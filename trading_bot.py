@@ -2,7 +2,8 @@ import os
 import requests
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
+import joblib
+from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
@@ -48,12 +49,22 @@ def prepare_features(df):
     return X, y
 
 
-def train_model(X, y):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_train, y_train)
+def train_or_update_model(X, y, model_path="model.pkl"):
+    """Train a new model or update an existing one with new data."""
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, shuffle=False
+    )
+
+    if os.path.exists(model_path):
+        model = joblib.load(model_path)
+        model.partial_fit(X_train, y_train)
+    else:
+        model = SGDClassifier(loss="log_loss", random_state=42)
+        model.partial_fit(X_train, y_train, classes=np.array([0, 1]))
+
     preds = model.predict(X_test)
     print("Model accuracy:", accuracy_score(y_test, preds))
+    joblib.dump(model, model_path)
     return model
 
 
@@ -70,7 +81,7 @@ def generate_signal(model, df):
 def main():
     df = fetch_market_data()
     X, y = prepare_features(df)
-    model = train_model(X, y)
+    model = train_or_update_model(X, y)
     signal = generate_signal(model, df)
     print("Generated signal:", signal)
 
