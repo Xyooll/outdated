@@ -1,0 +1,17 @@
+version: 1
+relationship:
+  required:
+    - id
+    - from
+    - type
+    - to
+  fields:
+    id: stable relationship identifier
+    from: source entity ID
+    type: produces|supplies|customer_of|competitor_of|owns|partner_of|invests_in|depends_on|benefits_from|threatened_by|located_in|regulated_by|awarded_to|related_to
+    to: target entity ID
+    evidence: source IDs supporting the relationship
+    confidence: 0.0-1.0
+    valid_from: optional ISO-8601
+    valid_to: optional ISO-8601
+    last_verified: ISO-8601
