@@ -20,6 +20,12 @@ SQLite-backed entities, relationships, events and experiences provide persistent
 ### Intelligence
 Evidence, entity resolution, relationship candidates and a validated world graph turn observations into structured knowledge.
 
+### Economic engine
+Business, investment and trading candidates use a shared opportunity model, evidence gate, capital-efficiency ranking, experiment framework and outcome loop.
+
+### Research/data adapters
+Read-only adapters now support SEC company facts, Alpaca market data and CoinGecko crypto market data. A canonical event model converts provider-specific payloads into the common research pipeline.
+
 ### Safety
 Hard gates, authorization, risk limits, reversibility, auditability and protected invariants constrain action.
 
@@ -49,7 +55,19 @@ The repository contains working primitives for:
 - append-only audit logging
 - learning candidate evaluation
 - node manifests and replication rules
-- core and intelligence tests
+- business/investment/trading opportunity scanners
+- deterministic backtesting foundation
+- SEC company-facts ingestion
+- Alpaca stock/crypto market-data ingestion
+- CoinGecko crypto-market ingestion
+- canonical research-event normalization
+- research pipeline tests
+
+## Data providers
+
+Provider credentials are never stored in the DNA. Environment variables or a secrets manager supply credentials at runtime.
+
+The current adapters are intentionally read-only. They feed research and backtesting; they do not place trades or spend funds.
 
 ## Deliberate boundary
 
