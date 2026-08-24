@@ -1,0 +1,20 @@
+version: 1
+event:
+  required:
+    - id
+    - type
+    - timestamp
+    - source
+  fields:
+    id: stable event identifier
+    type: contract|filing|earnings|regulatory|product|market|research|other
+    timestamp: event time in ISO-8601
+    source: source identifier and URL
+    entities: affected entity IDs
+    geography: affected regions/nodes
+    summary: concise factual summary
+    impact: -1.0 to 1.0
+    relevance: 0.0-1.0
+    novelty: 0.0-1.0
+    confidence: 0.0-1.0
+    evidence: supporting source IDs
