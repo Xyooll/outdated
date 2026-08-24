@@ -21,14 +21,12 @@ def dedupe(events):
     return result
 
 
-def process_stock_payload(payload: dict) -> dict:
-    events = stock_bar_events(payload)
-    return process_events(events)
+def process_stock_payload(payload: dict, persist=None) -> dict:
+    return process_events(stock_bar_events(payload), persist)
 
 
-def process_crypto_payload(payload: list[dict]) -> dict:
-    events = crypto_market_events(payload)
-    return process_events(events)
+def process_crypto_payload(payload: list[dict], persist=None) -> dict:
+    return process_events(crypto_market_events(payload), persist)
 
 
 def process_events(events, persist=None) -> dict:
@@ -43,10 +41,15 @@ def process_events(events, persist=None) -> dict:
         for event in raw:
             persist(event)
         for candidate in candidates:
-            persist({"type": "opportunity_candidate", "name": candidate.name, "domain": candidate.domain, "score": candidate.risk_adjusted_efficiency, "source_ids": list(candidate.source_ids)})
+            persist({"type": "opportunity_candidate", "name": candidate.name, "domain": candidate.domain, "thesis": candidate.thesis, "score": candidate.risk_adjusted_efficiency, "source_ids": list(candidate.source_ids)})
     return {"ingested": len(events), "unique": len(unique), "signals": signals, "candidates": candidates}
 
 
 def run(provider: str, loader, *args, **kwargs):
-    """Execute a read-only adapter and return structured success/failure data."""
     return safe_call(provider, loader, *args, **kwargs)
+
+
+if __name__ == "__main__":
+    # Safe CI health check: no network calls and no external actions.
+    result = process_events([])
+    print({"status": "ok", "ingested": result["ingested"], "candidates": len(result["candidates"])})
