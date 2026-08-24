@@ -1,4 +1,4 @@
-"""Minimal deterministic event-processing core for Operation DNA."""
+"""Deterministic event-processing primitives for Operation DNA."""
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from hashlib import sha256
@@ -20,7 +20,7 @@ class Event:
 
     @property
     def id(self) -> str:
-        raw = f"{self.source}|{self.url}|{self.title}".encode()
+        raw = f"{self.source}|{self.url}|{self.title}|{self.published_at}".encode()
         return sha256(raw).hexdigest()
 
 
@@ -39,9 +39,9 @@ class Experience:
 
 
 def ingest(events: list[Event], seen_ids: set[str] | None = None) -> list[Event]:
-    """Deterministically deduplicate incoming observations."""
-    seen = seen_ids or set()
-    fresh = []
+    """Deterministically deduplicate observations and update the supplied seen-id set."""
+    seen = seen_ids if seen_ids is not None else set()
+    fresh: list[Event] = []
     for event in events:
         if event.id not in seen:
             seen.add(event.id)
