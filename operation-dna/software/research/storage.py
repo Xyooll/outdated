@@ -7,8 +7,7 @@ class ResearchStore:
     """Legacy research API backed by the shared memory database."""
     def __init__(self, path: str = "data/operation_dna.db"):
         self.store = MemoryStore(path)
-        self.store.db.executescript(SCHEMA)
-        self.store.db.commit()
+        self.store.initialize_schema(SCHEMA)
 
     @property
     def conn(self):
