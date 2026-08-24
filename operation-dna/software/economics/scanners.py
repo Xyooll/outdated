@@ -28,13 +28,15 @@ class Candidate:
         return self.expected_upside / self.capital_required * self.evidence_score * risk_factor
 
 
-def scan(events: Iterable[dict], domain: str, keywords: Iterable[str]) -> list[Candidate]:
+def scan(events: Iterable[dict], domain: str, keywords: Iterable[str], min_hits: int = 1) -> list[Candidate]:
     terms = tuple(k.lower() for k in keywords)
+    if min_hits < 1:
+        raise ValueError("min_hits must be at least 1")
     candidates = []
     for event in events:
         text = f"{event.get('title', '')} {event.get('summary', '')}".lower()
         hits = [term for term in terms if term in text]
-        if not hits:
+        if len(hits) < min_hits:
             continue
         candidates.append(Candidate(
             name=event.get('title', 'untitled'),
@@ -65,4 +67,6 @@ def scan_investments(events):
 
 
 def scan_trading(events):
-    return scan(events, "trading", TRADING_SIGNALS)
+    # A single generic market-data word such as "volume" is not sufficient
+    # evidence of a trading setup. Require confluence from at least two signals.
+    return scan(events, "trading", TRADING_SIGNALS, min_hits=2)
