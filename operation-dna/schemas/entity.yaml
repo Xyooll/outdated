@@ -12,6 +12,7 @@ entity:
     identifiers: ticker, CIK, domain, contract number, etc.
     geography: country/region/node references
     tags: controlled taxonomy labels
+    attributes: structured entity-specific data
     relationships: typed links to other entities
     sources: evidence references
     confidence: 0.0-1.0
