@@ -21,11 +21,13 @@ def stock_bar_events(payload: dict, source: str = "alpaca") -> list[ResearchEven
 
 
 def crypto_market_events(payload: list[dict], source: str = "coingecko") -> list[ResearchEvent]:
+    fetched_at = now_iso()
     return [ResearchEvent(
         source=source,
-        source_id=str(row.get("id", row.get("symbol", "unknown"))),
+        source_id=f"{row.get('id', row.get('symbol', 'unknown'))}:{fetched_at}",
         title=f"Crypto market: {row.get('name', row.get('symbol', 'unknown'))}",
         summary=f"Price {row.get('current_price')} market cap {row.get('market_cap')} 24h volume {row.get('total_volume')}",
+        published_at=fetched_at,
         category="crypto_market",
         entity=row.get("symbol", ""),
         evidence_score=0.9,
