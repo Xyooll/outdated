@@ -1,10 +1,10 @@
-"""AI-directed software factory.
-Generated code is staged and validated before promotion."""
+"""AI-directed software factory with a human-controlled promotion boundary."""
 from dataclasses import dataclass
 from pathlib import Path
 import ast
 import subprocess
 import sys
+from .authority import HumanAuthority
 
 @dataclass(frozen=True)
 class BuildResult:
@@ -16,9 +16,10 @@ class BuildResult:
     reason: str
 
 class SoftwareFactory:
-    def __init__(self, staging_root: str = "data/software_staging"):
+    def __init__(self, staging_root: str = "data/software_staging", authority: HumanAuthority | None = None):
         self.root = Path(staging_root)
         self.root.mkdir(parents=True, exist_ok=True)
+        self.authority = authority or HumanAuthority()
 
     def stage(self, name: str, source: str) -> Path:
         if not name.isidentifier():
@@ -42,9 +43,11 @@ class SoftwareFactory:
         ok = result.returncode == 0
         return BuildResult(base.name, base.path, True, ok, False, "tests passed" if ok else result.stderr[-2000:])
 
-    def promote(self, result: BuildResult, destination: str) -> Path:
+    def promote(self, result: BuildResult, destination: str, *, autonomy_level: int = 0) -> Path:
         if not (result.syntax_ok and result.tests_ok):
             raise PermissionError("software cannot be promoted until validation passes")
+        if not self.authority.authorize(autonomy_level=autonomy_level):
+            raise PermissionError("human authorization required for software promotion")
         src = Path(result.path)
         dst = Path(destination) / src.name
         dst.parent.mkdir(parents=True, exist_ok=True)
