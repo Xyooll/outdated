@@ -1,8 +1,13 @@
+import pathlib
+import sys
 import unittest
 
-from operation_dna.software.research.normalization import ResearchEvent
-from operation_dna.software.research.market_events import stock_bar_events, crypto_market_events
-from operation_dna.software.economics.scanners import scan_business
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from software.research.normalization import ResearchEvent
+from software.research.market_events import stock_bar_events, crypto_market_events
+from software.economics.scanners import scan_business
 
 
 class ResearchPipelineTests(unittest.TestCase):
