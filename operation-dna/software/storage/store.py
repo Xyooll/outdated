@@ -14,7 +14,26 @@ class MemoryStore:
 
     def initialize(self, schema_path: str | Path) -> None:
         self.db.executescript(Path(schema_path).read_text(encoding="utf-8"))
+        self._ensure_compatible_schema()
         self.db.commit()
+
+    def _ensure_compatible_schema(self) -> None:
+        """Apply safe, additive changes to databases created by older versions."""
+        event_columns = {row[1] for row in self.db.execute("PRAGMA table_info(events)")}
+        if event_columns and "event_type" not in event_columns:
+            self.db.execute("ALTER TABLE events ADD COLUMN event_type TEXT")
+
+        self.db.execute("""CREATE TABLE IF NOT EXISTS opportunities (
+            candidate_key TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            domain TEXT NOT NULL,
+            score REAL NOT NULL,
+            source_ids_json TEXT,
+            data_json TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )""")
+        self.db.execute("CREATE INDEX IF NOT EXISTS idx_opportunities_score ON opportunities(score DESC)")
 
     def put_event(self, event: dict[str, Any]) -> None:
         event_id = event.get("id") or event.get("event_id")
