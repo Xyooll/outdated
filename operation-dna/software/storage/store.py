@@ -8,6 +8,7 @@ from typing import Any
 class MemoryStore:
     def __init__(self, path: str | Path):
         self.path = str(path)
+        Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(self.path)
         self.db.execute("PRAGMA foreign_keys = ON")
 
@@ -17,12 +18,16 @@ class MemoryStore:
         self.db.commit()
 
     def put_event(self, event: dict[str, Any]) -> None:
+        event_id = event.get("id") or event.get("event_id")
+        if not event_id:
+            raise ValueError("event requires id or event_id")
         self.db.execute(
             """INSERT OR REPLACE INTO events
                (id, source, title, url, published_at, data_json, ingested_at)
                VALUES (?, ?, ?, ?, ?, ?, datetime('now'))""",
-            (event["id"], event["source"], event["title"], event.get("url"),
-             event.get("published_at"), json.dumps(event, sort_keys=True)),
+            (event_id, event.get("source") or "unknown", event.get("title") or "untitled",
+             event.get("url"), event.get("published_at") or event.get("timestamp"),
+             json.dumps(event, sort_keys=True)),
         )
         self.db.commit()
 
