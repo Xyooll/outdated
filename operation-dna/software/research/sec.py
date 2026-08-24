@@ -1,5 +1,6 @@
 """Read-only SEC company-facts adapter with accurate fact counts and stable revisions."""
 import hashlib
+import json
 from .http import get_json
 from .normalization import now_iso
 
@@ -36,7 +37,8 @@ def company_event(cik: str | int, ticker: str, user_agent: str) -> dict:
     entity = data.get("entityName", ticker)
     facts = data.get("facts", {})
     fact_count = fact_observation_count(facts)
-    revision = hashlib.sha256(data.__repr__().encode("utf-8")).hexdigest()[:16]
+    canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    revision = hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
     fetched_at = now_iso()
     return {
         "source": "sec_companyfacts",
