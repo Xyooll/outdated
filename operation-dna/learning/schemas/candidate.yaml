@@ -1,0 +1,21 @@
+version: 1
+candidate:
+  required: [id, parent_version, hypothesis, changes, evaluation]
+  fields:
+    id: stable candidate identifier
+    parent_version: stable strategy/system version
+    hypothesis: expected improvement
+    changes: proposed modifications
+    generated_by: ai, human, algorithm, or hybrid
+    experiment_plan: isolated evaluation procedure
+    baseline: comparison version and metrics
+    evaluation: results and statistical evidence
+    robustness: out-of-sample and stress-test results
+    risk: identified failure modes and severity
+    safety_checks: required gates and results
+    status: proposed|testing|shadow|approved|rejected|promoted|rolled_back
+    promotion_authority: required approval path
+    rollback_target: known-good version
+    lineage: parent and child candidate references
+    created_at: ISO-8601
+    updated_at: ISO-8601
