@@ -12,4 +12,6 @@ Maps represent relationships, not just documents.
 - `financial-map.md` — assets, capital structures, financing and market exposure
 - `relationship-map.md` — cross-domain relationship index
 
-Every material relationship should point to evidence and carry a confidence score.
+## Rules
+
+Every material relationship must point to evidence and carry a confidence score. Maps are derived views: canonical entity and relationship records remain the source of truth, allowing every node to rebuild its maps after cloning.
