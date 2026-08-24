@@ -1,17 +1,40 @@
-"""Persistent research runner backed by the canonical memory database."""
+"""Continuous research ingestion loop backed by canonical memory."""
+from dataclasses import dataclass
+from typing import Callable, Iterable
 from .pipeline import process_events
 from .storage import ResearchStore
 
 
-def run_events(events, db_path="data/operation_dna.db"):
+@dataclass(frozen=True)
+class RunResult:
+    fetched: int
+    ingested: int
+    unique: int
+    candidates: int
+    top: list[dict]
+
+
+def run_events(events: Iterable[dict], db_path: str = "data/operation_dna.db") -> RunResult:
     store = ResearchStore(db_path)
     try:
-        result = process_events(events, persist=store.save)
-        return {
-            "ingested": result["ingested"],
-            "unique": result["unique"],
-            "candidate_count": len(result["candidates"]),
-            "top": store.top_opportunities(25),
-        }
+        result = process_events(list(events), persist=store.save)
+        return RunResult(
+            fetched=result["ingested"],
+            ingested=result["ingested"],
+            unique=result["unique"],
+            candidates=len(result["candidates"]),
+            top=store.top_opportunities(25),
+        )
     finally:
         store.close()
+
+
+def run_once(fetchers: Iterable[Callable[[], Iterable[dict]]], db_path: str = "data/operation_dna.db") -> RunResult:
+    raw: list[dict] = []
+    for fetch in fetchers:
+        try:
+            raw.extend(list(fetch()))
+        except Exception:
+            # One unavailable source must not stop all other research sources.
+            continue
+    return run_events(raw, db_path=db_path)
