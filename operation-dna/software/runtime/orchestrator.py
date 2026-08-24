@@ -30,16 +30,17 @@ class Orchestrator:
             return RunResult("observed", {"test": test, "lessons": lessons})
 
         capability_name = proposal.get("capability")
-        permitted = False
         capability_error = None
-        try:
-            capability = Capability(capability_name) if capability_name else None
-            permitted = capability is not None and self.permissions.allows(capability)
-            if capability is None:
-                capability_error = "missing capability"
-        except ValueError:
-            capability_error = f"unknown capability: {capability_name}"
+        capability = None
+        if capability_name:
+            try:
+                capability = Capability(capability_name)
+            except ValueError:
+                capability_error = f"unknown capability: {capability_name}"
+        else:
+            capability_error = "missing capability"
 
+        permitted = capability is not None and self.permissions.allows(capability)
         request = ActionRequest(
             authorized=bool(proposal.get("authorized", False)),
             evidence_score=float(proposal.get("evidence_score", 0.0)),
@@ -49,7 +50,7 @@ class Orchestrator:
             permitted=permitted,
         )
         gate_passed, failures = evaluate(self.policy, request)
-        if capability_error:
+        if capability_error and "capability" not in failures:
             failures.append("capability")
         if not gate_passed or capability_error:
             return RunResult(
