@@ -1,0 +1,17 @@
+version: 1
+source:
+  required:
+    - id
+    - name
+    - type
+  fields:
+    id: stable source identifier
+    name: source name
+    type: rss|filing|government|company|research|news|api|manual
+    url: source or feed URL
+    geography: source jurisdiction/region
+    priority: 1-5
+    reliability: 0.0-1.0
+    update_frequency: expected cadence
+    active: boolean
+    last_checked: ISO-8601
