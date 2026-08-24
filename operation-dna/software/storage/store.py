@@ -17,6 +17,12 @@ class MemoryStore:
         self._ensure_compatible_schema()
         self.db.commit()
 
+    def initialize_schema(self, schema: str) -> None:
+        """Initialize from an in-memory schema and apply additive migrations."""
+        self.db.executescript(schema)
+        self._ensure_compatible_schema()
+        self.db.commit()
+
     def _ensure_compatible_schema(self) -> None:
         """Apply safe, additive changes to databases created by older versions."""
         event_columns = {row[1] for row in self.db.execute("PRAGMA table_info(events)")}
@@ -42,7 +48,7 @@ class MemoryStore:
         self.db.execute("""INSERT OR REPLACE INTO events
             (id, source, event_type, title, url, published_at, data_json, ingested_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))""",
-            (event_id, event.get("source") or "unknown", event.get("event_type"),
+            (event_id, event.get("source") or "unknown", event.get("event_type") or event.get("category"),
              event.get("title") or "untitled", event.get("url"),
              event.get("published_at") or event.get("timestamp"),
              json.dumps(event, sort_keys=True)))
@@ -50,16 +56,21 @@ class MemoryStore:
 
     @staticmethod
     def candidate_key(item: dict[str, Any]) -> str:
-        sources = ",".join(sorted(map(str, item.get("source_ids", []))))
-        return f"{item.get('domain','')}|{item.get('name','')}|{sources}"
+        """Stable identity for an opportunity independent of changing source lists."""
+        domain = str(item.get("domain", "")).strip().lower()
+        name = " ".join(str(item.get("name", "")).split()).strip().lower()
+        return f"{domain}|{name}"
 
     def put_opportunity(self, item: dict[str, Any]) -> None:
+        if not item.get("name") or not item.get("domain"):
+            raise ValueError("opportunity requires name and domain")
         key = item.get("candidate_key") or self.candidate_key(item)
         self.db.execute("""INSERT INTO opportunities
             (candidate_key,name,domain,score,source_ids_json,data_json)
             VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(candidate_key) DO UPDATE SET
-              score=excluded.score, source_ids_json=excluded.source_ids_json,
+              name=excluded.name, domain=excluded.domain, score=excluded.score,
+              source_ids_json=excluded.source_ids_json,
               data_json=excluded.data_json, updated_at=CURRENT_TIMESTAMP""",
             (key, item["name"], item["domain"], float(item.get("score", 0)),
              json.dumps(item.get("source_ids", [])), json.dumps(item, sort_keys=True)))
