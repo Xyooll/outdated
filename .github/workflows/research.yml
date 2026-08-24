@@ -1,0 +1,26 @@
+name: Research Pipeline
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: research-pipeline
+  cancel-in-progress: true
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run research tests
+        run: python -m unittest discover -s operation-dna/tests -p 'test*.py'
+      - name: Research dry-run
+        run: python -m operation_dna.software.research.pipeline
