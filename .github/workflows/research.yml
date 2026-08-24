@@ -26,7 +26,14 @@ jobs:
         env:
           PYTHONPATH: operation-dna
         run: python -m unittest discover -s operation-dna/tests -p 'test_*.py' -v
-      - name: Research dry-run
+      - name: Run live research when feeds are configured
+        if: ${{ secrets.XYOO_FEEDS != '' }}
+        env:
+          PYTHONPATH: operation-dna
+          XYOOL_FEEDS: ${{ secrets.XYOO_FEEDS }}
+        run: python -m operation_dna.software.research.live
+      - name: Run research health check when feeds are not configured
+        if: ${{ secrets.XYOO_FEEDS == '' }}
         env:
           PYTHONPATH: operation-dna
         run: python -m operation_dna.software.research.pipeline
