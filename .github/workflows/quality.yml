@@ -12,8 +12,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
       - name: Compile Python
-        run: python -m compileall operation-dna/software
-      - name: Run tests when present
-        run: |
-          if [ -d tests ]; then python -m unittest discover -s tests -v; else echo 'No tests directory yet'; fi
+        run: python -m compileall operation-dna/software operation-dna/operation_dna
+      - name: Run Operation DNA tests
+        env:
+          PYTHONPATH: operation-dna
+        run: python -m unittest discover -s operation-dna/tests -p 'test_*.py' -v
