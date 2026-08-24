@@ -18,11 +18,16 @@ class Evidence:
 
 
 def confidence(evidence: list[Evidence]) -> float:
-    """Combine independent evidence conservatively; empty evidence means zero confidence."""
+    """Combine evidence conservatively while avoiding double-counting one source."""
     if not evidence:
         return 0.0
-    # Independent corroboration increases confidence without allowing one source to dominate.
-    product = 1.0
+
+    # Multiple articles/events from the same source are not independent evidence.
+    best_by_source: dict[str, float] = {}
     for item in evidence:
-        product *= 1.0 - item.score
+        best_by_source[item.source_id] = max(best_by_source.get(item.source_id, 0.0), item.score)
+
+    product = 1.0
+    for score in best_by_source.values():
+        product *= 1.0 - score
     return max(0.0, min(1.0, 1.0 - product))
