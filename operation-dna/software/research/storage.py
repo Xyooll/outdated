@@ -10,6 +10,10 @@ class ResearchStore:
         self.store.db.executescript(SCHEMA)
         self.store.db.commit()
 
+    @property
+    def conn(self):
+        return self.store.db
+
     def save(self, item: dict) -> None:
         if item.get("type") == "opportunity_candidate":
             self.store.put_opportunity(item)
