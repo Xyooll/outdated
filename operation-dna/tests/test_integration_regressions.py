@@ -1,34 +1,27 @@
-import sqlite3
 import unittest
 
 from operation_dna.software.research.normalization import ResearchEvent
 from operation_dna.software.research.storage import ResearchStore
 from operation_dna.software.safety.policy import ActionRequest, Policy, evaluate
+from operation_dna.software.intelligence.evidence import Evidence, confidence
 
 
 class IntegrationRegressionTests(unittest.TestCase):
     def test_canonical_event_can_persist(self):
         event = ResearchEvent("test", "1", "title", "summary", published_at="2026-01-01T00:00:00Z")
-        with self.subTest("research store"):
-            store = ResearchStore(":memory:")
-            try:
-                store.save(event.as_dict())
-                row = store.conn.execute("SELECT event_id, published_at FROM events").fetchone()
-                self.assertEqual(row[0], event.event_id)
-                self.assertEqual(row[1], event.published_at)
-            finally:
-                store.close()
+        store = ResearchStore(":memory:")
+        try:
+            store.save(event.as_dict())
+            row = store.conn.execute("SELECT id, published_at FROM events").fetchone()
+            self.assertEqual(row[0], event.event_id)
+            self.assertEqual(row[1], event.published_at)
+        finally:
+            store.close()
 
     def test_opportunities_are_upserted(self):
         store = ResearchStore(":memory:")
         try:
-            item = {
-                "type": "opportunity_candidate",
-                "name": "Test",
-                "domain": "business",
-                "score": 0.8,
-                "source_ids": ["s1"],
-            }
+            item = {"type": "opportunity_candidate", "name": "Test", "domain": "business", "score": 0.8, "source_ids": ["s1"]}
             store.save(item)
             store.save({**item, "score": 0.9})
             count = store.conn.execute("SELECT COUNT(*) FROM opportunities").fetchone()[0]
@@ -38,11 +31,16 @@ class IntegrationRegressionTests(unittest.TestCase):
             store.close()
 
     def test_policy_uses_configured_evidence_threshold(self):
-        policy = Policy(minimum_evidence_score=0.8)
-        request = ActionRequest(True, 0.7, 0.1, True, True)
+        policy = Policy(minimum_evidence_score=0.8, require_capability=False)
+        request = ActionRequest(True, 0.7, 0.1, True, True, True)
         allowed, failures = evaluate(policy, request)
         self.assertFalse(allowed)
         self.assertIn("evidence", failures)
+
+    def test_correlated_evidence_does_not_count_twice(self):
+        one = Evidence("source-a", "e1", .8, .8, .8, .8)
+        duplicate = Evidence("source-a", "e2", .8, .8, .8, .8)
+        self.assertEqual(confidence([one, duplicate]), confidence([one]))
 
 
 if __name__ == "__main__":
