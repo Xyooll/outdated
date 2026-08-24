@@ -1,0 +1,20 @@
+version: 1
+entity:
+  required:
+    - id
+    - type
+    - name
+  fields:
+    id: stable identifier
+    type: entity class
+    name: canonical name
+    aliases: alternate names
+    identifiers: ticker, CIK, domain, contract number, etc.
+    geography: country/region/node references
+    tags: controlled taxonomy labels
+    relationships: typed links to other entities
+    sources: evidence references
+    confidence: 0.0-1.0
+    created_at: ISO-8601
+    updated_at: ISO-8601
+    last_verified: ISO-8601
