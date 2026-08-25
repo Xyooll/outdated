@@ -1,5 +1,5 @@
 import unittest
-from operation-dna.software.runtime.strategy_search import StrategySearch, create_trading_candidates, create_business_candidates
+from software.runtime.strategy_search import StrategySearch, create_trading_candidates, create_business_candidates
 
 class StrategySearchTests(unittest.TestCase):
     def test_trading_search_is_reproducible(self):
