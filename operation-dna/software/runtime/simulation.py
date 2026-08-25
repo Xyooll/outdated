@@ -1,22 +1,17 @@
-"""Deterministic simulation harness for closed-loop testing."""
+"""Deterministic simulation environment for safe learning before real execution."""
 from dataclasses import dataclass
-from .controller import MasterController
-from software.economics.learning import Forecast, Outcome
+from typing import Callable, Any
 
 @dataclass(frozen=True)
-class SimulationResult:
-    cycles: int
-    forecasts: int
-    evaluated: int
-    accuracy: float
+class SimulationRun:
+    name: str
+    steps: int
+    outputs: tuple[Any, ...]
 
-
-def run(db_path: str = ":memory:") -> SimulationResult:
-    controller = MasterController(db_path)
-    outcomes = [(0.20, 0.10), (0.15, 0.10), (-0.05, 0.10), (0.30, 0.10)]
-    for index, (actual, predicted) in enumerate(outcomes):
-        fid = f"sim-{index}"
-        controller.record_forecast(Forecast(fid, f"sim-{index}", .7, predicted, .2, f"cycle-{index}"))
-        controller.observe(Outcome(fid, actual, 0.0, f"cycle-{index}-outcome"))
-    accuracy = sum(r["direction_correct"] for r in controller.results) / len(controller.results)
-    return SimulationResult(4, len(controller.forecasts), len(controller.results), accuracy)
+class Simulator:
+    def __init__(self): self.history: list[SimulationRun] = []
+    def run(self, name: str, actions: list[Callable[[], Any]]) -> SimulationRun:
+        outputs = tuple(action() for action in actions)
+        result = SimulationRun(name, len(actions), outputs)
+        self.history.append(result)
+        return result
