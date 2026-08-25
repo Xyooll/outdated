@@ -1,6 +1,6 @@
 import unittest
-from operation-dna.software.simulations.trading_market import run_strategy, momentum_baseline
-from operation-dna.software.simulations.business_market import run_business_strategy, fit_baseline
+from software.simulations.trading_market import run_strategy, momentum_baseline
+from software.simulations.business_market import run_business_strategy, fit_baseline
 
 class SimulationTests(unittest.TestCase):
     def test_trading_is_reproducible(self):
