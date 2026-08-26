@@ -1,14 +1,14 @@
 # Xyool Continuity / Build State
 
 ## Purpose
-Xyool is being built as an adaptive AI-controlled software system. The human is the final authority. The AI is the active controller/reasoning layer; software capabilities are the passive/executable layer. The system should observe, prioritize attention, reason, create capabilities, test them, simulate them, evaluate results, learn, and evolve without silently promoting risky changes.
+Xyool is an adaptive AI-controlled software system. The human is the final authority. The AI is the active controller/reasoning layer; software capabilities are the passive/executable layer. The system observes, prioritizes attention, reasons, creates capabilities, tests them, simulates them, evaluates results, learns, and evolves without silently promoting risky changes.
 
 ## Current architecture
 
 ```text
 Human Authority
       ↓
-Cognitive Runtime
+Cognitive Runtime / Loop
       ↓
 Attention → Memory → AI Reasoning → Objective → Hypothesis
       ↓                                      ↓
@@ -58,6 +58,10 @@ Primary development path: `operation-dna/`
 - Version store and rollback
 - End-to-end readiness tests
 - GitHub Actions test workflow
+- Backend-neutral storage router
+- End-to-end cognitive loop (`software/runtime/loop.py`)
+- Local/remote AI model router
+- Runnable dependency-light smoke test (`run_smoke_test.py`)
 
 ## Synthetic environments
 ### Trading
@@ -143,28 +147,12 @@ Use the local NVMe primarily for compute/runtime/cache/sandbox. Prefer connected
 - Dropbox: large files/artifacts/backups
 - Notion: human-readable knowledge
 
-The storage layer should eventually be exposed through capabilities such as `store_event`, `store_document`, `store_large_file`, `store_code`, `store_experiment`, and `retrieve_memory`, allowing the controller to choose a backend instead of hard-coding one service everywhere.
-
-## Next build priority
-Do NOT keep adding disconnected architecture. The next goal is to assemble and verify the real runtime:
-
-1. Storage abstraction over Supabase/GitHub/Dropbox/Notion.
-2. Capability registry populated with real, available capabilities and permission metadata.
-3. Cognitive Runtime wired end-to-end.
-4. Attention/event triggers so expensive AI is invoked only when defined conditions occur.
-5. Persistent memory retrieval and event history.
-6. AI provider abstraction with local/remote model routing.
-7. Complete integration cycle: event → attention → memory → AI → plan → capability check → sandbox/action → evaluation → learning → log.
-8. Run the full repository test suite through GitHub Actions and fix failures.
-9. Run large synthetic benchmarks before connecting real-world execution.
-10. Add shadow-mode adapters for real services; observe without taking external actions.
-11. Add human-approved execution.
-12. Only then consider narrowly scoped autonomous execution.
+`software/runtime/storage.py` provides a backend-neutral router so logical storage classes can be mapped to different backends without hard-coding vendors into the cognitive layer.
 
 ## Attention model
-The AI should not continuously reason over everything. Software should watch for explicit trigger conditions and wake the AI when attention is justified.
+The AI should not continuously reason over everything. Software watches for explicit trigger conditions and wakes the AI when attention is justified.
 
-Example:
+Examples:
 - Trading software detects a defined market condition → wake AI.
 - Social system detects meaningful analytics change → wake AI.
 - Marketplace adapter detects a high-fit job/request → wake AI.
@@ -184,14 +172,35 @@ A plan is invalid if it calls an unregistered capability. Instead:
 8. Make it eligible for promotion only if gates pass.
 9. Require authorization for protected side effects.
 
-## Safety / authority boundary
-The architecture must not turn external accounts, financial actions, destructive operations, or other consequential actions into unrestricted autonomous behavior. Keep permissions explicit and auditable. Human authority remains the final control layer.
+## Current runtime
+`software/runtime/loop.py` now wires the main event-driven cycle together. It checks the kill switch, evaluates attention, checks the AI cost budget, retrieves relevant memory, invokes the injected reasoner, rejects unknown capabilities, pauses for authorization on protected capabilities, executes permitted capabilities, records results, and writes episodic memory.
 
-## Current status
+`software/runtime/model_router.py` selects a local provider for low-complexity work and can route higher-complexity work to an injected remote provider subject to a cost policy.
+
+`run_smoke_test.py` provides a dependency-light synthetic end-to-end test that should be run from the `operation-dna` directory with Python.
+
+## Build status
 Architecture: substantially assembled.
-Integration: not yet proven end-to-end in the user's local environment.
-Full test suite: configured for GitHub Actions, but a complete successful run must be verified rather than assumed.
+Core orchestration: wired.
+Storage abstraction: wired at the contract/router level; vendor-specific production adapters still need credentials/configuration.
+Capability registry: implemented; real external capabilities still need adapter registration.
+AI routing: implemented at the provider abstraction level; real providers still need runtime configuration.
+Integration: ready for local execution testing.
+Full test suite: configured for GitHub Actions, but a successful complete run must be verified rather than assumed.
 Real-world execution: NOT ready; remain in synthetic/shadow mode until integration and regression testing pass.
 
+## Next execution sequence
+1. Clone/pull repository on the user's Precision 7520.
+2. Run `python run_smoke_test.py` from `operation-dna`.
+3. Run the complete test suite used by CI.
+4. Fix integration failures found by actual execution.
+5. Connect durable storage adapters, starting with Supabase.
+6. Register real read-only capabilities from available integrations.
+7. Configure local/remote AI providers.
+8. Run large synthetic benchmarks.
+9. Add shadow-mode real-service adapters.
+10. Add human-approved execution.
+11. Only then consider narrowly scoped autonomous execution.
+
 ## Continuation instruction
-When starting a new conversation, read this file first and continue from **Next build priority**. Do not redesign the architecture from scratch unless new evidence shows a structural problem. Prefer implementing, testing, measuring and fixing over adding speculative components.
+When starting a new conversation, read this file first and continue from **Next execution sequence**. Do not redesign the architecture from scratch unless new evidence shows a structural problem. Prefer implementing, testing, measuring and fixing over adding speculative components.
