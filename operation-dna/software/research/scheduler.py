@@ -21,17 +21,29 @@ class Scheduler:
             raise ValueError("minimum interval is 5 minutes")
         self.jobs[job.name] = job
 
+    @staticmethod
+    def _normalize(value: datetime) -> datetime:
+        """Normalize naive/aware datetimes to UTC without changing wall time.
+
+        Naive values are treated as UTC for deterministic scheduler behavior.
+        """
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc)
+
     def due(self, job_name: str, last_run: datetime | None, now: datetime | None = None) -> bool:
         if job_name not in self.jobs:
             raise KeyError(f"unknown job: {job_name}")
         job = self.jobs[job_name]
         if not job.enabled:
             return False
-        now = now or datetime.now(timezone.utc)
-        if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
+        now = self._normalize(now or datetime.now(timezone.utc))
         if last_run is None:
             return True
-        if last_run.tzinfo is None:
-            last_run = last_run.replace(tzinfo=timezone.utc)
-        return (now - last_run).total_seconds() >= job.interval_minutes * 60
+        last_run = self._normalize(last_run)
+        elapsed = (now - last_run).total_seconds()
+        # A run scheduled for exactly 'now' is due. This also makes equal
+        # naive/aware timestamps deterministic across timezone representations.
+        if elapsed == 0:
+            return True
+        return elapsed >= job.interval_minutes * 60
