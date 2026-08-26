@@ -1,12 +1,12 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 
-from operation_dna.software.research.normalization import ResearchEvent
-from operation_dna.software.research.storage import ResearchStore
-from operation_dna.software.research.scheduler import Scheduler, Job
-from operation_dna.software.safety.policy import ActionRequest, Policy, evaluate
-from operation_dna.software.intelligence.evidence import Evidence, confidence
-from operation_dna.software.economics.scanners import scan_trading
+from software.research.normalization import ResearchEvent
+from software.research.storage import ResearchStore
+from software.research.scheduler import Scheduler, Job
+from software.safety.policy import ActionRequest, Policy, evaluate
+from software.intelligence.evidence import Evidence, confidence
+from software.economics.scanners import scan_trading
 
 
 class IntegrationRegressionTests(unittest.TestCase):
