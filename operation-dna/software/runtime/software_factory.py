@@ -39,41 +39,16 @@ class SoftwareFactory:
         base = self.validate(path)
         if not base.syntax_ok:
             return base
-
         test_path = Path(test_file)
-        if test_path.exists() and test_path.is_file():
-            # Discover from the test file's directory so temporary/generated
-            # candidates can be tested without modifying the repository.
-            command = [
-                sys.executable,
-                "-m",
-                "unittest",
-                "discover",
-                "-s",
-                str(test_path.parent),
-                "-p",
-                test_path.name,
-                "-v",
-            ]
-        else:
-            command = [sys.executable, "-m", "unittest", test_file, "-v"]
-
+        if not test_path.exists():
+            return BuildResult(base.name, base.path, True, False, False, f"test file not found: {test_file}")
         result = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            timeout=60,
+            [sys.executable, "-m", "unittest", "discover", "-s", str(test_path.parent), "-p", test_path.name, "-v"],
+            cwd=str(path.parent), capture_output=True, text=True, timeout=60,
         )
         ok = result.returncode == 0
         failure = (result.stderr or result.stdout)[-2000:]
-        return BuildResult(
-            base.name,
-            base.path,
-            True,
-            ok,
-            False,
-            "tests passed" if ok else failure,
-        )
+        return BuildResult(base.name, base.path, True, ok, False, "tests passed" if ok else failure)
 
     def promote(self, result: BuildResult, destination: str, *, autonomy_level: int = 0) -> Path:
         if not (result.syntax_ok and result.tests_ok):
