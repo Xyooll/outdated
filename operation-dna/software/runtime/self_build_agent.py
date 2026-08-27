@@ -7,7 +7,7 @@ runtime to a specific vendor.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Any
 import json
@@ -74,11 +74,17 @@ class SelfBuildAgent:
                 notes.append("candidate passed syntax and tests")
                 promoted = False
                 if promote:
-                    destination = self.factory.promote(
-                        last, request.destination, autonomy_level=autonomy_level
-                    )
-                    promoted = True
-                    notes.append(f"promoted to {destination}")
+                    try:
+                        destination = self.factory.promote(
+                            last, request.destination, autonomy_level=autonomy_level
+                        )
+                        promoted = True
+                        notes.append(f"promoted to {destination}")
+                    except PermissionError as exc:
+                        # Authorization failure is an expected control-flow
+                        # result, not a build failure. The candidate remains
+                        # valid and unpromoted so callers can review/approve it.
+                        notes.append(f"promotion blocked: {exc}")
                 return AgentBuildResult(request, last, iteration, promoted, tuple(notes))
 
             feedback = last.reason
