@@ -23,18 +23,19 @@ TERMINAL = {"filled", "canceled", "cancelled", "rejected", "expired"}
 
 
 def refresh_broker_state(broker, ledger, audit):
-    """Refresh order lifecycle first, then make the broker the position source of truth."""
-    for record in list(ledger.orders.values()):
-        if not record.broker_order_id or record.status.lower() in TERMINAL:
-            continue
-        try:
-            order = broker.get_order(record.broker_order_id)
-            ledger.update_order_status(record.client_order_id, str(order.get("status", record.status)))
-        except Exception as exc:
-            audit.append("order_refresh_failed", client_order_id=record.client_order_id,
-                         error=type(exc).__name__, execution="paper")
-    remote = broker.get_positions()
-    ledger.sync_positions(remote)
+    """Use broker order history and positions as the source of truth."""
+    try:
+        remote_orders = broker.get_orders(status="all", limit=100)
+        by_client = {str(o.get("client_order_id")): o for o in remote_orders if o.get("client_order_id")}
+        for record in list(ledger.orders.values()):
+            remote = by_client.get(record.client_order_id)
+            if remote:
+                ledger.update_order_status(record.client_order_id, str(remote.get("status", record.status)))
+    except Exception as exc:
+        audit.append("order_history_refresh_failed", error=type(exc).__name__, execution="paper")
+
+    remote_positions = broker.get_positions()
+    ledger.sync_positions(remote_positions)
     return reconcile_positions(broker, ledger, audit)
 
 
@@ -73,9 +74,10 @@ def main() -> int:
     for cycle in range(args.cycles):
         observation = market.observe()
         price = float(observation.payload["price"])
-        reconciliation = None
         if broker:
             reconciliation = refresh_broker_state(broker, ledger, audit)
+        else:
+            reconciliation = None
         position = ledger.get_position(symbol)
         open_entry = ledger.has_pending_entry(symbol)
         strategy = selected[cycle % len(selected)]
