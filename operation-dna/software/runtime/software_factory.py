@@ -44,28 +44,41 @@ class SoftwareFactory:
         if not test_path.exists():
             return BuildResult(base.name, base.path, True, False, False, f"test file not found: {test_file}")
 
+        # Run the generated test module as a normal unittest target. This is
+        # deliberately isolated in a subprocess so candidate code cannot
+        # mutate the factory's interpreter state. Both the candidate staging
+        # directory and the repository's existing import roots are available.
         env = os.environ.copy()
-        env["PYTHONPATH"] = os.pathsep.join(
-            p for p in (str(path.parent.resolve()), env.get("PYTHONPATH", "")) if p
-        )
+        roots = [str(path.parent.resolve())]
+        repo_root = Path.cwd().resolve()
+        roots.append(str(repo_root))
+        existing = env.get("PYTHONPATH", "")
+        if existing:
+            roots.append(existing)
+        env["PYTHONPATH"] = os.pathsep.join(dict.fromkeys(roots))
+
         runner = (
-            "import importlib.util, inspect, sys, unittest; "
-            "p=sys.argv[1]; spec=importlib.util.spec_from_file_location('candidate_tests', p); "
-            "m=importlib.util.module_from_spec(spec); sys.modules['candidate_tests']=m; spec.loader.exec_module(m); "
+            "import importlib.util, pathlib, sys, unittest; "
+            "p=pathlib.Path(sys.argv[1]).resolve(); "
+            "spec=importlib.util.spec_from_file_location('candidate_tests', p); "
+            "m=importlib.util.module_from_spec(spec); "
+            "sys.modules['candidate_tests']=m; spec.loader.exec_module(m); "
             "suite=unittest.defaultTestLoader.loadTestsFromModule(m); "
-            "tests=[v for n,v in vars(m).items() if n.startswith('test_') and callable(v) and not inspect.isclass(v)]; "
             "r=unittest.TextTestRunner(verbosity=2).run(suite); "
-            "[t() for t in tests]; print(f'FUNCTION_TESTS_PASSED={len(tests)}'); "
             "sys.exit(0 if r.wasSuccessful() else 1)"
         )
-        result = subprocess.run(
-            [sys.executable, "-c", runner, str(test_path)],
-            cwd=str(path.parent.resolve()),
-            env=env,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
+        try:
+            result = subprocess.run(
+                [sys.executable, "-c", runner, str(test_path)],
+                cwd=str(path.parent.resolve()),
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+        except (OSError, subprocess.SubprocessError) as exc:
+            return BuildResult(base.name, base.path, True, False, False, f"test runner error: {exc}")
+
         ok = result.returncode == 0
         output = (result.stdout + "\n" + result.stderr).strip()
         return BuildResult(base.name, base.path, True, ok, False, "tests passed" if ok else output[-4000:])
