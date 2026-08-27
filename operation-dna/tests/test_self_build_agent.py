@@ -19,7 +19,6 @@ class SelfBuildAgentTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as td:
             factory = SoftwareFactory(td, HumanAuthority())
-            # Empty test path exercises syntax-only validation for this minimal loop.
             agent = SelfBuildAgent(factory, generate, max_iterations=2)
             result = agent.build(BuildRequest("candidate", "build a callable"))
             self.assertTrue(result.build.syntax_ok)
@@ -30,12 +29,17 @@ class SelfBuildAgentTests(unittest.TestCase):
     def test_promotion_still_requires_authority(self):
         with tempfile.TemporaryDirectory() as td:
             factory = SoftwareFactory(td, HumanAuthority())
-            agent = SelfBuildAgent(
-                factory,
-                lambda request, feedback: "def answer():\n    return 1\n",
+            candidate = factory.stage("candidate", "def answer():\n    return 1\n")
+            test_path = Path(td) / "test_candidate.py"
+            test_path.write_text(
+                "import candidate\n"
+                "def test_answer():\n"
+                "    assert candidate.answer() == 1\n",
+                encoding="utf-8",
             )
+            agent = SelfBuildAgent(factory, lambda request, feedback: candidate.read_text(), max_iterations=1)
             result = agent.build(
-                BuildRequest("candidate", "build a callable", destination=str(Path(td) / "out")),
+                BuildRequest("candidate", "build a callable", test_file=str(test_path), destination=str(Path(td) / "out")),
                 promote=True,
             )
             self.assertFalse(result.promoted)
@@ -45,15 +49,29 @@ class SelfBuildAgentTests(unittest.TestCase):
             authority = HumanAuthority()
             authority.approve()
             factory = SoftwareFactory(td, authority)
+            test_path = Path(td) / "test_candidate.py"
+            test_path.write_text(
+                "import candidate\n"
+                "def test_answer():\n"
+                "    assert candidate.answer() == 1\n",
+                encoding="utf-8",
+            )
             destination = str(Path(td) / "out")
             agent = SelfBuildAgent(
                 factory,
                 lambda request, feedback: "def answer():\n    return 1\n",
+                max_iterations=1,
             )
             result = agent.build(
-                BuildRequest("candidate", "build a callable", destination=destination),
+                BuildRequest(
+                    "candidate",
+                    "build a callable",
+                    test_file=str(test_path),
+                    destination=destination,
+                ),
                 promote=True,
             )
+            self.assertTrue(result.build.tests_ok)
             self.assertTrue(result.promoted)
             self.assertTrue((Path(destination) / "candidate.py").exists())
 
