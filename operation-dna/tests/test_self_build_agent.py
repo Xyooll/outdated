@@ -32,16 +32,27 @@ class SelfBuildAgentTests(unittest.TestCase):
             candidate = factory.stage("candidate", "def answer():\n    return 1\n")
             test_path = Path(td) / "test_candidate.py"
             test_path.write_text(
+                "import sys\n"
+                f"sys.path.insert(0, {str(Path(td)).__repr__()})\n"
                 "import candidate\n"
+                "\n"
                 "def test_answer():\n"
                 "    assert candidate.answer() == 1\n",
                 encoding="utf-8",
             )
-            agent = SelfBuildAgent(factory, lambda request, feedback: candidate.read_text(), max_iterations=1)
+            agent = SelfBuildAgent(
+                factory,
+                lambda request, feedback: candidate.read_text(),
+                max_iterations=1,
+            )
             result = agent.build(
-                BuildRequest("candidate", "build a callable", test_file=str(test_path), destination=str(Path(td) / "out")),
+                BuildRequest(
+                    "candidate", "build a callable", test_file=str(test_path),
+                    destination=str(Path(td) / "out"),
+                ),
                 promote=True,
             )
+            self.assertTrue(result.build.tests_ok)
             self.assertFalse(result.promoted)
 
     def test_authorized_promotion_works(self):
@@ -51,7 +62,10 @@ class SelfBuildAgentTests(unittest.TestCase):
             factory = SoftwareFactory(td, authority)
             test_path = Path(td) / "test_candidate.py"
             test_path.write_text(
+                "import sys\n"
+                f"sys.path.insert(0, {str(Path(td)).__repr__()})\n"
                 "import candidate\n"
+                "\n"
                 "def test_answer():\n"
                 "    assert candidate.answer() == 1\n",
                 encoding="utf-8",
@@ -64,9 +78,7 @@ class SelfBuildAgentTests(unittest.TestCase):
             )
             result = agent.build(
                 BuildRequest(
-                    "candidate",
-                    "build a callable",
-                    test_file=str(test_path),
+                    "candidate", "build a callable", test_file=str(test_path),
                     destination=destination,
                 ),
                 promote=True,
