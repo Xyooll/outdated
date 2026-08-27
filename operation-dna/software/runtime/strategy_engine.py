@@ -1,7 +1,7 @@
 """Multi-strategy evaluation and paper performance tracking."""
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from .market_features import MarketFeatures
 from .signal_engine import Signal, SignalEngine
@@ -61,10 +61,20 @@ class StrategyEngine:
         if pnl > 0:
             s.wins += 1
 
+    def leaderboard_for(self, strategy: str) -> dict:
+        if strategy not in self.stats:
+            raise KeyError(strategy)
+        s = self.stats[strategy]
+        return {
+            "samples": s.samples,
+            "direction_accuracy": s.win_rate,
+            "mean_pnl": s.mean_pnl,
+            "total_pnl": s.total_pnl,
+        }
+
     def leaderboard(self) -> list[dict]:
         rows = []
         for name, s in self.stats.items():
-            # Score rewards positive expectancy and accuracy while penalizing drawdown.
             score = s.mean_pnl + (s.win_rate * 0.01) - (s.max_drawdown * 0.001)
             rows.append({"strategy": name, "samples": s.samples,
                          "win_rate": round(s.win_rate, 4),
