@@ -23,14 +23,42 @@ TERMINAL = {"filled", "canceled", "cancelled", "rejected", "expired"}
 
 
 def refresh_broker_state(broker, ledger, audit):
-    """Use broker order history and positions as the source of truth."""
+    """Synchronize local order/position state from Alpaca.
+
+    Broker state is authoritative. For each local non-terminal order we first
+    use the order history returned by Alpaca; when an order is outside that
+    result set, we query it directly by broker order id. This prevents stale
+    local 'accepted' entries from permanently blocking new decisions.
+    """
     try:
         remote_orders = broker.get_orders(status="all", limit=100)
         by_client = {str(o.get("client_order_id")): o for o in remote_orders if o.get("client_order_id")}
+        by_id = {str(o.get("id")): o for o in remote_orders if o.get("id")}
         for record in list(ledger.orders.values()):
+            if record.status.lower() in TERMINAL:
+                continue
             remote = by_client.get(record.client_order_id)
+            if remote is None and record.broker_order_id:
+                remote = by_id.get(str(record.broker_order_id))
+            if remote is None and record.broker_order_id:
+                try:
+                    remote = broker.get_order(str(record.broker_order_id))
+                except Exception:
+                    remote = None
             if remote:
-                ledger.update_order_status(record.client_order_id, str(remote.get("status", record.status)))
+                ledger.update_order_status(
+                    record.client_order_id,
+                    str(remote.get("status", record.status)).lower(),
+                )
+            else:
+                # A local order without a broker record is not actionable.
+                # Mark it canceled so stale local state cannot block the loop.
+                ledger.update_order_status(record.client_order_id, "canceled")
+                audit.append(
+                    "stale_local_order_closed",
+                    client_order_id=record.client_order_id,
+                    execution="paper",
+                )
     except Exception as exc:
         audit.append("order_history_refresh_failed", error=type(exc).__name__, execution="paper")
 
