@@ -45,12 +45,21 @@ class SoftwareFactory:
             return BuildResult(base.name, base.path, True, False, False, f"test file not found: {test_file}")
 
         env = os.environ.copy()
-        existing = env.get("PYTHONPATH", "")
         env["PYTHONPATH"] = os.pathsep.join(
-            p for p in (str(path.parent.resolve()), existing) if p
+            p for p in (str(path.parent.resolve()), env.get("PYTHONPATH", "")) if p
+        )
+        runner = (
+            "import importlib.util, inspect, sys, unittest; "
+            "p=sys.argv[1]; spec=importlib.util.spec_from_file_location('candidate_tests', p); "
+            "m=importlib.util.module_from_spec(spec); sys.modules['candidate_tests']=m; spec.loader.exec_module(m); "
+            "suite=unittest.defaultTestLoader.loadTestsFromModule(m); "
+            "tests=[v for n,v in vars(m).items() if n.startswith('test_') and callable(v) and not inspect.isclass(v)]; "
+            "r=unittest.TextTestRunner(verbosity=2).run(suite); "
+            "[t() for t in tests]; print(f'FUNCTION_TESTS_PASSED={len(tests)}'); "
+            "sys.exit(0 if r.wasSuccessful() else 1)"
         )
         result = subprocess.run(
-            [sys.executable, "-m", "unittest", "discover", "-s", str(test_path.parent), "-p", test_path.name, "-v"],
+            [sys.executable, "-c", runner, str(test_path)],
             cwd=str(path.parent.resolve()),
             env=env,
             capture_output=True,
@@ -59,8 +68,7 @@ class SoftwareFactory:
         )
         ok = result.returncode == 0
         output = (result.stdout + "\n" + result.stderr).strip()
-        failure = output[-2000:]
-        return BuildResult(base.name, base.path, True, ok, False, "tests passed" if ok else failure)
+        return BuildResult(base.name, base.path, True, ok, False, "tests passed" if ok else output[-4000:])
 
     def promote(self, result: BuildResult, destination: str, *, autonomy_level: int = 0) -> Path:
         if not (result.syntax_ok and result.tests_ok):
