@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 import ast
+import os
 import subprocess
 import sys
 from .authority import HumanAuthority
@@ -39,15 +40,26 @@ class SoftwareFactory:
         base = self.validate(path)
         if not base.syntax_ok:
             return base
-        test_path = Path(test_file)
+        test_path = Path(test_file).resolve()
         if not test_path.exists():
             return BuildResult(base.name, base.path, True, False, False, f"test file not found: {test_file}")
+
+        env = os.environ.copy()
+        existing = env.get("PYTHONPATH", "")
+        env["PYTHONPATH"] = os.pathsep.join(
+            p for p in (str(path.parent.resolve()), existing) if p
+        )
         result = subprocess.run(
             [sys.executable, "-m", "unittest", "discover", "-s", str(test_path.parent), "-p", test_path.name, "-v"],
-            cwd=str(path.parent), capture_output=True, text=True, timeout=60,
+            cwd=str(path.parent.resolve()),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=60,
         )
         ok = result.returncode == 0
-        failure = (result.stderr or result.stdout)[-2000:]
+        output = (result.stdout + "\n" + result.stderr).strip()
+        failure = output[-2000:]
         return BuildResult(base.name, base.path, True, ok, False, "tests passed" if ok else failure)
 
     def promote(self, result: BuildResult, destination: str, *, autonomy_level: int = 0) -> Path:
