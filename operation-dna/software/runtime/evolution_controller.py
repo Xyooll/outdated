@@ -37,8 +37,6 @@ class EvolutionController:
         self._save()
 
     def diagnose(self, strategy: str, minimum_samples: int = 10) -> list[StrategyCandidate]:
-        if strategy not in self.engine.stats:
-            raise KeyError(strategy)
         return generate_candidates(strategy, self.engine.leaderboard_for(strategy), minimum_samples)
 
     def evolve(self, strategy: str, minimum_samples: int = 10,
@@ -52,8 +50,6 @@ class EvolutionController:
             self._record(run)
             return run
 
-        # Candidate competition is deterministic until real evaluation is supplied.
-        # Expected improvement is used only as a ranking prior, never as proof of fitness.
         winner = max(candidates, key=lambda c: (c.expected_improvement, c.candidate_id))
         promoted = False
         reason = "winner requires validation before promotion"
@@ -86,13 +82,3 @@ class EvolutionController:
             raw = json.loads(self.state_path.read_text(encoding="utf-8"))
             self.generation = int(raw.get("generation", 0))
             self.history = list(raw.get("history", []))
-
-
-# Small compatibility helper keeps evolution logic independent of StrategyStats internals.
-def _leaderboard_for(self: StrategyEngine, strategy: str) -> dict[str, Any]:
-    s = self.stats[strategy]
-    return {"samples": s.samples, "direction_accuracy": s.win_rate,
-            "mean_pnl": s.mean_pnl, "total_pnl": s.total_pnl}
-
-
-StrategyEngine.leaderboard_for = _leaderboard_for  # type: ignore[attr-defined]
