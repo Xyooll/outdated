@@ -1,10 +1,4 @@
-"""Self-building agent loop for Operation DNA.
-
-The agent can propose and validate software candidates, but promotion remains
-behind the existing HumanAuthority boundary. The code-generation layer is
-injected so this module works with any LLM/provider without coupling the
-runtime to a specific vendor.
-"""
+"""Self-building agent loop for Operation DNA."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -34,20 +28,12 @@ class AgentBuildResult:
 
 
 class SelfBuildAgent:
-    """Closed-loop software builder with explicit promotion control.
+    """Closed-loop software builder with explicit promotion control."""
 
-    `generate` receives a BuildRequest and returns complete Python source.
-    The agent may iterate on failed candidates, but it cannot bypass the
-    SoftwareFactory validation or HumanAuthority promotion gate.
-    """
-
-    def __init__(
-        self,
-        factory: SoftwareFactory,
-        generate: Callable[[BuildRequest, str], str],
-        test_file_for: Callable[[BuildRequest], str] | None = None,
-        max_iterations: int = 3,
-    ):
+    def __init__(self, factory: SoftwareFactory,
+                 generate: Callable[[BuildRequest, str], str],
+                 test_file_for: Callable[[BuildRequest], str] | None = None,
+                 max_iterations: int = 3):
         if max_iterations < 1:
             raise ValueError("max_iterations must be >= 1")
         self.factory = factory
@@ -60,42 +46,39 @@ class SelfBuildAgent:
         feedback = ""
         last: BuildResult | None = None
         notes: list[str] = []
-
         for iteration in range(1, self.max_iterations + 1):
             source = self.generate(request, feedback)
             path = self.factory.stage(request.name, source)
             test_file = self.test_file_for(request)
-            if not test_file:
-                last = self.factory.validate(path)
-            else:
-                last = self.factory.run_tests(path, test_file)
-
+            last = self.factory.run_tests(path, test_file) if test_file else self.factory.validate(path)
             if last.syntax_ok and last.tests_ok:
                 notes.append("candidate passed syntax and tests")
                 promoted = False
                 if promote:
                     try:
-                        destination = self.factory.promote(
-                            last, request.destination, autonomy_level=autonomy_level
-                        )
+                        destination = self.factory.promote(last, request.destination, autonomy_level=autonomy_level)
                         promoted = True
                         notes.append(f"promoted to {destination}")
                     except PermissionError as exc:
-                        # Authorization failure is an expected control-flow
-                        # result, not a build failure. The candidate remains
-                        # valid and unpromoted so callers can review/approve it.
                         notes.append(f"promotion blocked: {exc}")
                 return AgentBuildResult(request, last, iteration, promoted, tuple(notes))
-
             feedback = last.reason
             notes.append(f"iteration {iteration} rejected: {last.reason}")
-
         assert last is not None
         return AgentBuildResult(request, last, self.max_iterations, False, tuple(notes))
 
 
+class AutonomousSelfBuildAgent(SelfBuildAgent):
+    """Named autonomous interface used by the self-build pipeline.
+
+    Autonomy controls iteration and repair; software promotion remains subject
+    to the existing factory authorization boundary.
+    """
+
+    pass
+
+
 def write_build_record(result: AgentBuildResult, path: str = "data/self_build_history.jsonl") -> None:
-    """Append an audit record; never stores generated secrets."""
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     payload = {
