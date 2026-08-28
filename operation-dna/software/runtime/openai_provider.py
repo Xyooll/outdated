@@ -50,7 +50,7 @@ class OpenAIProvider:
             "Content-Type": "application/json",
         }
 
-    def _request(self, prompt: str) -> tuple[dict[str, Any], TokenUsage]:
+    def _request(self, prompt: str, operation: str) -> tuple[dict[str, Any], TokenUsage]:
         payload = {
             "model": self.model,
             "input": prompt,
@@ -64,11 +64,12 @@ class OpenAIProvider:
         response.raise_for_status()
         data = response.json()
         usage = data.get("usage") or {}
-        return data, TokenUsage(
+        token_usage = TokenUsage(
             int(usage.get("input_tokens", 0)),
             int(usage.get("output_tokens", 0)),
             True,
         )
+        return data, token_usage
 
     @staticmethod
     def _text(data: dict[str, Any]) -> str:
@@ -83,6 +84,7 @@ class OpenAIProvider:
         return "\n".join(parts)
 
     def generate_bundle(self, request: Any, feedback: str = "") -> OpenAIBuildBundle:
+        operation = "build.repair" if feedback else "build.generate"
         prompt = f"""You are the Xyool autonomous software engineer.
 Generate a deterministic Python capability for this request.
 
@@ -97,22 +99,23 @@ Return ONLY valid JSON with exactly two string fields:
 The generated source must be self-contained, deterministic, and safe to run
 locally. Tests must test the requested behavior and use unittest.
 """
-        data, usage = self._request(prompt)
+        data, usage = self._request(prompt, operation)
         raw = self._text(data)
         try:
             bundle = json.loads(raw)
             source = str(bundle["source"])
             tests = str(bundle["tests"])
         except (json.JSONDecodeError, KeyError, TypeError) as exc:
-            self.ledger.record("build.generate", usage, success=False,
-                               metadata={"model": self.model, "parse_error": str(exc)})
+            self.ledger.record(operation, usage, success=False,
+                               metadata={"model": self.model, "parse_error": str(exc),
+                                         "name": request.name})
             raise RuntimeError("OpenAI returned a non-JSON build bundle") from exc
 
         self.ledger.record(
-            "build.generate",
+            operation,
             usage,
             success=True,
             metadata={"model": self.model, "response_id": str(data.get("id", "")),
-                      "name": request.name},
+                      "name": request.name, "feedback": bool(feedback)},
         )
         return OpenAIBuildBundle(source, tests, usage, str(data.get("id", "")))
