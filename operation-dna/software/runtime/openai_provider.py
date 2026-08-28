@@ -1,9 +1,4 @@
-"""OpenAI API provider for the Xyool self-build agent.
-
-The provider is deliberately narrow: it generates a build bundle and records
-provider-reported token usage in the existing token ledger. It never promotes
-software and never logs credentials.
-"""
+"""OpenAI API provider for the Xyool self-build and conversation agents."""
 from __future__ import annotations
 
 import json
@@ -15,10 +10,8 @@ import requests
 
 from .token_ledger import TokenLedger, TokenUsage
 
-
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_MODEL = "gpt-5.6-luna"
-
 
 @dataclass(frozen=True)
 class OpenAIBuildBundle:
@@ -27,13 +20,10 @@ class OpenAIBuildBundle:
     usage: TokenUsage
     response_id: str = ""
 
-
 class OpenAIProvider:
-    """Small, metered Responses API client used by the self-build pipeline."""
-
+    """Small, metered Responses API client used by Xyool."""
     def __init__(self, api_key: str | None = None, *, model: str | None = None,
-                 base_url: str = DEFAULT_BASE_URL,
-                 ledger: TokenLedger | None = None,
+                 base_url: str = DEFAULT_BASE_URL, ledger: TokenLedger | None = None,
                  session: requests.Session | None = None):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
@@ -45,30 +35,17 @@ class OpenAIProvider:
 
     @property
     def headers(self) -> dict[str, str]:
-        return {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        }
+        return {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
 
     def _request(self, prompt: str, operation: str) -> tuple[dict[str, Any], TokenUsage]:
-        payload = {
-            "model": self.model,
-            "input": prompt,
-        }
         response = self.session.post(
-            f"{self.base_url}/responses",
-            headers=self.headers,
-            json=payload,
-            timeout=120,
+            f"{self.base_url}/responses", headers=self.headers,
+            json={"model": self.model, "input": prompt}, timeout=120,
         )
         response.raise_for_status()
         data = response.json()
         usage = data.get("usage") or {}
-        token_usage = TokenUsage(
-            int(usage.get("input_tokens", 0)),
-            int(usage.get("output_tokens", 0)),
-            True,
-        )
+        token_usage = TokenUsage(int(usage.get("input_tokens", 0)), int(usage.get("output_tokens", 0)), True)
         return data, token_usage
 
     @staticmethod
@@ -83,39 +60,38 @@ class OpenAIProvider:
                     parts.append(text)
         return "\n".join(parts)
 
+    def complete(self, messages: list[dict[str, str]], *, operation: str = "conversation") -> str:
+        """Complete a normal conversation while recording provider-reported usage."""
+        prompt = "\n\n".join(f"{m['role'].upper()}: {m['content']}" for m in messages)
+        data, usage = self._request(prompt, operation)
+        text = self._text(data).strip()
+        self.ledger.record(operation, usage, success=bool(text), metadata={
+            "model": self.model, "response_id": str(data.get("id", "")),
+        })
+        return text
+
     def generate_bundle(self, request: Any, feedback: str = "") -> OpenAIBuildBundle:
         operation = "build.repair" if feedback else "build.generate"
         prompt = f"""You are the Xyool autonomous software engineer.
 Generate a deterministic Python capability for this request.
-
 NAME: {request.name}
 GOAL: {request.goal}
 REQUIREMENTS: {list(request.requirements)}
 FEEDBACK FROM PRIOR ATTEMPT: {feedback or 'none'}
-
 Return ONLY valid JSON with exactly two string fields:
 {{"source":"complete Python source","tests":"complete unittest source"}}
-
-The generated source must be self-contained, deterministic, and safe to run
-locally. Tests must test the requested behavior and use unittest.
-"""
+The generated source must be self-contained, deterministic, and safe to run locally.
+Tests must test the requested behavior and use unittest."""
         data, usage = self._request(prompt, operation)
         raw = self._text(data)
         try:
             bundle = json.loads(raw)
-            source = str(bundle["source"])
-            tests = str(bundle["tests"])
+            source, tests = str(bundle["source"]), str(bundle["tests"])
         except (json.JSONDecodeError, KeyError, TypeError) as exc:
             self.ledger.record(operation, usage, success=False,
-                               metadata={"model": self.model, "parse_error": str(exc),
-                                         "name": request.name})
+                               metadata={"model": self.model, "parse_error": str(exc), "name": request.name})
             raise RuntimeError("OpenAI returned a non-JSON build bundle") from exc
-
-        self.ledger.record(
-            operation,
-            usage,
-            success=True,
-            metadata={"model": self.model, "response_id": str(data.get("id", "")),
-                      "name": request.name, "feedback": bool(feedback)},
-        )
+        self.ledger.record(operation, usage, success=True,
+                           metadata={"model": self.model, "response_id": str(data.get("id", "")),
+                                     "name": request.name, "feedback": bool(feedback)})
         return OpenAIBuildBundle(source, tests, usage, str(data.get("id", "")))
