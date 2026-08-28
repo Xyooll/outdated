@@ -14,7 +14,7 @@ from operation_dna.software.runtime.software_factory import SoftwareFactory
 
 def main() -> None:
     provider = OpenAIProvider()
-    factory = SoftwareFactory(root="operation-dna/.generated_api")
+    factory = SoftwareFactory(staging_root="operation-dna/.generated_api")
     agent = SelfBuildAgent(factory, provider, max_iterations=2)
     request = BuildRequest(
         name="api_probe",
