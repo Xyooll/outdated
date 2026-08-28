@@ -23,9 +23,11 @@ def main() -> None:
     )
     result = agent.build(request, promote=False)
     summary = provider.ledger.summary()
+    operations = provider.ledger.operation_summary()
     print(f"API_BUILD iteration={result.iteration} syntax={result.build.syntax_ok} tests={result.build.tests_ok}")
     print(f"PROMOTED={result.promoted} REASON={result.build.reason}")
     print(f"TOKENS input={summary['input_tokens']} output={summary['output_tokens']} total={summary['total_tokens']} measured_events={summary['measured_events']}")
+    print(f"OPERATIONS={operations}")
     print(f"LEDGER={provider.ledger.path}")
 
 
