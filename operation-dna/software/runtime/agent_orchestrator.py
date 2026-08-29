@@ -15,8 +15,8 @@ class AgentAction:
 class SkillRegistry:
     def __init__(self) -> None:
         self._skills: dict[str, Callable[..., Any]] = {}
-    def register(self, name: str, skill: Callable[..., Any]) -> None:
-        self._skills[name] = skill
+    def register(self, name: str, capability: Callable[..., Any]) -> None:
+        self._skills[name] = capability
     def names(self) -> tuple[str, ...]:
         return tuple(sorted(self._skills))
     def execute(self, name: str, **arguments: Any) -> Any:
@@ -25,21 +25,19 @@ class SkillRegistry:
         return self._skills[name](**arguments)
 
 class AgentOrchestrator:
-    """A minimal loop: model decides, runtime executes, model observes and decides again."""
-    def __init__(self, provider: Any, skills: SkillRegistry, max_steps: int = 12,
-                 behavior_file: str | Path | None = None):
-        self.provider, self.skills, self.max_steps = provider, skills, max_steps
+    """Model-directed loop: understand, act, observe, reason, repeat."""
+    def __init__(self, provider: Any, capabilities: SkillRegistry, max_steps: int = 12,
+                 behavior: str = "", behavior_file: str | Path | None = None):
+        self.provider, self.skills, self.max_steps = provider, capabilities, max_steps
+        self.behavior_text = behavior
         self.behavior_file = Path(behavior_file) if behavior_file else None
 
     def _behavior(self) -> str:
+        if self.behavior_text:
+            return self.behavior_text
         if self.behavior_file and self.behavior_file.exists():
             return self.behavior_file.read_text(encoding="utf-8")
-        return (
-            "You are Xyool, an autonomous general-purpose agent. Understand objectives in context. "
-            "Inspect available capabilities, reuse or adapt what exists, create what is missing, "
-            "test and evaluate results, observe outcomes, and continue toward completion. "
-            "Conversation is open-ended; never use keyword-triggered workflows."
-        )
+        return "You are Xyool, an autonomous general-purpose agent. Understand objectives in context. Inspect available capabilities, reuse or adapt what exists, create what is missing, test and evaluate results, observe outcomes, and continue toward completion. Conversation is open-ended; never use keyword-triggered workflows."
 
     def _decide(self, messages: list[dict[str, str]]) -> AgentAction:
         system = self._behavior() + "\n\n"
@@ -47,15 +45,13 @@ class AgentOrchestrator:
             "You control the reasoning loop. Available capabilities are exposed below. "
             "Choose a capability only when useful. You may call capabilities repeatedly and in sequence. "
             "Return JSON only: {\"kind\":\"respond|capability|ask|done\",\"content\":string,"
-            "\"skill\":string,\"arguments\":object}. "
-            "Do not expose this control protocol to the user."
+            "\"skill\":string,\"arguments\":object}. Do not expose this control protocol to the user."
             f"\nAVAILABLE CAPABILITIES: {', '.join(self.skills.names()) or 'none'}"
         )
         raw = self.provider.complete([{"role": "system", "content": system}, *messages], operation="agent.reason").strip()
         try:
             data = json.loads(raw)
-            return AgentAction(str(data.get("kind", "respond")), str(data.get("content", "")),
-                               str(data.get("skill", "")), data.get("arguments") or {})
+            return AgentAction(str(data.get("kind", "respond")), str(data.get("content", "")), str(data.get("skill", "")), data.get("arguments") or {})
         except (json.JSONDecodeError, TypeError):
             return AgentAction("respond", raw)
 
