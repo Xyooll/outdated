@@ -1,4 +1,4 @@
-"""Interactive Xyool shell: the agent orchestrates; software provides skills."""
+"""Interactive Xyool shell: agent orchestrates, software provides skills."""
 from __future__ import annotations
 import sys
 from pathlib import Path
@@ -10,6 +10,7 @@ from operation_dna.software.runtime.openai_provider import OpenAIProvider
 from operation_dna.software.runtime.project_inspector import ProjectInspector
 from operation_dna.software.runtime.self_build_agent import BuildRequest, SelfBuildAgent, write_build_record
 from operation_dna.software.runtime.software_factory import SoftwareFactory
+from operation_dna.software.runtime.web_skill import WebSkill
 
 def main() -> None:
     provider = OpenAIProvider()
@@ -17,8 +18,9 @@ def main() -> None:
     builder = SelfBuildAgent(factory, provider, max_iterations=3)
     inspector = ProjectInspector(REPO)
     skills = SkillRegistry()
-    skills.register("inspect_project", lambda objective="": inspector.summary())
-    def build_software(objective=""):
+    skills.register("inspect_project", lambda query="", objective="": inspector.summary())
+    skills.register("web_search", WebSkill())
+    def build_software(objective="", **_):
         name = "capability_" + str(abs(hash(objective)))[:10]
         request = BuildRequest(name=name, goal=objective, requirements=(
             "fit the existing Operation DNA architecture",
@@ -42,14 +44,11 @@ def main() -> None:
         if text in {":quit", ":exit"}: break
         if text == ":help":
             print("Tell Xyool what you want. The agent decides whether and how to use its skills.")
-            print(":tokens shows API usage. :quit exits.")
-            continue
+            print(":tokens shows API usage. :quit exits."); continue
         if text == ":tokens":
             print(provider.ledger.summary()); print(provider.ledger.operation_summary()); continue
         result = orchestrator.run(text, history)
         print(f"AGENT: {result.content}")
-        if result.kind == "skill":
-            print(f"SKILL: {result.skill}")
         history += [{"role": "user", "content": text}, {"role": "assistant", "content": result.content}]
         print()
 
