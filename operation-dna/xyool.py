@@ -1,11 +1,11 @@
-"""Interactive Xyool agent shell with project inspection."""
+"""Interactive Xyool shell: the agent orchestrates; software provides skills."""
 from __future__ import annotations
 import sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
 if str(REPO) not in sys.path: sys.path.insert(0, str(REPO))
-from operation_dna.software.runtime.conversation_agent import ConversationAgent
+from operation_dna.software.runtime.agent_orchestrator import AgentOrchestrator, SkillRegistry
 from operation_dna.software.runtime.openai_provider import OpenAIProvider
 from operation_dna.software.runtime.project_inspector import ProjectInspector
 from operation_dna.software.runtime.self_build_agent import BuildRequest, SelfBuildAgent, write_build_record
@@ -13,47 +13,44 @@ from operation_dna.software.runtime.software_factory import SoftwareFactory
 
 def main() -> None:
     provider = OpenAIProvider()
-    agent = SelfBuildAgent(SoftwareFactory(staging_root=str(ROOT / ".generated_agent")), provider, max_iterations=3)
-    brain = ConversationAgent(provider)
+    factory = SoftwareFactory(staging_root=str(ROOT / ".generated_agent"))
+    builder = SelfBuildAgent(factory, provider, max_iterations=3)
     inspector = ProjectInspector(REPO)
+    skills = SkillRegistry()
+    skills.register("inspect_project", lambda objective="": inspector.summary())
+    def build_software(objective=""):
+        name = "capability_" + str(abs(hash(objective)))[:10]
+        request = BuildRequest(name=name, goal=objective, requirements=(
+            "fit the existing Operation DNA architecture",
+            "inspect existing code before duplicating functionality",
+            "include tests", "avoid destructive changes"))
+        result = builder.build(request, promote=False)
+        write_build_record(result)
+        return {"iteration": result.iteration, "syntax_ok": result.build.syntax_ok,
+                "tests_ok": result.build.tests_ok, "promoted": result.promoted,
+                "reason": result.build.reason, "notes": result.notes}
+    skills.register("build_software", build_software)
+    orchestrator = AgentOrchestrator(provider, skills)
     history: list[dict[str, str]] = []
     print("XYOOL interactive agent")
-    print("Type naturally. :help, :inspect, :tokens, :quit")
+    print("Type naturally. :help, :tokens, :quit")
     print()
     while True:
         try: text = input("XYOOL> ").strip()
         except (EOFError, KeyboardInterrupt): print("\nExiting."); break
         if not text: continue
-        if text in {":quit", ":exit", "quit", "exit"}: break
+        if text in {":quit", ":exit"}: break
         if text == ":help":
-            print("Talk normally. Ask questions, discuss ideas, inspect the project, or explicitly ask me to build/create/implement something.")
-            print(":inspect scans the local project. :tokens shows API usage. :quit exits.")
+            print("Tell Xyool what you want. The agent decides whether and how to use its skills.")
+            print(":tokens shows API usage. :quit exits.")
             continue
-        if text == ":inspect":
-            print(inspector.summary()); print(); continue
         if text == ":tokens":
             print(provider.ledger.summary()); print(provider.ledger.operation_summary()); continue
-        result = brain.respond(text, history)
-        history.extend([{"role": "user", "content": text}, {"role": "assistant", "content": result.response}])
-        if result.intent == "CONVERSE":
-            print(f"AGENT: {result.response}")
-            print(); continue
-        if result.intent == "INSPECT":
-            print(f"AGENT: {result.response}")
-            print(inspector.summary())
-            print(); continue
-        print(f"AGENT: {result.response}")
-        safe_name = "capability_" + str(abs(hash(text)))[:10]
-        request = BuildRequest(name=safe_name, goal=text,
-                                requirements=("fit the existing Operation DNA architecture", "inspect existing code before duplicating functionality", "include tests", "avoid destructive changes"))
-        print("AGENT: building...")
-        built = agent.build(request, promote=False)
-        write_build_record(built)
-        print(f"RESULT: iteration={built.iteration} syntax={built.build.syntax_ok} tests={built.build.tests_ok}")
-        print(f"PROMOTED={built.promoted}")
-        print(f"REASON={built.build.reason}")
-        for note in built.notes: print(f"NOTE={note}")
-        print(f"TOKENS={provider.ledger.summary()}")
+        result = orchestrator.run(text, history)
+        print(f"AGENT: {result.content}")
+        if result.kind == "skill":
+            print(f"SKILL: {result.skill}")
+        history += [{"role": "user", "content": text}, {"role": "assistant", "content": result.content}]
         print()
 
 if __name__ == "__main__": main()
