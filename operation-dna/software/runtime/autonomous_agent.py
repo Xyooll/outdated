@@ -1,15 +1,15 @@
-"""Small autonomous agent loop: model + custom behavior + skills."""
+"""Small autonomous agent loop: model + custom behavior + capabilities."""
 from __future__ import annotations
 from typing import Any
 from .agent_orchestrator import AgentOrchestrator, SkillRegistry, AgentAction
 
 class AutonomousAgent:
-    """Persistent conversational agent. The model decides when to use skills and when to stop."""
-    def __init__(self, provider: Any, skills: SkillRegistry, behavior: str = "", max_steps: int = 12):
+    """Persistent conversational agent whose model controls capability use and iteration."""
+    def __init__(self, provider: Any, capabilities: SkillRegistry, behavior: str = "", max_steps: int = 12):
         self.provider = provider
-        self.skills = skills
+        self.capabilities = capabilities
         self.behavior = behavior
-        self.orchestrator = AgentOrchestrator(provider, skills, max_steps=max_steps)
+        self.orchestrator = AgentOrchestrator(provider, capabilities, max_steps=max_steps)
         self.history: list[dict[str, str]] = []
 
     def send(self, text: str) -> AgentAction:
