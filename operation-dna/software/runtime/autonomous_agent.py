@@ -9,7 +9,7 @@ class AutonomousAgent:
         self.provider = provider
         self.capabilities = capabilities
         self.behavior = behavior
-        self.orchestrator = AgentOrchestrator(provider, capabilities, max_steps=max_steps)
+        self.orchestrator = AgentOrchestrator(provider, capabilities, max_steps=max_steps, behavior=behavior)
         self.history: list[dict[str, str]] = []
 
     def send(self, text: str) -> AgentAction:
