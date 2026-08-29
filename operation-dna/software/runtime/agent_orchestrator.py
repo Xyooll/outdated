@@ -1,72 +1,63 @@
-"""Agent-first orchestration: the model chooses skills; skills execute capabilities."""
+"""Model-directed agent orchestration. Conversation is intentionally open-ended."""
 from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any, Callable
-
-SYSTEM = """You are the Xyool orchestrator. You are the agent, not a skill.
-Reason about the user's objective and choose the next capability yourself.
-Available skills are supplied by the runtime. Do not invent execution results.
-Use INSPECT before building when project context is needed. Use BUILD for software work.
-For ordinary conversation, use CONVERSE. After a skill returns, reason again until the
-objective is complete or you need the user. Never bypass hard authorization boundaries.
-Return exactly:
-ACTION=<CONVERSE|INSPECT|BUILD|DONE|ASK> RESPONSE=<natural response>
-"""
+import json
 
 @dataclass(frozen=True)
-class Decision:
-    action: str
-    response: str
+class AgentAction:
+    kind: str
+    content: str = ""
+    skill: str = ""
+    arguments: dict[str, Any] | None = None
 
 class SkillRegistry:
-    def __init__(self):
+    def __init__(self) -> None:
         self._skills: dict[str, Callable[..., Any]] = {}
-
     def register(self, name: str, skill: Callable[..., Any]) -> None:
         self._skills[name] = skill
-
     def names(self) -> tuple[str, ...]:
         return tuple(sorted(self._skills))
-
-    def get(self, name: str) -> Callable[..., Any]:
-        return self._skills[name]
+    def execute(self, name: str, **arguments: Any) -> Any:
+        if name not in self._skills:
+            raise KeyError(f"skill not available: {name}")
+        return self._skills[name](**arguments)
 
 class AgentOrchestrator:
-    def __init__(self, provider: Any, skills: SkillRegistry, max_steps: int = 8):
-        self.provider = provider
-        self.skills = skills
-        self.max_steps = max_steps
+    """The model decides what to say and which registered skill to invoke."""
+    def __init__(self, provider: Any, skills: SkillRegistry, max_steps: int = 12):
+        self.provider, self.skills, self.max_steps = provider, skills, max_steps
 
-    def decide(self, objective: str, context: str, history: list[dict[str, str]]) -> Decision:
-        skill_text = ", ".join(self.skills.names()) or "none"
-        messages = [{"role": "system", "content": SYSTEM + f"\nSkills: {skill_text}"}]
-        messages.extend(history)
-        messages.append({"role": "user", "content": f"OBJECTIVE: {objective}\nCONTEXT:\n{context}"})
-        raw = self.provider.complete(messages).strip()
-        line = raw.splitlines()[0] if raw else "ACTION=ASK RESPONSE=I need more information."
-        if "ACTION=" not in line or "RESPONSE=" not in line:
-            return Decision("ASK", raw)
-        action = line.split("ACTION=", 1)[1].split(None, 1)[0].strip()
-        response = line.split("RESPONSE=", 1)[1].strip()
-        if action not in {"CONVERSE", "INSPECT", "BUILD", "DONE", "ASK"}:
-            action = "ASK"
-        return Decision(action, response)
+    def _decide(self, messages: list[dict[str, str]]) -> AgentAction:
+        system = (
+            "You are Xyool, the agent and orchestrator. Conversation is open-ended; "
+            "there are no scripted conversational rules. Reason about the user's objective, "
+            "decide the next action, and use available skills when useful. "
+            f"Available skills: {', '.join(self.skills.names()) or 'none'}. "
+            "Return JSON only with keys kind, content, skill, arguments. "
+            "kind must be respond, skill, done, or ask. Never claim a skill ran unless its result is present."
+        )
+        raw = self.provider.complete([{"role": "system", "content": system}, *messages], operation="agent.reason").strip()
+        try:
+            data = json.loads(raw)
+            return AgentAction(str(data.get("kind", "respond")), str(data.get("content", "")), str(data.get("skill", "")), data.get("arguments") or {})
+        except (json.JSONDecodeError, TypeError):
+            return AgentAction("respond", raw)
 
-    def run(self, objective: str, context: str = "", history: list[dict[str, str]] | None = None) -> Decision:
-        history = list(history or [])
-        current_context = context
+    def run(self, user_text: str, history: list[dict[str, str]] | None = None) -> AgentAction:
+        messages = list(history or []) + [{"role": "user", "content": user_text}]
         for _ in range(self.max_steps):
-            decision = self.decide(objective, current_context, history)
-            if decision.action in {"CONVERSE", "DONE", "ASK"}:
-                return decision
-            skill_name = "inspect" if decision.action == "INSPECT" else "build"
-            if skill_name not in self.skills.names():
-                return Decision("ASK", f"Required skill unavailable: {skill_name}")
-            result = self.skills.get(skill_name)(objective)
-            current_context = str(result)
-            history.extend([
-                {"role": "assistant", "content": decision.response},
-                {"role": "user", "content": f"SKILL_RESULT: {current_context}"},
-            ])
-        return Decision("ASK", "I reached the orchestration step limit before completing the objective.")
+            action = self._decide(messages)
+            if action.kind in {"respond", "done", "ask"}:
+                return action
+            if action.kind != "skill" or not action.skill:
+                return AgentAction("respond", action.content)
+            try:
+                result = self.skills.execute(action.skill, **(action.arguments or {}))
+            except Exception as exc:
+                result = f"SKILL_ERROR {type(exc).__name__}: {exc}"
+            messages += [
+                {"role": "assistant", "content": action.content},
+                {"role": "user", "content": f"RESULT FROM SKILL {action.skill}: {result}"},
+            ]
+        return AgentAction("ask", "I need another reasoning cycle to continue this objective.")
