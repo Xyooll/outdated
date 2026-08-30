@@ -14,6 +14,8 @@ class ObjectiveState:
 
 class AutonomousAgent:
     """Keep one objective alive across turns; every human-originated message remains role=user."""
+    CONTINUE_INPUTS = {"continue", "contnue", "keep going", "proceed", "go on", "do it", "build it", "fix it", "handle this"}
+
     def __init__(self, provider: Any, capabilities: SkillRegistry, behavior: str = "", max_steps: int = 12,
                  progress: Callable[[str], None] | None = None):
         self.provider = provider
@@ -27,18 +29,23 @@ class AutonomousAgent:
         self.objective: ObjectiveState | None = None
 
     def send(self, text: str) -> AgentAction:
-        """Start or resume an objective. Semantic context is tracked separately from message role."""
+        """Start an objective or resume the current objective when context makes that clear."""
         incoming = {"role": "user", "content": text}
-        if self.objective and self.objective.status == "waiting_human":
+        normalized = " ".join(text.lower().split())
+        resume_existing = bool(self.objective and self.objective.status in {"active", "waiting_human"}) and (
+            normalized in self.CONTINUE_INPUTS or self.objective.status == "waiting_human"
+        )
+        if resume_existing:
             self.objective.context["last_human_response"] = text
-            self.objective.context["input_type"] = "human_response_to_handoff"
+            self.objective.context["input_type"] = "human_response_to_handoff" if self.objective.status == "waiting_human" else "objective_continuation"
             self.objective.status = "active"
             self.objective.turns += 1
             text_for_agent = (
                 f"EXISTING OBJECTIVE: {self.objective.text}\n"
+                f"CURRENT OBJECTIVE STATE: {self.objective.context}\n"
                 f"HUMAN INPUT: {text}\n"
-                "This is a user response to a pending dependency in the existing objective. "
-                "Verify it, update state, and continue the same objective autonomously. Do not create a new objective."
+                "Continue the existing objective from its current state. Do not restart discovery. "
+                "Inspect prior observations and unresolved work, then select the next useful means."
             )
         else:
             self.objective = ObjectiveState(text=text)
@@ -53,6 +60,8 @@ class AutonomousAgent:
             self.objective.handoff = action.content
         elif action.kind == "done":
             self.objective.status = "complete"
+        else:
+            self.objective.status = "active"
         return action
 
     def reset(self) -> None:
