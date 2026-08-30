@@ -8,6 +8,7 @@ if str(REPO) not in sys.path: sys.path.insert(0, str(REPO))
 from operation_dna.software.runtime.agent_orchestrator import SkillRegistry
 from operation_dna.software.runtime.autonomous_agent import AutonomousAgent
 from operation_dna.software.runtime.capability_environment import CapabilityEnvironment
+from operation_dna.software.runtime.codex_engine import CodexEngine
 from operation_dna.software.runtime.openai_provider import OpenAIProvider
 from operation_dna.software.runtime.project_inspector import ProjectInspector
 from operation_dna.software.runtime.self_build_agent import BuildRequest, SelfBuildAgent, write_build_record
@@ -22,10 +23,12 @@ def main() -> None:
     builder = SelfBuildAgent(factory, provider, max_iterations=3)
     inspector = ProjectInspector(REPO)
     environment = CapabilityEnvironment(REPO)
+    codex = CodexEngine(REPO)
     skills = SkillRegistry()
     skills.register("inspect_environment", lambda objective="", **_: environment.inspect(objective))
     skills.register("inspect_project", lambda query="", objective="", **_: inspector.summary())
     skills.register("web_search", WebSkill())
+    skills.register("codex_engine", lambda objective="", **_: codex.run(objective))
 
     def create_capability(objective="", **_: object):
         name = "capability_" + str(abs(hash(objective)))[:10]
@@ -37,7 +40,9 @@ def main() -> None:
         write_build_record(result)
         return {"iteration": result.iteration, "syntax_ok": result.build.syntax_ok,
                 "tests_ok": result.build.tests_ok, "promoted": result.promoted,
-                "reason": result.build.reason, "notes": result.notes}
+                "reason": result.build.reason, "notes": result.notes,
+                "next_mean_if_failed": "codex_engine"}
+
     skills.register("create_capability", create_capability)
 
     def progress(message: str) -> None:
@@ -57,7 +62,7 @@ def main() -> None:
         if text in {":quit", ":exit"}: break
         if text == ":reset": agent.reset(); print("AGENT: conversation reset.\n"); continue
         if text == ":help":
-            print("Give Xyool an objective or talk normally. It decides when to inspect, research, or create means.")
+            print("Give Xyool an objective or talk normally. It decides when to inspect, research, code, test, or use another means.")
             print(":tokens shows API usage; :reset clears conversation; :quit exits.\n"); continue
         if text == ":tokens":
             print(provider.ledger.summary()); print(provider.ledger.operation_summary()); print(); continue
