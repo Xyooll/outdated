@@ -26,7 +26,9 @@ class SkillRegistry:
         return self._skills[name](**arguments)
 
 class AgentOrchestrator:
-    """Each observation returns to the model for another reasoning cycle."""
+    """Persistent observe→reassess→act loop; completion is an evidence-based decision."""
+    VALID_KINDS = {"use_mean", "respond", "done", "ask"}
+
     def __init__(self, provider: Any, capabilities: SkillRegistry, max_steps: int = 12,
                  behavior: str = "", behavior_file: str | Path | None = None,
                  progress: Callable[[str], None] | None = None):
@@ -48,42 +50,79 @@ class AgentOrchestrator:
 
     def _decide(self, messages: list[dict[str, str]]) -> AgentAction:
         system = self._behavior() + "\n\n" + (
-            "You control the objective loop. After EVERY observation, reason again before deciding whether to continue or respond. "
-            "Do NOT stop merely because one mean returned a result or because you can describe missing components. If the objective is incomplete, select another available mean or initiate appropriate R&D through an available means. "
-            "Do not invent tools, results, or completed work. Registered means are resources, not a prescribed workflow. "
-            "When multiple plausible approaches exist, compare candidates when worthwhile. Effectiveness is contextual. "
-            "Triggers are evidence that prompt reassessment; they do not dictate final actions. "
-            "Only finish when the objective is actually accomplished, meaningful human judgment/authorization is required, or available resources make further progress genuinely impossible. "
-            "For ordinary conversation, respond naturally without unnecessary tool use. "
-            "Return JSON only: {\"kind\":\"use_mean|respond|done|ask\",\"content\":string,\"skill\":string,\"arguments\":object}. "
-            "For use_mean, content briefly states why this is the next action. For respond/done/ask, content is user-facing. "
+            "You control the objective loop. Return EXACTLY ONE JSON object and no other text. "
+            "The object must contain kind, content, skill, and arguments. kind must be one of use_mean, respond, done, ask. "
+            "Never emit multiple JSON objects or a plan containing several actions. "
+            "After every observation, reassess the actual state and choose the next action. "
+            "A means-producing/build/R&D action is intermediate work, never proof that the objective is complete. "
+            "After creating or changing something, inspect its actual result and test/evaluate it when applicable. "
+            "Do not claim done until the objective's success conditions are actually verified. "
+            "Do not repeat a substantially identical means call unless the new call is a deliberate verification or the state has materially changed. "
+            "If an existing means is insufficient, use available R&D/build means to create or improve the needed means, then test and evaluate it. "
+            "Different means can be more effective in different situations; compare candidates when useful rather than assuming one universal method. "
+            "Triggers are prompts to reassess, not automatic instructions for the final action. "
+            "Request human action only when a genuine dependency remains: required authorization/consent, human-only information or judgment, external access, physical action, or consequences beyond established authority/risk limits. "
+            "When human action is required, use kind=ask and state exactly what has been accomplished, what remains, why the human is needed, exactly what they must provide/do, and what you will do afterward. "
+            "Ordinary conversation may use respond. Never invent a result, capability, credential, or completion. "
             f"\nAVAILABLE MEANS: {', '.join(self.skills.names()) or 'none'}"
         )
         raw = self.provider.complete([{"role": "system", "content": system}, *messages], operation="agent.reason").strip()
         try:
             data = json.loads(raw)
-            return AgentAction(str(data.get("kind", "respond")), str(data.get("content", "")), str(data.get("skill", "")), data.get("arguments") or {})
-        except (json.JSONDecodeError, TypeError):
+            if not isinstance(data, dict):
+                raise ValueError("action is not an object")
+            kind = str(data.get("kind", "respond"))
+            if kind not in self.VALID_KINDS:
+                raise ValueError(f"invalid action kind: {kind}")
+            args = data.get("arguments", {})
+            if not isinstance(args, dict):
+                args = {}
+            return AgentAction(kind, str(data.get("content", "")), str(data.get("skill", "")), args)
+        except (json.JSONDecodeError, TypeError, ValueError):
             return AgentAction("respond", raw)
 
     def run(self, user_text: str, history: list[dict[str, str]] | None = None) -> AgentAction:
         messages = list(history or []) + [{"role": "user", "content": user_text}]
         self._progress("Analyzing objective...")
+        used_means: set[tuple[str, str]] = set()
+        had_observation = False
         for step in range(self.max_steps):
             self._progress(f"Reasoning cycle {step + 1}/{self.max_steps}...")
             action = self._decide(messages)
-            if action.kind in {"respond", "done", "ask"}:
-                return AgentAction("respond", action.content)
+
+            if action.kind == "ask":
+                return action
+
+            if action.kind == "done":
+                # A completion claim is only accepted after the agent has actually observed
+                # at least one concrete result in an objective-driven run.
+                if had_observation:
+                    return action
+                messages.append({"role": "user", "content": "OBSERVATION: You have not performed or observed any concrete work yet. The objective is not verified complete. Continue autonomously or explain a genuine human dependency."})
+                continue
+
+            if action.kind == "respond":
+                return action
+
             if action.kind != "use_mean" or not action.skill:
                 return AgentAction("respond", action.content)
+
+            fingerprint = (action.skill, json.dumps(action.arguments or {}, sort_keys=True, default=str))
+            if fingerprint in used_means:
+                messages.append({"role": "user", "content": f"OBSERVATION: identical mean call {action.skill} with the same arguments was already executed. Do not repeat it unless you can state a concrete verification reason; select the next unresolved action."})
+                continue
+            used_means.add(fingerprint)
+
             self._progress(f"Using {action.skill}...")
             try:
                 result = self.skills.execute(action.skill, **(action.arguments or {}))
             except Exception as exc:
                 result = f"MEANS_ERROR {type(exc).__name__}: {exc}"
+            had_observation = True
             self._progress("Observing result and reassessing...")
             messages += [
-                {"role": "assistant", "content": f"Selected mean: {action.skill}. Reason: {action.content}"},
+                {"role": "assistant", "content": json.dumps({"kind":"use_mean","skill":action.skill,"content":action.content,"arguments":action.arguments or {}}, ensure_ascii=False)},
                 {"role": "user", "content": f"OBSERVATION step={step + 1} mean={action.skill}: {result}"},
             ]
+
         return AgentAction("respond", "I reached the autonomous iteration limit before completing the objective.")
