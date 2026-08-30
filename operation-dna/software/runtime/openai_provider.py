@@ -1,9 +1,10 @@
-"""OpenAI API provider for the Xyool self-build and conversation agents."""
+"""OpenAI API provider for Xyool."""
 from __future__ import annotations
 
 import json
 import os
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import requests
@@ -12,6 +13,26 @@ from .token_ledger import TokenLedger, TokenUsage
 
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_MODEL = "gpt-5.6-luna"
+
+# Load repository-local .env without requiring python-dotenv.
+def _load_dotenv() -> None:
+    for path in (Path.cwd() / ".env", Path(__file__).resolve().parents[3] / ".env"):
+        if not path.exists():
+            continue
+        try:
+            for raw in path.read_text(encoding="utf-8").splitlines():
+                line = raw.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip("\"'")
+                if key and key not in os.environ:
+                    os.environ[key] = value
+        except OSError:
+            pass
+
+_load_dotenv()
 
 @dataclass(frozen=True)
 class OpenAIBuildBundle:
@@ -61,7 +82,6 @@ class OpenAIProvider:
         return "\n".join(parts)
 
     def complete(self, messages: list[dict[str, str]], *, operation: str = "conversation") -> str:
-        """Complete a normal conversation while recording provider-reported usage."""
         prompt = "\n\n".join(f"{m['role'].upper()}: {m['content']}" for m in messages)
         data, usage = self._request(prompt, operation)
         text = self._text(data).strip()
