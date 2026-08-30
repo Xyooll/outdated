@@ -13,7 +13,7 @@ class ObjectiveState:
     turns: int = 0
 
 class AutonomousAgent:
-    """Keep one objective alive across turns; human replies resume the same objective."""
+    """Keep one objective alive across turns; every human-originated message remains role=user."""
     def __init__(self, provider: Any, capabilities: SkillRegistry, behavior: str = "", max_steps: int = 12,
                  progress: Callable[[str], None] | None = None):
         self.provider = provider
@@ -27,32 +27,28 @@ class AutonomousAgent:
         self.objective: ObjectiveState | None = None
 
     def send(self, text: str) -> AgentAction:
-        """Start an objective or resume it after a handoff; do not restart unnecessarily."""
+        """Start or resume an objective. Semantic context is tracked separately from message role."""
+        incoming = {"role": "user", "content": text}
         if self.objective and self.objective.status == "waiting_human":
-            text_for_agent = (
-                "RESUME EXISTING OBJECTIVE.\n"
-                f"OBJECTIVE: {self.objective.text}\n"
-                f"PREVIOUS HANDOFF: {self.objective.handoff}\n"
-                f"HUMAN RESPONSE: {text}\n"
-                "Verify the response, update objective state, and continue autonomously. "
-                "Do not treat this as a new unrelated objective."
-            )
+            self.objective.context["last_human_response"] = text
+            self.objective.context["input_type"] = "human_response_to_handoff"
             self.objective.status = "active"
             self.objective.turns += 1
+            text_for_agent = (
+                f"EXISTING OBJECTIVE: {self.objective.text}\n"
+                f"HUMAN INPUT: {text}\n"
+                "This is a user response to a pending dependency in the existing objective. "
+                "Verify it, update state, and continue the same objective autonomously. Do not create a new objective."
+            )
         else:
             self.objective = ObjectiveState(text=text)
+            self.objective.context["input_type"] = "new_objective"
             text_for_agent = text
 
         action = self.orchestrator.run(text_for_agent, self.history)
-        self.history.extend([{"role": "user", "content": text},
-                             {"role": "assistant", "content": action.content}])
+        self.history.extend([incoming, {"role": "assistant", "content": action.content}])
 
-        lower = action.content.lower()
-        handoff_markers = (
-            "human action is required", "human involvement is required", "please provide",
-            "please authorize", "you need to", "you must provide", "requires your approval",
-        )
-        if action.kind == "ask" or any(marker in lower for marker in handoff_markers):
+        if action.kind == "ask":
             self.objective.status = "waiting_human"
             self.objective.handoff = action.content
         elif action.kind == "done":
