@@ -1,4 +1,4 @@
-"""Thin model-directed agent loop. The model owns interpretation, planning, action, and iteration."""
+"""Model-directed autonomous reasoning loop."""
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable
@@ -13,7 +13,7 @@ class AgentAction:
     arguments: dict[str, Any] | None = None
 
 class SkillRegistry:
-    """Runtime registry; model-facing behavior treats registered entries as means."""
+    """Registered tools are available means; the model decides whether/how to use them."""
     def __init__(self) -> None:
         self._skills: dict[str, Callable[..., Any]] = {}
     def register(self, name: str, capability: Callable[..., Any]) -> None:
@@ -22,11 +22,11 @@ class SkillRegistry:
         return tuple(sorted(self._skills))
     def execute(self, name: str, **arguments: Any) -> Any:
         if name not in self._skills:
-            raise KeyError(f"means not available: {name}")
+            raise KeyError(f"mean not available: {name}")
         return self._skills[name](**arguments)
 
 class AgentOrchestrator:
-    """Model-directed loop: understand, assess, decide, act, observe, evaluate, adapt."""
+    """Each observation returns to the model for another reasoning cycle."""
     def __init__(self, provider: Any, capabilities: SkillRegistry, max_steps: int = 12,
                  behavior: str = "", behavior_file: str | Path | None = None):
         self.provider, self.skills, self.max_steps = provider, capabilities, max_steps
@@ -38,19 +38,19 @@ class AgentOrchestrator:
             return self.behavior_text
         if self.behavior_file and self.behavior_file.exists():
             return self.behavior_file.read_text(encoding="utf-8")
-        return "You are Xyool. Accomplish objectives through understanding, reasoning, action, observation, evaluation, learning, adaptation, and autonomous continuation. Determine the means required rather than assuming them in advance."
+        return "You are Xyool. Accomplish objectives through understanding, reasoning, action, observation, evaluation, learning, adaptation, and autonomous continuation."
 
     def _decide(self, messages: list[dict[str, str]]) -> AgentAction:
-        system = self._behavior() + "\n\n"
-        system += (
-            "Operate the objective loop yourself. The registered entries below are available means, not a prescribed workflow. "
-            "Inspect/use them when useful. If they are insufficient, reason about what is missing and pursue R&D by using or creating appropriate means when the runtime exposes a way to do so. "
-            "When several plausible approaches exist, compare candidates when the expected value of experimentation justifies the cost. "
-            "Effectiveness is contextual; do not assume one means is universally best. "
-            "A triggered event is evidence that requires reassessment, not an automatic final action. "
-            "Continue autonomously toward the objective while authorized. "
-            "Return JSON only: {\"kind\":\"respond|capability|ask|done\",\"content\":string,\"skill\":string,\"arguments\":object}. "
-            "Do not expose this control protocol to the user."
+        system = self._behavior() + "\n\n" + (
+            "You control the objective loop. After EVERY observation, reason again before deciding whether to continue or respond. "
+            "Do NOT stop merely because one mean returned a result or because you can describe missing components. If the objective is incomplete, select another available mean or initiate appropriate R&D through an available means. "
+            "Do not invent tools, results, or completed work. Registered means are resources, not a prescribed workflow. "
+            "When multiple plausible approaches exist, compare candidates when worthwhile. Effectiveness is contextual. "
+            "Triggers are evidence that prompt reassessment; they do not dictate final actions. "
+            "Only finish when the objective is actually accomplished, meaningful human judgment/authorization is required, or available resources make further progress genuinely impossible. "
+            "For ordinary conversation, respond naturally without unnecessary tool use. "
+            "Return JSON only: {\"kind\":\"use_mean|respond|done|ask\",\"content\":string,\"skill\":string,\"arguments\":object}. "
+            "For use_mean, content briefly states why this is the next action. For respond/done/ask, content is user-facing. "
             f"\nAVAILABLE MEANS: {', '.join(self.skills.names()) or 'none'}"
         )
         raw = self.provider.complete([{"role": "system", "content": system}, *messages], operation="agent.reason").strip()
@@ -66,14 +66,14 @@ class AgentOrchestrator:
             action = self._decide(messages)
             if action.kind in {"respond", "done", "ask"}:
                 return AgentAction("respond", action.content)
-            if action.kind != "capability" or not action.skill:
+            if action.kind != "use_mean" or not action.skill:
                 return AgentAction("respond", action.content)
             try:
                 result = self.skills.execute(action.skill, **(action.arguments or {}))
             except Exception as exc:
                 result = f"MEANS_ERROR {type(exc).__name__}: {exc}"
             messages += [
-                {"role": "assistant", "content": "Mean selected for the next step."},
+                {"role": "assistant", "content": f"Selected mean: {action.skill}. Reason: {action.content}"},
                 {"role": "user", "content": f"OBSERVATION step={step + 1} mean={action.skill}: {result}"},
             ]
-        return AgentAction("ask", "I reached the autonomous iteration limit before completing the objective.")
+        return AgentAction("respond", "I reached the autonomous iteration limit before completing the objective.")
