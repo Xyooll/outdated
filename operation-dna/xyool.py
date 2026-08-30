@@ -40,7 +40,13 @@ def main() -> None:
                 "reason": result.build.reason, "notes": result.notes}
     skills.register("create_capability", create_capability)
 
-    agent = AutonomousAgent(provider, skills, behavior=BEHAVIOR.read_text(encoding="utf-8"), max_steps=12)
+    def progress(message: str) -> None:
+        print(f"[XYOOL] {message}", flush=True)
+
+    agent = AutonomousAgent(
+        provider, skills, behavior=BEHAVIOR.read_text(encoding="utf-8"),
+        max_steps=12, progress=progress
+    )
     print("XYOOL autonomous agent")
     print("Type naturally. :help, :tokens, :reset, :quit")
     print()
@@ -51,7 +57,7 @@ def main() -> None:
         if text in {":quit", ":exit"}: break
         if text == ":reset": agent.reset(); print("AGENT: conversation reset.\n"); continue
         if text == ":help":
-            print("Give Xyool an objective or talk normally. It decides when to inspect, research, or create capabilities.")
+            print("Give Xyool an objective or talk normally. It decides when to inspect, research, or create means.")
             print(":tokens shows API usage; :reset clears conversation; :quit exits.\n"); continue
         if text == ":tokens":
             print(provider.ledger.summary()); print(provider.ledger.operation_summary()); print(); continue
