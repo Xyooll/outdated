@@ -28,10 +28,16 @@ class SkillRegistry:
 class AgentOrchestrator:
     """Each observation returns to the model for another reasoning cycle."""
     def __init__(self, provider: Any, capabilities: SkillRegistry, max_steps: int = 12,
-                 behavior: str = "", behavior_file: str | Path | None = None):
+                 behavior: str = "", behavior_file: str | Path | None = None,
+                 progress: Callable[[str], None] | None = None):
         self.provider, self.skills, self.max_steps = provider, capabilities, max_steps
         self.behavior_text = behavior
         self.behavior_file = Path(behavior_file) if behavior_file else None
+        self.progress = progress
+
+    def _progress(self, message: str) -> None:
+        if self.progress:
+            self.progress(message)
 
     def _behavior(self) -> str:
         if self.behavior_text:
@@ -62,16 +68,20 @@ class AgentOrchestrator:
 
     def run(self, user_text: str, history: list[dict[str, str]] | None = None) -> AgentAction:
         messages = list(history or []) + [{"role": "user", "content": user_text}]
+        self._progress("Analyzing objective...")
         for step in range(self.max_steps):
+            self._progress(f"Reasoning cycle {step + 1}/{self.max_steps}...")
             action = self._decide(messages)
             if action.kind in {"respond", "done", "ask"}:
                 return AgentAction("respond", action.content)
             if action.kind != "use_mean" or not action.skill:
                 return AgentAction("respond", action.content)
+            self._progress(f"Using {action.skill}...")
             try:
                 result = self.skills.execute(action.skill, **(action.arguments or {}))
             except Exception as exc:
                 result = f"MEANS_ERROR {type(exc).__name__}: {exc}"
+            self._progress("Observing result and reassessing...")
             messages += [
                 {"role": "assistant", "content": f"Selected mean: {action.skill}. Reason: {action.content}"},
                 {"role": "user", "content": f"OBSERVATION step={step + 1} mean={action.skill}: {result}"},
