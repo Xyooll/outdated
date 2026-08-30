@@ -26,7 +26,7 @@ class SkillRegistry:
         return self._skills[name](**arguments)
 
 class AgentOrchestrator:
-    """Persistent observe→reassess→act loop; completion is an evidence-based decision."""
+    """Persistent observe→reassess→act loop; ineffective means trigger alternate-means research."""
     VALID_KINDS = {"use_mean", "respond", "done", "ask"}
 
     def __init__(self, provider: Any, capabilities: SkillRegistry, max_steps: int = 12,
@@ -59,6 +59,8 @@ class AgentOrchestrator:
             "Do not claim done until the objective's success conditions are actually verified. "
             "Do not repeat a substantially identical means call unless the new call is a deliberate verification or the state has materially changed. "
             "If an existing means is insufficient, use available R&D/build means to create or improve the needed means, then test and evaluate it. "
+            "If a build/create mean reports promotion failure, missing files, write failure, or an implementation blocker, do not repeat that same build blindly. "
+            "First diagnose the failure; if codex_engine or another engineering mean is available, prefer it to repair the actual repository, then inspect and test the repair. "
             "Different means can be more effective in different situations; compare candidates when useful rather than assuming one universal method. "
             "Triggers are prompts to reassess, not automatic instructions for the final action. "
             "Request human action only when a genuine dependency remains: required authorization/consent, human-only information or judgment, external access, physical action, or consequences beyond established authority/risk limits. "
@@ -69,14 +71,11 @@ class AgentOrchestrator:
         raw = self.provider.complete([{"role": "system", "content": system}, *messages], operation="agent.reason").strip()
         try:
             data = json.loads(raw)
-            if not isinstance(data, dict):
-                raise ValueError("action is not an object")
+            if not isinstance(data, dict): raise ValueError("action is not an object")
             kind = str(data.get("kind", "respond"))
-            if kind not in self.VALID_KINDS:
-                raise ValueError(f"invalid action kind: {kind}")
+            if kind not in self.VALID_KINDS: raise ValueError(f"invalid action kind: {kind}")
             args = data.get("arguments", {})
-            if not isinstance(args, dict):
-                args = {}
+            if not isinstance(args, dict): args = {}
             return AgentAction(kind, str(data.get("content", "")), str(data.get("skill", "")), args)
         except (json.JSONDecodeError, TypeError, ValueError):
             return AgentAction("respond", raw)
@@ -89,30 +88,20 @@ class AgentOrchestrator:
         for step in range(self.max_steps):
             self._progress(f"Reasoning cycle {step + 1}/{self.max_steps}...")
             action = self._decide(messages)
-
-            if action.kind == "ask":
-                return action
-
+            if action.kind == "ask": return action
             if action.kind == "done":
-                # A completion claim is only accepted after the agent has actually observed
-                # at least one concrete result in an objective-driven run.
-                if had_observation:
-                    return action
-                messages.append({"role": "user", "content": "OBSERVATION: You have not performed or observed any concrete work yet. The objective is not verified complete. Continue autonomously or explain a genuine human dependency."})
+                if had_observation: return action
+                messages.append({"role":"user","content":"OBSERVATION: Nothing concrete has been done or observed yet. Continue autonomously."})
                 continue
-
-            if action.kind == "respond":
-                return action
-
+            if action.kind == "respond": return action
             if action.kind != "use_mean" or not action.skill:
                 return AgentAction("respond", action.content)
 
             fingerprint = (action.skill, json.dumps(action.arguments or {}, sort_keys=True, default=str))
             if fingerprint in used_means:
-                messages.append({"role": "user", "content": f"OBSERVATION: identical mean call {action.skill} with the same arguments was already executed. Do not repeat it unless you can state a concrete verification reason; select the next unresolved action."})
+                messages.append({"role":"user","content":f"OBSERVATION: identical mean call {action.skill} was already executed. Do not repeat it. Choose another unresolved action or an alternate means."})
                 continue
             used_means.add(fingerprint)
-
             self._progress(f"Using {action.skill}...")
             try:
                 result = self.skills.execute(action.skill, **(action.arguments or {}))
@@ -120,9 +109,12 @@ class AgentOrchestrator:
                 result = f"MEANS_ERROR {type(exc).__name__}: {exc}"
             had_observation = True
             self._progress("Observing result and reassessing...")
+            result_text = str(result)
             messages += [
-                {"role": "assistant", "content": json.dumps({"kind":"use_mean","skill":action.skill,"content":action.content,"arguments":action.arguments or {}}, ensure_ascii=False)},
-                {"role": "user", "content": f"OBSERVATION step={step + 1} mean={action.skill}: {result}"},
+                {"role":"assistant","content":json.dumps({"kind":"use_mean","skill":action.skill,"content":action.content,"arguments":action.arguments or {}}, ensure_ascii=False)},
+                {"role":"user","content":f"OBSERVATION step={step + 1} mean={action.skill}: {result_text}"},
             ]
-
-        return AgentAction("respond", "I reached the autonomous iteration limit before completing the objective.")
+            if action.skill in {"create_capability", "software_factory"} and any(x in result_text.lower() for x in ("promoted': false", '"promoted": false', "promotion failed", "missing", "write failure")):
+                if "codex_engine" in self.skills.names():
+                    messages.append({"role":"user","content":"AUTONOMOUS ESCALATION: the software-building mean did not produce a usable repository result. Diagnose the concrete failure and use codex_engine to repair the repository, then inspect and test the result. Do not ask the human merely because the first builder failed."})
+        return AgentAction("respond", "I reached the autonomous iteration limit before completing the objective. The current objective state is preserved; provide a continuation input to resume from the unresolved work.")
