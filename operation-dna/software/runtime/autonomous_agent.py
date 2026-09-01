@@ -62,6 +62,19 @@ class AutonomousAgent:
             return
         self.state_file.write_text(json.dumps(self.objective.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
 
+    def _record_work(self, action: AgentAction, observation: str) -> None:
+        if self.objective is None or action.kind != "use_mean":
+            return
+        log = self.objective.context.setdefault("work_log", [])
+        if not isinstance(log, list):
+            log = []
+            self.objective.context["work_log"] = log
+        log.append({
+            "what": action.content or "I took a step toward the objective.",
+            "observation": observation[:1200],
+        })
+        self.objective.context["work_log"] = log[-12:]
+
     def _message_context(self, text: str) -> str:
         project = f"PROJECT DEVELOPMENT OBJECTIVE:\n{self.project_objective}\n\n" if self.project_objective else ""
         if self.objective is None or self.objective.status == "complete":
@@ -74,11 +87,13 @@ class AutonomousAgent:
         self.objective.turns += 1
         self.objective.status = "active"
         self.objective.handoff = ""
+        work_log = self.objective.context.get("work_log", [])
         return (
             project + "ACTIVE OBJECTIVE:\n" + self.objective.text + "\n\nOBJECTIVE STATE:\n" +
-            json.dumps(self.objective.context, ensure_ascii=False, default=str) + "\n\nPREVIOUS STATUS: " + prior_status +
+            json.dumps(self.objective.context, ensure_ascii=False, default=str) + "\n\nRECENT WORK HISTORY:\n" +
+            json.dumps(work_log[-12:], ensure_ascii=False, default=str) + "\n\nPREVIOUS STATUS: " + prior_status +
             "\nHUMAN MESSAGE:\n" + text +
-            "\n\nInterpret this message using the objective and conversation context. Continue the active objective when the message contributes to it, even without a continuation phrase. Start a new objective only when the human clearly establishes a distinct objective. When a distinct objective is established, return kind=new_objective and put the new objective in content. Preserve useful prior state unless replacement is clearly intended."
+            "\n\nInterpret this message using the objective, saved work history, and conversation context. If the human is asking what has happened, explain the actual saved progress and observations rather than starting unnecessary work. Continue the active objective when the message contributes to it, even without a continuation phrase. Start a new objective only when the human clearly establishes a distinct objective. When a distinct objective is established, return kind=new_objective and put the new objective in content. Preserve useful prior state unless replacement is clearly intended."
         )
 
     def send(self, text: str) -> AgentAction:
