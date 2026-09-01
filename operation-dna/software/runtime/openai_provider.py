@@ -13,6 +13,7 @@ from .token_ledger import TokenLedger, TokenUsage
 
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_MODEL = "gpt-5.6-luna"
+DEFAULT_TIMEOUT = 60
 
 # Load repository-local .env without requiring python-dotenv.
 def _load_dotenv() -> None:
@@ -45,7 +46,7 @@ class OpenAIProvider:
     """Small, metered Responses API client used by Xyool."""
     def __init__(self, api_key: str | None = None, *, model: str | None = None,
                  base_url: str = DEFAULT_BASE_URL, ledger: TokenLedger | None = None,
-                 session: requests.Session | None = None):
+                 session: requests.Session | None = None, timeout: int | float | None = None):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise RuntimeError("OPENAI_API_KEY is required")
@@ -53,17 +54,21 @@ class OpenAIProvider:
         self.base_url = base_url.rstrip("/")
         self.ledger = ledger or TokenLedger()
         self.session = session or requests.Session()
+        self.timeout = timeout if timeout is not None else float(os.getenv("XYOOL_OPENAI_TIMEOUT", DEFAULT_TIMEOUT))
 
     @property
     def headers(self) -> dict[str, str]:
         return {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
 
     def _request(self, prompt: str, operation: str) -> tuple[dict[str, Any], TokenUsage]:
-        response = self.session.post(
-            f"{self.base_url}/responses", headers=self.headers,
-            json={"model": self.model, "input": prompt}, timeout=120,
-        )
-        response.raise_for_status()
+        try:
+            response = self.session.post(
+                f"{self.base_url}/responses", headers=self.headers,
+                json={"model": self.model, "input": prompt}, timeout=self.timeout,
+            )
+            response.raise_for_status()
+        except requests.RequestException as exc:
+            raise RuntimeError(f"OpenAI request failed: {exc}") from exc
         data = response.json()
         usage = data.get("usage") or {}
         token_usage = TokenUsage(int(usage.get("input_tokens", 0)), int(usage.get("output_tokens", 0)), True)
