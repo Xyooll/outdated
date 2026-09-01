@@ -62,17 +62,15 @@ class AutonomousAgent:
             return
         self.state_file.write_text(json.dumps(self.objective.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
 
-    def _record_work(self, action: AgentAction, observation: str) -> None:
-        if self.objective is None or action.kind != "use_mean":
+    def _record_work(self, entries: list[dict[str, str]]) -> None:
+        if self.objective is None:
             return
         log = self.objective.context.setdefault("work_log", [])
         if not isinstance(log, list):
             log = []
             self.objective.context["work_log"] = log
-        log.append({
-            "what": action.content or "I took a step toward the objective.",
-            "observation": observation[:1200],
-        })
+        for entry in entries:
+            log.append({"what": str(entry.get("what", "")), "observation": str(entry.get("observation", ""))[:1200]})
         self.objective.context["work_log"] = log[-12:]
 
     def _message_context(self, text: str) -> str:
@@ -99,6 +97,7 @@ class AutonomousAgent:
     def send(self, text: str) -> AgentAction:
         incoming = {"role": "user", "content": text}
         action = self.orchestrator.run(self._message_context(text), self.history)
+        self._record_work(self.orchestrator.observations)
         self.history.extend([incoming, {"role": "assistant", "content": action.content}])
         if self.objective is None:
             self.objective = ObjectiveState(text=text)
