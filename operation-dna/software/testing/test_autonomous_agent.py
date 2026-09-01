@@ -10,7 +10,7 @@ class RecordingProvider:
         self.calls: list[list[dict[str, str]]] = []
     def complete(self, messages: list[dict[str, str]], operation: str = "") -> str:
         self.calls.append(messages)
-        return json.dumps({"kind": "respond", "content": "ack", "skill": "", "arguments": {}})
+        return json.dumps({"kind": "respond", "content": "I understand.", "skill": "", "arguments": {}})
 
 def test_human_message_stays_in_active_objective_without_keywords(tmp_path) -> None:
     agent = AutonomousAgent(RecordingProvider(), SkillRegistry(), behavior="You are Xyool.", state_file=tmp_path / "objective.json")
@@ -53,3 +53,34 @@ def test_model_can_replace_active_objective(tmp_path) -> None:
     assert action.kind == "new_objective"
     assert agent.objective is not None
     assert agent.objective.text == "New objective"
+
+def test_work_is_saved_for_later_status_questions(tmp_path) -> None:
+    class WorkProvider:
+        def __init__(self) -> None:
+            self.calls = 0
+        def complete(self, messages: list[dict[str, str]], operation: str = "") -> str:
+            self.calls += 1
+            if self.calls == 1:
+                return json.dumps({"kind": "use_mean", "content": "I’m checking the existing project structure so I can reuse what is already there.", "skill": "inspect", "arguments": {}})
+            return json.dumps({"kind": "respond", "content": "I checked the project structure and saved that work in my progress history.", "skill": "", "arguments": {}})
+    registry = SkillRegistry()
+    registry.register("inspect", lambda: "Found the runtime and testing infrastructure.")
+    state_file = tmp_path / "objective.json"
+    agent = AutonomousAgent(WorkProvider(), registry, behavior="You are Xyool.", state_file=state_file, max_steps=2)
+    agent.send("Develop Xyool")
+    restored = AutonomousAgent(RecordingProvider(), registry, behavior="You are Xyool.", state_file=state_file)
+    context = restored._message_context("What have you done so far?")
+    assert "RECENT WORK HISTORY:" in context
+    assert "existing project structure" in context
+    assert "Found the runtime and testing infrastructure." in context
+
+def test_model_request_failure_does_not_crash_conversation(tmp_path) -> None:
+    class FailingProvider:
+        def complete(self, messages: list[dict[str, str]], operation: str = "") -> str:
+            raise RuntimeError("temporary API failure")
+    agent = AutonomousAgent(FailingProvider(), SkillRegistry(), behavior="You are Xyool.", state_file=tmp_path / "objective.json")
+    action = agent.send("Continue the objective")
+    assert action.kind == "respond"
+    assert "couldn't complete" in action.content
+    assert agent.objective is not None
+    assert agent.objective.status == "active"
