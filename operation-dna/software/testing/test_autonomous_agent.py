@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 
-from operation_dna.software.runtime.agent_orchestrator import AgentAction, SkillRegistry
-from operation_dna.software.runtime.autonomous_agent import AutonomousAgent
+from operation_dna.software.runtime.agent_orchestrator import SkillRegistry
+from operation_dna.software.runtime.autonomous_agent import AutonomousAgent, ObjectiveState
 
 
 class RecordingProvider:
@@ -68,31 +68,18 @@ def test_objective_state_persists_and_resets(tmp_path) -> None:
 
 
 def test_completed_objective_can_start_a_new_objective(tmp_path) -> None:
-    class DoneProvider:
-        def complete(self, messages: list[dict[str, str]], operation: str = "") -> str:
-            return json.dumps({
-                "kind": "done",
-                "content": "verified",
-                "skill": "",
-                "arguments": {},
-            })
-
     agent = AutonomousAgent(
-        DoneProvider(),
+        RecordingProvider(),
         SkillRegistry(),
         behavior="You are Xyool.",
         state_file=tmp_path / "objective.json",
     )
 
-    # The orchestrator requires an observation before accepting `done`.
-    # This controller-level test verifies the state transition independently.
-    agent.objective = agent.objective or __import__(
-        "operation_dna.software.runtime.autonomous_agent",
-        fromlist=["ObjectiveState"],
-    ).ObjectiveState(text="First objective", status="complete")
+    agent.objective = ObjectiveState(text="First objective", status="complete")
     agent._save_state()
 
     context = agent._message_context("Start something else")
     assert context == "Start something else"
     assert agent.objective is not None
     assert agent.objective.text == "Start something else"
+    assert agent.objective.status == "active"
