@@ -1,5 +1,6 @@
 """Interactive Xyool shell: one model, behavior, and an expandable environment."""
 from __future__ import annotations
+import json
 import sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent
@@ -19,6 +20,16 @@ from operation_dna.software.runtime.memory_context import MemoryContext
 
 BEHAVIOR = ROOT / "agent_behavior.md"
 STATE_FILE = ROOT / "data" / "active_objective.json"
+PROJECT_OBJECTIVE_FILE = ROOT / "data" / "xyool_objective.json"
+
+def load_project_objective() -> str:
+    if not PROJECT_OBJECTIVE_FILE.exists():
+        return ""
+    try:
+        data = json.loads(PROJECT_OBJECTIVE_FILE.read_text(encoding="utf-8"))
+        return str(data.get("objective", "")).strip() if isinstance(data, dict) else ""
+    except (OSError, json.JSONDecodeError, TypeError):
+        return ""
 
 def main() -> None:
     provider = OpenAIProvider()
@@ -57,12 +68,12 @@ def main() -> None:
         print(f"[XYOOL] {message}", flush=True)
 
     agent = AutonomousAgent(
-        provider,
-        skills,
+        provider, skills,
         behavior=BEHAVIOR.read_text(encoding="utf-8"),
         max_steps=12,
         progress=progress,
         state_file=STATE_FILE,
+        project_objective=load_project_objective(),
     )
     print("XYOOL autonomous agent")
     print("Type naturally. :help, :tokens, :reset, :quit")
@@ -82,7 +93,7 @@ def main() -> None:
             print("AGENT: conversation reset.\n")
             continue
         if text == ":help":
-            print("Talk naturally or give Xyool an objective. It decides when to use memory, inspect the environment, research, code, test, or create new resources.")
+            print("Talk naturally or give Xyool an objective. It decides when to use available resources, research, code, test, memory, or new resources.")
             print(":tokens shows API usage; :reset clears conversation; :quit exits.\n")
             continue
         if text == ":tokens":
