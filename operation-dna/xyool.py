@@ -18,6 +18,7 @@ from operation_dna.software.runtime.web_skill import WebSkill
 from operation_dna.software.runtime.memory_context import MemoryContext
 
 BEHAVIOR = ROOT / "agent_behavior.md"
+STATE_FILE = ROOT / "data" / "active_objective.json"
 
 def main() -> None:
     provider = OpenAIProvider()
@@ -55,7 +56,14 @@ def main() -> None:
     def progress(message: str) -> None:
         print(f"[XYOOL] {message}", flush=True)
 
-    agent = AutonomousAgent(provider, skills, behavior=BEHAVIOR.read_text(encoding="utf-8"), max_steps=12, progress=progress)
+    agent = AutonomousAgent(
+        provider,
+        skills,
+        behavior=BEHAVIOR.read_text(encoding="utf-8"),
+        max_steps=12,
+        progress=progress,
+        state_file=STATE_FILE,
+    )
     print("XYOOL autonomous agent")
     print("Type naturally. :help, :tokens, :reset, :quit")
     print()
