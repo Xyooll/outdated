@@ -36,6 +36,7 @@ class AgentOrchestrator:
         self.behavior_text = behavior
         self.behavior_file = Path(behavior_file) if behavior_file else None
         self.progress = progress
+        self.observations: list[dict[str, str]] = []
 
     def _progress(self, message: str) -> None:
         if self.progress:
@@ -90,6 +91,7 @@ class AgentOrchestrator:
 
     def run(self, user_text: str, history: list[dict[str, str]] | None = None) -> AgentAction:
         messages = list(history or []) + [{"role": "user", "content": user_text}]
+        self.observations = []
         self._progress("I’m getting oriented with your objective and the work already done.")
         used_means: set[tuple[str, str]] = set()
         had_observation = False
@@ -118,8 +120,9 @@ class AgentOrchestrator:
             except Exception as exc:
                 result = f"RESOURCE_ERROR {type(exc).__name__}: {exc}"
             had_observation = True
-            self._progress("That step is finished. I’m checking the result and deciding what it means for the objective.")
             result_text = str(result)
+            self.observations.append({"what": action.content or "I took a step toward the objective.", "observation": result_text})
+            self._progress("That step is finished. I’m checking the result and deciding what it means for the objective.")
             messages += [
                 {"role": "assistant", "content": json.dumps({"kind": "use_mean", "skill": action.skill, "content": action.content, "arguments": action.arguments or {}}, ensure_ascii=False)},
                 {"role": "user", "content": f"OBSERVATION step={step + 1}: {result_text}"},
