@@ -22,7 +22,7 @@ class SkillRegistry:
         return tuple(sorted(self._skills))
     def execute(self, name: str, **arguments: Any) -> Any:
         if name not in self._skills:
-            raise KeyError(f"mean not available: {name}")
+            raise KeyError(f"resource not available: {name}")
         return self._skills[name](**arguments)
 
 class AgentOrchestrator:
@@ -52,6 +52,10 @@ class AgentOrchestrator:
         system = self._behavior() + "\n\n" + (
             "You control the objective loop. Return EXACTLY ONE JSON object and no other text. "
             "The object must contain kind, content, skill, and arguments. kind must be one of use_mean, respond, done, ask, new_objective. "
+            "The content field is HUMAN-FACING language: explain what you are doing or answering and why it matters. Never put internal resource names, cycle numbers, JSON protocol details, or implementation jargon in content. "
+            "For use_mean, content should briefly tell the human what you are about to accomplish and why before the internal operation runs. "
+            "For done, content should summarize what was accomplished and the evidence that verifies it. "
+            "For ask, content should clearly explain what is missing, why the human is needed, and what you will do afterward. "
             "Never emit multiple JSON objects or a multi-action plan. "
             "After every observation, reassess the actual state and choose the next useful action. "
             "A resource-producing, build, or R&D action is intermediate work, never proof that the objective is complete. "
@@ -66,7 +70,10 @@ class AgentOrchestrator:
             "Ordinary conversation uses respond. Never invent a result, resource, credential, or completion. "
             f"\nAVAILABLE RESOURCES: {', '.join(self.skills.names()) or 'none'}"
         )
-        raw = self.provider.complete([{"role": "system", "content": system}, *messages], operation="agent.reason").strip()
+        try:
+            raw = self.provider.complete([{"role": "system", "content": system}, *messages], operation="agent.reason").strip()
+        except Exception as exc:
+            return AgentAction("respond", f"I couldn't complete that reasoning step because the AI service returned an error ({type(exc).__name__}). Nothing has been marked complete. Your current objective and saved progress are still intact, so we can retry from the existing state.")
         try:
             data = json.loads(raw)
             if not isinstance(data, dict):
@@ -83,11 +90,10 @@ class AgentOrchestrator:
 
     def run(self, user_text: str, history: list[dict[str, str]] | None = None) -> AgentAction:
         messages = list(history or []) + [{"role": "user", "content": user_text}]
-        self._progress("Analyzing objective...")
+        self._progress("I’m getting oriented with your objective and the work already done.")
         used_means: set[tuple[str, str]] = set()
         had_observation = False
         for step in range(self.max_steps):
-            self._progress(f"Reasoning cycle {step + 1}/{self.max_steps}...")
             action = self._decide(messages)
             if action.kind in {"ask", "new_objective"}:
                 return action
@@ -103,19 +109,19 @@ class AgentOrchestrator:
 
             fingerprint = (action.skill, json.dumps(action.arguments or {}, sort_keys=True, default=str))
             if fingerprint in used_means:
-                messages.append({"role": "user", "content": f"OBSERVATION: identical resource call {action.skill} was already executed. Do not repeat it. Choose another unresolved action or a deliberate verification."})
+                messages.append({"role": "user", "content": "OBSERVATION: This exact operation was already executed. Do not repeat it unless the new attempt is deliberate verification after a material state change."})
                 continue
             used_means.add(fingerprint)
-            self._progress(f"Using {action.skill}...")
+            self._progress(action.content or "I’m taking the next step needed to move the objective forward.")
             try:
                 result = self.skills.execute(action.skill, **(action.arguments or {}))
             except Exception as exc:
-                result = f"MEANS_ERROR {type(exc).__name__}: {exc}"
+                result = f"RESOURCE_ERROR {type(exc).__name__}: {exc}"
             had_observation = True
-            self._progress("Observing result and reassessing...")
+            self._progress("That step is finished. I’m checking the result and deciding what it means for the objective.")
             result_text = str(result)
             messages += [
                 {"role": "assistant", "content": json.dumps({"kind": "use_mean", "skill": action.skill, "content": action.content, "arguments": action.arguments or {}}, ensure_ascii=False)},
-                {"role": "user", "content": f"OBSERVATION step={step + 1} resource={action.skill}: {result_text}"},
+                {"role": "user", "content": f"OBSERVATION step={step + 1}: {result_text}"},
             ]
-        return AgentAction("respond", "I reached the autonomous iteration limit before completing the objective. The current state is preserved; continue when more iteration is available.")
+        return AgentAction("respond", "I’ve completed this work session, but the objective is not verified complete yet. I saved the current state and observations so the next session can continue from here rather than starting over.")
