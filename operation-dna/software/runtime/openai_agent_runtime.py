@@ -11,11 +11,19 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
 from agents import Agent, FileSearchTool, Runner, SQLiteSession, WebSearchTool, function_tool
 from agents.mcp import MCPServerManager, MCPServerStdio, MCPServerStreamableHttp
 
 from .memory_context import MemoryContext
 from .project_inspector import ProjectInspector
+
+ROOT = Path(__file__).resolve().parents[2]
+
+# Xyool should be runnable from the repository without requiring the launcher
+# shell to export credentials first. Never store credentials in source control.
+load_dotenv(ROOT.parent / ".env")
+load_dotenv(ROOT / ".env")
 
 
 class OpenAIAgentRuntime:
