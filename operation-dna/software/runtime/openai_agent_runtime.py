@@ -36,16 +36,11 @@ class OpenAIAgentRuntime:
     def instructions(self) -> str:
         behavior = self.behavior_file.read_text(encoding="utf-8") if self.behavior_file.exists() else ""
         skills = self._skill_index()
-        project = (
-            f"\n\nPROJECT OBJECTIVE:\n{self.project_objective}"
-            if self.project_objective else ""
-        )
+        project = f"\n\nPROJECT OBJECTIVE:\n{self.project_objective}" if self.project_objective else ""
         return (
-            behavior
-            + project
-            + "\n\nSKILLS AVAILABLE:\n"
-            + (skills or "No local skills are currently installed.")
-            + "\n\nYou are the single Xyool intelligence. You decide when and how to use tools. "
+            behavior + project + "\n\nSKILLS AVAILABLE:\n" +
+            (skills or "No local skills are currently installed.") +
+            "\n\nYou are the single Xyool intelligence. You decide when and how to use tools. "
             "Skills are reusable instructions, not separate agents or workflows. "
             "Use tools to inspect reality and take action; do not merely describe actions you could take. "
             "Verify meaningful work before claiming completion. Be truthful about what was observed, inferred, attempted, and accomplished. "
@@ -116,9 +111,8 @@ class OpenAIAgentRuntime:
             if test_path.strip():
                 command.append(test_path.strip())
             try:
-                completed = subprocess.run(
-                    command, cwd=runtime.repo, text=True, capture_output=True, timeout=300
-                )
+                completed = subprocess.run(command, cwd=runtime.repo, text=True,
+                                           capture_output=True, timeout=300)
             except (OSError, subprocess.TimeoutExpired) as exc:
                 return f"TEST_ERROR {type(exc).__name__}: {exc}"
             output = (completed.stdout + "\n" + completed.stderr).strip()
@@ -148,21 +142,19 @@ class OpenAIAgentRuntime:
                 continue
             name = str(cfg.get("name", "mcp"))
             transport = str(cfg.get("transport", "streamable_http"))
+            approval = cfg.get("require_approval")
             if transport == "streamable_http":
-                params: dict[str, Any] = {"url": str(cfg["url"])}
+                params: dict[str, Any] = {"url": str(cfg["url"]), "timeout": float(cfg.get("timeout", 10))}
                 if cfg.get("headers"):
                     params["headers"] = dict(cfg["headers"])
-                params["timeout"] = float(cfg.get("timeout", 10))
                 servers.append(MCPServerStreamableHttp(name=name, params=params, cache_tools_list=True,
-                                                       max_retry_attempts=2,
-                                                       require_approval=cfg.get("require_approval")))
+                                                       max_retry_attempts=2, require_approval=approval))
             elif transport == "stdio":
                 servers.append(MCPServerStdio(
                     name=name,
                     params={"command": str(cfg["command"]), "args": [str(x) for x in cfg.get("args", [])],
                             "env": dict(cfg.get("env", {}))},
-                    cache_tools_list=True,
-                    require_approval=cfg.get("require_approval"),
+                    cache_tools_list=True, require_approval=approval,
                 ))
             else:
                 raise RuntimeError(f"Unsupported MCP transport: {transport}")
@@ -195,3 +187,7 @@ class OpenAIAgentRuntime:
                 await self._manager.cleanup_all()
                 self._manager = None
                 self.mcp_servers = []
+
+    async def reset(self, session_id: str = "default") -> None:
+        session = SQLiteSession(session_id, self.session_db)
+        await session.clear_session()
