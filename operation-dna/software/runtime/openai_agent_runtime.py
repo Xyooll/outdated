@@ -2,8 +2,8 @@
 
 The model is the orchestrator. Xyool supplies behavioral instructions,
 persistent session memory, local application tools, skills, and optional MCP
-servers. This module also provides the concrete execution controls required by
-those instructions: authorization, claim-state tracking, operating-mode
+servers. This module also provides concrete execution controls required by
+the instructions: authorization, claim-state tracking, operating-mode
 selection, verification evidence, and failure-aware task state.
 """
 from __future__ import annotations
@@ -55,8 +55,19 @@ class OpenAIAgentRuntime:
             )
         return f"AUTHORIZED SCOPE: {scope}\nAPPROVAL MECHANISM: {approval}"
 
+    def _load_behavior(self) -> str:
+        """Load the canonical system instructions and fail closed if unavailable."""
+        if not self.behavior_file.exists():
+            raise FileNotFoundError(
+                f"Canonical system instructions not found: {self.behavior_file}"
+            )
+        behavior = self.behavior_file.read_text(encoding="utf-8").strip()
+        if not behavior:
+            raise RuntimeError("Canonical system instructions are empty")
+        return behavior
+
     def instructions(self) -> str:
-        behavior = self.behavior_file.read_text(encoding="utf-8") if self.behavior_file.exists() else ""
+        behavior = self._load_behavior()
         skills = self._skill_index()
         project = f"\n\nPROJECT OBJECTIVE:\n{self.project_objective}" if self.project_objective else ""
         controls = """
