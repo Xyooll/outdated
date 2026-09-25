@@ -1,0 +1,84 @@
+version: 1
+status: experimental
+systems:
+  ASTRO.WT.MODERN:
+    family: western
+    subtype: tropical-modern
+    status: registered
+    native_before_synthesis: true
+  ASTRO.WT.TRAD:
+    family: western
+    subtype: tropical-traditional-hellenistic
+    status: registered
+    native_before_synthesis: true
+  ASTRO.WS:
+    family: western
+    subtype: sidereal
+    status: registered
+    requires:
+      - ayanamsha
+    native_before_synthesis: true
+  ASTRO.JYO:
+    family: jyotish
+    subtype: vedic
+    status: registered
+    optional_modules:
+      - nakshatra
+      - transit
+      - dasha
+      - panchang
+      - muhurta
+    native_before_synthesis: true
+  ASTRO.STAR:
+    family: stellar
+    subtype: fixed-stars-parans
+    status: experimental
+    time_sensitive:
+      - parans
+    native_before_synthesis: true
+  ASTRO.HELIO:
+    family: astronomical-experimental
+    subtype: heliocentric-3d
+    status: research-only
+    native_before_synthesis: true
+  MAYA.TRAD:
+    family: maya
+    subtype: traditional-living-calendrical
+    status: experimental
+    optional_modules:
+      - tzolkin_chol_qij
+      - haab
+      - calendar_round
+      - long_count
+    requires:
+      - calendar_conversion_identity
+    native_before_synthesis: true
+  DREAMSPELL.ARGUELLES:
+    family: dreamspell
+    subtype: modern-arguelles
+    status: experimental
+    optional_modules:
+      - kin
+      - galactic_tone
+      - solar_seal
+      - wavespell
+      - thirteen_moon
+    requires:
+      - implementation_version
+      - gregorian_mapping_rule
+      - leap_day_rule
+    native_before_synthesis: true
+adjacent_systems:
+  ADJ.WUXING:
+    status: optional-synthesis-only
+  ADJ.HD:
+    status: optional-synthesis-only
+  ADJ.AYURVEDA:
+    status: optional-synthesis-only
+synthesis:
+  allow_only_after_native_output: true
+  raw_vote_count_is_not_confidence: true
+  track_shared_dependencies: true
+  require_ablation_for_convergence_promotion: true
+  probability_numbers_require_calibration: true
+  atomic_windows_required_for_timing_optimization: true

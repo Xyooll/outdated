@@ -1,0 +1,29 @@
+schema_id: ASTRO-SCHEMA-STAR-CONTACT-V1
+status: CANDIDATE
+required:
+  - target_node_id
+  - star_id
+  - epoch
+  - coordinate_frame
+  - contact_method
+  - contact_rule_id
+fields:
+  target_node_id: string
+  star_id: string
+  star_catalog_id: string
+  epoch: string
+  coordinate_frame: string
+  star_longitude: number
+  star_latitude: number_optional
+  star_magnitude: number_optional
+  delta_longitude_deg: number_optional
+  spherical_distance_deg: number_optional
+  contact_method: enum[ecliptic_longitude,spherical_distance,paran,angularity]
+  threshold_deg: number_optional
+  phase: string_optional
+  contact_rule_id: string
+  semantic_rule_ids: list
+boundaries:
+  - astronomical contact and semantic interpretation are separate
+  - threshold belongs to the contact rule, not historical semantic source
+  - no posthoc star additions in confirmatory runs

@@ -1,0 +1,45 @@
+system_id: ASTRO.STAR.DEGREE.XYOOL_V1
+version: 1.0.0
+status: RESEARCH / PARTIAL / VALIDATION_REQUIRED
+purpose: exact-degree atomic-address and epoch-specific stellar-neighborhood layer
+
+state_model:
+  atomic_unit: exact_degree_node
+  coordinate_requirement:
+    - ecliptic_longitude
+    - coordinate_frame
+    - epoch_or_date
+  optional_precision:
+    - ecliptic_latitude
+    - right_ascension
+    - declination
+
+layers:
+  - exact_degree_address
+  - stellar_neighborhood
+  - sign
+  - decan
+  - bound_if_enabled
+  - house
+  - ruler_dispositor
+  - occupants_activators
+  - aspects_and_other_geometry
+
+separation_rules:
+  intrinsic_degree_meaning_not_equal_star_meaning: true
+  star_meaning_not_equal_sign_meaning: true
+  sign_decan_house_not_independent_when_same_longitude: true
+
+catalogs:
+  fixed_stars: ASTRO-CAT-FIXED-STARS-V1
+  minor_bodies: ASTRO-CAT-MINOR-BODIES-V1
+
+rule_cohort:
+  path: ../rules/star_degree_seed_v1.yaml
+
+readiness:
+  exact_degree_state: READY_FOR_MODELING
+  epoch_specific_star_field: PARTIAL
+  intrinsic_degree_symbolism: PARTIAL
+  fixed_star_interpretation: PARTIAL
+  predictive_star_astrology: BLOCKED

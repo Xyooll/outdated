@@ -1,0 +1,51 @@
+catalog_id: ASTRO-CAT-FIXED-STARS-V1
+version: 1.0.0
+status: CANDIDATE / SOURCE-GROUNDED
+purpose: bounded fixed-star identity and position manifest for Star Astrology experiments
+
+primary_runtime_source:
+  source_id: src.astro.swisseph
+  asset: sefstars.txt
+  requirement: pin release and content hash before confirmatory use
+
+audit_sources:
+  - source_id: src.gaia.dr3
+    role: independent astrometric audit
+  - source_id: src.iau.sofa
+    role: reference coordinate transformations / precession-nutation audit
+
+required_fields:
+  - canonical_star_id
+  - common_name
+  - catalogue_identifiers
+  - reference_epoch
+  - longitude_or_RA
+  - latitude_or_Dec
+  - proper_motion_if_material
+  - magnitude
+  - source_record
+
+seed_semantic_cohort:
+  ptolemaic:
+    - Aldebaran
+    - Regulus
+    - Spica
+    - Antares
+    - Fomalhaut
+    - Sirius
+    - Procyon
+    - Arcturus
+
+contact_policies:
+  ecliptic_longitude:
+    rule_id: ASTRO.STAR.CONTACT.ECLIPTIC_LONGITUDE
+    pilot_thresholds_deg: [0.25, 0.5, 1.0, 2.0]
+  spherical_distance:
+    rule_id: ASTRO.STAR.CONTACT.SPHERICAL_DISTANCE
+    pilot_thresholds_deg: [0.5, 1.0, 2.0]
+
+confirmatory_gate:
+  freeze_catalog_before_outcomes: true
+  freeze_threshold_before_outcomes: true
+  no_posthoc_star_addition: true
+  rotated_catalog_null_required: true

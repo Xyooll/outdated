@@ -1,0 +1,355 @@
+registry_version: 1
+as_of: "2026-09-24"
+domain: stock-market
+governing_flow: "domains/stock-market/flows/story-sourcing.flow.md"
+
+policy:
+  default_feed_action: "DISCOVER_RESOLVE_CANONICAL_SOURCE_THEN_UPDATE"
+  rss_does_not_override_claim_authority: true
+  issuer_wire_is_independent_confirmation: false
+  preserve_native_ids: true
+  cursor_commit_rule: "persist item/evidence before advancing cursor"
+
+feeds:
+  - source_id: "rss.sec.press_releases"
+    provider: "U.S. Securities and Exchange Commission"
+    source_tier: "TIER_A_OR_B_BY_CLAIM"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "rss"
+    feed_url: "https://www.sec.gov/news/pressreleases.rss"
+    landing_url: "https://www.sec.gov/about/rss-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P1"
+    claim_scope: ["sec_action", "rulemaking", "enforcement", "market_structure", "issuer_event"]
+    entity_mapping: "named_entities_then_CIK_or_security_resolution"
+    confirmation_rule: "preserve linked SEC release/order/filing; resolve issuer-specific primary record when material"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "SEC press releases are broad; not a substitute for issuer-specific EDGAR monitoring."
+
+  - source_id: "rss.sec.trading_suspensions"
+    provider: "U.S. Securities and Exchange Commission"
+    source_tier: "TIER_A"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "rss"
+    feed_url: "https://www.sec.gov/enforcement-litigation/trading-suspensions/rss"
+    landing_url: "https://www.sec.gov/about/rss-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P0"
+    claim_scope: ["trading_suspension", "regulatory_market_state"]
+    entity_mapping: "issuer_or_symbol_to_security"
+    confirmation_rule: "preserve SEC suspension record and effective dates"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Applies to SEC trading suspensions, not all exchange halts."
+
+  - source_id: "rss.sec.litigation_releases"
+    provider: "U.S. Securities and Exchange Commission"
+    source_tier: "TIER_A"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "rss"
+    feed_url: "https://www.sec.gov/enforcement-litigation/litigation-releases/rss"
+    landing_url: "https://www.sec.gov/about/rss-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P1"
+    claim_scope: ["sec_litigation", "enforcement", "fraud", "officer_director_case"]
+    entity_mapping: "named_entities_to_issuer_people_relationship_graph"
+    confirmation_rule: "preserve linked SEC litigation release and underlying court/action record when material"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Enforcement discovery; economic impact still requires company-specific analysis."
+
+  - source_id: "rss.sec.administrative_proceedings"
+    provider: "U.S. Securities and Exchange Commission"
+    source_tier: "TIER_A"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "rss"
+    feed_url: "https://www.sec.gov/enforcement-litigation/administrative-proceedings/rss"
+    landing_url: "https://www.sec.gov/about/rss-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P1"
+    claim_scope: ["administrative_proceeding", "enforcement", "registration_or_listing_related_state"]
+    entity_mapping: "named_entities_to_issuer_people_relationship_graph"
+    confirmation_rule: "preserve linked order/proceeding record"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Broad enforcement surface; materiality must be resolved per issuer."
+
+  - source_id: "rss.sec.xbrl_all"
+    provider: "U.S. Securities and Exchange Commission"
+    source_tier: "TIER_A"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "rss_xml"
+    feed_url: "https://www.sec.gov/Archives/edgar/xbrlrss.all.xml"
+    landing_url: "https://www.sec.gov/data-research/structured-data/structured-disclosure-rss-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P1"
+    claim_scope: ["structured_filing", "financial_statement", "filing_arrival"]
+    entity_mapping: "CIK_to_canonical_issuer"
+    confirmation_rule: "preserve accession number and fetch canonical EDGAR filing"
+    poll_floor_seconds: 600
+    verified_on: "2026-09-24"
+    limitations: "Structured-disclosure feed is not a complete substitute for all EDGAR filing types; SEC states these feeds update every ten minutes during stated weekday hours."
+
+  - source_id: "rss.sec.edgar_search_dynamic"
+    provider: "U.S. Securities and Exchange Commission"
+    source_tier: "TIER_A"
+    feed_role: "DYNAMIC_FEED"
+    feed_format: "rss_or_atom_generated_by_edgar_search"
+    feed_url: null
+    landing_url: "https://www.sec.gov/about/rss-feeds"
+    status: "ACTIVE_ENDPOINT_GENERATED_PER_QUERY"
+    priority: "P0_P1_BY_FORM_OR_ENTITY"
+    claim_scope: ["company_filings", "form_8_k", "form_4", "ownership", "registration", "periodic_reports"]
+    entity_mapping: "CIK_first"
+    confirmation_rule: "store generated query parameters plus accession; canonical EDGAR filing is evidence"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "SEC documents RSS subscription from Company Search and Latest Filings with company/CIK/form/ownership filters; registry should store generated per-entity/per-form endpoints rather than one global guessed URL."
+
+  - source_id: "rss.nasdaq.trade_halts"
+    provider: "Nasdaq Trader"
+    source_tier: "TIER_A"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "xml_rss"
+    feed_url: "https://www.nasdaqtrader.com/rss.aspx?feed=tradehalts"
+    landing_url: "https://www.nasdaqtrader.com/Trader.aspx?id=TradeHaltRSS"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P0"
+    claim_scope: ["trade_halt", "trade_pause", "resumption"]
+    entity_mapping: "symbol_plus_listing_venue"
+    confirmation_rule: "preserve halt reason/time and resumption fields from Nasdaq"
+    poll_floor_seconds: 60
+    verified_on: "2026-09-24"
+    limitations: "Nasdaq says data updates once per minute and asks clients not to query more than once per minute."
+
+  - source_id: "rss.fda.medwatch"
+    provider: "U.S. Food and Drug Administration"
+    source_tier: "TIER_A"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "rss_xml"
+    feed_url: "https://www.fda.gov/about-fda/contact-fda/stay-informed/rss-feeds/medwatch/rss.xml"
+    landing_url: "https://www.fda.gov/safety/medwatch-fda-safety-information-and-adverse-event-reporting-program/subscribe-medwatch-safety-alerts"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P1"
+    claim_scope: ["drug_safety", "device_safety", "safety_alert", "recall_context"]
+    entity_mapping: "product_to_sponsor_manufacturer_then_ticker"
+    confirmation_rule: "preserve linked FDA alert; resolve affected product/program/company branch"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Safety-oriented; does not cover every FDA regulatory milestone."
+
+  - source_id: "rss.doj_antitrust.civil_case_filings"
+    provider: "U.S. Department of Justice Antitrust Division"
+    source_tier: "TIER_A"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "xml"
+    feed_url: "https://www.justice.gov/media/1190096/dl?inline="
+    landing_url: "https://www.justice.gov/atr/news-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P1"
+    claim_scope: ["antitrust_civil_case", "merger_challenge", "competition_enforcement"]
+    entity_mapping: "named_parties_to_company_relationship_graph"
+    confirmation_rule: "preserve linked case filing/docket record"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Feed URL is a DOJ media endpoint; retain landing-page provenance so endpoint changes can be rediscovered."
+
+  - source_id: "rss.doj_antitrust.criminal_case_filings"
+    provider: "U.S. Department of Justice Antitrust Division"
+    source_tier: "TIER_A"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "xml"
+    feed_url: "https://www.justice.gov/media/1194211/dl?inline="
+    landing_url: "https://www.justice.gov/atr/news-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P1"
+    claim_scope: ["antitrust_criminal_case", "competition_enforcement"]
+    entity_mapping: "named_parties_to_company_relationship_graph"
+    confirmation_rule: "preserve linked criminal filing/case record"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Feed URL is a DOJ media endpoint; retain landing-page provenance so endpoint changes can be rediscovered."
+
+  - source_id: "rss.doj_antitrust.press_releases"
+    provider: "U.S. Department of Justice Antitrust Division"
+    source_tier: "TIER_A_OR_B_BY_CLAIM"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "rss"
+    feed_url: "https://www.justice.gov/news/rss?field_component=376&require_all=0&search_api_language=en&show_public_archived=0&type%5B0%5D=image_gallery&type%5B1%5D=press_release&type%5B2%5D=speech&type%5B3%5D=youtube_video"
+    landing_url: "https://www.justice.gov/atr/news-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P1"
+    claim_scope: ["antitrust", "merger_review", "competition_enforcement"]
+    entity_mapping: "named_parties_to_company_relationship_graph"
+    confirmation_rule: "resolve linked DOJ release and underlying filing/order when available"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "The DOJ feed query may include multiple content types; classify item type before state promotion."
+
+  - source_id: "rss.ftc.competition"
+    provider: "Federal Trade Commission"
+    source_tier: "TIER_A_OR_B_BY_CLAIM"
+    feed_role: "AUTHORITATIVE_SIGNAL"
+    feed_format: "rss"
+    feed_url: null
+    landing_url: "https://www.ftc.gov/news-events/stay-connected/ftc-rss-feeds"
+    status: "OFFICIAL_FEED_CONFIRMED_ENDPOINT_RESOLUTION_PENDING"
+    priority: "P1"
+    claim_scope: ["competition_press_release", "merger_review", "competition_enforcement", "hsr_context"]
+    entity_mapping: "named_parties_to_company_relationship_graph"
+    confirmation_rule: "resolve FTC case/order/HSR record where material"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "FTC confirms Competition Press Releases and related RSS families, but the direct machine endpoint was not frozen into this registry yet."
+
+  - source_id: "rss.grants_gov.modified_by_category"
+    provider: "Grants.gov"
+    source_tier: "TIER_A_OR_B_BY_CLAIM"
+    feed_role: "PRIMARY_DISCOVERY"
+    feed_format: "rss_xml"
+    feed_url: "https://www.grants.gov/rss/GG_OppModByCategory.xml"
+    landing_url: "https://grants.gov/connect/rss-feeds"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P2"
+    claim_scope: ["grant_opportunity", "grant_modification", "funding_signal"]
+    entity_mapping: "agency_program_then_named_recipient_or_partner_if_present"
+    confirmation_rule: "grant opportunity is primary for opportunity state; company impact requires a company/program relationship"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Opportunity feeds are not award feeds and should not be promoted to funded-company economics."
+
+  - source_id: "rss.nih.funding_opportunities"
+    provider: "National Institutes of Health"
+    source_tier: "TIER_A_OR_B_BY_CLAIM"
+    feed_role: "PRIMARY_DISCOVERY"
+    feed_format: "rss_xml"
+    feed_url: "https://grants.nih.gov/grants/guide/newsfeed/fundingopps.xml"
+    landing_url: "https://www.grants.nih.gov/funding/nih-guide-for-grants-and-contracts/subscribe"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P2"
+    claim_scope: ["nih_funding_opportunity", "biotech_research_signal", "program_funding"]
+    entity_mapping: "program_topic_then_company_partner_relationship_if_material"
+    confirmation_rule: "funding opportunity does not imply award or company economics"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Useful mainly for early program/research context unless a tracked company has a direct relationship."
+
+  - source_id: "rss.nasa.news_releases"
+    provider: "NASA"
+    source_tier: "TIER_A_OR_B_BY_CLAIM"
+    feed_role: "PRIMARY_DISCOVERY"
+    feed_format: "rss"
+    feed_url: "https://www.nasa.gov/news-release/feed/"
+    landing_url: "https://www.nasa.gov/rss-feeds/"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P2"
+    claim_scope: ["contract_award", "mission", "program", "supplier_customer_signal", "technology"]
+    entity_mapping: "named_company_program_facility_to_character_graph"
+    confirmation_rule: "resolve award/contract/program record when a release implies economic state"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "NASA news can mention companies without creating procurement or revenue state."
+
+  - source_id: "rss.globenewswire.business_contracts"
+    provider: "GlobeNewswire"
+    source_tier: "TIER_B_BY_UNDERLYING_ISSUER_CLAIM"
+    feed_role: "ISSUER_DISTRIBUTION"
+    feed_format: "rss"
+    feed_url: "https://www.globenewswire.com/RssFeed/subjectcode/7-Business%20Contracts/feedTitle/GlobeNewswire%20-%20Business%20Contracts"
+    landing_url: "https://www.globenewswire.com/rss/list"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P2"
+    claim_scope: ["contract", "order", "partnership", "customer"]
+    entity_mapping: "issuer_name_symbol_then_counterparty_resolution"
+    confirmation_rule: "resolve issuer IR/SEC filing and counterparty/agency evidence before closing a material commercial state"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Wire-distributed issuer announcement is not independent corroboration."
+
+  - source_id: "rss.globenewswire.mergers_acquisitions"
+    provider: "GlobeNewswire"
+    source_tier: "TIER_B_BY_UNDERLYING_ISSUER_CLAIM"
+    feed_role: "ISSUER_DISTRIBUTION"
+    feed_format: "rss"
+    feed_url: "https://www.globenewswire.com/RssFeed/subjectcode/27-Mergers%20and%20Acquisitions/feedTitle/GlobeNewswire%20-%20Mergers%20and%20Acquisitions"
+    landing_url: "https://www.globenewswire.com/rss/list"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P2"
+    claim_scope: ["merger", "acquisition", "divestiture", "transaction"]
+    entity_mapping: "issuer_and_counterparty_to_relationship_graph"
+    confirmation_rule: "resolve definitive transaction document/SEC filing/regulatory evidence"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Headline transaction language may precede definitive agreement or close."
+
+  - source_id: "rss.globenewswire.clinical_study"
+    provider: "GlobeNewswire"
+    source_tier: "TIER_B_BY_UNDERLYING_ISSUER_CLAIM"
+    feed_role: "ISSUER_DISTRIBUTION"
+    feed_format: "rss"
+    feed_url: "https://www.globenewswire.com/RssFeed/subjectcode/90-Clinical%20Study/feedTitle/GlobeNewswire%20-%20Clinical%20Study"
+    landing_url: "https://www.globenewswire.com/rss/list"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P2"
+    claim_scope: ["clinical_trial", "topline_data", "enrollment", "biotech_catalyst"]
+    entity_mapping: "issuer_product_program_trial_indication"
+    confirmation_rule: "preserve exact program/trial identity; resolve ClinicalTrials.gov/FDA/publication/counterparty evidence when material"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Issuer claims about clinical data require program-level routing and should not be generalized across the company."
+
+  - source_id: "rss.globenewswire.financing_agreements"
+    provider: "GlobeNewswire"
+    source_tier: "TIER_B_BY_UNDERLYING_ISSUER_CLAIM"
+    feed_role: "ISSUER_DISTRIBUTION"
+    feed_format: "rss"
+    feed_url: "https://www.globenewswire.com/RssFeed/subjectcode/17-Financing%20Agreements/feedTitle/GlobeNewswire%20-%20Financing%20Agreements"
+    landing_url: "https://www.globenewswire.com/rss/list"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P2"
+    claim_scope: ["financing", "credit_facility", "capital_raise", "liquidity"]
+    entity_mapping: "issuer_to_capital_structure_branch"
+    confirmation_rule: "resolve filed financing documents, terms, draw/issuance/completion state"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Do not treat available facility capacity as realized cash or announced financing as completed financing."
+
+  - source_id: "rss.globenewswire.earnings"
+    provider: "GlobeNewswire"
+    source_tier: "TIER_B_BY_UNDERLYING_ISSUER_CLAIM"
+    feed_role: "ISSUER_DISTRIBUTION"
+    feed_format: "rss"
+    feed_url: "https://www.globenewswire.com/RssFeed/subjectcode/13-Earnings%20Releases%20and%20Operating%20Results/feedTitle/GlobeNewswire%20-%20Earnings%20Releases%20and%20Operating%20Results"
+    landing_url: "https://www.globenewswire.com/rss/list"
+    status: "ACTIVE_VERIFIED_OFFICIAL"
+    priority: "P2"
+    claim_scope: ["earnings", "operating_results", "guidance"]
+    entity_mapping: "issuer_name_symbol_to_canonical_issuer"
+    confirmation_rule: "resolve issuer IR filing/10-Q/10-K/8-K and distinguish reported facts from guidance"
+    poll_floor_seconds: null
+    verified_on: "2026-09-24"
+    limitations: "Wire breadth is useful for discovery; SEC/issuer filing remains stronger for filed financial facts."
+
+dynamic_source_families:
+  - source_id: "rss.company_ir.per_entity"
+    provider: "Tracked issuer official investor-relations/newsroom"
+    source_tier: "TIER_B"
+    feed_role: "DYNAMIC_FEED"
+    status: "PER_ENTITY_DISCOVERY_REQUIRED"
+    priority: "P1"
+    discovery_key: "canonical issuer + official IR domain + CIK"
+    claim_scope: ["issuer_news", "earnings", "events", "presentations", "filings", "contracts"]
+    confirmation_rule: "bind only to official issuer-controlled domain; preserve item type and linked primary document"
+    limitations: "Feed availability and format vary by issuer."
+
+candidate_queue:
+  - "FTC Competition direct endpoint resolution"
+  - "FTC HSR / competition event surfaces, preferring API when RSS is not the strongest machine interface"
+  - "FDA recall-specific RSS families"
+  - "Federal Register agency/topic feeds where directly relevant to tracked characters"
+  - "DoD / service-branch award and contract feeds if official RSS endpoints are available"
+  - "SAM.gov / USAspending event surfaces where RSS exists; otherwise evaluate API under software-escalation boundary"
+  - "PR Newswire event/category feeds"
+  - "Business Wire feeds"
+  - "high-quality independent secondary feeds such as Reuters where feed access/licensing permits"

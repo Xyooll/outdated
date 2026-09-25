@@ -1,0 +1,38 @@
+rule_id: ASTRO.EXAMPLE.001
+rule_class: DOMAIN_HYPOTHESIS
+system_id: ASTRO.JYO
+subsystem: example
+name: Example rule
+version: 1
+status: DOMAIN_HYPOTHESIS
+source_provenance: XYOOL_HYPOTHESIS
+source_reference: null
+required_inputs: []
+calculation_prerequisites: []
+trigger_configuration: null
+native_interpretation: null
+capture_mapping: []
+capability_translation: []
+polarity: null
+strength_rule: null
+timing:
+  start_rule: null
+  peak_rule: null
+  end_rule: null
+settings:
+  orb: null
+  threshold: null
+  correlation_id: null
+conflict_rules: []
+known_dependencies: []
+known_exceptions: []
+falsification_condition: null
+positive_controls: []
+negative_controls: []
+discovery_cases: []
+validation_cases: []
+prospective_cases: []
+false_positive_notes: []
+miss_notes: []
+created_at: null
+supersedes: null

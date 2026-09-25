@@ -1,0 +1,58 @@
+version: 1
+active_domain: stock-market
+domains:
+  stock-market:
+    status: active
+    maturity: primary-development-validation
+    objective: compounded-capital
+    manifest: domains/stock-market/DOMAIN.md
+    state_contract: domains/stock-market/STATE.md
+    state_index: domains/stock-market/state/index.json
+    current: true
+    notes: Primary active development and validation domain.
+  astrology:
+    status: experimental
+    maturity: multi-system-architecture-defined-validation-pending
+    objective: reproducible-uncertainty-aware-multi-system-astrological-analysis-capability-translation-and-timing-validation
+    manifest: domains/astrology/DOMAIN.md
+    establishment: domains/astrology/ESTABLISHMENT.md
+    establishment_status: functions-partial
+    library_index: domains/astrology/library/INDEX.md
+    story_binding: domains/astrology/STORY-BINDING.md
+    floware_configuration: domains/astrology/CONFIGURATION.md
+    plumbing: domains/astrology/PLUMBING.md
+    primary_flow: domains/astrology/flows/astrology-analysis.flow.md
+    current: false
+    run_sequence: domains/astrology/RUN-SEQUENCE.md
+    validation: domains/astrology/VALIDATION.md
+    system_registry: domains/astrology/SYSTEM-REGISTRY.md
+    rule_registry: domains/astrology/RULE-REGISTRY.md
+    signal_output_model: domains/astrology/SIGNAL-OUTPUT-MODEL.md
+    maya_adapter: domains/astrology/MAYA.md
+    notes: Domain is FUNCTIONS_PARTIAL. Current sourced Maya/Dreamspell interpretation and validation methodology are established; Western/Jyotish/stellar/predictive functions remain partial until native rule cohorts are established. Controlled validation required before any empirical promotion.
+  numerical-magic:
+    status: experimental
+    maturity: symbolic-language-architecture-defined-deterministic-core-validation-pending
+    objective: construct-parse-compare-and-reverse-engineer-symbolic-numerical-formulas-with-arithmetic-provenance-and-validation-boundaries
+    manifest: domains/numerical-magic/DOMAIN.md
+    establishment: domains/numerical-magic/ESTABLISHMENT.md
+    establishment_status: ready-for-configuration-current-symbolic-scope
+    floware_configuration: domains/numerical-magic/CONFIGURATION.md
+    plumbing: domains/numerical-magic/PLUMBING.md
+    primary_flow: domains/numerical-magic/flows/numerical-analysis.flow.md
+    run_sequence: domains/numerical-magic/RUN-SEQUENCE.md
+    grammar: domains/numerical-magic/GRAMMAR.md
+    letter_number_protocol: domains/numerical-magic/LETTER-NUMBER-PROTOCOL.md
+    root_registry: domains/numerical-magic/ROOT-REGISTRY.json
+    validation: domains/numerical-magic/VALIDATION.md
+    engine: domains/numerical-magic/engine.py
+    current: false
+    notes: Preserves full reduction chains, ordered-path semantics, root-family ladders, and per-ring dual-value letter encoding. Every A-Z letter retains both alphabet ordinal and reduced root; ring digits select eligible letter families while ordinal pathways distinguish candidates. Symbolic interpretation remains separate from deterministic arithmetic and any efficacy claims.
+future_domain_policy:
+  require_manifest: true
+  require_correspondence_for_imported_principles: true
+  inherit_source_domain_calibration: false
+  inherit_source_domain_objective: false
+  inherit_source_domain_actions: false
+  validation_required: true
+  persistent_state_contract_recommended: true

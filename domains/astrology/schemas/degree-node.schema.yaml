@@ -1,0 +1,36 @@
+schema_id: ASTRO-SCHEMA-DEGREE-NODE-V1
+status: CANDIDATE
+required:
+  - node_id
+  - object_id
+  - timestamp_or_epoch
+  - coordinate_frame
+  - ecliptic_longitude
+  - calculation_provenance
+fields:
+  node_id: string
+  object_id: string
+  object_class: string
+  timestamp_or_epoch: string
+  time_scale: string
+  coordinate_frame: string
+  ecliptic_longitude: number
+  ecliptic_latitude: number_optional
+  right_ascension: number_optional
+  declination: number_optional
+  sign: string_optional
+  decan: string_optional
+  bound: string_optional
+  house: integer_optional
+  house_system: string_optional
+  dispositor: string_optional
+  house_ruler: string_optional
+  stellar_contacts: list
+  aspect_edges: list
+  timing_activations: list
+  calculation_provenance: object
+  state_hash: string_optional
+boundaries:
+  - preserve exact coordinate before categorical compression
+  - wrappers derived from same longitude are dependency-linked
+  - private subject data is not a general domain-library field

@@ -1,0 +1,38 @@
+catalog_id: ASTRO-CAT-MINOR-BODIES-V1
+version: 1.0.0
+status: CANDIDATE / BOUNDED SEARCH SPACE
+purpose: freeze optional minor-body cohorts before validation
+
+ephemeris_policy:
+  primary_runtime: Swiss Ephemeris when supported
+  crosscheck: JPL Horizons / SBDB
+  identity_crosscheck: Minor Planet Center
+
+tier_0:
+  - {number: 1, name: Ceres, class: dwarf_planet_asteroid}
+  - {number: 2, name: Pallas, class: asteroid}
+  - {number: 3, name: Juno, class: asteroid}
+  - {number: 4, name: Vesta, class: asteroid}
+  - {number: 2060, name: Chiron, class: centaur}
+
+tier_1:
+  - {number: 10, name: Hygiea, class: asteroid}
+  - {number: 16, name: Psyche, class: asteroid}
+  - {number: 433, name: Eros, class: asteroid}
+  - {number: 5145, name: Pholus, class: centaur}
+  - {number: 136199, name: Eris, class: dwarf_planet}
+
+tier_2:
+  - {number: 7066, name: Nessus, class: centaur}
+  - {number: 10199, name: Chariklo, class: centaur}
+  - {number: 90377, name: Sedna, class: trans_neptunian}
+  - {number: 50000, name: Quaoar, class: trans_neptunian}
+  - {number: 90482, name: Orcus, class: trans_neptunian}
+
+activation_policy:
+  astronomical_included_is_not_semantic_authority: true
+  predictive_eligible_default: false
+  namesake_mining_confirmatory: prohibited
+  object_set_must_be_frozen: true
+  initial_predictive_test_tier: tier_0
+  minor_body_cannot_create_primary_theme_alone_v1: true

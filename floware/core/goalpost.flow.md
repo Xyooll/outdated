@@ -1,0 +1,40 @@
+# FLOW — Goalpost Governance
+
+FLOW ID: `CORE-GOALPOST`  
+STATUS: **ACTIVE / CANONICAL**
+
+## GOAL
+
+Prevent recursive work from drifting away from the capability being finished.
+
+## PROCESS
+
+```text
+DEFINE GOAL
+→ FREEZE SUCCESS GATES
+→ FREEZE METHOD-FAILURE GATES
+→ FREEZE BOUNDARIES
+→ FREEZE EFFECTIVENESS / EFFICIENCY / COMPLEXITY STANDARD
+→ WORK
+→ METHOD FAILS? CHANGE METHOD, KEEP GOAL
+→ SUCCESS GATES PASS? CLOSE AS ACHIEVED
+→ GOAL ITSELF INVALID? REQUIRE EVIDENCE, CLOSE AS INVALIDATED
+→ ONLY THEN OPEN NEXT GOAL
+```
+
+## FAIL-CLOSED CONDITIONS
+
+Do not silently replace an unresolved goal with a more interesting one.
+
+## OUTPUT STATE
+
+`ACTIVE / ACHIEVED / INVALIDATED`
+
+Method failure remains attached to the ACTIVE goal.
+
+## SOFTWARE / HARD-LIMIT BOUNDARY
+
+`NONE — FLOWARE SUFFICIENT`
+
+Canonical doctrine:
+`skills/xyool/00-07-GOALPOST-EFFECTIVENESS-GOVERNANCE.md`

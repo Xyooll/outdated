@@ -1,0 +1,131 @@
+{
+  "version": "1.1.0",
+  "status": "experimental",
+  "profile": "xyool-numerical-magic-default",
+  "roots": {
+    "1": {
+      "name": "Origin",
+      "core": ["initiation", "will", "identity", "beginning"],
+      "verbs": ["initiate", "begin", "direct", "identify", "will"],
+      "provenance": "DOMAIN_CANONICAL"
+    },
+    "2": {
+      "name": "Relation",
+      "core": ["polarity", "receptivity", "cooperation", "exchange"],
+      "verbs": ["connect", "pair", "receive", "cooperate", "exchange"],
+      "provenance": "DOMAIN_CANONICAL"
+    },
+    "3": {
+      "name": "Creation",
+      "core": ["expression", "communication", "growth", "imagination"],
+      "verbs": ["create", "express", "communicate", "grow", "imagine"],
+      "provenance": "DOMAIN_CANONICAL"
+    },
+    "4": {
+      "name": "Structure",
+      "core": ["foundation", "order", "stability", "containment"],
+      "verbs": ["stabilize", "order", "ground", "build", "contain"],
+      "provenance": "DOMAIN_CANONICAL"
+    },
+    "5": {
+      "name": "Change",
+      "core": ["motion", "adaptation", "freedom", "transition"],
+      "verbs": ["move", "adapt", "alter", "liberate", "transition"],
+      "provenance": "DOMAIN_CANONICAL"
+    },
+    "6": {
+      "name": "Harmony",
+      "core": ["integration", "care", "responsibility", "balance"],
+      "verbs": ["integrate", "balance", "care", "reconcile", "sustain"],
+      "provenance": "DOMAIN_CANONICAL"
+    },
+    "7": {
+      "name": "Knowledge",
+      "core": ["mystery", "analysis", "investigation", "inward mastery"],
+      "verbs": ["know", "investigate", "analyze", "reveal", "master inwardly"],
+      "provenance": "DOMAIN_CANONICAL"
+    },
+    "8": {
+      "name": "Manifestation",
+      "core": ["materialization", "resources", "power", "authority"],
+      "verbs": ["materialize", "resource", "empower", "organize", "govern"],
+      "provenance": "DOMAIN_CANONICAL"
+    },
+    "9": {
+      "name": "Completion",
+      "core": ["culmination", "transcendence", "release", "closure"],
+      "verbs": ["complete", "culminate", "transcend", "release", "close"],
+      "provenance": "DOMAIN_CANONICAL"
+    }
+  },
+  "zero": {
+    "name": "Potential",
+    "core": ["field", "void", "openness", "container"],
+    "arithmetic_value": 0,
+    "is_root": false,
+    "provenance": "DOMAIN_CANONICAL"
+  },
+  "letter_numeric_protocol": {
+    "name": "dual-value-ordinal-root",
+    "ordinal_rule": "A=1 through Z=26",
+    "root_rule": "digital_root(alphabet_ordinal)",
+    "ordinal_mapping": {
+      "A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H": 8, "I": 9,
+      "J": 10, "K": 11, "L": 12, "M": 13, "N": 14, "O": 15, "P": 16, "Q": 17,
+      "R": 18, "S": 19, "T": 20, "U": 21, "V": 22, "W": 23, "X": 24, "Y": 25, "Z": 26
+    },
+    "selection_rule": "ring digit selects root family; ordinal pathway distinguishes eligible letters",
+    "preserve_ordinal_and_root": true,
+    "ordinal_channel_replaces_ring_reduction": false,
+    "provenance": "DOMAIN_CANONICAL_PROTOCOL"
+  },
+  "carrier_profiles": {
+    "pythagorean": {
+      "mapping": {
+        "A": 1, "J": 1, "S": 1,
+        "B": 2, "K": 2, "T": 2,
+        "C": 3, "L": 3, "U": 3,
+        "D": 4, "M": 4, "V": 4,
+        "E": 5, "N": 5, "W": 5,
+        "F": 6, "O": 6, "X": 6,
+        "G": 7, "P": 7, "Y": 7,
+        "H": 8, "Q": 8, "Z": 8,
+        "I": 9, "R": 9
+      },
+      "derived_from": "digital_root(alphabet_ordinal)",
+      "provenance": "INHERITED_NUMEROLOGY_CONVENTION"
+    }
+  },
+  "glyph_extensions": {
+    "G": {
+      "carrier": 7,
+      "name": "Gnosis",
+      "meaning": ["investigation", "discovery", "knowing"],
+      "provenance": "LOCAL_GLYPH_EXTENSION"
+    },
+    "P": {
+      "carrier": 7,
+      "name": "Projection",
+      "meaning": ["application", "directed power", "putting knowledge into operation"],
+      "provenance": "LOCAL_GLYPH_EXTENSION"
+    },
+    "Y": {
+      "carrier": 7,
+      "name": "Choice",
+      "meaning": ["branching", "direction selection", "transcendence"],
+      "provenance": "LOCAL_GLYPH_EXTENSION"
+    }
+  },
+  "rules": {
+    "preserve_full_reduction_chain": true,
+    "order_is_semantically_directional": true,
+    "repetition_is_symbolic_emphasis": true,
+    "zero_is_modifier_not_root": true,
+    "automatic_master_number_stop": false,
+    "shortest_equivalent_construction_preferred": true,
+    "letters_preserve_ordinal_and_root": true,
+    "number_to_letter_requires_root_family_match": true,
+    "ordinal_path_used_for_letter_disambiguation": true,
+    "ordinal_channel_is_parallel_to_ring_reduction": true
+  }
+}

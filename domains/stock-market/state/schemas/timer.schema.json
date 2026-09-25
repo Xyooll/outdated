@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xyool.local/domains/stock-market/state/schemas/timer.schema.json",
+  "title": "Xyool Stock Timer",
+  "type": "object",
+  "required": [
+    "timer_id",
+    "entity_id",
+    "event_key",
+    "timer_type",
+    "state",
+    "opened_at",
+    "evidence_ids"
+  ],
+  "properties": {
+    "timer_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entity_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_class": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timer_type": {
+      "type": "string",
+      "enum": [
+        "SINGLE_DATE_EXACT",
+        "SINGLE_DATE_TARGET",
+        "PRE_CATALYST_WINDOW",
+        "PROCUREMENT",
+        "REGULATORY",
+        "DEPLOYMENT",
+        "REPEAT_CADENCE",
+        "CASCADE_GATE",
+        "OTHER"
+      ]
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "REALIZED",
+        "DELAYED",
+        "STALE",
+        "INVALIDATED",
+        "SUPERSEDED",
+        "CLOSED"
+      ]
+    },
+    "opened_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_confirmed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "single_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "window_start": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "window_end": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "timing_basis": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "remaining_gates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pfs_state": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hazard_heat": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "recognition_state": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "quality_state_at_open": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "next_refresh_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "invalidation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "closed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "close_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "outcome_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

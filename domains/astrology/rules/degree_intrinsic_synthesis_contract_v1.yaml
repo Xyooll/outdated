@@ -1,0 +1,63 @@
+ruleset_id: ASTRO.DEGREE.INTRINSIC.SYNTHESIS_CONTRACT_V1
+version: 1.0.0
+status: DOMAIN_METHOD_CANDIDATE
+system_id: ASTRO.STAR.DEGREE.XYOOL_V1
+purpose: define how Xyool creates its own local30 and absolute360 intrinsic meaning candidates
+
+coordinate_types:
+  LOCAL30:
+    index_zero: 0..29
+    ordinal: 1..30
+    source_seed: rules/local_degree_30_modern_seed_v1.yaml
+  ABS360:
+    index_zero: 0..359
+    ordinal: 1..360
+    source_seed: rules/absolute_degree_360_monomoiria_v1.yaml
+
+candidate_fields:
+  - candidate_id
+  - coordinate_type
+  - index_zero
+  - ordinal
+  - exact_range
+  - contributing_source_ids
+  - dependency_groups
+  - source_semantic_primitives
+  - conflicts
+  - xyool_synthesis
+  - synthesis_status
+  - null_control
+  - discovery_cases
+  - validation_cases
+  - false_positive_notes
+  - supersedes
+
+statuses:
+  - SOURCE_ONLY
+  - XYOOL_HYPOTHESIS
+  - IN_TESTING
+  - PROVISIONALLY_SUPPORTED
+  - SUPPORTED_WITH_BOUNDARIES
+  - REJECTED
+  - SUPERSEDED
+
+local30_method:
+  - start from explicit local30 source lineages
+  - compare twelve absolute degrees sharing the same local index
+  - group dependent 360 corpora before counting recurrence
+  - remove sign-specific semantics where possible
+  - require incremental validation beyond sign/house/aspect baseline
+
+abs360_method:
+  - preserve source-specific 360 meanings separately
+  - include monomoiria ruler as one source-derived feature
+  - keep stellar neighborhood as separate non-intrinsic feature
+  - synthesize only recurring semantic primitives across independent corpora
+  - preserve contradictions rather than vague averaging
+
+anti_overfit:
+  - corpus choice frozen before validation
+  - no posthoc rewording after target outcome
+  - use permuted local30/abs360 meaning nulls
+  - one discovery case cannot promote a meaning
+  - source consensus is not empirical confirmation

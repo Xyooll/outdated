@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xyool.local/domains/stock-market/state/schemas/analysis-ingestion-bundle.schema.json",
+  "title": "Xyool Stock Analysis Ingestion Bundle",
+  "type": "object",
+  "required": [
+    "analysis_id",
+    "entity_id",
+    "as_of",
+    "analysis_text",
+    "material_conclusions",
+    "evidence_events",
+    "timer_records",
+    "snapshot_patch"
+  ],
+  "properties": {
+    "analysis_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,160}$"
+    },
+    "analysis_type": {
+      "type": "string"
+    },
+    "entity_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "analysis_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "material_conclusions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "conclusion_id",
+          "statement",
+          "material",
+          "dispositions"
+        ],
+        "properties": {
+          "conclusion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "statement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "material": {
+            "type": "boolean"
+          },
+          "dispositions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "EVIDENCE",
+                    "SNAPSHOT_FIELD",
+                    "DEPENDENCY_NODE",
+                    "DEPENDENCY_EDGE",
+                    "TIMER",
+                    "UNRESOLVED_QUESTION",
+                    "REJECTED_HYPOTHESIS",
+                    "NON_PERSISTENT"
+                  ]
+                },
+                "target_id": {},
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "evidence_events": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "timer_records": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "snapshot_patch": {
+      "type": "object",
+      "properties": {
+        "current_state": {
+          "type": "object"
+        },
+        "dependency_graph": {
+          "type": "object"
+        },
+        "repricing_sensitivity": {
+          "type": "object"
+        },
+        "active_timer_ids": {
+          "type": "array"
+        },
+        "latest_material_evidence_ids": {
+          "type": "array"
+        },
+        "unresolved_questions": {
+          "type": "array"
+        },
+        "source_cursors": {
+          "type": "object"
+        },
+        "story_memory": {
+          "type": "object"
+        },
+        "completeness_status": {}
+      },
+      "additionalProperties": false
+    },
+    "archive_origin": {
+      "type": "string"
+    },
+    "lossless_original": {
+      "type": "boolean"
+    },
+    "historical_limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reconstructed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": true
+}

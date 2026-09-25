@@ -1,0 +1,25 @@
+schema_id: ASTRO-SCHEMA-PROVENANCE-V1
+status: CANDIDATE
+required:
+  - source_id
+  - authority_class
+  - scope
+  - retrieved_at
+fields:
+  source_id: string
+  authority_class: string
+  author_or_institution: string_optional
+  work_or_dataset: string_optional
+  edition_or_release: string_optional
+  publication_date: string_optional
+  retrieved_at: date
+  claim_location: string_optional
+  language: string_optional
+  translator: string_optional
+  canonical_locator: string_optional
+  content_hash: string_optional
+  calculation_version: string_optional
+  known_conflicts: list
+  empirical_status: string_optional
+  scope: string
+  limitations: string_optional

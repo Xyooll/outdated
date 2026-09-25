@@ -1,0 +1,181 @@
+ruleset_id: ASTRO.DEGREE.LOCAL30.MODERN_SEED_V1
+version: 1.0.0
+status: SECONDARY_SOURCE_RECONSTRUCTION / UNVALIDATED
+system_id: ASTRO.STAR.DEGREE.XYOOL_V1
+purpose: candidate intrinsic local-degree meanings for the 0-29 degree position within any sign
+
+coordinate_contract:
+  local_degree_exact: lambda_mod_30_in_[0,30)
+  local_index_zero: floor(local_degree_exact)  # 0..29
+  local_ordinal: local_index_zero + 1          # 1..30
+
+source_lineage:
+  named_lineage: Nikola Stojanovic modern Degree Theory
+  source_ids:
+    - src.modern.degree_theory.astrology_com
+    - src.modern.degree_theory.augurine
+  primary_source_status: NOT_YET_RECOVERED
+  indexing_conflict: true
+
+interpretive_boundary:
+  - this is one modern lineage, not Xyool truth
+  - local-degree meaning is separate from absolute 360-degree meaning
+  - 0-degree treatment differs across secondary sources
+  - do not merge with monomoiria, Sabian, Charubel, Kozminsky, or Janduz without explicit synthesis rules
+
+entries:
+  - local_index_zero: 0
+    local_ordinal: 1
+    source_mapping: HOST_SIGN_AMPLIFIER_VARIANT
+    intrinsic_seed: threshold / raw emergence / concentration of host-sign expression
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 1
+    local_ordinal: 2
+    source_mapping: Aries
+    intrinsic_seed: initiation, action, emergence
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 2
+    local_ordinal: 3
+    source_mapping: Taurus
+    intrinsic_seed: stability, value, embodiment
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 3
+    local_ordinal: 4
+    source_mapping: Gemini
+    intrinsic_seed: communication, exchange, multiplicity
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 4
+    local_ordinal: 5
+    source_mapping: Cancer
+    intrinsic_seed: care, protection, belonging
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 5
+    local_ordinal: 6
+    source_mapping: Leo
+    intrinsic_seed: visibility, creativity, self-expression
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 6
+    local_ordinal: 7
+    source_mapping: Virgo
+    intrinsic_seed: discernment, refinement, service
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 7
+    local_ordinal: 8
+    source_mapping: Libra
+    intrinsic_seed: balance, relationship, reciprocity
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 8
+    local_ordinal: 9
+    source_mapping: Scorpio
+    intrinsic_seed: intensity, transformation, hidden depth
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 9
+    local_ordinal: 10
+    source_mapping: Sagittarius
+    intrinsic_seed: expansion, belief, exploration
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 10
+    local_ordinal: 11
+    source_mapping: Capricorn
+    intrinsic_seed: structure, responsibility, ambition
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 11
+    local_ordinal: 12
+    source_mapping: Aquarius
+    intrinsic_seed: systems, groups, innovation
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 12
+    local_ordinal: 13
+    source_mapping: Pisces
+    intrinsic_seed: diffusion, imagination, transcendence
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 13
+    local_ordinal: 14
+    source_mapping: Aries
+    intrinsic_seed: initiation, action, emergence
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 14
+    local_ordinal: 15
+    source_mapping: Taurus
+    intrinsic_seed: stability, value, embodiment
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 15
+    local_ordinal: 16
+    source_mapping: Gemini
+    intrinsic_seed: communication, exchange, multiplicity
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 16
+    local_ordinal: 17
+    source_mapping: Cancer
+    intrinsic_seed: care, protection, belonging
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 17
+    local_ordinal: 18
+    source_mapping: Leo
+    intrinsic_seed: visibility, creativity, self-expression
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 18
+    local_ordinal: 19
+    source_mapping: Virgo
+    intrinsic_seed: discernment, refinement, service
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 19
+    local_ordinal: 20
+    source_mapping: Libra
+    intrinsic_seed: balance, relationship, reciprocity
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 20
+    local_ordinal: 21
+    source_mapping: Scorpio
+    intrinsic_seed: intensity, transformation, hidden depth
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 21
+    local_ordinal: 22
+    source_mapping: Sagittarius
+    intrinsic_seed: expansion, belief, exploration
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 22
+    local_ordinal: 23
+    source_mapping: Capricorn
+    intrinsic_seed: structure, responsibility, ambition
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 23
+    local_ordinal: 24
+    source_mapping: Aquarius
+    intrinsic_seed: systems, groups, innovation
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 24
+    local_ordinal: 25
+    source_mapping: Pisces
+    intrinsic_seed: diffusion, imagination, transcendence
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 25
+    local_ordinal: 26
+    source_mapping: Aries
+    intrinsic_seed: initiation, action, emergence
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 26
+    local_ordinal: 27
+    source_mapping: Taurus
+    intrinsic_seed: stability, value, embodiment
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 27
+    local_ordinal: 28
+    source_mapping: Gemini
+    intrinsic_seed: communication, exchange, multiplicity
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 28
+    local_ordinal: 29
+    source_mapping: Cancer
+    intrinsic_seed: care, protection, belonging
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+  - local_index_zero: 29
+    local_ordinal: 30
+    source_mapping: Leo
+    intrinsic_seed: visibility, creativity, self-expression
+    status: SECONDARY_SOURCE_RECONSTRUCTION_UNVALIDATED
+
+validation:
+  model_name: LOCAL30_SOURCE_LAYER
+  requirement: test incremental value beyond sign/house/aspect/full-chart baseline
+  null: permute local-degree meanings while preserving degree frequencies

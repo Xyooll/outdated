@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xyool.local/domains/astrology/schemas/forecast.schema.json",
+  "title": "Xyool Astrology Forecast",
+  "type": "object",
+  "required": [
+    "forecast_id",
+    "created_at",
+    "subject_id",
+    "input_version",
+    "system_config_ids",
+    "rule_versions",
+    "claim",
+    "window_start",
+    "window_end",
+    "hit_definition",
+    "miss_definition"
+  ],
+  "properties": {
+    "forecast_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "frozen_at": {"type": ["string", "null"], "format": "date-time"},
+    "subject_id": {"type": "string", "minLength": 1},
+    "input_version": {"type": ["string", "integer"]},
+    "system_config_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "rule_versions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "claim": {"type": "string", "minLength": 1},
+    "claim_type": {"type": ["string", "null"]},
+    "predicted_category": {"type": ["string", "null"]},
+    "capability": {"type": ["string", "null"]},
+    "capture_area": {"type": ["string", "null"]},
+    "window_start": {"type": "string", "format": "date-time"},
+    "window_end": {"type": "string", "format": "date-time"},
+    "peak_time": {"type": ["string", "null"], "format": "date-time"},
+    "magnitude_band": {"type": ["string", "null"]},
+    "confidence_band": {"type": ["string", "null"]},
+    "probability": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "calibration_model_id": {"type": ["string", "null"]},
+    "hit_definition": {"type": "string", "minLength": 1},
+    "miss_definition": {"type": "string", "minLength": 1},
+    "exclusions": {"type": "array", "items": {"type": "string"}},
+    "known_contradictions": {"type": "array", "items": {"type": "string"}},
+    "dependency_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "preregistration_hash": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "status": {
+      "type": ["string", "null"],
+      "enum": [null, "draft", "frozen", "open", "closed_pending_score", "scored", "cancelled_pre_window", "unavailable_outcome", "invalidated_input_error"]
+    }
+  },
+  "additionalProperties": true
+}

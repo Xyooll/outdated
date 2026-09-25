@@ -1,0 +1,2193 @@
+ruleset_id: ASTRO.DEGREE.ABS360.MONOMOIRIA_V1
+version: 1.0.0
+status: SOURCE_DOCUMENTED_HISTORICAL / EMPIRICALLY_UNVALIDATED
+system_id: ASTRO.STAR.DEGREE.XYOOL_V1
+purpose: assign a historical planetary degree lord to each of the 360 absolute zodiac degree cells
+
+coordinate_contract:
+  absolute_degree_exact: lambda_mod_360_in_[0,360)
+  absolute_index_zero: floor(absolute_degree_exact)  # 0..359
+  absolute_ordinal: absolute_index_zero + 1          # 1..360
+  local_index_zero: absolute_index_zero % 30
+  local_ordinal: local_index_zero + 1
+
+method:
+  family: sign_based_monomoiria
+  first_degree_rule: first degree of each sign is ruled by its domicile lord
+  continuation: continue one degree at a time through descending Chaldean order
+  chaldean_order: [Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon]
+  source_ids:
+    - src.scholar.greenbaum_jones2017_monomoiria
+    - src.secondary.kurent_monomoiria
+    - src.ptolemy.tetrabiblos.i22_degree_rulership_witness
+
+boundary:
+  - historical use/provenance does not establish predictive efficacy
+  - this is one monomoiria system; trigonal/sect variants remain separate
+  - ordinal counting means 0°00'-0°59' is the first degree
+
+entries:
+  - absolute_index_zero: 0
+    absolute_ordinal: 1
+    sign: Aries
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 1
+    absolute_ordinal: 2
+    sign: Aries
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 2
+    absolute_ordinal: 3
+    sign: Aries
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 3
+    absolute_ordinal: 4
+    sign: Aries
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 4
+    absolute_ordinal: 5
+    sign: Aries
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 5
+    absolute_ordinal: 6
+    sign: Aries
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 6
+    absolute_ordinal: 7
+    sign: Aries
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 7
+    absolute_ordinal: 8
+    sign: Aries
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 8
+    absolute_ordinal: 9
+    sign: Aries
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 9
+    absolute_ordinal: 10
+    sign: Aries
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 10
+    absolute_ordinal: 11
+    sign: Aries
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 11
+    absolute_ordinal: 12
+    sign: Aries
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 12
+    absolute_ordinal: 13
+    sign: Aries
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 13
+    absolute_ordinal: 14
+    sign: Aries
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 14
+    absolute_ordinal: 15
+    sign: Aries
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 15
+    absolute_ordinal: 16
+    sign: Aries
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 16
+    absolute_ordinal: 17
+    sign: Aries
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 17
+    absolute_ordinal: 18
+    sign: Aries
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 18
+    absolute_ordinal: 19
+    sign: Aries
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 19
+    absolute_ordinal: 20
+    sign: Aries
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 20
+    absolute_ordinal: 21
+    sign: Aries
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 21
+    absolute_ordinal: 22
+    sign: Aries
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 22
+    absolute_ordinal: 23
+    sign: Aries
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 23
+    absolute_ordinal: 24
+    sign: Aries
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 24
+    absolute_ordinal: 25
+    sign: Aries
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 25
+    absolute_ordinal: 26
+    sign: Aries
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 26
+    absolute_ordinal: 27
+    sign: Aries
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 27
+    absolute_ordinal: 28
+    sign: Aries
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 28
+    absolute_ordinal: 29
+    sign: Aries
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 29
+    absolute_ordinal: 30
+    sign: Aries
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 30
+    absolute_ordinal: 31
+    sign: Taurus
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 31
+    absolute_ordinal: 32
+    sign: Taurus
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 32
+    absolute_ordinal: 33
+    sign: Taurus
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 33
+    absolute_ordinal: 34
+    sign: Taurus
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 34
+    absolute_ordinal: 35
+    sign: Taurus
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 35
+    absolute_ordinal: 36
+    sign: Taurus
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 36
+    absolute_ordinal: 37
+    sign: Taurus
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 37
+    absolute_ordinal: 38
+    sign: Taurus
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 38
+    absolute_ordinal: 39
+    sign: Taurus
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 39
+    absolute_ordinal: 40
+    sign: Taurus
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 40
+    absolute_ordinal: 41
+    sign: Taurus
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 41
+    absolute_ordinal: 42
+    sign: Taurus
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 42
+    absolute_ordinal: 43
+    sign: Taurus
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 43
+    absolute_ordinal: 44
+    sign: Taurus
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 44
+    absolute_ordinal: 45
+    sign: Taurus
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 45
+    absolute_ordinal: 46
+    sign: Taurus
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 46
+    absolute_ordinal: 47
+    sign: Taurus
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 47
+    absolute_ordinal: 48
+    sign: Taurus
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 48
+    absolute_ordinal: 49
+    sign: Taurus
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 49
+    absolute_ordinal: 50
+    sign: Taurus
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 50
+    absolute_ordinal: 51
+    sign: Taurus
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 51
+    absolute_ordinal: 52
+    sign: Taurus
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 52
+    absolute_ordinal: 53
+    sign: Taurus
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 53
+    absolute_ordinal: 54
+    sign: Taurus
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 54
+    absolute_ordinal: 55
+    sign: Taurus
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 55
+    absolute_ordinal: 56
+    sign: Taurus
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 56
+    absolute_ordinal: 57
+    sign: Taurus
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 57
+    absolute_ordinal: 58
+    sign: Taurus
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 58
+    absolute_ordinal: 59
+    sign: Taurus
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 59
+    absolute_ordinal: 60
+    sign: Taurus
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 60
+    absolute_ordinal: 61
+    sign: Gemini
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 61
+    absolute_ordinal: 62
+    sign: Gemini
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 62
+    absolute_ordinal: 63
+    sign: Gemini
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 63
+    absolute_ordinal: 64
+    sign: Gemini
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 64
+    absolute_ordinal: 65
+    sign: Gemini
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 65
+    absolute_ordinal: 66
+    sign: Gemini
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 66
+    absolute_ordinal: 67
+    sign: Gemini
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 67
+    absolute_ordinal: 68
+    sign: Gemini
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 68
+    absolute_ordinal: 69
+    sign: Gemini
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 69
+    absolute_ordinal: 70
+    sign: Gemini
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 70
+    absolute_ordinal: 71
+    sign: Gemini
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 71
+    absolute_ordinal: 72
+    sign: Gemini
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 72
+    absolute_ordinal: 73
+    sign: Gemini
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 73
+    absolute_ordinal: 74
+    sign: Gemini
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 74
+    absolute_ordinal: 75
+    sign: Gemini
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 75
+    absolute_ordinal: 76
+    sign: Gemini
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 76
+    absolute_ordinal: 77
+    sign: Gemini
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 77
+    absolute_ordinal: 78
+    sign: Gemini
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 78
+    absolute_ordinal: 79
+    sign: Gemini
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 79
+    absolute_ordinal: 80
+    sign: Gemini
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 80
+    absolute_ordinal: 81
+    sign: Gemini
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 81
+    absolute_ordinal: 82
+    sign: Gemini
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 82
+    absolute_ordinal: 83
+    sign: Gemini
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 83
+    absolute_ordinal: 84
+    sign: Gemini
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 84
+    absolute_ordinal: 85
+    sign: Gemini
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 85
+    absolute_ordinal: 86
+    sign: Gemini
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 86
+    absolute_ordinal: 87
+    sign: Gemini
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 87
+    absolute_ordinal: 88
+    sign: Gemini
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 88
+    absolute_ordinal: 89
+    sign: Gemini
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 89
+    absolute_ordinal: 90
+    sign: Gemini
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 90
+    absolute_ordinal: 91
+    sign: Cancer
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 91
+    absolute_ordinal: 92
+    sign: Cancer
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 92
+    absolute_ordinal: 93
+    sign: Cancer
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 93
+    absolute_ordinal: 94
+    sign: Cancer
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 94
+    absolute_ordinal: 95
+    sign: Cancer
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 95
+    absolute_ordinal: 96
+    sign: Cancer
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 96
+    absolute_ordinal: 97
+    sign: Cancer
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 97
+    absolute_ordinal: 98
+    sign: Cancer
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 98
+    absolute_ordinal: 99
+    sign: Cancer
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 99
+    absolute_ordinal: 100
+    sign: Cancer
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 100
+    absolute_ordinal: 101
+    sign: Cancer
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 101
+    absolute_ordinal: 102
+    sign: Cancer
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 102
+    absolute_ordinal: 103
+    sign: Cancer
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 103
+    absolute_ordinal: 104
+    sign: Cancer
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 104
+    absolute_ordinal: 105
+    sign: Cancer
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 105
+    absolute_ordinal: 106
+    sign: Cancer
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 106
+    absolute_ordinal: 107
+    sign: Cancer
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 107
+    absolute_ordinal: 108
+    sign: Cancer
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 108
+    absolute_ordinal: 109
+    sign: Cancer
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 109
+    absolute_ordinal: 110
+    sign: Cancer
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 110
+    absolute_ordinal: 111
+    sign: Cancer
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 111
+    absolute_ordinal: 112
+    sign: Cancer
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 112
+    absolute_ordinal: 113
+    sign: Cancer
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 113
+    absolute_ordinal: 114
+    sign: Cancer
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 114
+    absolute_ordinal: 115
+    sign: Cancer
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 115
+    absolute_ordinal: 116
+    sign: Cancer
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 116
+    absolute_ordinal: 117
+    sign: Cancer
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 117
+    absolute_ordinal: 118
+    sign: Cancer
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 118
+    absolute_ordinal: 119
+    sign: Cancer
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 119
+    absolute_ordinal: 120
+    sign: Cancer
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 120
+    absolute_ordinal: 121
+    sign: Leo
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 121
+    absolute_ordinal: 122
+    sign: Leo
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 122
+    absolute_ordinal: 123
+    sign: Leo
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 123
+    absolute_ordinal: 124
+    sign: Leo
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 124
+    absolute_ordinal: 125
+    sign: Leo
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 125
+    absolute_ordinal: 126
+    sign: Leo
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 126
+    absolute_ordinal: 127
+    sign: Leo
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 127
+    absolute_ordinal: 128
+    sign: Leo
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 128
+    absolute_ordinal: 129
+    sign: Leo
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 129
+    absolute_ordinal: 130
+    sign: Leo
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 130
+    absolute_ordinal: 131
+    sign: Leo
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 131
+    absolute_ordinal: 132
+    sign: Leo
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 132
+    absolute_ordinal: 133
+    sign: Leo
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 133
+    absolute_ordinal: 134
+    sign: Leo
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 134
+    absolute_ordinal: 135
+    sign: Leo
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 135
+    absolute_ordinal: 136
+    sign: Leo
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 136
+    absolute_ordinal: 137
+    sign: Leo
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 137
+    absolute_ordinal: 138
+    sign: Leo
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 138
+    absolute_ordinal: 139
+    sign: Leo
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 139
+    absolute_ordinal: 140
+    sign: Leo
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 140
+    absolute_ordinal: 141
+    sign: Leo
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 141
+    absolute_ordinal: 142
+    sign: Leo
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 142
+    absolute_ordinal: 143
+    sign: Leo
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 143
+    absolute_ordinal: 144
+    sign: Leo
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 144
+    absolute_ordinal: 145
+    sign: Leo
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 145
+    absolute_ordinal: 146
+    sign: Leo
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 146
+    absolute_ordinal: 147
+    sign: Leo
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 147
+    absolute_ordinal: 148
+    sign: Leo
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 148
+    absolute_ordinal: 149
+    sign: Leo
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 149
+    absolute_ordinal: 150
+    sign: Leo
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 150
+    absolute_ordinal: 151
+    sign: Virgo
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 151
+    absolute_ordinal: 152
+    sign: Virgo
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 152
+    absolute_ordinal: 153
+    sign: Virgo
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 153
+    absolute_ordinal: 154
+    sign: Virgo
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 154
+    absolute_ordinal: 155
+    sign: Virgo
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 155
+    absolute_ordinal: 156
+    sign: Virgo
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 156
+    absolute_ordinal: 157
+    sign: Virgo
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 157
+    absolute_ordinal: 158
+    sign: Virgo
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 158
+    absolute_ordinal: 159
+    sign: Virgo
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 159
+    absolute_ordinal: 160
+    sign: Virgo
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 160
+    absolute_ordinal: 161
+    sign: Virgo
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 161
+    absolute_ordinal: 162
+    sign: Virgo
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 162
+    absolute_ordinal: 163
+    sign: Virgo
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 163
+    absolute_ordinal: 164
+    sign: Virgo
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 164
+    absolute_ordinal: 165
+    sign: Virgo
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 165
+    absolute_ordinal: 166
+    sign: Virgo
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 166
+    absolute_ordinal: 167
+    sign: Virgo
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 167
+    absolute_ordinal: 168
+    sign: Virgo
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 168
+    absolute_ordinal: 169
+    sign: Virgo
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 169
+    absolute_ordinal: 170
+    sign: Virgo
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 170
+    absolute_ordinal: 171
+    sign: Virgo
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 171
+    absolute_ordinal: 172
+    sign: Virgo
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 172
+    absolute_ordinal: 173
+    sign: Virgo
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 173
+    absolute_ordinal: 174
+    sign: Virgo
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 174
+    absolute_ordinal: 175
+    sign: Virgo
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 175
+    absolute_ordinal: 176
+    sign: Virgo
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 176
+    absolute_ordinal: 177
+    sign: Virgo
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 177
+    absolute_ordinal: 178
+    sign: Virgo
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 178
+    absolute_ordinal: 179
+    sign: Virgo
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 179
+    absolute_ordinal: 180
+    sign: Virgo
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 180
+    absolute_ordinal: 181
+    sign: Libra
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 181
+    absolute_ordinal: 182
+    sign: Libra
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 182
+    absolute_ordinal: 183
+    sign: Libra
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 183
+    absolute_ordinal: 184
+    sign: Libra
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 184
+    absolute_ordinal: 185
+    sign: Libra
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 185
+    absolute_ordinal: 186
+    sign: Libra
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 186
+    absolute_ordinal: 187
+    sign: Libra
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 187
+    absolute_ordinal: 188
+    sign: Libra
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 188
+    absolute_ordinal: 189
+    sign: Libra
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 189
+    absolute_ordinal: 190
+    sign: Libra
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 190
+    absolute_ordinal: 191
+    sign: Libra
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 191
+    absolute_ordinal: 192
+    sign: Libra
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 192
+    absolute_ordinal: 193
+    sign: Libra
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 193
+    absolute_ordinal: 194
+    sign: Libra
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 194
+    absolute_ordinal: 195
+    sign: Libra
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 195
+    absolute_ordinal: 196
+    sign: Libra
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 196
+    absolute_ordinal: 197
+    sign: Libra
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 197
+    absolute_ordinal: 198
+    sign: Libra
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 198
+    absolute_ordinal: 199
+    sign: Libra
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 199
+    absolute_ordinal: 200
+    sign: Libra
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 200
+    absolute_ordinal: 201
+    sign: Libra
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 201
+    absolute_ordinal: 202
+    sign: Libra
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 202
+    absolute_ordinal: 203
+    sign: Libra
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 203
+    absolute_ordinal: 204
+    sign: Libra
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 204
+    absolute_ordinal: 205
+    sign: Libra
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 205
+    absolute_ordinal: 206
+    sign: Libra
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 206
+    absolute_ordinal: 207
+    sign: Libra
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 207
+    absolute_ordinal: 208
+    sign: Libra
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 208
+    absolute_ordinal: 209
+    sign: Libra
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 209
+    absolute_ordinal: 210
+    sign: Libra
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 210
+    absolute_ordinal: 211
+    sign: Scorpio
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 211
+    absolute_ordinal: 212
+    sign: Scorpio
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 212
+    absolute_ordinal: 213
+    sign: Scorpio
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 213
+    absolute_ordinal: 214
+    sign: Scorpio
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 214
+    absolute_ordinal: 215
+    sign: Scorpio
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 215
+    absolute_ordinal: 216
+    sign: Scorpio
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 216
+    absolute_ordinal: 217
+    sign: Scorpio
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 217
+    absolute_ordinal: 218
+    sign: Scorpio
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 218
+    absolute_ordinal: 219
+    sign: Scorpio
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 219
+    absolute_ordinal: 220
+    sign: Scorpio
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 220
+    absolute_ordinal: 221
+    sign: Scorpio
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 221
+    absolute_ordinal: 222
+    sign: Scorpio
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 222
+    absolute_ordinal: 223
+    sign: Scorpio
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 223
+    absolute_ordinal: 224
+    sign: Scorpio
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 224
+    absolute_ordinal: 225
+    sign: Scorpio
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 225
+    absolute_ordinal: 226
+    sign: Scorpio
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 226
+    absolute_ordinal: 227
+    sign: Scorpio
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 227
+    absolute_ordinal: 228
+    sign: Scorpio
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 228
+    absolute_ordinal: 229
+    sign: Scorpio
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 229
+    absolute_ordinal: 230
+    sign: Scorpio
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 230
+    absolute_ordinal: 231
+    sign: Scorpio
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 231
+    absolute_ordinal: 232
+    sign: Scorpio
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 232
+    absolute_ordinal: 233
+    sign: Scorpio
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 233
+    absolute_ordinal: 234
+    sign: Scorpio
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 234
+    absolute_ordinal: 235
+    sign: Scorpio
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 235
+    absolute_ordinal: 236
+    sign: Scorpio
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 236
+    absolute_ordinal: 237
+    sign: Scorpio
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 237
+    absolute_ordinal: 238
+    sign: Scorpio
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 238
+    absolute_ordinal: 239
+    sign: Scorpio
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 239
+    absolute_ordinal: 240
+    sign: Scorpio
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 240
+    absolute_ordinal: 241
+    sign: Sagittarius
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 241
+    absolute_ordinal: 242
+    sign: Sagittarius
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 242
+    absolute_ordinal: 243
+    sign: Sagittarius
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 243
+    absolute_ordinal: 244
+    sign: Sagittarius
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 244
+    absolute_ordinal: 245
+    sign: Sagittarius
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 245
+    absolute_ordinal: 246
+    sign: Sagittarius
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 246
+    absolute_ordinal: 247
+    sign: Sagittarius
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 247
+    absolute_ordinal: 248
+    sign: Sagittarius
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 248
+    absolute_ordinal: 249
+    sign: Sagittarius
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 249
+    absolute_ordinal: 250
+    sign: Sagittarius
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 250
+    absolute_ordinal: 251
+    sign: Sagittarius
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 251
+    absolute_ordinal: 252
+    sign: Sagittarius
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 252
+    absolute_ordinal: 253
+    sign: Sagittarius
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 253
+    absolute_ordinal: 254
+    sign: Sagittarius
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 254
+    absolute_ordinal: 255
+    sign: Sagittarius
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 255
+    absolute_ordinal: 256
+    sign: Sagittarius
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 256
+    absolute_ordinal: 257
+    sign: Sagittarius
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 257
+    absolute_ordinal: 258
+    sign: Sagittarius
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 258
+    absolute_ordinal: 259
+    sign: Sagittarius
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 259
+    absolute_ordinal: 260
+    sign: Sagittarius
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 260
+    absolute_ordinal: 261
+    sign: Sagittarius
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 261
+    absolute_ordinal: 262
+    sign: Sagittarius
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 262
+    absolute_ordinal: 263
+    sign: Sagittarius
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 263
+    absolute_ordinal: 264
+    sign: Sagittarius
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 264
+    absolute_ordinal: 265
+    sign: Sagittarius
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 265
+    absolute_ordinal: 266
+    sign: Sagittarius
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 266
+    absolute_ordinal: 267
+    sign: Sagittarius
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 267
+    absolute_ordinal: 268
+    sign: Sagittarius
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 268
+    absolute_ordinal: 269
+    sign: Sagittarius
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 269
+    absolute_ordinal: 270
+    sign: Sagittarius
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 270
+    absolute_ordinal: 271
+    sign: Capricorn
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 271
+    absolute_ordinal: 272
+    sign: Capricorn
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 272
+    absolute_ordinal: 273
+    sign: Capricorn
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 273
+    absolute_ordinal: 274
+    sign: Capricorn
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 274
+    absolute_ordinal: 275
+    sign: Capricorn
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 275
+    absolute_ordinal: 276
+    sign: Capricorn
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 276
+    absolute_ordinal: 277
+    sign: Capricorn
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 277
+    absolute_ordinal: 278
+    sign: Capricorn
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 278
+    absolute_ordinal: 279
+    sign: Capricorn
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 279
+    absolute_ordinal: 280
+    sign: Capricorn
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 280
+    absolute_ordinal: 281
+    sign: Capricorn
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 281
+    absolute_ordinal: 282
+    sign: Capricorn
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 282
+    absolute_ordinal: 283
+    sign: Capricorn
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 283
+    absolute_ordinal: 284
+    sign: Capricorn
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 284
+    absolute_ordinal: 285
+    sign: Capricorn
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 285
+    absolute_ordinal: 286
+    sign: Capricorn
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 286
+    absolute_ordinal: 287
+    sign: Capricorn
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 287
+    absolute_ordinal: 288
+    sign: Capricorn
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 288
+    absolute_ordinal: 289
+    sign: Capricorn
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 289
+    absolute_ordinal: 290
+    sign: Capricorn
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 290
+    absolute_ordinal: 291
+    sign: Capricorn
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 291
+    absolute_ordinal: 292
+    sign: Capricorn
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 292
+    absolute_ordinal: 293
+    sign: Capricorn
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 293
+    absolute_ordinal: 294
+    sign: Capricorn
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 294
+    absolute_ordinal: 295
+    sign: Capricorn
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 295
+    absolute_ordinal: 296
+    sign: Capricorn
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 296
+    absolute_ordinal: 297
+    sign: Capricorn
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 297
+    absolute_ordinal: 298
+    sign: Capricorn
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 298
+    absolute_ordinal: 299
+    sign: Capricorn
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 299
+    absolute_ordinal: 300
+    sign: Capricorn
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 300
+    absolute_ordinal: 301
+    sign: Aquarius
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 301
+    absolute_ordinal: 302
+    sign: Aquarius
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 302
+    absolute_ordinal: 303
+    sign: Aquarius
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 303
+    absolute_ordinal: 304
+    sign: Aquarius
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 304
+    absolute_ordinal: 305
+    sign: Aquarius
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 305
+    absolute_ordinal: 306
+    sign: Aquarius
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 306
+    absolute_ordinal: 307
+    sign: Aquarius
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 307
+    absolute_ordinal: 308
+    sign: Aquarius
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 308
+    absolute_ordinal: 309
+    sign: Aquarius
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 309
+    absolute_ordinal: 310
+    sign: Aquarius
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 310
+    absolute_ordinal: 311
+    sign: Aquarius
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 311
+    absolute_ordinal: 312
+    sign: Aquarius
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 312
+    absolute_ordinal: 313
+    sign: Aquarius
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 313
+    absolute_ordinal: 314
+    sign: Aquarius
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 314
+    absolute_ordinal: 315
+    sign: Aquarius
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 315
+    absolute_ordinal: 316
+    sign: Aquarius
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 316
+    absolute_ordinal: 317
+    sign: Aquarius
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 317
+    absolute_ordinal: 318
+    sign: Aquarius
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 318
+    absolute_ordinal: 319
+    sign: Aquarius
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 319
+    absolute_ordinal: 320
+    sign: Aquarius
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 320
+    absolute_ordinal: 321
+    sign: Aquarius
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 321
+    absolute_ordinal: 322
+    sign: Aquarius
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 322
+    absolute_ordinal: 323
+    sign: Aquarius
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 323
+    absolute_ordinal: 324
+    sign: Aquarius
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 324
+    absolute_ordinal: 325
+    sign: Aquarius
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 325
+    absolute_ordinal: 326
+    sign: Aquarius
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 326
+    absolute_ordinal: 327
+    sign: Aquarius
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 327
+    absolute_ordinal: 328
+    sign: Aquarius
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 328
+    absolute_ordinal: 329
+    sign: Aquarius
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 329
+    absolute_ordinal: 330
+    sign: Aquarius
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 330
+    absolute_ordinal: 331
+    sign: Pisces
+    local_index_zero: 0
+    local_ordinal: 1
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 331
+    absolute_ordinal: 332
+    sign: Pisces
+    local_index_zero: 1
+    local_ordinal: 2
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 332
+    absolute_ordinal: 333
+    sign: Pisces
+    local_index_zero: 2
+    local_ordinal: 3
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 333
+    absolute_ordinal: 334
+    sign: Pisces
+    local_index_zero: 3
+    local_ordinal: 4
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 334
+    absolute_ordinal: 335
+    sign: Pisces
+    local_index_zero: 4
+    local_ordinal: 5
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 335
+    absolute_ordinal: 336
+    sign: Pisces
+    local_index_zero: 5
+    local_ordinal: 6
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 336
+    absolute_ordinal: 337
+    sign: Pisces
+    local_index_zero: 6
+    local_ordinal: 7
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 337
+    absolute_ordinal: 338
+    sign: Pisces
+    local_index_zero: 7
+    local_ordinal: 8
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 338
+    absolute_ordinal: 339
+    sign: Pisces
+    local_index_zero: 8
+    local_ordinal: 9
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 339
+    absolute_ordinal: 340
+    sign: Pisces
+    local_index_zero: 9
+    local_ordinal: 10
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 340
+    absolute_ordinal: 341
+    sign: Pisces
+    local_index_zero: 10
+    local_ordinal: 11
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 341
+    absolute_ordinal: 342
+    sign: Pisces
+    local_index_zero: 11
+    local_ordinal: 12
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 342
+    absolute_ordinal: 343
+    sign: Pisces
+    local_index_zero: 12
+    local_ordinal: 13
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 343
+    absolute_ordinal: 344
+    sign: Pisces
+    local_index_zero: 13
+    local_ordinal: 14
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 344
+    absolute_ordinal: 345
+    sign: Pisces
+    local_index_zero: 14
+    local_ordinal: 15
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 345
+    absolute_ordinal: 346
+    sign: Pisces
+    local_index_zero: 15
+    local_ordinal: 16
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 346
+    absolute_ordinal: 347
+    sign: Pisces
+    local_index_zero: 16
+    local_ordinal: 17
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 347
+    absolute_ordinal: 348
+    sign: Pisces
+    local_index_zero: 17
+    local_ordinal: 18
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 348
+    absolute_ordinal: 349
+    sign: Pisces
+    local_index_zero: 18
+    local_ordinal: 19
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 349
+    absolute_ordinal: 350
+    sign: Pisces
+    local_index_zero: 19
+    local_ordinal: 20
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 350
+    absolute_ordinal: 351
+    sign: Pisces
+    local_index_zero: 20
+    local_ordinal: 21
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 351
+    absolute_ordinal: 352
+    sign: Pisces
+    local_index_zero: 21
+    local_ordinal: 22
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 352
+    absolute_ordinal: 353
+    sign: Pisces
+    local_index_zero: 22
+    local_ordinal: 23
+    monomoiria_ruler: Mars
+  - absolute_index_zero: 353
+    absolute_ordinal: 354
+    sign: Pisces
+    local_index_zero: 23
+    local_ordinal: 24
+    monomoiria_ruler: Sun
+  - absolute_index_zero: 354
+    absolute_ordinal: 355
+    sign: Pisces
+    local_index_zero: 24
+    local_ordinal: 25
+    monomoiria_ruler: Venus
+  - absolute_index_zero: 355
+    absolute_ordinal: 356
+    sign: Pisces
+    local_index_zero: 25
+    local_ordinal: 26
+    monomoiria_ruler: Mercury
+  - absolute_index_zero: 356
+    absolute_ordinal: 357
+    sign: Pisces
+    local_index_zero: 26
+    local_ordinal: 27
+    monomoiria_ruler: Moon
+  - absolute_index_zero: 357
+    absolute_ordinal: 358
+    sign: Pisces
+    local_index_zero: 27
+    local_ordinal: 28
+    monomoiria_ruler: Saturn
+  - absolute_index_zero: 358
+    absolute_ordinal: 359
+    sign: Pisces
+    local_index_zero: 28
+    local_ordinal: 29
+    monomoiria_ruler: Jupiter
+  - absolute_index_zero: 359
+    absolute_ordinal: 360
+    sign: Pisces
+    local_index_zero: 29
+    local_ordinal: 30
+    monomoiria_ruler: Mars
+
+validation:
+  requirement: ablate monomoiria ruler against a baseline without degree-lord feature
+  dependency: ruler is derived from sign lord + local ordinal; do not count it as independent from those inputs

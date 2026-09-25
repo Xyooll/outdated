@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xyool.local/domains/astrology/schemas/outcome.schema.json",
+  "title": "Xyool Astrology Outcome",
+  "type": "object",
+  "required": ["outcome_id", "forecast_id", "observed_at", "source_type", "raw_observation", "score_state"],
+  "properties": {
+    "outcome_id": {"type": "string", "minLength": 1},
+    "forecast_id": {"type": "string", "minLength": 1},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "source_type": {
+      "type": "string",
+      "enum": ["external_record", "timestamped_record", "prospective_self_report", "retrospective_report", "unavailable"]
+    },
+    "source_id": {"type": ["string", "null"]},
+    "raw_observation": {"type": ["string", "object", "array", "number", "boolean", "null"]},
+    "normalized_category": {"type": ["string", "null"]},
+    "objective_or_subjective": {"type": ["string", "null"], "enum": [null, "objective", "subjective", "mixed", "unknown"]},
+    "scored_at": {"type": ["string", "null"], "format": "date-time"},
+    "score_state": {"type": "string", "enum": ["hit", "miss", "ambiguous", "unavailable"]},
+    "scoring_rule_version": {"type": ["string", "null"]},
+    "notes_after_scoring": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

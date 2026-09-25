@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xyool.local/domains/astrology/schemas/capability-observation.schema.json",
+  "title": "Xyool Astrology Capability Observation",
+  "type": "object",
+  "required": ["subject_id", "observed_at", "measurement_method", "blinded_to_prediction"],
+  "properties": {
+    "subject_id": {"type": "string", "minLength": 1},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "window_id": {"type": ["string", "null"]},
+    "measurement_method": {"type": "string", "minLength": 1},
+    "blinded_to_prediction": {"type": "boolean"},
+    "mental_capacity": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "focus": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "action": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "opportunity": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "communication": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "creation": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "investigation": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "connection": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "recovery": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "friction": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "impulsiveness": {"type": ["integer", "null"], "minimum": 0, "maximum": 4},
+    "notes": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

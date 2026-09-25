@@ -1,0 +1,334 @@
+system_id: ASTRO.WT.XYOOL_STORY_V1
+ruleset_id: ASTRO.WT.XYOOL_STORY_V1.RULESET
+version: 1.0.0
+status: SOURCE-DOCUMENTED_AND_DOMAIN-HYPOTHESIS_MIXED
+created_at: 2026-09-24
+purpose: >
+  Small auditable Western Tropical grammar for Xyool Story Reader/Writer experiments.
+  Source-documented conventions are separated from Xyool-created story rules.
+efficacy_status: VALIDATION_REQUIRED
+
+source_ids:
+  - src.astro.whole_sign_houses
+  - src.astro.houses
+  - src.astro.planets
+  - src.astro.aspects
+  - src.astro.transits
+  - src.astro.classical_rulers
+  - src.tap.profections153
+
+rules:
+
+  - rule_id: ASTRO.WT.XS1.CALC.WHOLE_SIGN
+    rule_class: NATIVE_CALCULATION_RULE
+    name: Whole-sign house assignment
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.astro.whole_sign_houses
+    required_inputs:
+      - verified or declared birth/event time
+      - location
+      - tropical Ascendant longitude
+    trigger_configuration: Ascendant sign is known
+    native_interpretation: >
+      The entire zodiac sign containing the Ascendant is House 1.
+      Subsequent signs in zodiacal order are Houses 2 through 12.
+    falsification_condition: deterministic calculation mismatch under identical inputs/settings
+
+  - rule_id: ASTRO.WT.XS1.INPUT.ASC_BOUNDARY
+    rule_class: NATIVE_CALCULATION_RULE
+    name: Ascendant sign-boundary precision gate
+    version: 1
+    status: DOMAIN HYPOTHESIS
+    source_provenance:
+      - src.astro.whole_sign_houses
+      - src.astro.swisseph
+    required_inputs:
+      - reported birth time
+      - birth-time precision or uncertainty
+      - calculated Ascendant
+    native_interpretation: >
+      Whole-sign house identity and Ascendant-based profections depend on the Ascendant sign.
+      If plausible birth-time error can move the Ascendant into an adjacent sign, house/profection
+      outputs are conditional on competing birth-time scenarios rather than treated as settled.
+    trigger_configuration: Ascendant is sufficiently close to a sign boundary that declared time uncertainty can cross it
+    timing_start_rule: calculate nearest sign-boundary crossing time around the reported birth time
+    conflict_rules:
+      - do not select one rising-sign scenario merely because its interpretation fits better
+    falsification_condition: verified birth time or independent rectification evidence excludes the alternate sign scenario
+
+  - rule_id: ASTRO.WT.XS1.CALC.MAJOR_ASPECTS
+    rule_class: NATIVE_CALCULATION_RULE
+    name: Major aspect geometry
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.astro.aspects
+    native_interpretation:
+      conjunction: 0
+      sextile: 60
+      square: 90
+      trine: 120
+      opposition: 180
+    calculation_prerequisites:
+      - geocentric tropical longitudes
+    falsification_condition: calculated angular separation does not match the declared aspect within the active orb rule
+
+  - rule_id: ASTRO.WT.XS1.STATE.ASPECT_PHASE
+    rule_class: TIMING_RULE
+    name: Applying exact separating phase
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.astro.aspects
+    native_interpretation: >
+      Applying means the faster body is moving toward exact aspect; exact is the minimum angular
+      separation from the target aspect; separating means it has passed exact and is moving away.
+    timing_start_rule: aspect enters the declared orb while applying
+    timing_peak_rule: exact aspect
+    timing_end_rule: aspect exits the declared orb while separating
+    known_exceptions:
+      - station/retrograde loops can create repeated exact contacts and must be represented as separate passes
+    falsification_condition: motion state does not support the assigned applying/exact/separating label
+
+  - rule_id: ASTRO.WT.XS1.CAL.TRANSIT_ORB_1D
+    rule_class: TIMING_RULE
+    name: One-degree pilot transit orb
+    version: 1
+    status: DOMAIN HYPOTHESIS
+    source_provenance: src.astro.transits
+    native_interpretation: >
+      For v1 prospective tests, a major transit aspect becomes an eligible timing window at one degree
+      applying and closes at one degree separating. This is a deliberately narrow Xyool pilot calibration.
+    orb: 1.0_degree
+    timing_start_rule: absolute deviation from exact major aspect <= 1 degree while applying
+    timing_peak_rule: exact aspect
+    timing_end_rule: absolute deviation from exact major aspect > 1 degree after separation
+    conflict_rules:
+      - do not widen the orb after outcome review
+    falsification_condition: prospective tests show the calibration is non-discriminating or inferior to a predeclared alternative
+
+  - rule_id: ASTRO.WT.XS1.STATE.TRANSIT
+    rule_class: TIMING_RULE
+    name: Transit activates natal factor
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.astro.transits
+    required_inputs:
+      - natal planet or angle longitude
+      - transiting planet longitude and motion
+      - declared major aspect
+      - active orb rule
+    native_interpretation: >
+      A transit is a moving planet forming an aspect to a natal factor. Exact contact is treated as the
+      center/peak of the timing state, while the transiting planet's symbolism supplies the proposed theme.
+    known_dependencies:
+      - ASTRO.WT.XS1.CALC.MAJOR_ASPECTS
+      - ASTRO.WT.XS1.STATE.ASPECT_PHASE
+    falsification_condition: no declared aspect occurs under the frozen calculation settings
+
+  - rule_id: ASTRO.WT.XS1.CAPTURE.HOUSES
+    rule_class: CAPTURE_RULE
+    name: Broad whole-sign house capture map
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.astro.houses
+    capture_mapping:
+      1: self, body, identity, beginnings
+      2: money, possessions, values, resources
+      3: communication, learning, siblings, local movement
+      4: home, family, roots, foundations
+      5: creativity, pleasure, romance, children
+      6: work routines, service, health
+      7: partners, relationships, agreements, open counterparts
+      8: shared resources, debt, loss, transformation
+      9: higher learning, belief, law, long travel
+      10: vocation, public role, achievement, authority
+      11: friends, groups, networks, support, hopes
+      12: retreat, seclusion, hidden matters, endings
+    known_exceptions:
+      - meanings vary by historical school; this map is a broad modern capture layer for v1
+    falsification_condition: capture mapping fails prospective specificity tests or is too broad to discriminate
+
+  - rule_id: ASTRO.WT.XS1.SIGNIF.PLANETS
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    name: Broad planetary-function map
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.astro.planets
+    native_interpretation:
+      Sun: identity, vitality, will, conscious purpose
+      Moon: emotion, habit, needs, mood
+      Mercury: thought, communication, learning, movement
+      Venus: attraction, relationship, aesthetics, harmony
+      Mars: assertion, conflict, effort, activation
+      Jupiter: expansion, meaning, opportunity, confidence
+      Saturn: limits, responsibility, structure, concentration
+      Uranus: disruption, liberation, discontinuity
+      Neptune: sensitivity, diffusion, idealization, dissolution
+      Pluto: deep transformation, compulsion, regeneration
+    falsification_condition: interpretation cannot be mapped to a predeclared observable target without adding post-hoc meanings
+
+  - rule_id: ASTRO.WT.XS1.ASPECT.DIRECTION
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    name: Broad major-aspect direction
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.astro.aspects
+    native_interpretation:
+      conjunction: direct combination or concentration of the involved planetary functions
+      opposition: polarity/tension requiring response or balancing
+      square: friction/blockage/challenge requiring action or adjustment
+      trine: comparatively easy or complementary flow
+      sextile: comparatively cooperative/opportunity-like flow
+    known_dependencies:
+      - ASTRO.WT.XS1.SIGNIF.PLANETS
+    falsification_condition: aspect label alone is used to predict a concrete outcome without specifying the planets/capture area
+
+  - rule_id: ASTRO.WT.XS1.RULERS.CLASSICAL
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    name: Classical sign rulers for profections
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.astro.classical_rulers
+    native_interpretation:
+      Aries: Mars
+      Taurus: Venus
+      Gemini: Mercury
+      Cancer: Moon
+      Leo: Sun
+      Virgo: Mercury
+      Libra: Venus
+      Scorpio: Mars
+      Sagittarius: Jupiter
+      Capricorn: Saturn
+      Aquarius: Saturn
+      Pisces: Jupiter
+    conflict_rules:
+      - modern outer-planet rulerships are not substituted inside this v1 profection component
+    falsification_condition: not applicable as an internal convention; predictive usefulness remains separately testable
+
+  - rule_id: ASTRO.WT.XS1.TIME.PROFECTION
+    rule_class: TIMING_RULE
+    name: Annual profection one-sign-per-year cycle
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.tap.profections153
+    required_inputs:
+      - Ascendant sign
+      - age measured from birthday to birthday
+    native_interpretation: >
+      Birth to first birthday activates the Ascendant sign/first whole-sign house.
+      Each birthday advances one sign/house; the cycle repeats every twelve years.
+    timing_start_rule: birthday
+    timing_end_rule: next birthday
+    known_dependencies:
+      - ASTRO.WT.XS1.CALC.WHOLE_SIGN
+      - ASTRO.WT.XS1.INPUT.ASC_BOUNDARY
+    falsification_condition: deterministic cycle assignment mismatch from frozen age/Ascendant inputs
+
+  - rule_id: ASTRO.WT.XS1.TIME.LORD_OF_YEAR
+    rule_class: TIMING_RULE
+    name: Profected sign ruler becomes lord of year
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.tap.profections153
+    required_inputs:
+      - profected sign
+      - classical ruler map
+    native_interpretation: >
+      The classical ruler of the activated profected sign is treated as the primary annual time-lord
+      and becomes a priority factor for interpreting that year.
+    known_dependencies:
+      - ASTRO.WT.XS1.TIME.PROFECTION
+      - ASTRO.WT.XS1.RULERS.CLASSICAL
+    falsification_condition: predictive cohort shows no added discrimination over controls when using the lord-of-year prioritization
+
+  - rule_id: ASTRO.WT.XS1.TIME.PROFECTION_TRANSIT_PRIORITY
+    rule_class: TIMING_RULE
+    name: Transit priority in a profection year
+    version: 1
+    status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+    source_provenance: src.tap.profections153
+    native_interpretation: >
+      During a profection year, prioritize (1) transits to the natal lord of the year,
+      (2) transits made by the lord of the year to natal factors, and
+      (3) transits through the profected sign.
+    known_dependencies:
+      - ASTRO.WT.XS1.TIME.LORD_OF_YEAR
+      - ASTRO.WT.XS1.STATE.TRANSIT
+    conflict_rules:
+      - priority does not mean guaranteed manifestation
+      - multiple signals sharing the same underlying transit are not independent confirmations
+    falsification_condition: priority model fails to outperform an unfiltered transit baseline on untouched/prospective cases
+
+  - rule_id: ASTRO.WT.XS1.STORY.READER
+    rule_class: CORRESPONDENCE_RULE
+    name: Astrology Story Reader grammar
+    version: 1
+    status: DOMAIN HYPOTHESIS
+    source_provenance:
+      - Xyool CORE-STORY-READER
+      - ASTRO.WT.XYOOL_STORY_V1 source-documented rules
+    required_inputs:
+      - dated real-world history through an as-of cutoff
+      - frozen system and rule versions
+      - calculated historical astrology states
+    native_interpretation: >
+      Reader reconstruction may compare dated history with rule-active astrology states and use those
+      comparisons to describe correspondence, misses, contradictions, and current state. It may not use
+      later outcome knowledge to rewrite the rule or present correlation as causal proof.
+    conflict_rules:
+      - a case used to discover or tune a rule cannot also confirm the tuned rule
+    falsification_condition: reader output depends on information after the declared as-of cutoff
+
+  - rule_id: ASTRO.WT.XS1.STORY.WRITER
+    rule_class: CORRESPONDENCE_RULE
+    name: Astrology Story Writer branch grammar
+    version: 1
+    status: DOMAIN HYPOTHESIS
+    source_provenance:
+      - Xyool CORE-STORY-WRITER
+      - ASTRO.WT.XYOOL_STORY_V1 source-documented rules
+    required_inputs:
+      - frozen Reader current state
+      - future calculated transit/profection states
+      - established source rules
+    native_interpretation: >
+      A future branch may be written only when a domain-valid timing/transition rule is active.
+      The branch combines the transiting/time-lord planetary theme, the natal target theme,
+      house/capture area, aspect direction, and timing phase into a conditional story.
+    trigger_configuration: at least one eligible timing rule is active
+    timing_start_rule: source timing window or frozen local timing calibration
+    timing_peak_rule: exact/declared peak
+    timing_end_rule: source timing end or frozen local timing calibration
+    conflict_rules:
+      - preserve counter-story and no-manifestation branch
+      - do not add new techniques after seeing the outcome
+      - do not convert branch coherence into probability
+    falsification_condition: branch lacks observable proof, invalidation, or a finite timing window
+
+  - rule_id: ASTRO.WT.XS1.STORY.PREDICTIVE_ELIGIBILITY
+    rule_class: ACTION_MAPPING_RULE
+    name: Story branch to forecast eligibility
+    version: 1
+    status: DOMAIN HYPOTHESIS
+    source_provenance: Xyool Predictive Astrology contract
+    required_inputs:
+      - frozen Story Writer branch
+      - predeclared outcome taxonomy
+    trigger_configuration: branch is backed by an established rule and can be stated as a finite falsifiable outcome
+    native_interpretation: >
+      Only branches with a predeclared outcome category, finite window, explicit hit/miss criteria,
+      rule/version provenance, and a relevant baseline/control plan can become prospective forecasts.
+    falsification_condition: forecast requires post-hoc reinterpretation to score
+
+readiness:
+  deterministic_calculation_grammar: READY_FOR_CONFIGURATION
+  historical_story_reader_grammar: READY_FOR_CONFIGURATION_FOR_DISCOVERY
+  future_story_writer_grammar: PARTIAL
+  prospective_prediction: PARTIAL
+
+remaining_blockers:
+  - establish system-specific capture/outcome translations narrow enough for prospective scoring
+  - verify input precision for Ascendant-dependent methods on each subject
+  - run historical discovery only with explicit discovery/confirmation separation
+  - run prospective validation before any predictive efficacy promotion

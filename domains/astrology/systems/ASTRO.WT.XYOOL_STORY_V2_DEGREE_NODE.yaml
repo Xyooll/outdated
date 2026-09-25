@@ -1,0 +1,34 @@
+system_id: ASTRO.WT.XYOOL_STORY_V2_DEGREE_NODE
+version: 0.1.0
+status: CANDIDATE / PARTIAL
+parent_system: ASTRO.WT.XYOOL_STORY_V1
+degree_layer: ASTRO.STAR.DEGREE.XYOOL_V1
+purpose: migrate Western Story v1 into a full-chart degree-node graph without rewriting v1 history
+
+graph_layers:
+  L0: raw_astronomical_state
+  L1: categorical_wrappers
+  L2: rulership_governance
+  L3: geometric_relationships
+  L4: stellar_neighborhood
+  L5: minor_body_layer
+  L6: timing_activation
+  L7: historical_outcome_evidence
+
+house_policy:
+  role: primary_life_area_capture_wrapper
+  v1_default: whole_sign
+
+degree_policy:
+  role: exact_atomic_address
+  preserve_before_categorical_compression: true
+
+migration:
+  document: ../migrations/WT-STORY-V1-TO-DEGREE-NODE-V2.md
+  v1_immutable: true
+
+readiness:
+  deterministic_state_model: PARTIAL
+  story_reader: PARTIAL
+  story_writer: PARTIAL
+  predictive_wrapper: BLOCKED

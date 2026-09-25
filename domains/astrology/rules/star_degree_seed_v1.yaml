@@ -1,0 +1,99 @@
+ruleset_id: ASTRO.STAR.DEGREE.SEED_V1
+version: 1.0.0
+status: SOURCE_DOCUMENTED_AND_XYOOL_HYPOTHESIS_MIXED
+system_id: ASTRO.STAR.DEGREE.XYOOL_V1
+
+rules:
+  - rule_id: ASTRO.STAR.NODE.EXACT_STATE
+    rule_class: CALCULATION_STATE_RULE
+    status: DOMAIN_METHOD_CANDIDATE
+    authority: XYOOL_HYPOTHESIS
+    claim: preserve exact longitude and calculation identity before sign/house/decan compression
+    falsification: deterministic reproduction fails under identical frozen settings
+
+  - rule_id: ASTRO.STAR.NODE.EPOCH_FIELD
+    rule_class: CALCULATION_STATE_RULE
+    status: SOURCE_GROUNDED_METHOD
+    authority: ASTRONOMICAL_REFERENCE + XYOOL_METHOD
+    source_ids: [src.iau.sofa, src.gaia.dr3, src.astro.swisseph]
+    claim: stellar neighborhood is epoch/frame dependent rather than a timeless degree-to-star identity
+    falsification: independent pipelines disagree beyond frozen tolerance
+
+  - rule_id: ASTRO.STAR.CONTACT.ECLIPTIC_LONGITUDE
+    rule_class: CONTACT_RULE
+    status: XYOOL_HYPOTHESIS
+    method: wrapped absolute ecliptic-longitude difference
+    pilot_threshold_deg: 1.0
+    sensitivity_deg: [0.25, 0.5, 1.0, 2.0]
+    falsification: no incremental holdout signal versus Model A and rotated-star controls
+
+  - rule_id: ASTRO.STAR.CONTACT.SPHERICAL_DISTANCE
+    rule_class: CONTACT_RULE
+    status: XYOOL_HYPOTHESIS
+    method: great-circle angular separation in common frame/epoch
+    pilot_threshold_deg: 1.0
+    sensitivity_deg: [0.5, 1.0, 2.0]
+    falsification: no incremental holdout signal versus longitude-only contact
+
+  - rule_id: ASTRO.DEGREE.SABIAN.CELL_MAPPING
+    rule_class: DEGREE_SYMBOL_RULE
+    status: SOURCE_DOCUMENTED_LINEAGE / UNVALIDATED
+    authority: MODERN_PRACTITIONER_LINEAGE
+    source_id: src.astro.sabian_symbols
+    required: frozen tropical degree-cell convention and corpus version
+    boundary: does not imply fixed-star identity
+    falsification: Model B fails to improve over Model A or permuted-cell null
+
+  - rule_id: ASTRO.STAR.PTOLEMY.ALDEBARAN.NATURE
+    rule_class: FIXED_STAR_SEMANTIC_RULE
+    status: SOURCE_DOCUMENTED_UNVALIDATED
+    source_id: src.ptolemy.tetrabiblos.i9
+    native_meaning: Mars analogue
+
+  - rule_id: ASTRO.STAR.PTOLEMY.REGULUS.NATURE
+    rule_class: FIXED_STAR_SEMANTIC_RULE
+    status: SOURCE_DOCUMENTED_UNVALIDATED
+    source_id: src.ptolemy.tetrabiblos.i9
+    native_meaning: Mars + Jupiter analogue
+
+  - rule_id: ASTRO.STAR.PTOLEMY.SPICA.NATURE
+    rule_class: FIXED_STAR_SEMANTIC_RULE
+    status: SOURCE_DOCUMENTED_UNVALIDATED
+    source_id: src.ptolemy.tetrabiblos.i9
+    native_meaning: Venus + lesser Mars analogue in referenced translation
+
+  - rule_id: ASTRO.STAR.PTOLEMY.ANTARES.NATURE
+    rule_class: FIXED_STAR_SEMANTIC_RULE
+    status: SOURCE_DOCUMENTED_UNVALIDATED
+    source_id: src.ptolemy.tetrabiblos.i9
+    native_meaning: Mars + some Jupiter analogue
+
+  - rule_id: ASTRO.STAR.PTOLEMY.FOMALHAUT.NATURE
+    rule_class: FIXED_STAR_SEMANTIC_RULE
+    status: SOURCE_DOCUMENTED_UNVALIDATED
+    source_id: src.ptolemy.tetrabiblos.i9
+    native_meaning: Venus + Mercury analogue
+
+  - rule_id: ASTRO.STAR.PTOLEMY.SIRIUS.NATURE
+    rule_class: FIXED_STAR_SEMANTIC_RULE
+    status: SOURCE_DOCUMENTED_UNVALIDATED
+    source_id: src.ptolemy.tetrabiblos.i9
+    native_meaning: Jupiter + lesser Mars analogue
+
+  - rule_id: ASTRO.STAR.PTOLEMY.PROCYON.NATURE
+    rule_class: FIXED_STAR_SEMANTIC_RULE
+    status: SOURCE_DOCUMENTED_UNVALIDATED
+    source_id: src.ptolemy.tetrabiblos.i9
+    native_meaning: Mercury + lesser Mars analogue
+
+  - rule_id: ASTRO.STAR.PTOLEMY.ARCTURUS.NATURE
+    rule_class: FIXED_STAR_SEMANTIC_RULE
+    status: SOURCE_DOCUMENTED_UNVALIDATED
+    source_id: src.ptolemy.tetrabiblos.i9
+    native_meaning: Jupiter + Mars analogue
+
+global_boundaries:
+  - historical semantic source never supplies Xyool contact orb unless explicitly documented
+  - no event prediction follows directly from a planetary analogy
+  - no posthoc star addition
+  - degree/star/sign/house labels preserve dependency lineage

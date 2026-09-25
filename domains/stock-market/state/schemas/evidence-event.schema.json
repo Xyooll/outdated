@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xyool.local/domains/stock-market/state/schemas/evidence-event.schema.json",
+  "title": "Xyool Stock Evidence Event",
+  "type": "object",
+  "required": [
+    "event_id",
+    "domain",
+    "entity_id",
+    "observed_at",
+    "source_type",
+    "source_id",
+    "evidence_class",
+    "fingerprint",
+    "status"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "const": "stock-market"
+    },
+    "entity_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "effective_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "source_type": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "source_url_or_accession": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_published_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "source_fetched_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "fingerprint": {
+      "type": "string",
+      "minLength": 8
+    },
+    "evidence_class": {
+      "type": "string"
+    },
+    "structured_fact": {},
+    "native_text_summary": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "transition_implication": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timer_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "confidence": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "CONFIRMED",
+        "REALIZED",
+        "STALE",
+        "INVALIDATED",
+        "SUPERSEDED"
+      ]
+    },
+    "supersedes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sec_fact_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,135 @@
+version: 1
+system_id: MAYA.TRAD
+status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+source:
+  source_id: src.smithsonian.komon_tohil_day_meanings
+  title: The Meaning of the Days in the Maya Sacred Calendar
+  author_or_tradition: Group of K'iche' Day Keepers Komon Tohil, Zunil, Quetzaltenango, Guatemala
+  publisher_context: Smithsonian National Museum of the American Indian — Living Maya Time
+  locator: https://maya.nmai.si.edu/sites/default/files/resources/The%20Meaning%20of%20the%20Days%20in%20the%20Maya%20Sacred%20Calendar.pdf
+provenance_note: >-
+  These are concise Xyool paraphrases of one explicitly identified K'iche' Day Keeper source.
+  They are not asserted to represent every Maya community, language, or lineage.
+validation_note: >-
+  Source documentation establishes provenance only. Descriptive or predictive efficacy remains untested by Xyool.
+rules:
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.IMOX
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Imox
+    yucatec_name: Imix'
+    native_summary: Water, rain, return, intuition, creativity, and restoring disturbed conditions.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.IQ
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Iq'
+    yucatec_name: Ik'
+    native_summary: Wind, air, spirit, emotional and social currents, and relief from difficulty.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.AQABAL
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Aq'ab'al
+    yucatec_name: Ak'b'al
+    native_summary: Dawn and darkness, illumination, heartfelt feeling, precision, and endurance of criticism.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.KAT
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: K'at
+    yucatec_name: K'an
+    native_summary: Nets, entanglement and release, fire, protection, and themes of birth or emergence.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.KAN
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Kan
+    yucatec_name: Chikchan
+    native_summary: Feathered-serpent symbolism, justice, truth, peace, strength, work, and release of anger.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.KAME
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Kame
+    yucatec_name: Kimi
+    native_summary: Death and life-cycle gravity, choices, protection from accidents, strength, and hardship.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.KEJ
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Kej
+    yucatec_name: Manik'
+    native_summary: Deer, fourfold support of sky and Earth, carrying responsibility, defense, and strength.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.QANIL
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Q'anil
+    yucatec_name: Lamat
+    native_summary: Seed, growth, seasonal cycles, living beings, and themes of support and resilience.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.TOJ
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Toj
+    yucatec_name: Muluk
+    native_summary: Offering, payment, help, listening, understanding, reconciliation, and bringing hidden matters to light.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.TZI
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Tz'i'
+    yucatec_name: Ok
+    native_summary: Dog symbolism, senses, justice, judgment, and protection from deprivation or harmful habits.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.BATZ
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: B'atz'
+    yucatec_name: Chuwen
+    native_summary: Thread, continuity, destiny, human and natural development, and the renewal of the 260-day cycle.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.E
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: E
+    yucatec_name: Eb'
+    native_summary: Path, travel, relationship/formal union, well-being, generosity, and ancestral listening.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.AJ
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Aj
+    yucatec_name: B'en
+    native_summary: Corn and cultivated land, virtue, divine authority, triumph, composure, and intelligence.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.IX
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: I'x
+    yucatec_name: Ix
+    native_summary: Feline power, vitality, sacred place, wisdom, earthly divinity, and animal guardianship.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.TZIKIN
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Tz'ikin
+    yucatec_name: Men
+    native_summary: Bird and sky symbolism, commerce, money, merchants, kindness, and relational warmth.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.AJMAQ
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Ajmaq
+    yucatec_name: Kib'
+    native_summary: Will, avoiding mistakes, gratitude for communal/material well-being, courage, and strong temperament.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.NOJ
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: No'j
+    yucatec_name: Kab'an
+    native_summary: Wisdom, reason and thought, joining ideas, advice, science, and constructive social judgment.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.TIJAX
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Tijax
+    yucatec_name: Etz'nab'
+    native_summary: Obsidian/decisive symbolism, destiny, temptation, protection from wrongdoing, conflict, and healing.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.KAWOQ
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Kawoq
+    yucatec_name: Kawak
+    native_summary: Thunder and communal themes, project success, prosperity, mental restoration, judgment, and foresight.
+    capability_translation: null
+  - rule_id: MAYA.TRAD.KOMON_TOHIL.AJPU
+    rule_class: NATIVE_INTERPRETIVE_RULE
+    kiche_name: Ajpu'
+    yucatec_name: Ajaw
+    native_summary: Sun, life and destiny, living beings, skillful action, communal fulfillment, affection, and judgment.
+    capability_translation: null

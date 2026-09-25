@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xyool"
+version = "0.1.0"
+description = "Autonomous research, development, and execution agent"
+requires-python = ">=3.11"
+dependencies = ["openai>=1.0.0", "numpy>=1.26.0"]
+
+[project.optional-dependencies]
+pdf = ["pypdf>=5.0.0"]
+
+[tool.setuptools.packages.find]
+include = ["agent*"]
+
+[project.scripts]
+xyool = "main:main"

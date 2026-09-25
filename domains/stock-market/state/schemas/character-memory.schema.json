@@ -1,0 +1,377 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xyool.local/domains/stock-market/state/schemas/character-memory.schema.json",
+  "title": "Xyool Canonical Character Memory",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "character_id",
+    "identity",
+    "as_of",
+    "local_web"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "character_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identity": {
+      "type": "object"
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "character_type": {
+      "type": "string"
+    },
+    "public_status": {
+      "type": "string"
+    },
+    "story_roles": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "relationship_edges": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "local_web": {
+      "type": "object",
+      "properties": {
+        "subsidiaries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "customers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "partners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "investees_acquisitions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "financing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regulators_governments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "management_insiders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suppliers_distributors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "programs_technologies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "other": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "source_cursors": {
+      "type": "object"
+    },
+    "evidence_pointers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "story_pointers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "current_story_head": {
+      "type": "object"
+    },
+    "unresolved_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "material_source_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "profile_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "profile_status": {
+      "type": "string"
+    },
+    "quantitative_traits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "trait"
+        ],
+        "properties": {
+          "trait": {
+            "type": "string"
+          },
+          "value": {},
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "as_of": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "qualitative_traits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "trait",
+          "state"
+        ],
+        "properties": {
+          "trait": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "basis": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contradictions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "behavior_signature": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "resources_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "constraints_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "agency": {
+      "type": [
+        "string",
+        "object",
+        "null"
+      ]
+    },
+    "relationship_style": {
+      "type": [
+        "string",
+        "object",
+        "null"
+      ]
+    },
+    "maturity_state": {
+      "type": [
+        "string",
+        "object",
+        "null"
+      ]
+    },
+    "archetype_hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "archetype",
+          "status"
+        ],
+        "properties": {
+          "archetype": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "CANDIDATE",
+              "PROVISIONAL",
+              "SUPPORTED_FOR_SCOPE",
+              "WEAKENED",
+              "REJECTED",
+              "SUPERSEDED",
+              "UNCLASSIFIED",
+              "EMERGENT"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "supporting_traits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contradictions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "registry": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "as_of": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "transformation_state": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "unclassified_features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "character_condition": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "EMERGING",
+        "PROGRESSING",
+        "FUNCTIONING",
+        "STALLED",
+        "REMEDIATING",
+        "DEGRADING",
+        "TRANSFORMING",
+        "UNKNOWN",
+        null
+      ]
+    },
+    "trajectory": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "IMPROVING",
+        "STABLE",
+        "MIXED",
+        "DETERIORATING",
+        "UNKNOWN",
+        null
+      ]
+    }
+  },
+  "additionalProperties": true
+}

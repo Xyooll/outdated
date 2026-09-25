@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xyool.local/domains/astrology/schemas/signal.schema.json",
+  "title": "Xyool Astrology Signal",
+  "type": "object",
+  "required": ["signal_id", "system_id", "rule_id", "start", "end"],
+  "properties": {
+    "signal_id": {"type": "string", "minLength": 1},
+    "system_id": {"type": "string", "minLength": 1},
+    "rule_id": {"type": "string", "minLength": 1},
+    "rule_version": {"type": ["string", "integer", "null"]},
+    "capability": {"type": ["string", "null"]},
+    "direction": {"type": ["string", "null"], "enum": [null, "supports", "inhibits", "neutral", "mixed", "unknown"]},
+    "strength_band": {"type": ["string", "null"]},
+    "confidence_band": {"type": ["string", "null"]},
+    "start": {"type": "string", "format": "date-time"},
+    "end": {"type": "string", "format": "date-time"},
+    "peak": {"type": ["string", "null"], "format": "date-time"},
+    "dependency_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "native_interpretation_reference": {"type": ["string", "null"]},
+    "translation_rule_id": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

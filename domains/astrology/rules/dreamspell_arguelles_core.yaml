@@ -1,0 +1,48 @@
+version: 1
+system_id: DREAMSPELL.ARGUELLES
+status: SOURCE-DOCUMENTED — NOT TESTED BY XYOOL
+source:
+  source_id: src.lawoftime.seals_and_tones
+  title: Learning the 13 Galactic Tones and 20 Solar Seals
+  author_or_tradition: Foundation for the Law of Time / Argüelles Dreamspell tradition
+  locator: https://www.lawoftime.org/infobooth/sealsandtones.html
+provenance_note: >-
+  These are concise Xyool summaries of the primary modern Dreamspell system vocabulary.
+  They are not traditional Maya Chol Q'ij meanings.
+validation_note: >-
+  Source documentation establishes Dreamspell provenance only. Descriptive or predictive efficacy remains untested by Xyool.
+tones:
+  - {rule_id: DREAMSPELL.TONE.01, number: 1, name: Magnetic, native_summary: Purpose-oriented beginning; gathering or attracting toward unity, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.02, number: 2, name: Lunar, native_summary: Polarity and challenge; stabilizing through contrast, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.03, number: 3, name: Electric, native_summary: Activation and service; linking or bonding action, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.04, number: 4, name: Self-Existing, native_summary: Form and definition; measuring or structuring, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.05, number: 5, name: Overtone, native_summary: Empowerment and radiance; directing or commanding resources, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.06, number: 6, name: Rhythmic, native_summary: Equality and organization; balancing through rhythm, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.07, number: 7, name: Resonant, native_summary: Attunement; channeling and inspiration, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.08, number: 8, name: Galactic, native_summary: Integrity; harmonizing conduct with a model or pattern, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.09, number: 9, name: Solar, native_summary: Intention and realization; pulsing purpose into expression, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.10, number: 10, name: Planetary, native_summary: Manifestation; producing or perfecting form, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.11, number: 11, name: Spectral, native_summary: Liberation; dissolving and releasing structure, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.12, number: 12, name: Crystal, native_summary: Cooperation; dedication and wider sharing, capability_translation: null}
+  - {rule_id: DREAMSPELL.TONE.13, number: 13, name: Cosmic, native_summary: Presence and endurance; transcending or completing a cycle, capability_translation: null}
+solar_seals:
+  - {rule_id: DREAMSPELL.SEAL.01, number: 1, name: Dragon, native_summary: Birth, nurture, and being, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.02, number: 2, name: Wind, native_summary: Spirit, communication, and breath, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.03, number: 3, name: Night, native_summary: Abundance, dreaming, and intuition, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.04, number: 4, name: Seed, native_summary: Flowering, targeting, and awareness, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.05, number: 5, name: Serpent, native_summary: Life force, survival, and instinct, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.06, number: 6, name: Worldbridger, native_summary: Death/change, equalization, and opportunity, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.07, number: 7, name: Hand, native_summary: Accomplishment, knowledge, and healing, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.08, number: 8, name: Star, native_summary: Elegance, beauty-making, and art, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.09, number: 9, name: Moon, native_summary: Water, purification, and flow, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.10, number: 10, name: Dog, native_summary: Heart, love, and loyalty, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.11, number: 11, name: Monkey, native_summary: Magic, play, and illusion, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.12, number: 12, name: Human, native_summary: Free will, influence, and wisdom, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.13, number: 13, name: Skywalker, native_summary: Space, exploration, and wakefulness, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.14, number: 14, name: Wizard, native_summary: Timelessness, enchantment, and receptivity, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.15, number: 15, name: Eagle, native_summary: Vision, creation, and mind, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.16, number: 16, name: Warrior, native_summary: Intelligence, questioning, and fearlessness, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.17, number: 17, name: Earth, native_summary: Navigation, evolution, and synchronicity, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.18, number: 18, name: Mirror, native_summary: Endlessness, reflection, and order, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.19, number: 19, name: Storm, native_summary: Self-generation, catalysis, and energy, capability_translation: null}
+  - {rule_id: DREAMSPELL.SEAL.20, number: 20, name: Sun, native_summary: Universal fire, illumination, and life, capability_translation: null}
