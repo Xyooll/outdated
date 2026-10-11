@@ -12,7 +12,13 @@
 <header class="top"><div class="logo"><span class="heart">♥</span><div><b>Our Space</b><small>Just the two of us</small></div></div><button id="lockBtn" class="light hidden" type="button">Lock</button></header>
 <main>
 <section id="setup" class="gate hidden"><div class="intro"><span class="emblem">♥</span><h1>Something just for us.</h1><p>A little corner of the world that belongs to two people.</p></div><div class="panel"><span class="eyebrow">ONE-TIME SETUP</span><h2>Connect private messaging</h2><p class="note">Create a dedicated Supabase project, run setup.sql, invite only your two accounts, and add the project URL and publishable key to config.js.</p><p class="note">Instructions: <a href="https://github.com/Xyooll/outdated/tree/main/our-space">GitHub setup guide</a></p><p class="status">No messages can be sent until setup is complete.</p></div></section>
-<section id="login" class="gate hidden"><div class="intro"><span class="emblem">♥</span><h1>Only you & me.</h1><p>One conversation, away from all the noise.</p></div><form id="loginForm" class="panel"><span class="eyebrow">PRIVATE ACCESS</span><h2>Come on in</h2><label for="email">Your invited email</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com"><button id="loginBtn" class="primary">Send my sign-in link →</button><p class="note">Only two approved accounts can use this chat. Open the sign-in link on this phone.</p><p id="loginStatus" class="status" role="status"></p></form></section>
+<section id="login" class="gate hidden"><div class="intro"><span class="emblem">♥</span><h1>Only you & me.</h1><p>One conversation, away from all the noise.</p></div><form id="loginForm" class="panel"><span class="eyebrow">PRIVATE ACCESS</span><h2>Come on in</h2><label for="email">Your invited email</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
+<label for="loginPassword" style="margin-top:17px">Your account password</label>
+<input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Supabase account password">
+<button id="loginBtn" class="primary">Sign in securely →</button>
+<button id="emailLinkBtn" class="textbutton" type="button" style="margin-top:18px">Email me a sign-in link instead</button>
+<p class="note">Use the password you set for this Supabase account, not the private phrase used to encrypt messages. Only your two approved accounts can access this room.</p>
+<p class="note">If you choose an email link, open it once in the same browser where you will use the app.</p><p id="loginStatus" class="status" role="status"></p></form></section>
 <section id="unlock" class="gate hidden"><div class="intro"><span class="emblem">✦</span><h1>Your words. Your key.</h1><p>Messages unlock on your phone. Your encryption phrase never goes to the server.</p></div><form id="unlockForm" class="panel"><span class="eyebrow">ENCRYPTED CHAT</span><h2>Unlock our conversation</h2><label for="phrase">Our shared secret phrase</label><input id="phrase" type="password" required minlength="12" autocomplete="off" placeholder="Our private phrase"><button id="unlockBtn" class="primary">Unlock conversation ↗</button><p class="note">Use the exact same long, random phrase on both phones. Share it in person, not by email or in this chat. Losing it means losing access to older messages.</p><p id="unlockStatus" class="status" role="status"></p><button type="button" id="logout" class="textbutton">Sign out</button></form></section>
 <section id="chat" class="chat hidden"><div class="peer"><div class="peericon">♥</div><div><strong>Our conversation</strong><small><span id="liveStatus">Connecting…</span> · End-to-end encrypted</small></div></div><div id="messages" class="messages" role="log" aria-live="polite" aria-label="Our messages"></div><form id="sendForm" class="composer"><label for="entry" class="sr">New message</label><textarea id="entry" rows="1" maxlength="2000" enterkeyhint="send" required placeholder="Write something sweet…"></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></form><p class="feedback" id="sendStatus" role="status"></p></section>
 </main><footer class="footer">A place for two · No ads · No spectators</footer></div>
@@ -103,9 +109,41 @@ async function load(){
 function subscribe(){if(channel)supabase.removeChannel(channel);channel=supabase.channel("couple-chat-live").on("postgres_changes",{event:"INSERT",schema:"public",table:"couple_messages"},()=>{load().catch(e=>tell("sendStatus",errorText(e)));}).subscribe(status=>{$("liveStatus").textContent=status==="SUBSCRIBED"?"● Live":"Reconnecting…";});}
 $("loginForm").addEventListener("submit",async e=>{
  e.preventDefault();$("loginBtn").disabled=true;tell("loginStatus","");
- try{const link=window.location.origin+window.location.pathname;const res=await supabase.auth.signInWithOtp({email:$("email").value.trim(),options:{shouldCreateUser:false,emailRedirectTo:link}});if(res.error)throw res.error;tell("loginStatus","Check your email. Open the sign-in link on this phone.");}
- catch(err){tell("loginStatus",errorText(err));}finally{$("loginBtn").disabled=false;}
+ try {
+  const email=$("email").value.trim(),password=$("loginPassword").value;
+  if (!email || !password) throw Error("Enter your invited email and account password.");
+  const res=await supabase.auth.signInWithPassword({email,password});
+  if(res.error)throw res.error;
+  $("loginPassword").value="";
+  await initialize();
+ } catch(err) {
+  tell("loginStatus","Sign-in unsuccessful: "+errorText(err)+". If you do not have a password, choose the email-link option below.");
+ } finally { $("loginPassword").value="";$("loginBtn").disabled=false; }
 });
+$("emailLinkBtn").addEventListener("click",async()=>{
+ const email=$("email");
+ if(!email.checkValidity()){email.reportValidity();return;}
+ $("emailLinkBtn").disabled=true;tell("loginStatus","");
+ try{
+  const link=window.location.origin+window.location.pathname;
+  const res=await supabase.auth.signInWithOtp({email:email.value.trim(),options:{shouldCreateUser:false,emailRedirectTo:link}});
+  if(res.error)throw res.error;
+  tell("loginStatus","A one-time link was requested. Open the newest message once, in the same browser. If you already used the link, request another after the rate limit clears.");
+ }catch(err){
+  tell("loginStatus",(err.status===429?"Too many recent email requests. Wait for Supabase's limit to reset. ":"")+errorText(err));
+ }finally{$("emailLinkBtn").disabled=false;}
+});
+function surfaceRedirectError() {
+ const query=new URLSearchParams(location.search);
+ const fragment=new URLSearchParams(location.hash.replace(/^#/,""));
+ const code=query.get("error")||fragment.get("error");
+ const reason=query.get("error_description")||fragment.get("error_description");
+ if(!code)return;
+ const details=(reason||code).replace(/\+/g," ");
+ tell("loginStatus","Email sign-in did not complete: "+details+". Request a fresh link or sign in with your account password.");
+ if(!location.hash.includes("access_token"))history.replaceState(null,"",location.pathname);
+}
+surfaceRedirectError();
 $("unlockForm").addEventListener("submit",async e=>{
  e.preventDefault();$("unlockBtn").disabled=true;tell("unlockStatus","");
  try{key=await derive($("phrase").value);await verifyPairPhrase();await load();$("phrase").value="";show("chat");subscribe();$("entry").focus();}

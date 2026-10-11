@@ -54,7 +54,7 @@ WHERE lower(email)=lower('EMAIL_TWO');
 
 https://xyooll.github.io/outdated/our-space/
 
-Each person signs in using their invited email, then enters the **same unique, strong encryption phrase**. The first unlocked phone sets the encrypted phrase verifier, so the other phone must use the same phrase. Exchange the phrase in person.
+Each person signs in using the invited email and their account password (recommended), then enters the **same unique, strong encryption phrase**. A one-time email link remains available as an alternative. If an email link redirects back to login, do not reuse that link; it may be expired, consumed, or open in a separate browser session. Use password login in the same Chrome tab or installed PWA to avoid this loop. The first unlocked phone sets the encrypted phrase verifier, so the other phone must use the same phrase. Exchange the phrase in person.
 
 On Android Chrome: menu (⋮) → **Add to Home screen** / **Install app**.
 
@@ -72,3 +72,7 @@ On Android Chrome: menu (⋮) → **Add to Home screen** / **Install app**.
 **Data project:** https://supabase.com/dashboard/project/vtlqpgmipfhdjiidssxg
 
 **Code:** https://github.com/Xyooll/outdated/tree/main/our-space
+
+## Login-loop correction
+
+On 2026-10-11, Supabase Auth logs showed invalid/consumed one-time verification links and temporary email rate limiting. The app now offers direct email + password sign-in, an optional email-link fallback, and visible redirect errors. Email-account passwords and the shared end-to-end encryption phrase are **different** secrets. No passwords should be added to GitHub, shared in chat, or placed in config.js.
