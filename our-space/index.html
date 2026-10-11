@@ -16,22 +16,22 @@
 <label for="loginPassword" style="margin-top:17px">Your account password</label>
 <input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Supabase account password">
 <button id="loginBtn" class="primary">Sign in securely →</button>
-<button id="emailLinkBtn" class="textbutton" type="button" style="margin-top:18px">Email me a sign-in link instead</button>
+<button id="forgotBtn" class="textbutton" type="button" style="margin-top:18px">Forgot password? Send a reset link</button>
 <p class="note">Use the password you set for this Supabase account, not the private phrase used to encrypt messages. Only your two approved accounts can access this room.</p>
 <p class="note">If you choose an email link, open it once in the same browser where you will use the app.</p><p id="loginStatus" class="status" role="status"></p></form></section>
-<section id="unlock" class="gate hidden"><div class="intro"><span class="emblem">✦</span><h1>Your words. Your key.</h1><p>Messages unlock on your phone. Your encryption phrase never goes to the server.</p></div><form id="unlockForm" class="panel"><span class="eyebrow">ENCRYPTED CHAT</span><h2>Unlock our conversation</h2><label for="phrase">Our shared secret phrase</label><input id="phrase" type="password" required minlength="12" autocomplete="off" placeholder="Our private phrase"><button id="unlockBtn" class="primary">Unlock conversation ↗</button><p class="note">Use the exact same long, random phrase on both phones. Share it in person, not by email or in this chat. Losing it means losing access to older messages.</p><p id="unlockStatus" class="status" role="status"></p><button type="button" id="logout" class="textbutton">Sign out</button></form></section>
+<section id="passwordReset" class="gate hidden"><form id="passwordResetForm" class="panel"><span class="eyebrow">ACCOUNT RECOVERY</span><h2>Choose a new password</h2><label for="freshPassword">New account password</label><input id="freshPassword" type="password" minlength="12" required autocomplete="new-password"><label for="freshPassword2" style="margin-top:14px">Confirm password</label><input id="freshPassword2" type="password" minlength="12" required autocomplete="new-password"><button id="saveFreshPassword" class="primary">Save new password</button><p id="passwordResetStatus" class="status" role="status"></p></form></section><section id="unlock" class="gate hidden"><div class="intro"><span class="emblem">✦</span><h1>Your words. Your key.</h1><p>Messages unlock on your phone. Your encryption phrase never goes to the server.</p></div><form id="unlockForm" class="panel"><span class="eyebrow">ENCRYPTED CHAT</span><h2>Unlock our conversation</h2><label for="phrase">Our shared secret phrase</label><input id="phrase" type="password" required minlength="12" autocomplete="off" placeholder="Our private phrase"><button id="unlockBtn" class="primary">Unlock conversation ↗</button><p class="note">Use the exact same long, random phrase on both phones. Share it in person, not by email or in this chat. Losing it means losing access to older messages.</p><p id="unlockStatus" class="status" role="status"></p><button type="button" id="logout" class="textbutton">Sign out</button></form></section>
 <section id="chat" class="chat hidden"><div class="peer"><div class="peericon">♥</div><div><strong>Our conversation</strong><small><span id="liveStatus">Connecting…</span> · End-to-end encrypted</small></div></div><div id="messages" class="messages" role="log" aria-live="polite" aria-label="Our messages"></div><form id="sendForm" class="composer"><label for="entry" class="sr">New message</label><textarea id="entry" rows="1" maxlength="2000" enterkeyhint="send" required placeholder="Write something sweet…"></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></form><p class="feedback" id="sendStatus" role="status"></p></section>
 </main><footer class="footer">A place for two · No ads · No spectators</footer></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
 import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js";
 const $ = id => document.getElementById(id);
-const ids = ["setup","login","unlock","chat"];
+const ids = ["setup","login","passwordReset","unlock","chat"];
 const ready = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL) && (PUBLISHABLE_KEY.startsWith("sb_publishable_") || PUBLISHABLE_KEY.length > 100);
 const supabase = ready ? createClient(PROJECT_URL, PUBLISHABLE_KEY) : null;
 const encoder = new TextEncoder(), decoder = new TextDecoder();
 const aad = encoder.encode("our-space-v1");
-let me=null, salt=null, verifier=null, key=null, channel=null, refresh=0;
+let me=null, salt=null, verifier=null, key=null, channel=null, refresh=0, isRecovering=false;
 function show(id){ for(const name of ids)$(name).classList.toggle("hidden",name!==id);$("lockBtn").classList.toggle("hidden",id!=="chat");}
 function tell(id,message){$(id).textContent=message||"";}
 function errorText(e){return e && e.message || "Something went wrong.";}
@@ -72,6 +72,7 @@ async function initialize(){
  try{
   const identity=await supabase.auth.getUser();
   if(identity.error||!identity.data.user){me=null;lock();return;}
+  if(isRecovering){me=identity.data.user;show("passwordReset");return;}
   if(me && me.id===identity.data.user.id && key)return;
   me=identity.data.user;
   const allowed=await supabase.from("couple_members").select("role").eq("user_id",me.id).maybeSingle();
@@ -120,18 +121,31 @@ $("loginForm").addEventListener("submit",async e=>{
   tell("loginStatus","Sign-in unsuccessful: "+errorText(err)+". If you do not have a password, choose the email-link option below.");
  } finally { $("loginPassword").value="";$("loginBtn").disabled=false; }
 });
-$("emailLinkBtn").addEventListener("click",async()=>{
- const email=$("email");
- if(!email.checkValidity()){email.reportValidity();return;}
- $("emailLinkBtn").disabled=true;tell("loginStatus","");
+$("forgotBtn").addEventListener("click",async()=>{
+ const field=$("email");
+ if(!field.value.trim()||!field.checkValidity()){field.reportValidity();return;}
+ $("forgotBtn").disabled=true;
  try{
-  const link=window.location.origin+window.location.pathname;
-  const res=await supabase.auth.signInWithOtp({email:email.value.trim(),options:{shouldCreateUser:false,emailRedirectTo:link}});
-  if(res.error)throw res.error;
-  tell("loginStatus","A one-time link was requested. Open the newest message once, in the same browser. If you already used the link, request another after the rate limit clears.");
- }catch(err){
-  tell("loginStatus",(err.status===429?"Too many recent email requests. Wait for Supabase's limit to reset. ":"")+errorText(err));
- }finally{$("emailLinkBtn").disabled=false;}
+  const response=await supabase.auth.resetPasswordForEmail(field.value.trim(),{redirectTo:location.origin+location.pathname});
+  if(response.error)throw response.error;
+  tell("loginStatus","Check your email for a new password reset link. Open it once. Email delivery may be temporarily rate-limited.");
+ }catch(err){tell("loginStatus",errorText(err));}
+ finally{$("forgotBtn").disabled=false;}
+});
+$("passwordResetForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const password=$("freshPassword").value;
+ if(password!==$("freshPassword2").value){tell("passwordResetStatus","Passwords do not match.");return;}
+ $("saveFreshPassword").disabled=true;
+ try{
+  const result=await supabase.auth.updateUser({password});
+  if(result.error)throw result.error;
+  $("freshPassword").value="";$("freshPassword2").value="";
+  isRecovering=false;history.replaceState(null,"",location.pathname);
+  await initialize();
+  tell("unlockStatus","Account password saved. Now use your separate shared encryption phrase.");
+ }catch(err){tell("passwordResetStatus",errorText(err));}
+ finally{$("saveFreshPassword").disabled=false;}
 });
 function surfaceRedirectError() {
  const query=new URLSearchParams(location.search);
@@ -159,7 +173,11 @@ $("sendForm").addEventListener("submit",async e=>{
 $("entry").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();if(!$("sendBtn").disabled)$("sendForm").requestSubmit();}});
 $("lockBtn").addEventListener("click",lock);
 $("logout").addEventListener("click",async()=>{await supabase.auth.signOut();me=null;lock();});
-if(supabase){supabase.auth.onAuthStateChange(event=>{if(event==="SIGNED_IN"||event==="SIGNED_OUT")setTimeout(initialize,0);});}
+if(supabase){supabase.auth.onAuthStateChange(event=>{
+ if(event==="PASSWORD_RECOVERY"){isRecovering=true;setTimeout(()=>show("passwordReset"),0);}
+ else if(event==="SIGNED_OUT"){isRecovering=false;setTimeout(initialize,0);}
+ else if(event==="SIGNED_IN")setTimeout(initialize,0);
+});}
 if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
 initialize();
 </script>
