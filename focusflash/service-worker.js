@@ -1,37 +1,22 @@
-const CACHE = 'focusflash-v1';
-const ASSETS = [
-  './',
-  './index.html',
-  './styles.css',
-  './app.js',
-  './manifest.webmanifest',
-  './icon.svg'
+// Network-first FocusFlash shell; no old HTML/JS cached across releases.
+const CACHE="focusflash-video-v2";
+const STATIC=[
+ "./index.html","./styles.css?v=video-1",
+ "./app.js?v=video-1","./video-studio.js?v=video-1",
+ "./manifest.webmanifest","./icon.svg"
 ];
-
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
-  self.skipWaiting();
+self.addEventListener("install",event=>{
+ event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(STATIC)));
+ self.skipWaiting();
 });
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE).map(key => caches.delete(key))
-    ))
-  );
-  self.clients.claim();
+self.addEventListener("activate",event=>{
+ event.waitUntil(caches.keys().then(keys=>Promise.all(
+  keys.filter(key=>key.startsWith("focusflash-")&&key!==CACHE).map(key=>caches.delete(key))
+ )));
+ self.clients.claim();
 });
-
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then(hit => {
-      if (hit) return hit;
-      return fetch(event.request).then(response => {
-        const clone = response.clone();
-        caches.open(CACHE).then(cache => cache.put(event.request, clone));
-        return response;
-      }).catch(() => caches.match('./index.html'));
-    })
-  );
+self.addEventListener("fetch",event=>{
+ if(event.request.method!=="GET"||new URL(event.request.url).origin!==self.location.origin)return;
+ // No caching third-party model requests here: the runtime handles model cache.
+ event.respondWith(fetch(event.request).catch(()=>caches.match(event.request)));
 });

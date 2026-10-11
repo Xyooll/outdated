@@ -32,3 +32,20 @@ Open that URL in Chrome on Android and choose:
 
 The same web app can be wrapped with Capacitor or Trusted Web Activity tooling
 to produce an Android APK/AAB without rewriting the reader.
+
+
+## All-in-one narrated video creation
+
+FocusFlash now includes a **Video Studio** on the same screen.
+
+1. Paste or type a passage and set the speed/word size.
+2. Choose Portrait (9:16), Landscape (16:9) or Square (1:1).
+3. Choose a narrator and tap **Generate voice**.
+4. Once on-device speech synthesis completes, preview the voice, optionally save the WAV, and tap **Export video**.
+5. Chrome downloads a **WebM video with synchronized generated narration** (or silent if the audio checkbox is off). Word changes are timed proportionally to word length within the generated audio and are an approximation, not word-for-word forced alignment.
+
+No sign-in, server API key, subscription, or third-party editing app is required. Speech generation uses open-source **Kokoro-82M** (Apache-2.0 licensed weights), loaded on demand from a public model host. Its quantized ONNX weights are about 90 MB for first download, plus the JS/WASM runtime and voice data; cached on-device as browser storage allows. Generating long passages can be slow or exceed memory on entry-level phones. Sent text is processed locally: it is not submitted to a cloud text-to-speech endpoint. A network connection is initially required to download the voice model.
+
+**Important limitations:** The native browser video encoder usually produces `.webm`, not `.mp4`. Video is captured in real time, so leave Chrome open and the screen awake until it finishes. Narration speed sets the approximate duration of a narrated export (WPM controls silent exports). A WebM can be converted to MP4 separately if an upload service requires it, but no external tool is needed to produce the video itself.
+
+The normal RSVP reader, its focus letter, font controls, saved position and installable PWA behavior remain unchanged.

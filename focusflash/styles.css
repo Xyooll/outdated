@@ -53,3 +53,26 @@ textarea{width:100%;resize:vertical;background:#111113;color:var(--text);border:
 @media(prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important;transition:none!important}
 }
+
+/* FocusFlash Video Studio — clear controls, no overlays */
+.studio-card{background:linear-gradient(145deg,#211d26,#171719);border:1px solid #493744;border-radius:20px;padding:17px;margin-bottom:14px}
+.studio-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.studio-title h2{font-size:1.24rem;margin:6px 0 6px;letter-spacing:-.3px}
+.studio-title p{margin:0;color:#c1b5c0;font-size:.86rem;line-height:1.5;max-width:510px}
+.studio-title .eyebrow{font-size:10px;letter-spacing:2px;color:#fa8797;font-weight:800}
+.studio-symbol{font-size:27px;color:#f1a3b4;border:1px solid #8f5664;border-radius:13px;display:grid;place-items:center;min-width:48px;height:48px}
+.studio-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
+.studio-grid>label{display:flex;flex-direction:column;font-size:12px;color:#e7dce4;gap:7px}
+.studio-grid select{width:100%;height:47px;padding:10px;background:#101015;color:#fff;border:1px solid #605360;border-radius:12px;font:inherit;font-size:13px}
+.studio-grid input[type=range]{width:100%;accent-color:#e85966;min-height:30px}
+.studio-grid .studio-check{display:flex;flex-direction:row;align-items:center;gap:10px;line-height:1.35;font-size:13px}
+.studio-check input{accent-color:#e85966;width:21px;height:21px;flex:none}
+.studio-grid .mini-note{font-size:10px;color:#98919c;margin-left:3px}
+.studio-buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.studio-buttons button{min-height:46px;padding:10px 9px;font-size:12px}
+.studio-buttons button:disabled{opacity:.45;cursor:default}
+.studio-buttons .primary{background:#f5edf1;color:#231e29}
+.studio-buttons #studioExport{background:#f7b4c0;color:#33212a}
+.studio-status{margin:13px 0 0;min-height:25px;border-radius:11px;background:#121115;border:1px solid #ffffff18;color:#f2d5dc;font-size:12px;line-height:1.5;padding:11px 12px;overflow-wrap:anywhere}
+.studio-help{color:#aaa3ae;font-size:11px;line-height:1.6;margin:12px 1px 0}
+@media(max-width:490px){.studio-grid{grid-template-columns:1fr}.studio-buttons{grid-template-columns:1fr 1fr}.studio-card{padding:14px}.studio-buttons button{font-size:11px}}

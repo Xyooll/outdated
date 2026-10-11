@@ -251,4 +251,5 @@
 
   restoreState();
   loadText(false);
+  if (window.FocusFlashStudio) window.FocusFlashStudio.mount();
 })();

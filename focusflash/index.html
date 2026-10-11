@@ -7,15 +7,15 @@
   <meta name="description" content="A rapid serial visual presentation speed reader with a centered red focal letter.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <title>FocusFlash Reader</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>FocusFlash — Reader & Video Maker</title>
+  <link rel="stylesheet" href="styles.css?v=video-1">
 </head>
 <body>
   <main class="app">
     <header class="topbar">
       <div>
         <h1>FocusFlash</h1>
-        <p>Centered-letter speed reader</p>
+        <p>Speed reader · automatic narrated videos</p>
       </div>
       <button id="installBtn" class="ghost hidden" type="button">Install</button>
     </header>
@@ -65,6 +65,41 @@
       </div>
     </section>
 
+
+    <section class="studio-card" id="videoStudio">
+      <div class="studio-title"><div><span class="eyebrow">CREATE IN ONE APP</span>
+        <h2>Turn your text into a video</h2>
+        <p>Flashing words, centered red focus letters, and natural AI narration—all made in your browser.</p>
+      </div><span class="studio-symbol" aria-hidden="true">▶</span></div>
+      <div class="studio-grid">
+        <label for="studioRatio">Video shape
+          <select id="studioRatio">
+            <option value="portrait">9:16 · TikTok / Reels / Shorts</option>
+            <option value="wide">16:9 · YouTube / landscape</option>
+            <option value="square">1:1 · Square</option>
+          </select>
+        </label>
+        <label for="studioVoice">Automatic narrator
+          <select id="studioVoice"></select>
+        </label>
+        <label for="studioScale">Video word size <span class="mini-note">70%–130%</span>
+          <input id="studioScale" type="range" min="70" max="130" step="10" value="100">
+        </label>
+        <label for="studioAudio" class="studio-check">
+          <input id="studioAudio" type="checkbox" checked>
+          <span>Include generated voice in video</span>
+        </label>
+      </div>
+      <div class="studio-buttons">
+        <button type="button" id="studioGenerate" class="primary">✦ Generate voice</button>
+        <button type="button" id="studioListen" disabled>▶ Listen to voice</button>
+        <button type="button" id="studioWav" disabled>↓ Save voice (WAV)</button>
+        <button type="button" id="studioExport" class="primary">● Export video (WebM)</button>
+      </div>
+      <p id="studioStatus" class="studio-status" role="status" aria-live="polite">Ready.</p>
+      <p class="studio-help">No account, API key, payment, or separate editing app required. The first AI voice download is about 90 MB, then speech is generated on your device. Narrated video timing is approximate word-by-word alignment. Video exports record in real time; keep this tab open until finished. Chrome exports WebM, not MP4.</p>
+    </section>
+
     <section class="text-card">
       <label for="sourceText">Text</label>
       <textarea id="sourceText" rows="9" spellcheck="true">Speed reading works by reducing unnecessary eye movement. This reader flashes one word at a time while keeping one focal letter centered, helping your eyes stay in one place.</textarea>
@@ -81,6 +116,7 @@
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <script defer src="video-studio.js?v=video-1"></script>
+  <script defer src="app.js?v=video-1"></script>
 </body>
 </html>
