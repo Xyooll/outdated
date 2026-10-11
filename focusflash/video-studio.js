@@ -379,22 +379,27 @@
      return;
    }
    const useVoice=narration&&!!voiceBuffer;
-   const timeline=makeTimeline(text,useVoice?voiceBuffer.duration:null);
+   const timeline=makeTimeline(text);
    if(timeline.total>480){report("Limit each exported video to 8 minutes; split longer text into chapters.");return;}
    busy=true;renderAbort=false;sel("studioExport").disabled=true;sel("studioGenerate").disabled=true;
+   sel("studioListen").disabled=true;
    const {width,height}=dimensions(sel("studioRatio").value);
    const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
    const context=canvas.getContext("2d",{alpha:false});
    drawVideoFrame(canvas,context,text[0],0,text.length,0,timeline.total);
    let stream=null,recorder=null,src=null,ctx=null,raf=0,finished=false;
-   let audioDestination=null;
+   let audioDestination=null,narrationGain=null;
    const chunks=[];
    try{
      stream=canvas.captureStream(30);
      if(useVoice){
        ctx=await getContext();audioDestination=ctx.createMediaStreamDestination();
        src=ctx.createBufferSource();src.buffer=voiceBuffer;
-       src.connect(audioDestination);src.connect(ctx.destination);
+       // Compress the generated speech to the EXACT same length as the WPM
+       // timeline, at the user's quiet undertone volume.
+       src.playbackRate.value=narrationRate(timeline);
+       narrationGain=ctx.createGain();narrationGain.gain.value=undertoneVolume();
+       src.connect(narrationGain);narrationGain.connect(audioDestination);
        for(const track of audioDestination.stream.getAudioTracks())stream.addTrack(track);
      }
      const type=mime();
@@ -442,8 +447,9 @@
      sel("studioResult").classList.remove("hidden");
      // The visible Save link remains usable when auto-download is blocked.
      download(videoBlob,videoFilename);
-     report("Video created as WebM"+(useVoice?" with narration":" without narration")+
-       ". Watch it below or tap Save video. Nothing was uploaded.");
+     report("Video created at "+timing().wpm+" WPM"+
+       (useVoice?" with "+Math.round(undertoneVolume()*100)+"% undertone voice.":" without narration.")+
+       " Watch it below or tap Save video. Nothing was uploaded.");
    }catch(error){
      report("Export could not finish: "+error.message);
      if(recorder?.state==="recording"){try{recorder.stop();}catch{}}
@@ -453,6 +459,7 @@
      for(const track of stream?.getTracks()||[])track.stop();
      busy=false;
      sel("studioExport").disabled=false;sel("studioGenerate").disabled=false;
+     sel("studioListen").disabled=!voiceBuffer;
    }
  }
  function setVoiceStatus(){
