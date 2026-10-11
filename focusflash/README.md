@@ -166,3 +166,7 @@ The old single-user localStorage records are **copied without deletion into User
 **Usability:** The editor now has a more legible hierarchy, improved color contrast, accessible focus rings, distinct navigation states, a persistent profile switcher, responsive layouts for narrow Android screens, a short step-by-step onboarding hint in Script, improved input affordances, and a dedicated profile settings panel. The text preview, fixed red focus point, audio tools, block timeline, and export controls remain compatible.
 
 **Limitations:** This release is not yet a cloud multi-account service; optional account/password protection or cross-device synchronization would require an authentication and backend design. Browser-generated audio and WebM rendering still have mobile performance limitations.
+
+
+### Workspace 3 final UX refinements
+The mobile phone layout explicitly stays in one column below 710px, and tapping a tool or the profile management gear scrolls that tool's controls into view. The profile manager supports two named, independently persisted local workspaces with existing single-user data copied to User 1. Current release: https://xyooll.github.io/outdated/focusflash/?v=workspace-3.
