@@ -135,6 +135,7 @@
     timer = null;
     els.playBtn.textContent = '▶ Play';
     window.FocusFlashStudio?.stopReaderUndertone?.();
+    window.FocusFlashTones?.stopReader?.();
     saveState(true);
   }
 
@@ -159,6 +160,7 @@
     els.playBtn.textContent = '❚❚ Pause';
     tick();
     window.FocusFlashStudio?.startReaderUndertone?.(index);
+    window.FocusFlashTones?.startReader?.();
   }
 
   function togglePlay() {
@@ -296,6 +298,7 @@
   window.FocusFlashReader = {isPlaying:()=>playing,currentIndex:()=>index,pause:()=>{if(playing)stop();}};
   restoreState();
   loadText(false);
+  if(window.FocusFlashTones)window.FocusFlashTones.mount();
   if(window.FocusFlashStudio)window.FocusFlashStudio.mount();
   if(window.FocusFlashEditor)window.FocusFlashEditor.mount();
 })();
