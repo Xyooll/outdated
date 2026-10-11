@@ -268,3 +268,22 @@
   }
   .editor-preview-section .preview-shortcuts{display:none!important}
 }
+
+/* Temporarily widen the right window to make detailed editing comfortable. */
+.dock-inspector-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px}
+#dockInspectorWide{display:none}
+@media(max-width:950px){
+ .editor-workspace#editorWorkspace[data-inspector-wide="true"]{
+   --phone-inspector:clamp(165px,50vw,320px)
+ }
+ #dockInspectorWide{
+   display:grid!important;place-items:center;min-width:27px!important;
+   min-height:27px!important;font-size:16px!important
+ }
+ #dockInspectorEdit{display:none!important}
+}
+@media(max-width:950px) and (orientation:landscape){
+ .editor-workspace#editorWorkspace{
+   --phone-timeline:clamp(105px,28dvh,180px)
+ }
+}
