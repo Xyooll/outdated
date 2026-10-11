@@ -9,8 +9,8 @@
  <title>FocusFlash Studio · Reader & Video Editor</title>
  <link rel="icon" href="icon.svg" type="image/svg+xml">
  <link rel="manifest" href="manifest.webmanifest">
- <link rel="stylesheet" href="styles.css?v=sound-mixer-2">
- <link rel="stylesheet" href="editor.css?v=sound-mixer-2">
+ <link rel="stylesheet" href="styles.css?v=workspace-1">
+ <link rel="stylesheet" href="editor.css?v=workspace-1">
 </head>
 <body>
 <main class="editor-app">
@@ -19,7 +19,16 @@
    <h1>FocusFlash Studio</h1><p>Speed reading · voice · video</p>
   </div></div>
   <div class="editor-head-actions">
-   <span class="editor-badge">PRIVATE ON YOUR DEVICE</span>
+   <div class="profile-switcher" aria-label="Active user workspace">
+    <span id="profileAvatar" class="profile-avatar" aria-hidden="true">1</span>
+    <div class="profile-switcher-inner">
+     <label for="profileSwitch">Workspace</label>
+     <select id="profileSwitch" aria-label="Switch user workspace">
+      <option value="1">User 1</option><option value="2">User 2</option>
+     </select>
+    </div>
+    <button id="profileEditBtn" type="button" class="profile-edit-btn" aria-label="Manage user profiles" title="Manage profiles">⚙</button>
+   </div>
    <button type="button" id="topImportBtn" class="ghost">＋ Import text</button>
    <button type="button" id="installBtn" class="ghost hidden">Install</button>
    <button type="button" id="jumpExportBtn" class="primary">Export <span aria-hidden="true">↗</span></button>
@@ -33,14 +42,21 @@
    <button type="button" class="editor-tab" data-editor-tab="style"><span aria-hidden="true">▣</span>Canvas</button>
    <button type="button" class="editor-tab" data-editor-tab="tones"><span aria-hidden="true">≋</span>Tones</button>
    <button type="button" class="editor-tab" data-editor-tab="export"><span aria-hidden="true">⇧</span>Export</button>
+   <button type="button" class="editor-tab" data-editor-tab="profiles"><span aria-hidden="true">◎</span>Profiles</button>
   </nav>
   <aside class="editor-inspector" aria-label="Editing tools">
    <section id="editorScript" class="editor-section" data-editor-panel="script">
     <header class="editor-panel-head">
-     <span class="editor-eyebrow">01 · Words</span>
+     <span class="editor-eyebrow">01 · Create</span>
      <h2>Your script</h2>
-     <p>Write or import the text that will appear one word at a time.</p>
+     <p>Create the words that appear in your reading preview.</p>
     </header>
+    <div class="editor-onboarding">
+     <div class="onboarding-icon" aria-hidden="true">✦</div>
+     <div><strong>Start here</strong>
+      <p><span>1. Add text</span> <span>2. Adjust speed</span> <span>3. Press Play</span> <span>4. Export</span></p>
+     </div>
+    </div>
     <div class="script-mode-switch" role="group" aria-label="Script editing mode">
      <button id="scriptModeSingle" type="button" class="active" aria-pressed="true">Single script</button>
      <button id="scriptModeBlocks" type="button" aria-pressed="false">▦ Script blocks</button>
@@ -263,10 +279,37 @@
      <p class="editor-output-tip">Export records the sequence in real time. Keep Chrome open and your screen awake. Chrome creates WebM video rather than MP4.</p>
     </div>
    </section>
+   <section id="editorProfiles" class="editor-section" data-editor-panel="profiles" hidden>
+    <header class="editor-panel-head">
+     <span class="editor-eyebrow">07 · Workspaces</span>
+     <h2>Two users, two studios</h2>
+     <p>Give each user a name and keep their scripts, progress, voice choices, sound settings and MP3s separate.</p>
+    </header>
+    <div class="profiles-intro">
+     <span class="profile-intro-icon" aria-hidden="true">⌂</span>
+     <div><strong id="profileBadge">User 1’s studio</strong>
+      <p>Changes save automatically on this device.</p>
+     </div>
+    </div>
+    <div class="profile-cards">
+     <article id="profileCard1" class="profile-card selected">
+      <div class="profile-card-head"><span class="profile-circle">1</span><strong>User 1 workspace</strong></div>
+      <label for="profileName1">Workspace name<input id="profileName1" type="text" maxlength="28" placeholder="User 1" autocomplete="off"></label>
+      <button id="profileChoose1" type="button">✓ Using this workspace</button>
+     </article>
+     <article id="profileCard2" class="profile-card">
+      <div class="profile-card-head"><span class="profile-circle alt">2</span><strong>User 2 workspace</strong></div>
+      <label for="profileName2">Workspace name<input id="profileName2" type="text" maxlength="28" placeholder="User 2" autocomplete="off"></label>
+      <button id="profileChoose2" type="button">Switch to User 2</button>
+     </article>
+    </div>
+    <p id="profileStatus" class="profile-status" role="status">Workspaces are saved separately on this device.</p>
+    <p class="profile-privacy">Each user's work is separate on this browser, but these are not password-protected accounts. Nothing syncs between phones automatically, and clearing site data can erase saved work.</p>
+   </section>
   </aside>
   <section class="editor-preview-section" aria-label="Video preview and reader">
    <header class="editor-preview-header">
-    <strong class="preview-title">Preview</strong>
+    <strong class="preview-title">Live preview</strong>
     <div class="preview-font-controls" aria-label="Quick font size adjustment">
      <button type="button" id="fontQuickMinus" aria-label="Smaller word text">−</button>
      <output id="fontQuickLabel" for="fontSize studioScale">48 px</output>
@@ -303,14 +346,15 @@
    <div class="timeline-track"><div class="timeline-track-label">≋ Tone <span id="timelineToneStatus">Disabled</span></div><div id="timelineTone" class="timeline-strip tone-track" data-mode="off"><span class="tone-track-wave" aria-hidden="true">∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿</span></div></div>
    <div class="timeline-track"><div class="timeline-track-label voice-track-label">♫ Voice <span id="timelineVoiceStatus">Phone TTS</span></div><div id="timelineAudio" class="timeline-strip voice"></div></div>
    <input id="progressRange" class="timeline-scrub" type="range" min="0" max="0" value="0" aria-label="Scrub reading position">
-   <div class="timeline-readout"><span id="timelineCurrent">00:00</span><span>Tap a word clip to jump · Drag the playhead to scrub</span></div>
+   <div class="timeline-readout"><span id="timelineCurrent">00:00</span><span id="profileSummary">User 1 · saved on this device</span></div>
   </section>
  </div>
 </main>
-<script defer src="tone-generator.js?v=sound-mixer-2"></script>
-<script defer src="script-blocks.js?v=sound-mixer-2"></script>
-<script defer src="video-studio.js?v=sound-mixer-2"></script>
-<script defer src="editor.js?v=sound-mixer-2"></script>
-<script defer src="app.js?v=sound-mixer-2"></script>
+<script defer src="profiles.js?v=workspace-1"></script>
+<script defer src="tone-generator.js?v=workspace-1"></script>
+<script defer src="script-blocks.js?v=workspace-1"></script>
+<script defer src="video-studio.js?v=workspace-1"></script>
+<script defer src="editor.js?v=workspace-1"></script>
+<script defer src="app.js?v=workspace-1"></script>
 </body>
 </html>
