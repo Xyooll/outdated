@@ -30,7 +30,7 @@
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let readerSource=null,readerGain=null,readerGeneration=0;
  let readerVoice=null,previewVoice=null,nativeSpeaking=false;
- const pitchEngine=()=>import("./pitch-preserve.js?v=tones-2");
+ const pitchEngine=()=>import("./pitch-preserve.js?v=sound-mixer-1");
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -224,10 +224,10 @@
          const phrases=splitIntoPhrases(unit.text);
          if(!phrases.length)continue;
          if(mode==="instant"){
-           const {generateInstantExportSpeech}=await import("./instant-tts.js?v=tones-2");
+           const {generateInstantExportSpeech}=await import("./instant-tts.js?v=sound-mixer-1");
            generated=await generateInstantExportSpeech(unit.text,msg=>report("Block "+(i+1)+": "+msg));
          }else if(mode==="fast"){
-           const adapter=await import("./fast-piper.js?v=tones-2");
+           const adapter=await import("./fast-piper.js?v=sound-mixer-1");
            generated=await adapter.generateFastPhrases(phrases,voice,
              msg=>report("Block "+(i+1)+": "+msg));
          }else{
@@ -579,6 +579,9 @@
      });
      recorder.start(1000);
      if(transport)await transport.start(0);
+     // MP3/media elements must be started explicitly (oscillators and ambient
+     // loops begin when created); connect them to the SAME export audio bus.
+     if(toneSession)await window.FocusFlashTones?.startSession?.(toneSession);
      const startAt=performance.now()/1000;
      const paint=()=>{
        if(finished||renderAbort)return;
@@ -618,7 +621,7 @@
      download(videoBlob,videoFilename);
      report("Video created at "+timing().wpm+" WPM"+
        (useVoice?" with pitch-preserved "+Math.round(undertoneVolume()*100)+"% undertone voice.":" without narration.")+
-       (window.FocusFlashTones?.activeForExport?.()?" Tone soundtrack included.":"")+
+       (window.FocusFlashTones?.activeForExport?.()?" Additional sound mix included.":"")+
        " Watch it below or tap Save video. Nothing was uploaded.");
    }catch(error){
      report("Export could not finish: "+error.message);
