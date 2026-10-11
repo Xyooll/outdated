@@ -107,7 +107,12 @@ export async function generateInstantExportSpeech(text,onProgress){
     else resolve({samples:samples instanceof Float32Array?samples:new Float32Array(samples),sampleRate});
    });
   });
-  results.push(result);
+  // Bundled eSpeak worker outputs L/R interleaved samples.
+  // Downmix to mono so the speech plays at the intended pitch and duration.
+  const interleaved=result.samples,mono=new Float32Array(Math.floor(interleaved.length/2));
+  for(let j=0;j<mono.length;j++)mono[j]=(interleaved[j*2]+interleaved[j*2+1])*.5;
+  if(!mono.length)throw Error("Speech engine produced no audio.");
+  results.push({samples:mono,sampleRate:result.sampleRate});
   if(i%4===3)await new Promise(r=>setTimeout(r,0));
  }
  return results;
