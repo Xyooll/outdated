@@ -145,6 +145,21 @@
      updatePlayhead(lastState);
    });
  }
+ function adjustWordSize(raw,source="other"){
+   const value=Number(raw);
+   if(!Number.isFinite(value))return;
+   const size=Math.min(120,Math.max(16,Math.round(value/2)*2));
+   const reader=$("fontSize"),exportSize=$("studioScale"),number=$("wordSizeNumber");
+   reader.value=String(size);exportSize.value=String(size);number.value=String(size);
+   $("studioScaleValue").textContent=size+" px";
+   $("fontQuickLabel").textContent=size+" px";
+   // app.js owns the actual reader rendering and persists this size.
+   // Avoid recursive input dispatches when the source is already the reader.
+   if(source!=="reader")
+     reader.dispatchEvent(new Event("input",{bubbles:true}));
+   if(source==="button"||source==="number")
+     exportSize.dispatchEvent(new Event("change",{bubbles:true}));
+ }
  function selectRatio(){
    const ratio=$("studioRatio").value,info=$("editorPreviewFormat");
    const canvas=$("editorPreview");
@@ -186,7 +201,18 @@
    $("importFile").addEventListener("change",e=>{
      importFile(e.target.files?.[0]);e.target.value="";
    });
-   $("studioRatio").addEventListener("change",selectRatio);
+   $("studioRatio").addEventListener("change",()=>{
+     selectRatio();
+     // Responsive focus-letter alignment can change with aspect ratio.
+     adjustWordSize($("fontSize").value);
+   });
+   $("studioScale").addEventListener("input",e=>adjustWordSize(e.target.value,"export"));
+   $("fontSize").addEventListener("input",e=>adjustWordSize(e.target.value,"reader"));
+   $("wordSizeNumber").addEventListener("change",e=>adjustWordSize(e.target.value,"number"));
+   for(const id of ["wordSizeMinus","fontQuickMinus"])
+     $(id).addEventListener("click",()=>adjustWordSize(Number($("fontSize").value)-2,"button"));
+   for(const id of ["wordSizePlus","fontQuickPlus"])
+     $(id).addEventListener("click",()=>adjustWordSize(Number($("fontSize").value)+2,"button"));
    $("sourceText").addEventListener("input",()=>{
      renderSoon();
      if(scriptTimer)clearTimeout(scriptTimer);
@@ -221,6 +247,9 @@
    });
    selectTab("script");
    selectRatio();
+   // app.js loads its saved reader size before editor.mount() executes.
+   // Use that saved size as the single source of truth for both preview and video.
+   adjustWordSize($("fontSize").value);
    makeTimeline();
    updatePlayhead({index:playheadIndex()});
  }
