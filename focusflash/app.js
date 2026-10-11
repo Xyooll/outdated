@@ -109,11 +109,11 @@
   function tick() {
     if (!playing) return;
     render();
+    const current = words[index];
     if (index >= words.length - 1) {
-      stop();
+      timer = setTimeout(stop, delayFor(current));
       return;
     }
-    const current = words[index];
     timer = setTimeout(() => {
       index += 1;
       tick();
