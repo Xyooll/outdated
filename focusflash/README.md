@@ -90,7 +90,7 @@ The new release is at `https://xyooll.github.io/outdated/focusflash/?v=natural-p
 
 ## FocusFlash Studio 2: immediate reading + multi-tool timeline editor
 
-Live editor: https://xyooll.github.io/outdated/focusflash/?v=studio-2
+Live editor: https://xyooll.github.io/outdated/focusflash/?v=studio-3
 
 The editor has five tools: Script, Voice, Speed, Canvas and Export, as well as a scalable video preview, word-clip timeline, narration track, zoom, and a draggable playhead. It accepts local TXT/Markdown files. On Android the tools display below the preview without modal overlays. The layout is inspired by standard timeline-based editors, not an official Clipchamp implementation.
 
@@ -100,4 +100,4 @@ Video export with the Instant voice option synthesizes a separate, compact local
 
 Voice speed matching is pitch preserving for recorded audio where supported; at extreme WPM, intelligibility can drop. Settings, imported script, and reading position are stored on-device. Autosaves during word playback are throttled to avoid repeated large localStorage writes.
 
-Revision studio-2 replaces older page, script, CSS and PWA cache names to avoid restoring an old reader interface. An ordinary browser hard reload should show the updated editor.
+Revision studio-3 replaces older page, script, CSS and PWA cache names to avoid restoring an old reader interface. An ordinary browser hard reload should show the updated editor.
