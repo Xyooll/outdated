@@ -48,3 +48,6 @@ The app footer shows **Life Sim 2.1**. To force-refresh a phone that still displ
 ## Living Edition 2.2 — visual assets and interactions
 
 Original procedural Canvas graphics now add environment decoration and light, highlighted furniture and interaction markers, walking-path breadcrumbs, and contextual particles when someone cooks, washes dishes, showers, does laundry, watches TV, sleeps, hugs, waves, or tidies. Characters blink, move their arms while walking, and have more readable clothing details. The primary home also has a horizontally scrollable furniture interaction bar; choosing an object opens actions with their duration and need benefit, even when it's difficult to tap small furniture on a phone. Chat, saved outfits, RLS-protected tasks, and original messages remain unchanged. On phones, use the browser's current app URL with query `?v=assets-v1` to load this edition.
+
+### Living Edition 2.3
+Added a clearly marked **Your person** quick interaction button for hugs and waves when your partner is online in the Cottage. While a timed activity is running, movement and new walk destinations are disabled until it completes or is canceled. This prevents walking away from a bed, shower, or other action. The updated PWA assets use cache version v10 and browser version `assets-v2`.

@@ -1,5 +1,5 @@
 
-import {OBJECTS,ACTIONS,TASKS,NEEDS} from "./life-house.js?v=assets-v1";
+import {OBJECTS,ACTIONS,TASKS,NEEDS} from "./life-house.js?v=assets-v2";
 const $=id=>document.getElementById(id);
 const numeric=n=>Math.max(0,Math.min(100,Number(n)||0));
 const explain=e=>e?.message||"Connection issue — please try again.";
@@ -104,6 +104,19 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
    button.addEventListener("click",()=>menu(object.id));
    bar.append(button);
   }
+  const partner=document.createElement("button");
+  partner.type="button";partner.className="furniture-chip partner-chip";
+  partner.dataset.object="partner";partner.textContent="💞 Your person";
+  partner.title="Wave to or hug your partner";
+  partner.addEventListener("click",()=>{
+    const other=getAvatars().find(a=>a.user_id!==getUser()?.id&&a.world_id==="home");
+    if(!other||new Date(other.updated_at).getTime()<Date.now()-90000){
+      status("Your person needs to be online at home for a social interaction.");
+      return;
+    }
+    menu("partner",other);
+  });
+  bar.append(partner);
  }
  function syncQuickbar(){
   const bar=$("lifeObjectQuickbar");if(!bar)return;

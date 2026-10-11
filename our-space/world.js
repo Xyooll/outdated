@@ -1,10 +1,10 @@
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
-import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js?v=assets-v1";
-import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js?v=assets-v1";
-import { drawHouse, findHousePath, clearTile, ACTIONS, objectAt } from "./life-house.js?v=assets-v1";
-import {paintHouseDetails,paintInteractiveHighlights,paintActivityEffects} from "./life-assets.js?v=assets-v1";
-import { createLifeUI } from "./life-ui.js?v=assets-v1";
+import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js?v=assets-v2";
+import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js?v=assets-v2";
+import { drawHouse, findHousePath, clearTile, ACTIONS, objectAt } from "./life-house.js?v=assets-v2";
+import {paintHouseDetails,paintInteractiveHighlights,paintActivityEffects} from "./life-assets.js?v=assets-v2";
+import { createLifeUI } from "./life-ui.js?v=assets-v2";
 
 const $ = id => document.getElementById(id);
 const valid = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL)
@@ -272,6 +272,10 @@ async function sendMessage(e){
 
 function walkTo(x,y,callback=null){
  if(!appReady||!myAvatar)return false;
+ if(life.active){
+  message("lifeStatus","Finish or cancel the current action before moving.");
+  return false;
+ }
  if(world!=="home"){positionTarget={x:clamp(x,26,934),y:clamp(y,125,484)};return true;}
  const route=findHousePath(myAvatar.x,myAvatar.y,x,y);
  if(!route.length)return false;
@@ -293,6 +297,11 @@ function worldPoint(e){
 }
 function moveAvatar(delta){
  if(!myAvatar||!appReady)return;
+ if(life.active){
+  waypoints=[];arrival=null;positionTarget=null;
+  inputDirection.clear();
+  return;
+ }
  const d=Math.min(delta,0.06);
  let dx=0,dy=0;
  for(const dir of inputDirection){
@@ -469,7 +478,12 @@ for(const id of Object.keys(FIELDS))$(id).addEventListener("input",drawPreview);
 for(const tab of document.querySelectorAll("[data-world]"))
  tab.addEventListener("click",()=>changeWorld(tab.dataset.world).catch(e=>message("chatStatus",err(e))));
 $("worldCanvas").addEventListener("pointerdown",e=>{
- e.preventDefault();const point=worldPoint(e);
+ e.preventDefault();
+ if(life.active){
+  message("lifeStatus","Action in progress. Wait for it to finish or tap Cancel.");
+  return;
+ }
+ const point=worldPoint(e);
  hoveredId=null;
  if(world!=="home"||!life.interactAt(point.x,point.y))moveTo(point.x,point.y);
  $("worldCanvas").focus();

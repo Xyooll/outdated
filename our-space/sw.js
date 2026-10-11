@@ -1,10 +1,10 @@
 // Network-first game shell; versioned assets prevent stale overlay modules.
-const CACHE="our-space-v9-living-assets";
+const CACHE="our-space-v10-living-interactions";
 const FILES=[
- "./","./index.html","./config.js?v=assets-v1",
- "./world.css?v=assets-v1","./world.js?v=assets-v1",
- "./world-art.js?v=assets-v1","./life-house.js?v=assets-v1",
- "./life-ui.js?v=assets-v1","./life-assets.js?v=assets-v1","./icon.svg","./manifest.webmanifest"
+ "./","./index.html","./config.js?v=assets-v2",
+ "./world.css?v=assets-v2","./world.js?v=assets-v2",
+ "./world-art.js?v=assets-v2","./life-house.js?v=assets-v2",
+ "./life-ui.js?v=assets-v2","./life-assets.js?v=assets-v2","./icon.svg","./manifest.webmanifest"
 ];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)));
