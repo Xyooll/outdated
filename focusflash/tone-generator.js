@@ -5,7 +5,9 @@
 (() => {
  "use strict";
  const $=id=>document.getElementById(id);
- const KEY="focusflash-tones-v1",DB_NAME="focusflash-soundtrack-v1";
+ const KEY=window.FocusFlashProfiles?.key("focusflash-tones-v1")||"focusflash-tones-v1",
+       DB_NAME="focusflash-soundtrack-v1",
+       FILE_ID="active-"+(window.FocusFlashProfiles?.id?.()||"1");
  const LIMIT=50*1024*1024;
  const MODES=["off","pure","binaural"];
  const FX=["off","white","pink","brown","rain","waves","wind","stream","fire","forest","fan","night"];
@@ -280,18 +282,36 @@
  }
  async function getSavedFile(){
    const db=await database();if(!db)return null;
-   try{return await new Promise((resolve,reject)=>{
-     const req=db.transaction("files").objectStore("files").get("active");
+   const get=key=>new Promise((resolve,reject)=>{
+     const req=db.transaction("files").objectStore("files").get(key);
      req.onsuccess=()=>resolve(req.result||null);
      req.onerror=()=>reject(req.error);
-   });}finally{db.close();}
+   });
+   try{
+     const saved=await get(FILE_ID);
+     if(saved)return saved;
+     // Migrate existing legacy single-user audio into User 1 non-destructively.
+     // Never copy this record into User 2.
+     if(FILE_ID==="active-1"){
+       const original=await get("active");
+       if(original){
+         await new Promise((resolve,reject)=>{
+           const tx=db.transaction("files","readwrite");
+           tx.objectStore("files").put(original,FILE_ID);
+           tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+         });
+         return original;
+       }
+     }
+     return null;
+   }finally{db.close();}
  }
  async function storeFile(record){
    const db=await database();if(!db)return;
    try{await new Promise((resolve,reject)=>{
      const tx=db.transaction("files","readwrite");
-     if(record)tx.objectStore("files").put(record,"active");
-     else tx.objectStore("files").delete("active");
+     if(record)tx.objectStore("files").put(record,FILE_ID);
+     else tx.objectStore("files").delete(FILE_ID);
      tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
      tx.onabort=()=>reject(tx.error);
    });}finally{db.close();}
