@@ -272,3 +272,11 @@ button,select,textarea{font-family:inherit}
 .tone-track-wave{color:#9fa9c6;white-space:nowrap;font-size:15px;letter-spacing:5px;opacity:.65;overflow:hidden}
 .tone-track[data-mode="pure"] .tone-track-wave{color:#b2e8f1;opacity:.95}
 .tone-track[data-mode="binaural"] .tone-track-wave{color:#d3b5f6;opacity:.95}
+
+.tone-exact{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#abb2cb;font-size:11px}
+.tone-exact input[type="number"]{
+ min-width:95px;width:115px;min-height:39px;padding:8px 10px;
+ border-radius:9px;background:#131526;border:1px solid #696482;
+ color:#fff;font-variant-numeric:tabular-nums;font-size:16px
+}
+.tone-exact input[type="number"]:focus-visible{outline:2px solid #d9c6fb;outline-offset:2px}
