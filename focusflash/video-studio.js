@@ -21,13 +21,14 @@
    bf_emma:"Emma · British",bm_george:"George · British"
  };
  let tts=null,modelLoading=null,voiceBuffer=null,voiceSignature="",busy=false;
+ const fastVoices={"en_US-ryan-medium":"Ryan · American male","en_US-hfc_female-medium":"American female","en_US-lessac-low":"Lessac · American"};
  let micRecorder=null,micStream=null,micChunks=[],videoBlob=null,videoFilename="focusflash-video.webm";
  let audioContext=null,previewSource=null,renderAbort=false;
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
  const words=()=>sel("sourceText").value.trim().split(/\s+/).filter(Boolean);
- const signature=()=>sel("sourceText").value.trim()+"\n@@"+sel("studioVoice").value;
+ const signature=()=>sel("sourceText").value.trim()+"\n@@"+sel("studioMode").value+"\n@@"+sel("studioVoice").value;
  const timing=()=>({
    wpm:Math.max(60,Math.min(2000,Number(sel("wpm").value)||300)),
    punct:sel("punctuationPause").checked,long:sel("longWordPause").checked
