@@ -9,8 +9,8 @@
  <title>FocusFlash Studio · Reader & Video Editor</title>
  <link rel="icon" href="icon.svg" type="image/svg+xml">
  <link rel="manifest" href="manifest.webmanifest">
- <link rel="stylesheet" href="styles.css?v=studio-3">
- <link rel="stylesheet" href="editor.css?v=studio-3">
+ <link rel="stylesheet" href="styles.css?v=font-1">
+ <link rel="stylesheet" href="editor.css?v=font-1">
 </head>
 <body>
 <main class="editor-app">
@@ -104,7 +104,7 @@
      <div class="setting"><label for="wpm">Words per minute <strong id="wpmValue">300 WPM</strong></label><input id="wpm" type="range" min="60" max="2000" step="10" value="300"></div>
      <div class="setting switch-row"><label for="punctuationPause">Extra pause at punctuation</label><input id="punctuationPause" type="checkbox" checked></div>
      <div class="setting switch-row"><label for="longWordPause">Extra pause on long words</label><input id="longWordPause" type="checkbox" checked></div>
-     <div class="setting"><label for="fontSize">Reader word size <strong id="fontSizeValue">48 px</strong></label><input id="fontSize" type="range" min="24" max="84" step="2" value="48"></div>
+     <div class="setting"><label for="fontSize">Word size <strong id="fontSizeValue">48 px</strong></label><input id="fontSize" type="range" min="16" max="120" step="2" value="48"></div>
     </div>
     <p class="editor-small-note">The selected WPM controls the flashing words. Your phone may cap the native speaking rate, even though it starts instantly.</p>
    </section>
@@ -112,7 +112,7 @@
     <header class="editor-panel-head">
      <span class="editor-eyebrow">04 · Video look</span>
      <h2>Canvas & typography</h2>
-     <p>Choose the shape and emphasis of your exported reading video.</p>
+     <p>Adjust the word size here and watch it change immediately in the preview and exported video.</p>
     </header>
     <div class="studio-card">
      <div class="studio-grid">
@@ -123,9 +123,17 @@
         <option value="square">1:1 · Square post</option>
        </select>
       </label>
-      <label for="studioScale">Video word size · 70–130%
-       <input id="studioScale" type="range" min="70" max="130" value="100" step="10">
+      <label for="studioScale">Word font size <strong id="studioScaleValue">48 px</strong>
+       <input id="studioScale" type="range" min="16" max="120" value="48" step="2">
       </label>
+      <div class="size-adjust">
+       <button id="wordSizeMinus" type="button" aria-label="Decrease word size">−</button>
+       <label for="wordSizeNumber">Exact size (px)
+        <input id="wordSizeNumber" type="number" min="16" max="120" step="2" value="48" inputmode="numeric">
+       </label>
+       <button id="wordSizePlus" type="button" aria-label="Increase word size">＋</button>
+      </div>
+      <p id="fontFitHint" class="editor-small-note">Preview and video use the same font-size setting. Longer words shrink automatically to fit.</p>
      </div>
      <p class="editor-small-note">The red central letter is retained in every format. Changes to the preview don't overwrite your original script.</p>
     </div>
@@ -192,8 +200,8 @@
   </section>
  </div>
 </main>
-<script defer src="video-studio.js?v=studio-3"></script>
-<script defer src="editor.js?v=studio-3"></script>
-<script defer src="app.js?v=studio-3"></script>
+<script defer src="video-studio.js?v=font-1"></script>
+<script defer src="editor.js?v=font-1"></script>
+<script defer src="app.js?v=font-1"></script>
 </body>
 </html>
