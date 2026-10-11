@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>FocusFlash — Reader & Video Maker</title>
-  <link rel="stylesheet" href="styles.css?v=video-2">
+  <link rel="stylesheet" href="styles.css?v=voice-fast-1">
 </head>
 <body>
   <main class="app">
@@ -79,7 +79,7 @@
             <option value="square">1:1 · Square</option>
           </select>
         </label>
-        <label for="studioVoice">Automatic narrator
+        <label for="studioMode">Voice speed<select id="studioMode"><option value="fast">Fast mobile AI (recommended)</option><option value="quality">Natural AI (slower)</option></select></label><label for="studioVoice">Automatic narrator
           <select id="studioVoice"></select>
         </label>
         <label for="studioScale">Video word size <span class="mini-note">70%–130%</span>
@@ -106,7 +106,7 @@
           <button id="studioShare" type="button">↗ Share video</button>
         </div>
       </div>
-      <p class="studio-help">Generate speech automatically or tap Record my voice to narrate directly in the app. Microphone recording needs permission. No account, API key, payment, or separate editing app required. The first AI voice download is about 90 MB, then speech is generated on your device. Narrated video timing is approximate word-by-word alignment. Video exports record in real time; keep this tab open until finished. Chrome exports WebM, not MP4.</p>
+      <p class="studio-help">Generate speech automatically or tap Record my voice to narrate directly in the app. Microphone recording needs permission. No account, API key, payment, or separate editing app required. Fast voice needs a one-time model download of about 63 MB. Natural voice is larger and slower. Both generate video-ready audio on the device. Narrated video timing is approximate word-by-word alignment. Video exports record in real time; keep this tab open until finished. Chrome exports WebM, not MP4.</p>
     </section>
 
     <section class="text-card">
@@ -125,7 +125,7 @@
     </section>
   </main>
 
-  <script defer src="video-studio.js?v=video-2"></script>
-  <script defer src="app.js?v=video-2"></script>
+  <script defer src="video-studio.js?v=voice-fast-1"></script>
+  <script defer src="app.js?v=voice-fast-1"></script>
 </body>
 </html>
