@@ -4,10 +4,10 @@
 <meta name="theme-color" content="#1c233b">
 <meta name="description" content="Our Space: a miniature household life simulator for two.">
 <meta name="color-scheme" content="dark">
-<title>Our Space · Life Simulator: Living Edition</title>
+<title>Our Space · Life Simulator 3.0</title>
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="stylesheet" href="./world.css?v=assets-v2">
+<link rel="stylesheet" href="./world.css?v=layout-3">
 </head>
 <body><div class="app">
 <header class="topbar"><div class="brand"><div class="logo">♥</div><div><strong>Our Space</strong><small>Life together</small></div></div>
@@ -32,7 +32,7 @@
 
 <section id="worldView" class="world-view hidden">
  <div class="sim-toolbar">
-  <div class="sim-place"><span class="eyebrow" id="worldEyebrow">OUR HOUSE · LIVING EDITION</span>
+  <div class="sim-place"><span class="eyebrow" id="worldEyebrow">OUR HOUSE · INTERACTIVE HOME 3.0</span>
    <h1 id="worldTitle">Cozy Cottage</h1><span id="worldPeople" class="sim-presence">● Connecting</span>
    <span id="worldDescription" class="sr-only">Our shared home</span></div>
   <div class="sim-quick-actions">
@@ -52,14 +52,14 @@
  </div>
  <div class="world-shell">
   <div class="world-stage">
-   <div id="lifeActions" class="life-action-menu hidden">
+   <canvas id="worldCanvas" width="960" height="540" aria-label="Four-room 2D home. Tap furniture for activities or floor to move." tabindex="0"></canvas>
+  </div>
+  <div id="lifeActions" class="life-action-menu hidden">
     <div class="life-actions-card"><div class="life-actions-top"><strong id="lifeActionTitle">Interact</strong><button type="button" id="lifeCloseMenu" aria-label="Close actions">×</button></div>
      <div id="lifeActionButtons" class="life-action-buttons"></div>
     </div>
    </div>
-   <canvas id="worldCanvas" width="960" height="540" aria-label="Four-room 2D home. Tap furniture for activities or floor to move." tabindex="0"></canvas>
-  </div>
-  <div id="lifeObjectQuickbar" class="life-object-quickbar" aria-label="Household furniture interactions"></div>
+   <div id="lifeObjectQuickbar" class="life-object-quickbar" aria-label="Household furniture interactions"></div>
   <div class="sim-lower">
    <div id="lifeHud" class="life-hud"><div class="life-topline"><strong>Your character's needs</strong><span id="lifeMealCount">🍲 0 meals</span></div><div id="lifeNeeds" class="life-needs"></div></div>
    <div class="sim-movement"><span class="move-hint">Tap floor to walk · Tap furniture to interact</span>
@@ -74,26 +74,22 @@
   <div id="lifeProgress" class="life-progress hidden"><span id="lifeProgressName">Action</span><div class="life-progress-track"><div id="lifeProgressFill"></div></div><span id="lifeProgressTime">0s</span><button type="button" id="lifeCancel">Cancel</button></div>
   <p id="lifeStatus" class="life-status" role="status"></p>
  </div>
-</section></main>
-<footer class="footer">Our Space · A private home for two · <a href="./legacy.html">Old encrypted messages</a> · <span id="buildLabel">Living Edition 2.2</span></footer>
-</div>
-
-<section id="tasksPanel" class="sim-drawer hidden" aria-label="Household duties">
- <div class="sim-drawer-shade" data-panel-close="tasks"></div>
+<div id="simWorkspace" class="sim-workspace"><section id="tasksPanel" class="sim-drawer hidden" aria-label="Household duties">
+ 
  <div class="sim-drawer-body"><div class="sim-drawer-head"><div><span class="eyebrow">KEEP OUR HOME HAPPY</span><h2>Household duties</h2></div><button class="close" id="tasksClose" type="button" aria-label="Close duties">×</button></div>
  <details id="lifeDutyPanel" class="life-duties" open><summary><span>✓ Today's responsibilities</span><span id="lifeScore">0/100 Home Care</span></summary>
  <p class="duty-caption">Volunteer for a duty, then use the matching furniture.</p><div id="lifeTasks"></div></details>
  </div>
 </section>
 <section id="chatPanel" class="sim-drawer hidden" aria-label="Private conversation">
- <div class="sim-drawer-shade" data-panel-close="chat"></div>
+ 
  <div class="sim-drawer-body"><div class="sim-drawer-head"><div><span class="eyebrow">OUR PRIVATE MESSAGES</span><h2 id="chatHeading">Cottage Chat</h2></div><button class="close" id="chatClose" type="button" aria-label="Close chat">×</button></div>
  <div class="chat-section"><div id="chatMessages" class="chat-messages" role="log" aria-label="Room messages" aria-live="polite" aria-relevant="additions"></div>
  <form id="sendForm" class="composer"><label for="message" class="sr-only">Write a message</label><input id="message" type="text" maxlength="4000" autocomplete="off" placeholder="Say something sweet…" required><button type="submit" id="sendBtn" aria-label="Send message">↑</button></form>
  <p id="chatStatus" class="chat-status" role="status"></p></div></div>
 </section>
 <section id="closet" class="closet hidden" aria-label="Avatar wardrobe">
-<div class="closet-shade" id="closetShade"></div>
+
 <div class="closet-sheet"><div class="closet-header"><div><span class="eyebrow">YOUR VERY OWN</span><h2>Avatar closet ✨</h2></div><button type="button" id="closetClose" aria-label="Close wardrobe" class="close">×</button></div>
 <div class="closet-body">
 <div class="avatar-card"><canvas id="avatarCanvas" width="200" height="240" aria-label="Avatar preview"></canvas><p>Make it feel like you.</p></div>
@@ -110,5 +106,10 @@
 <p id="outfitStatus" class="form-status" role="status"></p>
 <button class="primary" id="saveOutfit" type="submit">Save my look <span>✓</span></button></form></div>
 </div></section>
-<script type="module" src="./world.js?v=assets-v2"></script>
+</div>
+</section></main>
+<footer class="footer">Our Space · A private home for two · <a href="./legacy.html">Old encrypted messages</a> · <span id="buildLabel">Life Sim 3.0</span></footer>
+</div>
+
+<script type="module" src="./world.js?v=layout-3"></script>
 </body></html>
