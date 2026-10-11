@@ -126,6 +126,7 @@
     playing = true;
     els.playBtn.textContent = '❚❚ Pause';
     tick();
+    window.FocusFlashStudio?.startReaderUndertone?.(index);
   }
 
   function togglePlay() {
