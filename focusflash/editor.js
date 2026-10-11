@@ -22,7 +22,7 @@
    for(const tab of tabs)tab.classList.toggle("background-tab",requested==="timeline");
    try{localStorage.setItem(VIEW_KEY,requested);}catch{}
    if(requested==="tools")$("editorInspector")?.scrollTo?.({top:0,behavior:"auto"});
-   else $("editorTimeline")?.scrollTo?.({top:0,behavior:"instant"});
+   else $("editorTimeline")?.scrollTo?.({top:0,behavior:"auto"});
  }
  function selectTab(name,scroll=false){
    const tab=tabs.find(t=>t.dataset.editorTab===name);
