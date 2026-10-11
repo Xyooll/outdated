@@ -176,18 +176,29 @@
    busy=true;sel("studioGenerate").disabled=true;sel("studioExport").disabled=true;
    stopPreview();voiceBuffer=null;voiceSignature="";report("Initializing narrator...");
    try{
-     const engine=await loadModel();
+     const mode=sel("studioMode").value;
+     const engine=mode==="quality"?await loadModel():null;
      const phrases=splitIntoPhrases(text);
      if(!phrases.length)throw Error("No readable text found.");
      const segments=[];let total=0;
      const gap=.11;
-     for(let i=0;i<phrases.length;i++){
-       report("Generating spoken audio locally: "+(i+1)+" / "+phrases.length);
-       const raw=rawAudio(await engine.generate(phrases[i],{voice:sel("studioVoice").value}));
-       if(raw.samples.length<1)throw Error("Voice generator returned an empty phrase.");
-       segments.push(raw);
-       total+=raw.samples.length/raw.sampleRate+gap;
-       await wait(0);
+     if(mode==="fast"){
+       report("Loading faster mobile voice, then generating audio...");
+       const adapter=await import("./fast-piper.js?v=voice-fast-1");
+       const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
+       for(const raw of results){
+         segments.push(raw);
+         total+=raw.samples.length/raw.sampleRate+gap;
+       }
+     }else{
+       for(let i=0;i<phrases.length;i++){
+         report("Generating natural narration: "+(i+1)+" / "+phrases.length);
+         const raw=rawAudio(await engine.generate(phrases[i],{voice:sel("studioVoice").value}));
+         if(!raw.samples.length)throw Error("Voice generator returned an empty phrase.");
+         segments.push(raw);
+         total+=raw.samples.length/raw.sampleRate+gap;
+         await wait(0);
+       }
      }
      const rate=24000;
      const count=Math.ceil(total*rate);
