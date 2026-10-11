@@ -1,9 +1,9 @@
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
-import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js";
-import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js";
-import { drawHouse, findHousePath, clearTile, ACTIONS } from "./life-house.js";
-import { createLifeUI } from "./life-ui.js";
+import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js?v=life-layout-2";
+import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js?v=life-layout-2";
+import { drawHouse, findHousePath, clearTile, ACTIONS } from "./life-house.js?v=life-layout-2";
+import { createLifeUI } from "./life-ui.js?v=life-layout-2";
 
 const $ = id => document.getElementById(id);
 const valid = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL)
@@ -21,12 +21,34 @@ let chatChannel=null,avatarChannel=null,loadStamp=0,messageStamp=0;
 let lastFrame=0,lastWrite=0,writeBusy=false,dirty=false,positionTarget=null;
 let inputDirection=new Set(),timer=null,appReady=false,recovery=false,starting=null,waypoints=[],arrival=null;
 let emoted={},outfitPending=false,sessionGeneration=0;
+function panelState(which,showIt){
+ const panel=$(which+"Panel"),button=$(which+"Btn");
+ if(!panel||!button)return;
+ panel.classList.toggle("hidden",!showIt);
+ button.setAttribute("aria-expanded",String(showIt));
+ if(which==="chat"&&showIt){
+  $("chatBadge").classList.add("hidden");
+  $("chatMessages").scrollTop=$("chatMessages").scrollHeight;
+ }
+}
+function closePanels(){
+ for(const name of ["chat","tasks","places"])panelState(name,false);
+}
+function togglePanel(name){
+ const showIt=$(name+"Panel").classList.contains("hidden");
+ closePanels();
+ if(showIt)panelState(name,true);
+}
 const life=createLifeUI({db,getUser:()=>me,getAvatar:()=>myAvatar,
  getAvatars:()=>avatars,goTo:walkTo,savePosition:ensureSavedPosition});
 const NUM=v=>Number.isFinite(+v)?Number(v):0;
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 function message(id,text){$(id).textContent=text||"";}
-function show(id){for(const view of VIEW_IDS)$(view).classList.toggle("hidden",view!==id);$("signoutBtn").classList.toggle("hidden",id!=="worldView");}
+function show(id){
+ if(id!=="worldView")closePanels();
+ for(const view of VIEW_IDS)$(view).classList.toggle("hidden",view!==id);
+ $("signoutBtn").classList.toggle("hidden",id!=="worldView");
+}
 function err(e){return e?.message||"Something went wrong. Please try again.";}
 function setStatus(s){$("networkState").textContent=s||"Private worlds";}
 function ensureAuthenticated(){if(!me||!myAvatar)throw Error("Please sign in again.");}
@@ -166,6 +188,7 @@ async function flushPosition(force=false){
 }
 async function changeWorld(next){
  if(!WORLD_META[next]||!me||next===world)return;
+ closePanels();
  if(life.active){message("chatStatus","Finish or cancel your activity before changing worlds.");return;}
  positionTarget=null;waypoints=[];arrival=null;inputDirection.clear();
  world=next;myAvatar.world_id=next;
@@ -187,6 +210,8 @@ async function changeRoomChat(){
  chatChannel=db.channel("our-space-messages-"+room.id)
  .on("postgres_changes",{event:"INSERT",schema:"public",table:"chat_room_messages",filter:"room_id=eq."+room.id},p=>{
   if(worldRow()?.id!==room.id)return;
+  if($("chatPanel").classList.contains("hidden") && p.new?.sender_id!==me?.id)
+   $("chatBadge").classList.remove("hidden");
   const id=p.new?.sender_id;
   if(id&&p.new?.body)emoted[id]={text:String(p.new.body).slice(0,30),until:Date.now()+4500};
   loadMessages().catch(()=>{});
@@ -344,6 +369,7 @@ function frame(ts){
 }
 function showCloset(){
  if(!myAvatar)return;
+ closePanels();
  life.onShowWardrobe();
  for(const [id,col] of Object.entries(FIELDS))$(id).value=myAvatar[col]||"";
  $("closet").classList.remove("hidden");$("avatarName").focus();
@@ -423,6 +449,12 @@ $("closetBtn").addEventListener("click",showCloset);
 $("closetClose").addEventListener("click",closeCloset);
 $("closetShade").addEventListener("click",closeCloset);
 $("outfitForm").addEventListener("submit",saveOutfit);
+for(const name of ["chat","tasks","places"])
+ $(name+"Btn").addEventListener("click",()=>togglePanel(name));
+$("chatClose").addEventListener("click",()=>panelState("chat",false));
+$("tasksClose").addEventListener("click",()=>panelState("tasks",false));
+for(const shade of document.querySelectorAll("[data-panel-close]"))
+ shade.addEventListener("click",()=>panelState(shade.dataset.panelClose,false));
 for(const id of Object.keys(FIELDS))$(id).addEventListener("input",drawPreview);
 for(const tab of document.querySelectorAll("[data-world]"))
  tab.addEventListener("click",()=>changeWorld(tab.dataset.world).catch(e=>message("chatStatus",err(e))));
@@ -443,7 +475,7 @@ document.addEventListener("keydown",e=>{
   w:"up",s:"down",a:"left",d:"right"};
  const direction=map[e.key]||map[e.key.toLowerCase()];
  if(direction&&appReady){e.preventDefault();inputDirection.add(direction);}
- if(e.key==="Escape")closeCloset();
+ if(e.key==="Escape"){closeCloset();closePanels();}
 });
 document.addEventListener("keyup",e=>{
  const map={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right",w:"up",s:"down",a:"left",d:"right"};
@@ -473,4 +505,8 @@ if(db){
  });
  enter();
 }else{show("loginView");message("loginStatus","Our Space is not connected to its database yet.");}
-if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+if("serviceWorker"in navigator){
+ navigator.serviceWorker.register("./sw.js")
+  .then(reg=>reg.update())
+  .catch(()=>{});
+}
