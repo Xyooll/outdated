@@ -9,8 +9,8 @@
  <title>FocusFlash Studio · Reader & Video Editor</title>
  <link rel="icon" href="icon.svg" type="image/svg+xml">
  <link rel="manifest" href="manifest.webmanifest">
- <link rel="stylesheet" href="styles.css?v=tones-1">
- <link rel="stylesheet" href="editor.css?v=tones-1">
+ <link rel="stylesheet" href="styles.css?v=tones-2">
+ <link rel="stylesheet" href="editor.css?v=tones-2">
 </head>
 <body>
 <main class="editor-app">
@@ -173,11 +173,13 @@
       </select>
      </label>
      <label for="toneCarrier">Carrier frequency <strong id="toneCarrierValue">220 Hz</strong>
-      <input id="toneCarrier" type="range" min="60" max="1200" step="5" value="220">
+      <input id="toneCarrier" type="range" min="60" max="1200" step="1" value="220">
+      <span class="tone-exact"><input id="toneCarrierNumber" type="number" min="60" max="1200" step="1" value="220" inputmode="decimal"><span>Hz · exact carrier</span></span>
      </label>
      <div id="toneBeatRow">
       <label for="toneBeat">Binaural beat difference <strong id="toneBeatValue">6.0 Hz</strong>
-       <input id="toneBeat" type="range" min="0.5" max="40" step="0.5" value="6">
+       <input id="toneBeat" type="range" min="0.5" max="40" step="0.01" value="6">
+       <span class="tone-exact"><input id="toneBeatNumber" type="number" min="0.5" max="40" step="0.01" value="6" inputmode="decimal"><span>Hz · exact difference</span></span>
       </label>
       <p class="tone-note" id="toneHeadphones">Use stereo headphones: the left and right channels play slightly different frequencies. Speaker playback won't produce the intended binaural effect.</p>
      </div>
@@ -265,10 +267,10 @@
   </section>
  </div>
 </main>
-<script defer src="tone-generator.js?v=tones-1"></script>
-<script defer src="script-blocks.js?v=tones-1"></script>
-<script defer src="video-studio.js?v=tones-1"></script>
-<script defer src="editor.js?v=tones-1"></script>
-<script defer src="app.js?v=tones-1"></script>
+<script defer src="tone-generator.js?v=tones-2"></script>
+<script defer src="script-blocks.js?v=tones-2"></script>
+<script defer src="video-studio.js?v=tones-2"></script>
+<script defer src="editor.js?v=tones-2"></script>
+<script defer src="app.js?v=tones-2"></script>
 </body>
 </html>
