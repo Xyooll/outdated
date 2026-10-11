@@ -40,11 +40,15 @@
   }
 
   function focalIndex(word) {
-    const n = [...word].length;
-    if (n <= 1) return 0;
-    if (n <= 5) return Math.max(0, Math.floor((n - 1) * 0.40));
-    if (n <= 9) return Math.max(0, Math.floor((n - 1) * 0.38));
-    return Math.max(0, Math.floor((n - 1) * 0.35));
+    // Always center the focal LETTER, not surrounding punctuation.
+    // For even letter counts, highlight the letter just left of center.
+    const chars = [...word];
+    const letters = [];
+    for (let i = 0; i < chars.length; i++) {
+      if (/[\p{L}\p{N}]/u.test(chars[i])) letters.push(i);
+    }
+    return letters.length ? letters[Math.floor((letters.length - 1) / 2)] :
+      Math.max(0, Math.floor((chars.length - 1) / 2));
   }
 
   function splitWord(word) {
