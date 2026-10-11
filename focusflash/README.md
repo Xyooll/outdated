@@ -151,3 +151,18 @@ A **Preview sound mix** button auditions all enabled layers. Pressing Play in th
 Everything is local on the device; audio files aren't sent to servers by the application. Settings persist in localStorage. The imported audio file is stored **in this browser's IndexedDB** when supported and sufficient quota exists, then restored on later visits; if saving fails it remains available only for the current page session. Browser data clearing removes it. Browser's tab should remain in the foreground during real-time export.
 
 **Audio safety:** Volumes are intentionally conservative for the synthesized layers, but combined tracks can add loudness; start low, especially with headphones. Binaural auditory stimulation is not scientifically established to achieve subliminal learning or reliably induce specific mental states. Background effects are for ambience/creative mixing only.
+
+
+## Two-user Workspaces and UX refresh
+
+**Live:** https://xyooll.github.io/outdated/focusflash/?v=workspace-2
+
+FocusFlash now includes **exactly two local user workspaces**, initially called User 1 and User 2. The active workspace is immediately visible in the top bar, with a switcher and a settings gear. The new **Profiles** tool lets users rename each workspace and switch to the other. Each profile has its own scripts, script-block sequences, repetition counts, reading position, WPM, font size, voice/speech preferences, export format, pure tones, binaural settings, ambient FX, and locally imported MP3s. Each also remembers the most recently open tool panel. When switching, the app flushes pending block and reader changes, stops playback, changes the active workspace, and reloads so every module reinitializes with the correct state. Switching is blocked during video rendering. User 2 begins with a blank script rather than inheriting the original owner's text.
+
+The old single-user localStorage records are **copied without deletion into User 1**, leaving past data intact. Legacy audio (IndexedDB key `active`) migrates once into User 1's own audio record, with a migration marker to prevent removed audio reappearing. New MP3 records are saved with profile-specific keys, and each profile can save or remove its own imported audio independently.
+
+**Storage and security:** These are local browser profiles, not password-protected accounts. Workspaces are not automatically synchronized between devices or browsers. Someone else using the same browser can switch profiles, so this does not provide privacy against a shared-device user. Clearing browser data, private/incognito browsing or site storage eviction can remove saved projects/audio. Users should keep copies of irreplaceable text and MP3s.
+
+**Usability:** The editor now has a more legible hierarchy, improved color contrast, accessible focus rings, distinct navigation states, a persistent profile switcher, responsive layouts for narrow Android screens, a short step-by-step onboarding hint in Script, improved input affordances, and a dedicated profile settings panel. The text preview, fixed red focus point, audio tools, block timeline, and export controls remain compatible.
+
+**Limitations:** This release is not yet a cloud multi-account service; optional account/password protection or cross-device synchronization would require an authentication and backend design. Browser-generated audio and WebM rendering still have mobile performance limitations.
