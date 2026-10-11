@@ -65,3 +65,10 @@ The video creator now respects **your chosen visual WPM** as the authoritative t
 At high WPM this is heavily accelerated and pitch-shifted rather than pitch-preserved; it may sound like a high-pitched blur, which is the intended faint/rapid undertone, not intelligible narration. Source synthesis still takes some time on phones. Word-to-phoneme correspondence is only approximate because there is no forced alignment; the *overall beginning, duration and ending* are synchronized. No claims are made that low-volume subliminal messages cause learning or behavior change.
 
 Change Speed in the original reader card to change both the resulting video pace and the voice's compression factor. The app shows the effective audio multiplier. Video export remains WebM and is recorded in real time while Chrome stays foregrounded. Voice volume/voice mode/format choices are saved locally. Visit `https://xyooll.github.io/outdated/focusflash/?v=undertone-1` for the updated version.
+
+
+### Reader playback (undertone v2)
+
+After generating a voice once, the ordinary **Play** control can optionally start synchronized low-volume speech behind the flashing words. The checkbox **Include voice during normal reading** is enabled by default and can be turned off at any time. Pausing playback stops the voice; choosing a different word position restarts from the matching approximate offset the next time Play is pressed. The final word remains on screen for its full configured duration.
+
+The **Preview synced undertone** display uses the same WPM timeline, audio playback multiplier, and volume as the exported WebM. Changing WPM or volume does **not** require regenerating the voice; only changing text or narrator requires new synthesis. Note that very high WPM causes strong pitch shifts and loss of intelligibility, and faint rapid narration is not scientifically established to produce subliminal learning. Latest URL: `https://xyooll.github.io/outdated/focusflash/?v=undertone-2`.
