@@ -9,9 +9,10 @@
  <title>FocusFlash Studio · Reader & Video Editor</title>
  <link rel="icon" href="icon.svg" type="image/svg+xml">
  <link rel="manifest" href="manifest.webmanifest">
- <link rel="stylesheet" href="styles.css?v=workspace-3">
- <link rel="stylesheet" href="editor.css?v=workspace-3">
- <link rel="stylesheet" href="workspace.css?v=workspace-3">
+ <link rel="stylesheet" href="styles.css?v=reference-ui-1">
+ <link rel="stylesheet" href="editor.css?v=reference-ui-1">
+ <link rel="stylesheet" href="workspace.css?v=reference-ui-1">
+ <link rel="stylesheet" href="reference-layout.css?v=reference-ui-1">
 </head>
 <body>
 <main class="editor-app">
@@ -30,6 +31,7 @@
     </div>
     <button id="profileEditBtn" type="button" class="profile-edit-btn" aria-label="Manage user profiles" title="Manage profiles">⚙</button>
    </div>
+   <button type="button" id="topTranscriptBtn" class="ghost">≡ Transcript</button>
    <button type="button" id="topImportBtn" class="ghost">＋ Import text</button>
    <button type="button" id="installBtn" class="ghost hidden">Install</button>
    <button type="button" id="jumpExportBtn" class="primary">Export <span aria-hidden="true">↗</span></button>
@@ -37,7 +39,8 @@
  </header>
  <div class="editor-workspace">
   <nav class="editor-rail" aria-label="Editor tools">
-   <button type="button" class="editor-tab active" data-editor-tab="script" aria-current="page"><span aria-hidden="true">▤</span>Script</button>
+   <button type="button" class="editor-tab active" data-editor-tab="transcript" aria-current="page"><span aria-hidden="true">≡</span>Transcript</button>
+   <button type="button" class="editor-tab" data-editor-tab="script"><span aria-hidden="true">▤</span>Script</button>
    <button type="button" class="editor-tab" data-editor-tab="voice"><span aria-hidden="true">♫</span>Voice</button>
    <button type="button" class="editor-tab" data-editor-tab="timing"><span aria-hidden="true">◷</span>Speed</button>
    <button type="button" class="editor-tab" data-editor-tab="style"><span aria-hidden="true">▣</span>Canvas</button>
@@ -45,8 +48,28 @@
    <button type="button" class="editor-tab" data-editor-tab="export"><span aria-hidden="true">⇧</span>Export</button>
    <button type="button" class="editor-tab" data-editor-tab="profiles"><span aria-hidden="true">◎</span>Profiles</button>
   </nav>
-  <aside class="editor-inspector" aria-label="Editing tools">
-   <section id="editorScript" class="editor-section" data-editor-panel="script">
+  <aside class="editor-inspector" aria-label="Transcript and editing tools">
+   <section id="editorTranscript" class="editor-section" data-editor-panel="transcript">
+    <header class="editor-panel-head">
+     <span class="editor-eyebrow">PROJECT TRANSCRIPT</span>
+     <h2>Follow your words</h2>
+     <p>Tap any passage to jump there in the preview and timeline.</p>
+    </header>
+    <div class="transcript-toolbar">
+     <label for="transcriptSearch">Find in script</label>
+     <input id="transcriptSearch" type="search" placeholder="Search for a word or phrase…" autocomplete="off">
+     <div class="transcript-meta">
+      <span id="transcriptCount">0 passages</span>
+      <span id="transcriptNow">00:00</span>
+     </div>
+    </div>
+    <div id="transcriptList" class="transcript-list" role="group" aria-label="Seekable transcript passages"></div>
+    <div class="transcript-footer">
+     <button id="transcriptEditBtn" type="button" class="primary">✎ Edit script or blocks</button>
+     <span id="transcriptHelp">Passages follow the reader automatically.</span>
+    </div>
+   </section>
+   <section id="editorScript" class="editor-section" data-editor-panel="script" hidden>
     <header class="editor-panel-head">
      <span class="editor-eyebrow">01 · Create</span>
      <h2>Your script</h2>
@@ -310,13 +333,14 @@
   </aside>
   <section class="editor-preview-section" aria-label="Video preview and reader">
    <header class="editor-preview-header">
-    <strong class="preview-title">Live preview</strong>
+    <div class="preview-heading"><span class="preview-live-dot" aria-hidden="true"></span><strong class="preview-title">Player preview</strong></div>
     <div class="preview-font-controls" aria-label="Quick font size adjustment">
      <button type="button" id="fontQuickMinus" aria-label="Smaller word text">−</button>
      <output id="fontQuickLabel" for="fontSize studioScale">48 px</output>
      <button type="button" id="fontQuickPlus" aria-label="Larger word text">＋</button>
     </div>
     <span class="preview-note" id="editorPreviewFormat">9:16 · Vertical</span>
+    <button id="previewFullscreen" type="button" class="preview-fullscreen" aria-label="Expand preview" title="Expand preview">⛶</button>
    </header>
    <div class="editor-preview-holder">
     <div class="reader-card">
@@ -338,7 +362,7 @@
   </section>
   <section class="editor-timeline" aria-label="Timeline editor">
    <header class="timeline-header">
-    <div><strong>Timeline</strong><small id="timelineDuration"> · 0:00</small></div>
+    <div><strong>Editor timeline</strong><small id="timelineDuration"> · 0:00</small></div>
     <div class="timeline-actions"><span class="timeline-zoom-label" id="timelineZoomLabel">1×</span><button type="button" id="timelineZoomOut" aria-label="Zoom out">−</button><button type="button" id="timelineZoomIn" aria-label="Zoom in">＋</button></div>
    </header>
    <div class="timeline-ruler"><span>00:00</span><span id="timelineMid">00:00</span><span id="timelineEnd">00:00</span></div>
@@ -351,11 +375,11 @@
   </section>
  </div>
 </main>
-<script defer src="profiles.js?v=workspace-3"></script>
-<script defer src="tone-generator.js?v=workspace-3"></script>
-<script defer src="script-blocks.js?v=workspace-3"></script>
-<script defer src="video-studio.js?v=workspace-3"></script>
-<script defer src="editor.js?v=workspace-3"></script>
-<script defer src="app.js?v=workspace-3"></script>
+<script defer src="profiles.js?v=reference-ui-1"></script>
+<script defer src="tone-generator.js?v=reference-ui-1"></script>
+<script defer src="script-blocks.js?v=reference-ui-1"></script>
+<script defer src="video-studio.js?v=reference-ui-1"></script>
+<script defer src="editor.js?v=reference-ui-1"></script>
+<script defer src="app.js?v=reference-ui-1"></script>
 </body>
 </html>
