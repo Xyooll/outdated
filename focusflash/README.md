@@ -72,3 +72,18 @@ Change Speed in the original reader card to change both the resulting video pace
 After generating a voice once, the ordinary **Play** control can optionally start synchronized low-volume speech behind the flashing words. The checkbox **Include voice during normal reading** is enabled by default and can be turned off at any time. Pausing playback stops the voice; choosing a different word position restarts from the matching approximate offset the next time Play is pressed. The final word remains on screen for its full configured duration.
 
 The **Preview synced undertone** display uses the same WPM timeline, audio playback multiplier, and volume as the exported WebM. Changing WPM or volume does **not** require regenerating the voice; only changing text or narrator requires new synthesis. Note that very high WPM causes strong pitch shifts and loss of intelligibility, and faint rapid narration is not scientifically established to produce subliminal learning. Latest URL: `https://xyooll.github.io/outdated/focusflash/?v=undertone-2`.
+
+
+## Natural-pitch, speed-matched undertone (v3)
+
+FocusFlash no longer speeds up AudioBufferSourceNode audio, which raised the voice's pitch. Instead it uses Chrome/Android's standard `HTMLMediaElement.preservesPitch` during accelerated playback and routes that audio into Web Audio for live reading, the audiovisual preview, and the exported WebM soundtrack.
+
+For very high speech compression (more than ~3.5x), the app first shortens audio with a local, windowed overlap/add (WSOLA-like) processor at the **original sample rate**, then plays the result through the browser's pitch-preserving audio transport. This avoids the chipmunk pitch but cannot preserve perfect word clarity at extreme speeds. Input and output are all processed on-device; no proprietary PDF reader was decompiled, no new voice subscription is needed.
+
+- Visual WPM remains authoritative; changing WPM does not require resynthesizing the same voice.
+- Low-volume narration remains adjustable, default 18%, and the pitch-preserved voice is available in both regular reader playback and generated video.
+- If the phone's browser lacks pitch-preserving playback, audio fails with a clear instruction to update Chrome rather than silently raising the pitch.
+- A simple synthetic 215 Hz tone test of the offline compressor at ratios 2.2x, 5.5x and 11x produced an estimated fundamental frequency of approximately 213–214 Hz. This verifies approximate fundamental pitch retention in that synthetic test, **not** actual voice quality on every phone.
+- For severe voice compression, speech may be clipped, choppy or hard to recognize. Keeping pitch unchanged is not the same as preserving speech intelligibility. No scientific claim is made about subliminal messaging effectiveness.
+
+The new release is at `https://xyooll.github.io/outdated/focusflash/?v=natural-pitch-1`. The speech synthesis step (Piper or Kokoro) still requires a one-time downloaded model and processing time; the pitch correction changes playback and exported soundtrack only.
