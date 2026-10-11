@@ -13,3 +13,33 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}.center-view{flex:1;
 .closet{position:fixed;inset:0;z-index:20;display:flex;align-items:end;justify-content:center}.closet-shade{position:absolute;inset:0;background:#070a19bd;backdrop-filter:blur(6px)}.closet-sheet{position:relative;background:#232640;border-radius:24px 24px 0 0;border:1px solid #746384;border-bottom:0;width:min(560px,100%);max-height:92dvh;overflow-y:auto;padding:21px 20px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -25px 65px #0008}.closet-header{display:flex;align-items:center;justify-content:space-between}.closet-header h2{font-size:24px;letter-spacing:-.8px;margin:5px 0 15px}.close{border:1px solid #ffffff25;border-radius:50%;background:#343754;color:white;font-size:25px;width:38px;height:38px}.closet-body{display:grid;grid-template-columns:160px 1fr;gap:18px}.avatar-card{background:radial-gradient(circle at 50% 35%,#655475,#3b3658 55%,#262942);border-radius:17px;padding:10px;display:flex;align-items:center;flex-direction:column;align-self:start}.avatar-card canvas{width:140px;height:168px;image-rendering:pixelated}.avatar-card p{color:#f7d0e8;font-size:11px}.closet-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.closet-grid label{font-size:11px;color:#d7cbe6}.outfit-form input{margin-bottom:10px}.outfit-form select{margin-top:6px;padding:0 9px;font-size:12px;height:41px}.outfit-form .fine{margin:1px 0 12px}
 @media (max-width:540px){.topbar{height:60px;padding:0 14px}.room-nav{padding:12px 12px 9px}.world-shell{padding:0 9px 4px}.chat-section{margin:7px 9px 5px;min-height:270px}.world-banner h1{font-size:18px}.room-nav-label{margin-bottom:8px}.tabs{gap:6px}.tab{padding:9px 10px;font-size:11px}.chat-top{padding:9px 12px}.network{display:none}.world-stage{border-width:3px;border-radius:15px}.world-hud{top:5px;left:6px;right:5px}.world-hud span{font-size:9px;padding:4px 7px}.dpad{right:6px;bottom:5px;grid-template-columns:30px 30px 30px;grid-template-rows:30px 30px;gap:3px}.dpad button{border-radius:7px;font-size:17px}.closet-body{grid-template-columns:1fr}.avatar-card{flex-direction:row;gap:18px;justify-content:center}.avatar-card canvas{width:105px;height:125px}.avatar-card p{font-size:14px}.closet-sheet{padding:17px 17px calc(19px + env(safe-area-inset-bottom))}.closet-header h2{font-size:21px}.closet-grid{gap:0 8px}}
 @media(min-width:850px){.world-view{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);grid-template-rows:auto 1fr;gap:0;align-items:start}.room-nav{grid-column:1/-1}.world-shell{grid-column:1;grid-row:2}.chat-section{grid-column:2;grid-row:2;height:100%;margin:0 20px 12px 0;max-height:720px}.world-stage canvas{max-height:560px}}
+
+/* Small two-person life simulation */
+.life-hud{padding:12px 12px 10px;margin:0 0 10px;background:#252841;border:1px solid #ffffff23;border-radius:15px}
+.life-topline{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+.life-topline strong{font-size:12px;color:#fde5ee}.life-topline span{font-size:11px;color:#f3d7ad}
+.life-needs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.need{min-width:0}.need-heading{display:flex;gap:3px;justify-content:space-between;font-size:10px;color:#eee1ec;margin-bottom:6px}
+.need-heading span:last-child{color:#c4b9d3}.need-track{height:8px;border-radius:8px;background:#13192f;overflow:hidden;border:1px solid #ffffff16}
+.need-fill{height:100%;border-radius:8px;background:#8fd6b3;transition:width .4s}.need-fill[data-level="medium"]{background:#e8c281}.need-fill[data-level="low"]{background:#e47e8d}
+.life-duties{border:1px solid #ffffff2b;background:#292945;margin:10px 0;border-radius:15px;overflow:hidden}
+.life-duties summary{cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 14px;font-size:12px;font-weight:800;color:#f0d7e9}
+.life-duties summary span:last-child{color:#a9e0b9;font-size:11px}.duty-caption{font-size:11px;color:#b1abc8;padding:0 14px;margin:3px 0 8px}
+#lifeTasks{padding:0 10px 12px}.duty-row{background:#171e32;border:1px solid #ffffff18;border-radius:11px;padding:10px;margin:6px 0;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.duty-summary strong{display:block;font-size:12px}.duty-summary small{display:block;font-size:10px;color:#bbb5d0;margin-top:3px}
+.duty-button{border:1px solid #f6bcda77;border-radius:9px;background:#3d354f;color:#fbd2e8;padding:8px;font-size:11px;white-space:nowrap}
+.duty-done{border-color:#8fe0b34b}.duty-tick{font-size:18px;color:#92dab6}
+.life-action-menu{position:absolute;inset:0;z-index:8;background:#18182aa6;display:flex;align-items:center;justify-content:center;padding:14px}
+.life-actions-card{width:min(360px,98%);background:#222941;border:1px solid #b29ac9;border-radius:17px;padding:14px;box-shadow:0 13px 40px #0007}
+.life-actions-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:15px;margin-bottom:12px}
+.life-actions-top button{background:#ffffff16;color:#fff;border:0;border-radius:50%;height:32px;width:32px;font-size:23px}
+.life-action-buttons{display:grid;gap:7px;max-height:220px;overflow:auto}
+.action-choice{background:#36334e;color:#fce9f7;border:1px solid #ffffff21;border-radius:10px;padding:11px 12px;text-align:left;font-size:12px}
+.action-choice:not(:disabled):hover{background:#5b4964}
+.life-progress{display:flex;gap:8px;align-items:center;border-radius:12px;background:#322c46;padding:9px 11px;margin-top:9px;font-size:11px}
+.life-progress span:first-child{white-space:nowrap}.life-progress-track{height:9px;flex:1;background:#15172c;border-radius:10px;overflow:hidden}
+#lifeProgressFill{width:0;background:#e4b2d9;height:100%;transition:width .2s}
+.life-progress button{background:transparent;color:#f5cde7;border:1px solid #ffffff30;border-radius:8px;padding:4px 7px;font-size:10px}
+.life-status{margin:4px 0;min-height:0;font-size:11px;color:#ecb5d2;text-align:center}
+.life-status:empty{display:none}
+@media(max-width:600px){.life-hud{padding:9px 9px 8px;margin-bottom:7px}.life-needs{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.need-heading{font-size:9px;display:block}.need-heading span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.need-track{height:7px}.life-topline{margin-bottom:7px}.life-progress{flex-wrap:wrap}}

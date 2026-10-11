@@ -38,7 +38,15 @@
 <div class="world-shell">
 <div class="world-banner"><div><span id="worldEyebrow">A LITTLE PLACE CALLED HOME</span><h1 id="worldTitle">Cozy Cottage</h1></div>
 <button type="button" id="closetBtn" class="closet-btn"><span>✦</span> Dress up</button></div>
+<div id="lifeHud" class="life-hud">
+ <div class="life-topline"><strong>♥ Your Sim's needs</strong><span id="lifeMealCount">🍲 0 meals</span></div>
+ <div id="lifeNeeds" class="life-needs"></div>
+</div>
 <div class="world-stage">
+<div id="lifeActions" class="life-action-menu hidden">
+ <div class="life-actions-card"><div class="life-actions-top"><strong id="lifeActionTitle">Interact</strong><button type="button" id="lifeCloseMenu" aria-label="Close actions">×</button></div>
+ <div id="lifeActionButtons" class="life-action-buttons"></div></div>
+</div>
 <canvas id="worldCanvas" width="960" height="540" aria-label="2D walkable world. Tap a place to walk there, or use the directional controls." tabindex="0"></canvas>
 <div class="world-hud"><span id="worldPeople">● Connecting</span><span>Tap to walk</span></div>
 <div class="dpad" aria-label="Move your avatar">
@@ -47,7 +55,10 @@
 <button type="button" data-move="down" class="down" aria-label="Walk down">↓</button>
 <button type="button" data-move="right" class="right" aria-label="Walk right">→</button>
 </div></div>
+<div id="lifeProgress" class="life-progress hidden"><span id="lifeProgressName">Action</span><div class="life-progress-track"><div id="lifeProgressFill"></div></div><span id="lifeProgressTime">0s</span><button type="button" id="lifeCancel">Cancel</button></div>
+<p id="lifeStatus" class="life-status" role="status"></p>
 <p class="world-subtitle" id="worldDescription">Make yourself at home. Stay a while.</p>
+<details id="lifeDutyPanel" class="life-duties"><summary><span>✓ Household duties</span><span id="lifeScore">0/100 Home Care</span></summary><p class="duty-caption">Voluntary daily chores · complete them using furniture</p><div id="lifeTasks"></div></details>
 </div>
 <div class="chat-section">
 <div class="chat-top"><div><span class="chaticon">✉</span><strong id="chatHeading">Cottage Chat</strong></div><span class="chat-private">PRIVATE TO TWO <span aria-hidden="true">●</span></span></div>

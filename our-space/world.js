@@ -2,6 +2,8 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
 import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js";
 import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js";
+import { drawHouse, findHousePath, clearTile } from "./life-house.js";
+import { createLifeUI } from "./life-ui.js";
 
 const $ = id => document.getElementById(id);
 const valid = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL)
@@ -17,8 +19,10 @@ const preview=$("avatarCanvas").getContext("2d");
 let me=null,myAvatar=null,avatars=[],rooms={},world="home";
 let chatChannel=null,avatarChannel=null,loadStamp=0,messageStamp=0;
 let lastFrame=0,lastWrite=0,writeBusy=false,dirty=false,positionTarget=null;
-let inputDirection=new Set(),timer=null,appReady=false,recovery=false,starting=null;
+let inputDirection=new Set(),timer=null,appReady=false,recovery=false,starting=null,waypoints=[],arrival=null;
 let emoted={},outfitPending=false,sessionGeneration=0;
+const life=createLifeUI({db,getUser:()=>me,getAvatar:()=>myAvatar,
+ getAvatars:()=>avatars,goTo:walkTo,savePosition:ensureSavedPosition});
 const NUM=v=>Number.isFinite(+v)?Number(v):0;
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 function message(id,text){$(id).textContent=text||"";}
@@ -102,6 +106,8 @@ async function doEnter(){
   show("worldView");
   connectAvatarChannel();
   await changeRoomChat();
+  await life.start();
+  await life.onChangeWorld(world);
   updateWorldPeople();
   if(timer)clearInterval(timer);
   timer=setInterval(()=>{if(appReady&&me){
@@ -155,7 +161,8 @@ async function flushPosition(force=false){
 }
 async function changeWorld(next){
  if(!WORLD_META[next]||!me||next===world)return;
- positionTarget=null; inputDirection.clear();
+ if(life.active){message("chatStatus","Finish or cancel your activity before changing worlds.");return;}
+ positionTarget=null;waypoints=[];arrival=null;inputDirection.clear();
  world=next;myAvatar.world_id=next;
  myAvatar.x=450;myAvatar.y=350;
  dirty=true;
@@ -164,6 +171,7 @@ async function changeWorld(next){
  message("chatStatus","");
  await flushPosition(true);
  await changeRoomChat();
+ await life.onChangeWorld(world);
 }
 async function changeRoomChat(){
  if(chatChannel)await db.removeChannel(chatChannel);
@@ -230,7 +238,24 @@ async function sendMessage(e){
  }catch(error){message("chatStatus","Not sent: "+err(error));}
  finally{btn.disabled=false;}
 }
-function moveTo(x,y){if(!appReady)return;positionTarget={x:clamp(x,26,934),y:clamp(y,125,484)};}
+
+function walkTo(x,y,callback=null){
+ if(!appReady||!myAvatar)return false;
+ if(world!=="home"){positionTarget={x:clamp(x,26,934),y:clamp(y,125,484)};return true;}
+ const route=findHousePath(myAvatar.x,myAvatar.y,x,y);
+ if(!route.length)return false;
+ waypoints=route;arrival=callback;positionTarget=null;
+ return true;
+}
+function moveTo(x,y){if(!appReady)return;life.closeMenu();walkTo(x,y);}
+async function ensureSavedPosition(){
+ for(let i=0;i<10;i++){
+  if(writeBusy){await new Promise(r=>setTimeout(r,125));continue;}
+  await flushPosition(true);
+  if(!writeBusy&&!dirty)return;
+ }
+ throw Error("Position has not synchronized; retry the activity.");
+}
 function worldPoint(e){
  const rect=$("worldCanvas").getBoundingClientRect();
  return {x:(e.clientX-rect.left)*960/rect.width,y:(e.clientY-rect.top)*540/rect.height};
@@ -243,19 +268,44 @@ function moveAvatar(delta){
   if(dir==="up")dy-=1;if(dir==="down")dy+=1;
   if(dir==="left")dx-=1;if(dir==="right")dx+=1;
  }
- const speed=185*d;
- if(dx||dy){
-  const l=Math.hypot(dx,dy);
-  myAvatar.x=clamp(myAvatar.x+dx/l*speed,26,934);
-  myAvatar.y=clamp(myAvatar.y+dy/l*speed,125,484);
-  positionTarget=null;dirty=true;
- }else if(positionTarget){
-  const vx=positionTarget.x-myAvatar.x,vy=positionTarget.y-myAvatar.y;
-  const distance=Math.hypot(vx,vy);
-  if(distance<=speed){myAvatar.x=positionTarget.x;myAvatar.y=positionTarget.y;positionTarget=null;dirty=true;}
-  else{myAvatar.x+=vx/distance*speed;myAvatar.y+=vy/distance*speed;dirty=true;}
+ const speed=185*d*(world==="home"?life.getSpeed():1);
+ if(world==="home"){
+  if(dx||dy){
+   waypoints=[];arrival=null;positionTarget=null;
+   const l=Math.hypot(dx,dy);
+   const nx=clamp(myAvatar.x+dx/l*speed,26,934);
+   const ny=clamp(myAvatar.y+dy/l*speed,125,485);
+   if(clearTile(nx,myAvatar.y)){myAvatar.x=nx;dirty=true;}
+   if(clearTile(myAvatar.x,ny)){myAvatar.y=ny;dirty=true;}
+  }else if(waypoints.length){
+   const target=waypoints[0],vx=target[0]-myAvatar.x,vy=target[1]-myAvatar.y;
+   const dist=Math.hypot(vx,vy);
+   if(dist<=speed+1){
+    myAvatar.x=target[0];myAvatar.y=target[1];waypoints.shift();dirty=true;
+    if(!waypoints.length && arrival){
+     const callback=arrival;arrival=null;
+     Promise.resolve().then(callback).catch(e=>message("lifeStatus",err(e)));
+    }
+   }else{
+    const nx=myAvatar.x+vx/dist*speed,ny=myAvatar.y+vy/dist*speed;
+    if(clearTile(nx,ny)){myAvatar.x=nx;myAvatar.y=ny;dirty=true;}
+    else{waypoints=[];arrival=null;message("lifeStatus","Path blocked. Tap another spot.");}
+   }
+  }
+ }else{
+  if(dx||dy){
+   const l=Math.hypot(dx,dy);
+   myAvatar.x=clamp(myAvatar.x+dx/l*speed,26,934);
+   myAvatar.y=clamp(myAvatar.y+dy/l*speed,125,484);
+   positionTarget=null;dirty=true;
+  }else if(positionTarget){
+   const vx=positionTarget.x-myAvatar.x,vy=positionTarget.y-myAvatar.y;
+   const dist=Math.hypot(vx,vy);
+   if(dist<=speed){myAvatar.x=positionTarget.x;myAvatar.y=positionTarget.y;positionTarget=null;dirty=true;}
+   else{myAvatar.x+=vx/dist*speed;myAvatar.y+=vy/dist*speed;dirty=true;}
+  }
  }
- if(dirty && performance.now()-lastWrite>1100)flushPosition().catch(()=>{});
+ if(dirty&&performance.now()-lastWrite>1100)flushPosition().catch(()=>{});
 }
 function drawPreview(){
  if(!myAvatar)return;
@@ -270,7 +320,7 @@ function frame(ts){
  lastFrame=ts;
  if(appReady&&myAvatar){
   moveAvatar(dt);
-  drawWorld(ctx,world,ts/1000);
+  if(world==="home")drawHouse(ctx,ts/1000);else drawWorld(ctx,world,ts/1000);
   const visible=avatars.filter(a=>a.world_id===world).sort((a,b)=>a.y-b.y);
   for(const a of visible){
    const you=a.user_id===me.id, active=you||online(a);
@@ -279,11 +329,13 @@ function frame(ts){
    drawAvatar(ctx,a,a.x,y,{online:active,offline:!active,emote:bubble,scale:1.38});
   }
   if(!$("closet").classList.contains("hidden"))drawPreview();
+  life.animate();
  }
  requestAnimationFrame(frame);
 }
 function showCloset(){
  if(!myAvatar)return;
+ life.onShowWardrobe();
  for(const [id,col] of Object.entries(FIELDS))$(id).value=myAvatar[col]||"";
  $("closet").classList.remove("hidden");$("avatarName").focus();
  drawPreview();
@@ -307,7 +359,7 @@ async function saveOutfit(e){
  finally{outfitPending=false;$("saveOutfit").disabled=false;}
 }
 async function signOut(){
- sessionGeneration++;appReady=false;positionTarget=null;inputDirection.clear();
+ sessionGeneration++;appReady=false;positionTarget=null;waypoints=[];arrival=null;inputDirection.clear();life.stop();
  if(timer)clearInterval(timer);timer=null;
  if(avatarChannel)await db.removeChannel(avatarChannel);
  if(chatChannel)await db.removeChannel(chatChannel);
@@ -366,7 +418,9 @@ for(const id of Object.keys(FIELDS))$(id).addEventListener("input",drawPreview);
 for(const tab of document.querySelectorAll("[data-world]"))
  tab.addEventListener("click",()=>changeWorld(tab.dataset.world).catch(e=>message("chatStatus",err(e))));
 $("worldCanvas").addEventListener("pointerdown",e=>{
- e.preventDefault();const point=worldPoint(e);moveTo(point.x,point.y);$("worldCanvas").focus();
+ e.preventDefault();const point=worldPoint(e);
+ if(world!=="home"||!life.interactAt(point.x,point.y))moveTo(point.x,point.y);
+ $("worldCanvas").focus();
 });
 for(const control of document.querySelectorAll("[data-move]")){
  const dir=control.dataset.move;
