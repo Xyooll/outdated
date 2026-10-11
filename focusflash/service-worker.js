@@ -1,14 +1,14 @@
-// FocusFlash Studio: cache the app shell, not heavy optional voice models.
-const CACHE="focusflash-font-focus-v1";
+// FocusFlash Script Blocks v2 — refresh the edit/playback shell.
+const CACHE="focusflash-script-blocks-v2";
 const STATIC=[
- "./","./index.html","./styles.css?v=font-focus-1","./editor.css?v=font-focus-1",
- "./app.js?v=font-focus-1","./editor.js?v=font-focus-1",
- "./video-studio.js?v=font-focus-1","./instant-tts.js?v=font-focus-1",
- "./pitch-preserve.js?v=font-focus-1","./fast-piper.js?v=font-focus-1",
- "./manifest.webmanifest","./icon.svg"
+ "./","./index.html","./styles.css?v=blocks-2","./editor.css?v=blocks-2",
+ "./app.js?v=blocks-2","./editor.js?v=blocks-2",
+ "./script-blocks.js?v=blocks-2","./video-studio.js?v=blocks-2",
+ "./instant-tts.js?v=blocks-2","./pitch-preserve.js?v=blocks-2",
+ "./fast-piper.js?v=blocks-2","./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{
- event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(STATIC)));
+ event.waitUntil(caches.open(CACHE).then(c=>c.addAll(STATIC)));
  self.skipWaiting();
 });
 self.addEventListener("activate",event=>{

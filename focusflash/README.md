@@ -106,3 +106,18 @@ Revision studio-3 replaces older page, script, CSS and PWA cache names to avoid 
 The reading and exported-video focal letter is now selected from the **middle of the word**, excluding punctuation; for even letter counts the left-middle letter is highlighted. CSS locks that one red character in the precise center of the preview regardless of word length, using equal, minmax(0,1fr) tracks around a max-content center. The video Canvas draw path already centers the exact highlighted character on W/2.
 
 Both reader preview and video font size now use the same 16–120 pixel control. The Canvas tab has a slider, +/- buttons and exact number entry; there are also always-visible +/- controls above the video preview. Long words automatically shrink to fit while retaining the fixed red focal point. Visit `https://xyooll.github.io/outdated/focusflash/?v=font-focus-1`.
+
+
+## Script Blocks · repeat then advance (v2)
+
+**Live:** https://xyooll.github.io/outdated/focusflash/?v=blocks-2
+
+The Script tool now offers **Single script** and **Script blocks**. Script blocks are local, ordered passages with a title, editable text, and a **Repeat this block** count from 1 to 100. Users can add, move up/down, duplicate, and delete blocks. For instance: "Block 1: I am focused" repeated 10 times, followed by "Block 2: I follow through" repeated 5 times. The app automatically advances to the next block after the configured repetitions; after the final block, it stops. Repetitions are finite, not an endless loop.
+
+The video preview/reader, WPM timing, central red focal letter, source narration, and exported WebM video all consume the *same compiled sequence*. The timeline now shows block groups with repeat counts; tapping a group seeks to its start. Every repeated iteration is a separate timed part of the playback sequence.
+
+**Voice processing is optimized:** repeated blocks reuse the same generated audio samples instead of calling the AI or compact speech generator for every repetition. The voice synthesizer generates each distinct block's text once and assembles audio in the requested sequence. This reduces repeated synthesis work, though total voice duration and real-time video recording still scale with the number of repeats. High WPM, sound processing, and recording remain subject to device/browser limits. Native Android TTS still starts immediately for playback.
+
+Scripts and block settings are stored on-device in localStorage, including whether Blocks mode was selected. Switching back to Single Script restores the separate original single-script draft rather than replacing it with the expanded block sequence. Importing a TXT or Markdown file switches to Single Script to avoid silently destroying an existing block composition.
+
+Limits: 60 blocks, 100 repetitions/block and 100,000 total expanded words. Video output remains limited to eight minutes; the app shows a warning if the selected repetitions would exceed that length at the chosen WPM. Optional heavy AI voices remain limited to 800 unique words and the compact voice to 1,800 unique words per project.
