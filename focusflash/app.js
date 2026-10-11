@@ -33,7 +33,7 @@
   let lastSaveAt = 0;
   const wordMetrics = document.createElement('canvas').getContext('2d');
 
-  const STORAGE_KEY = 'focusflash-state-v1';
+  const STORAGE_KEY = window.FocusFlashProfiles?.key('focusflash-state-v1') || 'focusflash-state-v1';
 
   function tokenize(text) {
     return text.trim().split(/\s+/).filter(Boolean).slice(0, 100000);
@@ -295,7 +295,11 @@
     navigator.serviceWorker.register('./service-worker.js').catch(() => {});
   }
 
-  window.FocusFlashReader = {isPlaying:()=>playing,currentIndex:()=>index,pause:()=>{if(playing)stop();}};
+  window.FocusFlashReader = {
+    isPlaying:()=>playing,currentIndex:()=>index,
+    pause:()=>{if(playing)stop();},persist:()=>saveState(true)
+  };
+  window.FocusFlashProfiles?.mount?.();
   restoreState();
   loadText(false);
   if(window.FocusFlashTones)window.FocusFlashTones.mount();
