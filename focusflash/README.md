@@ -87,3 +87,17 @@ For very high speech compression (more than ~3.5x), the app first shortens audio
 - For severe voice compression, speech may be clipped, choppy or hard to recognize. Keeping pitch unchanged is not the same as preserving speech intelligibility. No scientific claim is made about subliminal messaging effectiveness.
 
 The new release is at `https://xyooll.github.io/outdated/focusflash/?v=natural-pitch-1`. The speech synthesis step (Piper or Kokoro) still requires a one-time downloaded model and processing time; the pitch correction changes playback and exported soundtrack only.
+
+## FocusFlash Studio 2: immediate reading + multi-tool timeline editor
+
+Live editor: https://xyooll.github.io/outdated/focusflash/?v=studio-2
+
+The editor has five tools: Script, Voice, Speed, Canvas and Export, as well as a scalable video preview, word-clip timeline, narration track, zoom, and a draggable playhead. It accepts local TXT/Markdown files. On Android the tools display below the preview without modal overlays. The layout is inspired by standard timeline-based editors, not an official Clipchamp implementation.
+
+Native phone text-to-speech is the default for live reading. It starts on Play without downloading or synthesizing a passage. Device speech can be slower than the chosen visual WPM and is not directly capturable by video recording APIs. The original optional Piper (Fast AI) and Kokoro (Natural AI) voices have not been removed.
+
+Video export with the Instant voice option synthesizes a separate, compact local eSpeak NG audio track on demand; this is not exactly the phone system voice, and long exports are not truly instantaneous. The first export downloads approximately 2.5 MB of eSpeak voice data. The vendored eSpeak NG wrapper/worker and GPLv3 license live under focusflash/vendor. Compact synthesis supports up to 1,800 words, while the heavier neural synthesis caps at 800 words. All video output still uses WebM and real-time recording.
+
+Voice speed matching is pitch preserving for recorded audio where supported; at extreme WPM, intelligibility can drop. Settings, imported script, and reading position are stored on-device. Autosaves during word playback are throttled to avoid repeated large localStorage writes.
+
+Revision studio-2 replaces older page, script, CSS and PWA cache names to avoid restoring an old reader interface. An ordinary browser hard reload should show the updated editor.

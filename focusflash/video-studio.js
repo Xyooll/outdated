@@ -27,7 +27,7 @@
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let readerSource=null,readerGain=null,readerGeneration=0;
  let readerVoice=null,previewVoice=null,nativeSpeaking=false;
- const pitchEngine=()=>import("./pitch-preserve.js?v=studio-1");
+ const pitchEngine=()=>import("./pitch-preserve.js?v=studio-2");
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -205,7 +205,7 @@
        }
      }else if(mode==="fast"){
        report("Loading faster mobile voice, then generating audio...");
-       const adapter=await import("./fast-piper.js?v=studio-1");
+       const adapter=await import("./fast-piper.js?v=studio-2");
        const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
        for(const raw of results){
          segments.push(raw);
