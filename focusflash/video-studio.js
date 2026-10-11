@@ -436,19 +436,18 @@
    const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
    const context=canvas.getContext("2d",{alpha:false});
    drawVideoFrame(canvas,context,text[0],0,text.length,0,timeline.total);
-   let stream=null,recorder=null,src=null,ctx=null,raf=0,finished=false;
-   let audioDestination=null,narrationGain=null;
+   let stream=null,recorder=null,transport=null,ctx=null,raf=0,finished=false;
+   let audioDestination=null;
    const chunks=[];
    try{
      stream=canvas.captureStream(30);
      if(useVoice){
        ctx=await getContext();audioDestination=ctx.createMediaStreamDestination();
-       src=ctx.createBufferSource();src.buffer=voiceBuffer;
-       // Compress the generated speech to the EXACT same length as the WPM
-       // timeline, at the user's quiet undertone volume.
-       src.playbackRate.value=narrationRate(timeline);
-       narrationGain=ctx.createGain();narrationGain.gain.value=undertoneVolume();
-       src.connect(narrationGain);narrationGain.connect(audioDestination);
+       const {makePitchPreservedVoice}=await pitchEngine();
+       transport=await makePitchPreservedVoice({
+         context:ctx,buffer:voiceBuffer,rate:narrationRate(timeline),
+         volume:undertoneVolume(),destination:audioDestination,onProgress:report
+       });
        for(const track of audioDestination.stream.getAudioTracks())stream.addTrack(track);
      }
      const type=mime();
@@ -460,11 +459,11 @@
        recorder.onstop=()=>resolve();
      });
      recorder.start(1000);
-     const startAt=useVoice?ctx.currentTime+.25:performance.now()/1000+.25;
-     if(useVoice)src.start(startAt);
+     if(transport)await transport.start(0);
+     const startAt=performance.now()/1000;
      const paint=()=>{
        if(finished||renderAbort)return;
-       const now=useVoice?ctx.currentTime:performance.now()/1000;
+       const now=performance.now()/1000;
        const elapsed=Math.max(0,now-startAt);
        const idx=currentWordAt(timeline,Math.min(elapsed,timeline.total));
        drawVideoFrame(canvas,context,text[idx],idx,text.length,elapsed,timeline.total);
@@ -482,7 +481,7 @@
        await wait(200);
      }
      if(renderAbort)throw Error("Export canceled.");
-     if(src){try{src.stop();}catch{}}
+     transport?.dispose();
      recorder.stop();
      await complete;
      if(!chunks.length)throw Error("No video data was recorded.");
@@ -497,14 +496,14 @@
      // The visible Save link remains usable when auto-download is blocked.
      download(videoBlob,videoFilename);
      report("Video created at "+timing().wpm+" WPM"+
-       (useVoice?" with "+Math.round(undertoneVolume()*100)+"% undertone voice.":" without narration.")+
+       (useVoice?" with pitch-preserved "+Math.round(undertoneVolume()*100)+"% undertone voice.":" without narration.")+
        " Watch it below or tap Save video. Nothing was uploaded.");
    }catch(error){
      report("Export could not finish: "+error.message);
      if(recorder?.state==="recording"){try{recorder.stop();}catch{}}
    }finally{
      finished=true;cancelAnimationFrame(raf);
-     try{src?.stop();}catch{}
+     transport?.dispose();
      for(const track of stream?.getTracks()||[])track.stop();
      busy=false;
      sel("studioExport").disabled=false;sel("studioGenerate").disabled=false;
