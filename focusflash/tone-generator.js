@@ -293,6 +293,11 @@
      // Migrate existing legacy single-user audio into User 1 non-destructively.
      // Never copy this record into User 2.
      if(FILE_ID==="active-1"){
+       const doneKey=window.FocusFlashProfiles?.key("focusflash-legacy-mp3-scanned-v1")||
+         "focusflash-legacy-mp3-scanned-v1";
+       // Mark the one-time migration, so a deliberate "Remove MP3" does not
+       // accidentally resurrect the legacy record on the next app launch.
+       if(localStorage.getItem(doneKey)==="1")return null;
        const original=await get("active");
        if(original){
          await new Promise((resolve,reject)=>{
@@ -300,8 +305,9 @@
            tx.objectStore("files").put(original,FILE_ID);
            tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
          });
-         return original;
        }
+       try{localStorage.setItem(doneKey,"1");}catch{}
+       return original;
      }
      return null;
    }finally{db.close();}
