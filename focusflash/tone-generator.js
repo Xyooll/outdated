@@ -19,6 +19,7 @@
  try{settings=normalize(JSON.parse(localStorage.getItem(KEY)||"null"));}catch{}
  let sharedContext=null,live=null,preview=null;
  const store=()=>{try{localStorage.setItem(KEY,JSON.stringify(settings));}catch{}};
+ const formatBeat=hz=>Number(hz.toFixed(2)).toString();
  const label=()=>settings.mode==="off"?"Sound off":
    settings.mode==="pure"?settings.carrier+" Hz pure tone":
    (settings.carrier-settings.beat/2).toFixed(2)+" Hz left · "+
@@ -31,7 +32,9 @@
    const checkbox=$("toneExport");
    if(checkbox)checkbox.checked=settings.exportAudio;
    const carrier=$("toneCarrierValue");if(carrier)carrier.textContent=settings.carrier+" Hz";
-   const beat=$("toneBeatValue");if(beat)beat.textContent=settings.beat.toFixed(1)+" Hz";
+   const beat=$("toneBeatValue");if(beat)beat.textContent=formatBeat(settings.beat)+" Hz";
+   const carrierNum=$("toneCarrierNumber");if(carrierNum&&document.activeElement!==carrierNum)carrierNum.value=String(settings.carrier);
+   const beatNum=$("toneBeatNumber");if(beatNum&&document.activeElement!==beatNum)beatNum.value=formatBeat(settings.beat);
    const volume=$("toneVolumeValue");if(volume)volume.textContent=settings.volume+"%";
    const beats=$("toneBeatRow");if(beats)beats.hidden=settings.mode!=="binaural";
    const hint=$("toneStatus");
@@ -43,7 +46,7 @@
    const timeline=$("timelineToneStatus");
    if(timeline)timeline.textContent=settings.mode==="off"?"Disabled":
      settings.mode==="pure"?"Pure · "+settings.carrier+" Hz":
-     "Binaural · "+settings.beat.toFixed(1)+" Hz";
+     "Binaural · "+formatBeat(settings.beat)+" Hz";
    const track=$("timelineTone");
    if(track)track.dataset.mode=settings.mode;
  }
@@ -169,12 +172,26 @@
    $("toneBeat").value=String(settings.beat);
    $("toneVolume").value=String(settings.volume);
    $("toneExport").checked=settings.exportAudio;
+   $("toneCarrierNumber").value=String(settings.carrier);
+   $("toneBeatNumber").value=formatBeat(settings.beat);
    $("toneMode").addEventListener("change",e=>{settings.mode=e.target.value;update();});
    for(const [id,key] of [["toneCarrier","carrier"],["toneBeat","beat"],["toneVolume","volume"]])
      $(id).addEventListener("input",e=>{
        const [low,high]=key==="carrier"?[60,1200]:key==="beat"?[.5,40]:[0,25];
        settings[key]=clamp(e.target.value,low,high);update();
      });
+   for(const [input,key,range,low,high,places] of [
+     ["toneCarrierNumber","carrier","toneCarrier",60,1200,0],
+     ["toneBeatNumber","beat","toneBeat",.5,40,2]
+   ]){
+     $(input).addEventListener("change",e=>{
+       const value=clamp(e.target.value,low,high);
+       settings[key]=Number(value.toFixed(places));
+       $(range).value=String(settings[key]);
+       e.target.value=String(settings[key]);
+       update();
+     });
+   }
    $("toneExport").addEventListener("change",e=>{settings.exportAudio=e.target.checked;update();});
    $("tonePreview").addEventListener("click",toggleTest);
    describe();
