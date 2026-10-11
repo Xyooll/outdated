@@ -76,3 +76,13 @@ On Android Chrome: menu (⋮) → **Add to Home screen** / **Install app**.
 ## Login-loop correction
 
 On 2026-10-11, Supabase Auth logs showed invalid/consumed one-time verification links and temporary email rate limiting. The app now offers direct email + password sign-in, an optional email-link fallback, and visible redirect errors. Email-account passwords and the shared end-to-end encryption phrase are **different** secrets. No passwords should be added to GitHub, shared in chat, or placed in config.js.
+
+
+## Persistent session and device state
+
+- Login uses Supabase client session persistence (`persistSession: true`, `autoRefreshToken: true`). The session is stored by the browser and restored on the same Chrome/PWA profile. Gmail's in-app browser may use a **different** storage profile from Chrome; always open/install the app in Chrome.
+- Each phone can opt in to **Keep this conversation unlocked on this phone** when entering the encryption phrase. This saves a **non-extractable AES-GCM CryptoKey** using IndexedDB structured cloning. The passphrase itself is never stored. On reopen, Supabase checks the authenticated user against the two-person membership list, then verifies the saved key against the encrypted room verifier before showing messages.
+- Opt-in is per phone, user, and room salt. The device's unlock key is deleted on manual **Lock** or Sign out. Without opt-in, the app still remembers the login session but asks for the shared encryption phrase after a full restart.
+- The composer saves **encrypted** unsent drafts in localStorage after a short delay and restores them when the correct encryption key is available. Never store plaintext messages, drafts, or the shared phrase in localStorage.
+- **Security trade-off:** A remembered non-extractable key cannot be exported directly but can still be USED by JavaScript running on the same origin and can be accessed by anyone who gets access to the browser on an unlocked device. It is not tied to biometrics, secure hardware, or a device lock. Only enable it on your personal phone with a strong screen lock. For higher privacy, leave it unchecked and type the phrase when reopening.
+- Browser data clearing, private browsing, changing browsers, and reinstalling an app can erase saved sessions/drafts/unlocks. Server messages remain available when signing in and entering the original phrase. No new server database tables were necessary for persistent state.

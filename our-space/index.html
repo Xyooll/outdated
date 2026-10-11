@@ -82,7 +82,10 @@ function lock(){
 }
 async function manuallyLock(){
  const who=me?.id;
- if(who){ try{await forgetDeviceKey(PROJECT_URL,who);}catch(e){tell("chatStatus",errorText(e));} }
+ if(who){
+  try{await forgetDeviceKey(PROJECT_URL,who);}
+  catch(e){tell("sendStatus","Could not clear this device unlock: "+errorText(e)+". Try again.");return;}
+ }
  lock();
 }
 function draftName(uid=me?.id){return "our-space-draft-v1:"+PROJECT_URL+":"+uid;}
