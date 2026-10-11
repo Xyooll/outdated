@@ -179,6 +179,10 @@
    $("topImportBtn").addEventListener("click",()=>{
      selectTab("script",true);$("importFile").click();
    });
+   $("loadBtn").addEventListener("click",()=>{
+     if(scriptTimer)clearTimeout(scriptTimer);
+     scriptTimer=null;
+   });
    $("importFile").addEventListener("change",e=>{
      importFile(e.target.files?.[0]);e.target.value="";
    });
