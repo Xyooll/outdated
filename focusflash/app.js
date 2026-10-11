@@ -31,6 +31,7 @@
   let deferredInstall = null;
   let touchStartX = null;
   let lastSaveAt = 0;
+  const wordMetrics = document.createElement('canvas').getContext('2d');
 
   const STORAGE_KEY = 'focusflash-state-v1';
 
@@ -88,9 +89,30 @@
     const sec = Math.ceil((remaining / wpm) * 60);
     els.timeText.textContent = sec >= 60 ? `~${Math.ceil(sec / 60)} min left` : `~${sec} sec left`;
 
-    const px = Number(els.fontSize.value) || 64;
-    document.querySelector('.word').style.fontSize = `${px}px`;
-    els.fontSizeValue.textContent = `${px} px`;
+    const px = Math.max(16, Math.min(120, Number(els.fontSize.value) || 48));
+    const wordNode = els.wordStage.querySelector('.word');
+    const stageWidth = Math.max(100, els.wordStage.clientWidth || 240);
+    let fitted = px;
+    if (wordMetrics && wordNode) {
+      // Focus letter stays centered, so reserve equal room for both halves.
+      // Fit long words without simply clipping them in a narrow portrait frame.
+      wordMetrics.font = '700 ' + px + 'px ' + getComputedStyle(wordNode).fontFamily;
+      const half = Math.max(
+        wordMetrics.measureText(parts.left).width,
+        wordMetrics.measureText(parts.right).width
+      );
+      const middle = wordMetrics.measureText(parts.focus).width;
+      const needed = half * 2 + middle + 22;
+      if (needed > stageWidth) fitted = Math.max(10, Math.floor(px * (stageWidth - 8) / needed));
+    }
+    if (wordNode) wordNode.style.fontSize = fitted + 'px';
+    els.fontSizeValue.textContent = px + ' px';
+    const videoLabel = $('studioScaleValue');
+    if (videoLabel) videoLabel.textContent = px + ' px';
+    const hint = $('fontFitHint');
+    if (hint) hint.textContent = fitted < px ?
+      'This word is displayed at ' + fitted + ' px to fit the preview. Your chosen size is ' + px + ' px.' :
+      'Preview and video use the same size. Longer words shrink automatically to fit.';
     els.wpmValue.textContent = `${wpm} WPM`;
 
     els.backBtn.disabled = index <= 0;
@@ -174,7 +196,7 @@
       if (Number.isFinite(s.wpm)) els.wpm.value = String(Math.max(60, Math.min(2000, s.wpm)));
       if (typeof s.punctuationPause === 'boolean') els.punctuationPause.checked = s.punctuationPause;
       if (typeof s.longWordPause === 'boolean') els.longWordPause.checked = s.longWordPause;
-      if (Number.isFinite(s.fontSize)) els.fontSize.value = String(Math.max(32, Math.min(96, s.fontSize)));
+      if (Number.isFinite(s.fontSize)) els.fontSize.value = String(Math.max(16, Math.min(120, s.fontSize)));
       words = tokenize(els.sourceText.value);
       if (!words.length) words = ['Ready'];
       index = Math.max(0, Math.min(Number.isFinite(s.index) ? s.index : 0, words.length - 1));
@@ -211,7 +233,13 @@
     saveState();
   });
 
-  els.fontSize.addEventListener('input', render);
+  els.fontSize.addEventListener('input', () => {
+    render();
+    saveState(true);
+  });
+  // Make the word fit adjust when the phone rotates or the canvas format changes.
+  if ('ResizeObserver' in window)
+    new ResizeObserver(() => render()).observe(els.wordStage);
   els.punctuationPause.addEventListener('change', saveState);
   els.longWordPause.addEventListener('change', saveState);
   els.sourceText.addEventListener('input', () => saveState(true));
