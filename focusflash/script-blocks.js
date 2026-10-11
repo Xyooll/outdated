@@ -4,7 +4,7 @@
 (() => {
  "use strict";
  const $=id=>document.getElementById(id);
- const STORAGE="focusflash-script-blocks-v1",MAX_REPEAT=100,MAX_WORDS=100000;
+ const STORAGE=window.FocusFlashProfiles?.key("focusflash-script-blocks-v1")||"focusflash-script-blocks-v1",MAX_REPEAT=100,MAX_WORDS=100000;
  const wordsOf=text=>String(text||"").trim().split(/\s+/).filter(Boolean);
  const id=()=>String(Date.now())+"-"+String(Math.random()).slice(2,8);
  const block=(text="",name="",repeats=1)=>({id:id(),name,text,repeats});
