@@ -649,7 +649,7 @@
  function mount(){
    const choice=sel("studioVoice"),mode=sel("studioMode");
    let saved={};
-   try{saved=JSON.parse(localStorage.getItem("focusflash-video-v1")||"{}");}catch{}
+   try{saved=JSON.parse(localStorage.getItem(window.FocusFlashProfiles?.key("focusflash-video-v1")||"focusflash-video-v1")||"{}");}catch{}
    const populate=(preferred)=>{
      const list=mode.value==="instant"?instantVoices:mode.value==="fast"?fastVoices:voices;
      choice.replaceChildren();
@@ -669,7 +669,7 @@
    if(Number.isFinite(saved.volume))
      sel("studioVolume").value=String(Math.max(0,Math.min(100,saved.volume)));
    if(typeof saved.readerAudio==="boolean")sel("studioReaderAudio").checked=saved.readerAudio;
-   const save=()=>{try{localStorage.setItem("focusflash-video-v1",JSON.stringify({
+   const save=()=>{try{localStorage.setItem(window.FocusFlashProfiles?.key("focusflash-video-v1")||"focusflash-video-v1",JSON.stringify({
      mode:mode.value,voice:choice.value,ratio:sel("studioRatio").value,
      size:Number(sel("studioScale").value),
      volume:Number(sel("studioVolume").value),
@@ -736,5 +736,5 @@
      "Instant voice is ready. Press the reader's Play button; no AI voice generation is needed.":
      "AI voice selected. Generate it before hearing it in the reader.");
  }
- window.FocusFlashStudio={mount,startReaderUndertone,stopReaderUndertone};
+ window.FocusFlashStudio={mount,startReaderUndertone,stopReaderUndertone,isBusy:()=>busy};
 })();
