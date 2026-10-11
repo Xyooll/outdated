@@ -157,7 +157,7 @@
    const segment=locate(activeIndex);
    $("transcriptNow").textContent=time(starts[Math.min(activeIndex,starts.length-1)]||0);
    draw();
-   if(segment===activeSegment)return;
+   if(segment===activeSegment&&list.querySelector('.transcript-entry.current'))return;
    activeSegment=segment;
    const old=list.querySelector(".transcript-entry.current");
    if(old){old.classList.remove("current");old.removeAttribute("aria-current");}
