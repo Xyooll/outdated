@@ -158,6 +158,13 @@ body{background:#0c1019}
  .editor-head-actions{gap:7px}
 }
 @media(max-width:710px){
+ /* Keep the phone layout as a one-column editor. This must override the
+    earlier 980px tablet rule, which otherwise recreates three columns. */
+ .editor-workspace{
+   grid-template-columns:minmax(0,1fr);
+   grid-template-areas:"canvas" "rail" "inspector" "timeline";
+   min-height:0
+ }
  .editor-topbar{gap:8px;padding:10px}
  .editor-brand{flex:1 1 130px}
  .editor-brand h1{font-size:15px}
