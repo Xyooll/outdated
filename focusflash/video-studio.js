@@ -433,32 +433,41 @@
    }
  }
  function mount(){
-   const voiceSelect=sel("studioVoice");
-   for(const [value,title] of Object.entries(voices)){
-     const option=document.createElement("option");option.value=value;
-     option.textContent=title;voiceSelect.append(option);
-   }
-   voiceSelect.value="af_heart";
-   try{
-     const settings=JSON.parse(localStorage.getItem("focusflash-video-v1")||"{}");
-     if(settings.voice&&voices[settings.voice])voiceSelect.value=settings.voice;
-     if(["portrait","wide","square"].includes(settings.ratio))sel("studioRatio").value=settings.ratio;
-     if(Number.isFinite(settings.size))sel("studioScale").value=String(settings.size);
-   }catch{}
+   const choice=sel("studioVoice"),mode=sel("studioMode");
+   let saved={};
+   try{saved=JSON.parse(localStorage.getItem("focusflash-video-v1")||"{}");}catch{}
+   const populate=(preferred)=>{
+     const list=mode.value==="fast"?fastVoices:voices;
+     choice.replaceChildren();
+     for(const [key,label] of Object.entries(list)){
+       const option=document.createElement("option");
+       option.value=key;option.textContent=label;choice.append(option);
+     }
+     choice.value=preferred&&list[preferred]?preferred:Object.keys(list)[0];
+   };
+   mode.value=saved.mode==="quality"?"quality":"fast";
+   populate(saved.voice);
+   if(["portrait","wide","square"].includes(saved.ratio))sel("studioRatio").value=saved.ratio;
+   if(Number.isFinite(saved.size))sel("studioScale").value=String(saved.size);
    const save=()=>{try{localStorage.setItem("focusflash-video-v1",JSON.stringify({
-      voice:voiceSelect.value,ratio:sel("studioRatio").value,size:Number(sel("studioScale").value)
+     mode:mode.value,voice:choice.value,ratio:sel("studioRatio").value,
+     size:Number(sel("studioScale").value)
    }));}catch{}};
-   for(const element of [sel("sourceText"),voiceSelect])
-      element.addEventListener("input",setVoiceStatus);
+   mode.addEventListener("change",()=>{
+     populate();setVoiceStatus();save();
+     report(mode.value==="fast"?"Fast mobile voice selected. Generate narration for the video.":"Natural high-quality voice selected. Slower on phones.");
+   });
+   for(const element of [sel("sourceText"),choice])
+     element.addEventListener("input",setVoiceStatus);
    for(const id of ["studioVoice","studioRatio","studioScale"])
-      sel(id).addEventListener("change",save);
+     sel(id).addEventListener("change",save);
    sel("studioGenerate").addEventListener("click",synthesize);
    sel("studioMic").addEventListener("click",toggleMic);
    sel("studioShare").addEventListener("click",shareVideo);
    sel("studioListen").addEventListener("click",()=>listen().catch(error=>report(error.message)));
    sel("studioWav").addEventListener("click",downloadWav);
    sel("studioExport").addEventListener("click",()=>exportVideo().catch(error=>report(error.message)));
-   report("Ready. Generate a local voice, then export your narrated video.");
+   report("Fast mobile narration ready to start. First use downloads a voice model.");
  }
  window.FocusFlashStudio={mount};
 })();
