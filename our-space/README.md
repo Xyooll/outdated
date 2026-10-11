@@ -1,34 +1,74 @@
 # Our Space — private chat for two
 
-A small, mobile-first progressive web app with realtime text messaging, Supabase email-link login, per-account row-level permissions, and browser-side AES-256-GCM message encryption.
+## Current installation status
 
-## Setup before chatting
+- [x] App is committed to GitHub and published by the successful GitHub Pages deployment.
+- [x] Dedicated **Our Space** Supabase project created under **Xyool Org** (US East).
+- [x] Project URL and browser-safe publishable key configured in `config.js`.
+- [x] Encrypted-message tables created; Row Level Security enabled on all three chat tables.
+- [x] Private member and message access policies verified.
+- [x] Realtime database events enabled.
+- [x] Encrypted first-phone phrase verifier added so subsequent unlocks reject the wrong phrase.
+- [ ] Configure Authentication redirect URL (owner's Supabase dashboard).
+- [ ] Invite exactly two email accounts (owner's Supabase dashboard).
+- [ ] Enroll the two invited users into `public.couple_members` (ChatGPT can do this once you have created the users).
+- [ ] Verify actual messaging between both phones.
 
-1. Create a NEW and DEDICATED Supabase project at https://supabase.com/dashboard. Do not reuse the Xyool Supabase project.
-2. Open the NEW project SQL Editor and execute the contents of setup.sql.
-3. In Authentication > Users, invite/create exactly two email users, one for each of you. Ensure both can sign in. Turn off public sign-ups.
-4. Use the two commented INSERT statements at the end of setup.sql in SQL Editor to enroll those two email addresses by ID. Confirm SELECT * FROM public.couple_members returns exactly two rows. Never place actual emails in the GitHub repo.
-5. The dedicated Supabase URL and publishable key have already been connected in config.js. In the new project's settings, find the Project URL and the PUBLISHABLE API key (legacy anon key also supported). Put these values in config.js. A publishable key is not a secret; NEVER expose a service_role or secret key.
-6. Host this folder over HTTPS. On GitHub, go to Xyooll/outdated > Settings > Pages > Deploy from a branch > main > /(root), if Pages is not already enabled. The expected app URL is https://xyooll.github.io/outdated/our-space/ .
-7. In Supabase Authentication > URL Configuration, set Site URL and add the EXACT final app URL as an allowed redirect URL.
-8. On each phone open the app URL, request an email login link for the invited account, and follow the link on that phone.
-9. Both people must independently enter the SAME strong shared phrase (at least 12 characters, ideally 6+ genuinely random words). Exchange it IN PERSON. It is never uploaded or stored, and is forgotten when the page locks/reloads.
-10. Send a test message from each phone. Install on Android from Chrome menu > Add to Home screen / Install app.
+## Finish setup from your phone
 
-## Security details
+**1. Open Authentication URL Configuration**
 
-Only the two database-enrolled Supabase user IDs can read or write messages, enforced by database Row Level Security. Messages are encrypted locally with AES-256-GCM and a key derived from the shared phrase using PBKDF2-SHA256 with 600,000 iterations. The server can see sender identifiers, times, IVs, and ciphertext, but NOT the message plaintext. Anyone with the shared phrase and a copy of the ciphertext could decrypt it. The source code and login page may be public through GitHub Pages; the chat contents are not.
+https://supabase.com/dashboard/project/vtlqpgmipfhdjiidssxg/auth/url-configuration
 
-This is an early, unaudited personal app, not as secure as Signal: no forward secrecy or key rotation, and compromised devices or altered website code could expose the shared phrase. Do not put the phrase or any server secret keys in GitHub. If either person loses the phrase, existing messages cannot be recovered. A different phrase will make existing messages unreadable. Only the 250 latest messages are displayed initially; there is no push notification, media attachment, typing status, or read receipt yet.
+Set the **Site URL** to:
 
-## Verify database access
+https://xyooll.github.io/outdated/our-space/
 
-Run SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname='public' AND tablename LIKE 'couple_%'; — all three must show true. Verify the enrolled membership list has exactly two IDs. Try accessing messages from a third account: it should receive zero rows and cannot insert. Test encrypted ciphertext by inspecting a database row; it must not contain plaintext. Run the Supabase database security advisor after setup.
+Add the exact same URL to the **Redirect URLs** list and save.
 
-GitHub stores the app code ONLY. Supabase stores the encrypted data. This app is not operational until the new project, two users, and Pages are configured.
+**2. Invite exactly two users**
 
-## Installed project
+https://supabase.com/dashboard/project/vtlqpgmipfhdjiidssxg/auth/users
 
-The database project was created under Xyool Org: https://vtlqpgmipfhdjiidssxg.supabase.co
+Under **Authentication → Users**, use **Invite user** for each of your two real email addresses. Only invite those two people. Verify the users appear in the list. You can keep your email addresses private: there is no need to paste them in your public GitHub source code.
 
-The chat schema is applied, but account invitations, member enrollment, and Auth URL configuration must still be completed by the project owner. The first authorized unlock sets an encrypted phrase verifier; subsequent unlocks reject a mismatched phrase before opening messages. This does not add forward secrecy.
+Disable public signups after the two are invited (Authentication sign-in settings). Do not confuse this with Row Level Security; RLS is already enabled and is enforced even if signups were open.
+
+**3. Enroll your accounts**
+
+After both accounts appear in Supabase, tell ChatGPT: **"Both Our Space users have been invited; enroll them."** ChatGPT can look up the two users in this dedicated project and assign them as `person_one` and `person_two`, without requiring you to paste the emails in chat.
+
+For reference, enrollment uses SQL equivalent to:
+
+```sql
+INSERT INTO public.couple_members(user_id,role)
+SELECT id,'person_one' FROM auth.users
+WHERE lower(email)=lower('EMAIL_ONE');
+
+INSERT INTO public.couple_members(user_id,role)
+SELECT id,'person_two' FROM auth.users
+WHERE lower(email)=lower('EMAIL_TWO');
+```
+
+**4. Open your app**
+
+https://xyooll.github.io/outdated/our-space/
+
+Each person signs in using their invited email, then enters the **same unique, strong encryption phrase**. The first unlocked phone sets the encrypted phrase verifier, so the other phone must use the same phrase. Exchange the phrase in person.
+
+On Android Chrome: menu (⋮) → **Add to Home screen** / **Install app**.
+
+## Security and limitations
+
+- Supabase Auth identifies each person using email-link login.
+- Access to the private conversation is restricted by database Row Level Security to the **two manually enrolled auth user IDs**.
+- The browser encrypts messages with AES-256-GCM before upload, using PBKDF2-SHA256 (600,000 iterations) on the shared phrase. The phrase and derived key remain in browser memory; they are not uploaded or saved in GitHub.
+- The server sees message timestamps, sender IDs, IVs, and ciphertext, but not plaintext.
+- A separate encrypted verifier helps detect wrong phrases; choose at least six randomly selected words and keep them private. **Losing the phrase makes old messages unrecoverable.**
+- **This is an unaudited first version, not a Signal replacement.** It has no forward secrecy, no independent identity verification, no media attachments or push notifications, and no offline send. A compromised device, malicious browser code, or someone who learns the phrase can expose messages.
+- The latest 250 messages are shown. Github Pages hosts public application code and login UI, not the contents of private messages.
+- Service-role/secret Supabase API keys must NEVER appear in web client files.
+
+**Data project:** https://supabase.com/dashboard/project/vtlqpgmipfhdjiidssxg
+
+**Code:** https://github.com/Xyooll/outdated/tree/main/our-space
