@@ -225,3 +225,7 @@ At widths up to 950px, a final-priority stylesheet now forces the actual four-pa
 Mobile users can tap the widen/compact icon in the inspector header when editing needs additional width; the expanded setting persists separately per workspace. On mobile portrait the windows share a narrow display, so text is deliberately compact; landscape provides more space. Desktop draggable separators and saved desktop proportions still work. User scripts, TTS, MP3, tone settings, and separate profiles were not modified.
 
 Published at: https://xyooll.github.io/outdated/focusflash/?v=four-panes-3
+
+
+### Single-line mobile top bar (four-panes-4)
+The phone/tablet header is exactly one row, 48px high, with compact FocusFlash brand, user workspace selector + profile settings, and Export. Nonessential links are accessible via their existing editing tools instead of cluttering the header. The full four-window area gets the reclaimed vertical space. No saved workspace data or audio processing is changed.
