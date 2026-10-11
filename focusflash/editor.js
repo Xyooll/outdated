@@ -5,6 +5,7 @@
  const $=id=>document.getElementById(id);
  const tabs=[...document.querySelectorAll("[data-editor-tab]")];
  const panels=[...document.querySelectorAll("[data-editor-panel]")];
+ const TOOL_KEY=window.FocusFlashProfiles?.key("focusflash-open-tool-v1")||"focusflash-open-tool-v1";
  const maxClips=48;
  let zoom=1,lastClipWindow="",cachedText=null,cachedSettings="",timelineVersion=0,lastState=null,timeline=null,refreshPending=false,scriptTimer=null;
  let lastBlockLayout="";
@@ -19,6 +20,7 @@
      else item.removeAttribute("aria-current");
    }
    for(const panel of panels)panel.hidden=panel.dataset.editorPanel!==name;
+   try{localStorage.setItem(TOOL_KEY,name);}catch{}
    if(scroll&&matchMedia("(max-width:710px)").matches)
      tab.scrollIntoView({block:"nearest",inline:"nearest",behavior:"smooth"});
  }
@@ -297,7 +299,9 @@
      renderSoon();
    });
    window.FocusFlashBlocks?.mount?.();
-   selectTab("script");
+   let lastTool="script";
+   try{lastTool=localStorage.getItem(TOOL_KEY)||"script";}catch{}
+   selectTab(tabs.some(t=>t.dataset.editorTab===lastTool)?lastTool:"script");
    selectRatio();
    // app.js loads its saved reader size before editor.mount() executes.
    // Use that saved size as the single source of truth for both preview and video.
