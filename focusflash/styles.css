@@ -25,7 +25,7 @@ button.ghost{background:transparent}
 .reader-card,.settings-card,.text-card,.tips{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:14px;margin-bottom:14px}
 .status-row{display:flex;justify-content:space-between;color:var(--muted);font-size:.82rem;margin-bottom:8px}
 .word-stage{position:relative;height:200px;background:#111113;border:1px solid var(--border);border-radius:18px;display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none;touch-action:pan-y}
-.word{width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;font-size:64px;line-height:1;white-space:nowrap;padding:0 10px}
+.word{width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;font-size:48px;line-height:1;white-space:nowrap;padding:0 10px}
 .word .left{text-align:right}
 .word .right{text-align:left}
 .word .focus{color:var(--focus)}
@@ -48,7 +48,7 @@ textarea{width:100%;resize:vertical;background:#111113;color:var(--text);border:
 @media(max-width:420px){
   .app{padding-left:10px;padding-right:10px}
   .word-stage{height:180px}
-  .word{font-size:52px}
+  .word{font-size:42px}
 }
 @media(prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important;transition:none!important}
