@@ -9,8 +9,8 @@
  <title>FocusFlash Studio · Reader & Video Editor</title>
  <link rel="icon" href="icon.svg" type="image/svg+xml">
  <link rel="manifest" href="manifest.webmanifest">
- <link rel="stylesheet" href="styles.css?v=blocks-2">
- <link rel="stylesheet" href="editor.css?v=blocks-2">
+ <link rel="stylesheet" href="styles.css?v=tones-1">
+ <link rel="stylesheet" href="editor.css?v=tones-1">
 </head>
 <body>
 <main class="editor-app">
@@ -31,6 +31,7 @@
    <button type="button" class="editor-tab" data-editor-tab="voice"><span aria-hidden="true">♫</span>Voice</button>
    <button type="button" class="editor-tab" data-editor-tab="timing"><span aria-hidden="true">◷</span>Speed</button>
    <button type="button" class="editor-tab" data-editor-tab="style"><span aria-hidden="true">▣</span>Canvas</button>
+   <button type="button" class="editor-tab" data-editor-tab="tones"><span aria-hidden="true">≋</span>Tones</button>
    <button type="button" class="editor-tab" data-editor-tab="export"><span aria-hidden="true">⇧</span>Export</button>
   </nav>
   <aside class="editor-inspector" aria-label="Editing tools">
@@ -157,9 +158,44 @@
      <p class="editor-small-note">The red central letter is retained in every format. Changes to the preview don't overwrite your original script.</p>
     </div>
    </section>
+   <section id="editorTones" class="editor-section" data-editor-panel="tones" hidden>
+    <header class="editor-panel-head">
+     <span class="editor-eyebrow">05 · Soundscape</span>
+     <h2>Tone generator</h2>
+     <p>Produce clean sine-wave tones or separate left/right tones for binaural listening. Works while reading and in exported videos.</p>
+    </header>
+    <div class="tone-generator">
+     <label for="toneMode">Sound mode
+      <select id="toneMode">
+       <option value="off">Off · no tone</option>
+       <option value="pure">Pure tone · one frequency</option>
+       <option value="binaural">Binaural beats · stereo headphones</option>
+      </select>
+     </label>
+     <label for="toneCarrier">Carrier frequency <strong id="toneCarrierValue">220 Hz</strong>
+      <input id="toneCarrier" type="range" min="60" max="1200" step="5" value="220">
+     </label>
+     <div id="toneBeatRow">
+      <label for="toneBeat">Binaural beat difference <strong id="toneBeatValue">6.0 Hz</strong>
+       <input id="toneBeat" type="range" min="0.5" max="40" step="0.5" value="6">
+      </label>
+      <p class="tone-note" id="toneHeadphones">Use stereo headphones: the left and right channels play slightly different frequencies. Speaker playback won't produce the intended binaural effect.</p>
+     </div>
+     <label for="toneVolume">Tone volume <strong id="toneVolumeValue">8%</strong>
+      <input id="toneVolume" type="range" min="0" max="25" step="1" value="8">
+     </label>
+     <div class="tone-buttons">
+      <button id="tonePreview" type="button">▶ Test tone</button>
+     </div>
+     <p id="toneCurrent" class="tone-readout">Sound off</p>
+     <label for="toneExport" class="tone-checkbox"><input type="checkbox" id="toneExport" checked> Include tone in exported video</label>
+     <p id="toneStatus" role="status" class="tone-status">Ready · Sound off</p>
+     <p class="tone-note">These are mathematically generated audio tones, not music. Keep volume low. Binaural beats are not a proven way to create subliminal learning or reliably change mental states.</p>
+    </div>
+   </section>
    <section id="editorExport" class="editor-section" data-editor-panel="export" hidden>
     <header class="editor-panel-head">
-     <span class="editor-eyebrow">05 · Create</span>
+     <span class="editor-eyebrow">06 · Create</span>
      <h2>Export video</h2>
      <p>Render the exact word sequence, with optional low-volume narration.</p>
     </header>
@@ -222,15 +258,17 @@
    <div class="timeline-ruler"><span>00:00</span><span id="timelineMid">00:00</span><span id="timelineEnd">00:00</span></div>
    <div id="blockTimelineTrack" class="timeline-track hidden"><div class="timeline-track-label">▦ Blocks <span id="timelineBlockCount">0 parts</span></div><div id="timelineBlocks" class="timeline-strip blocks" aria-label="Script block sequence"></div></div>
    <div class="timeline-track"><div class="timeline-track-label">▤ Words <span id="timelineClipCount">0 clips</span></div><div id="timelineWords" class="timeline-strip" role="group" aria-label="Clickable word clips"></div></div>
+   <div class="timeline-track"><div class="timeline-track-label">≋ Tone <span id="timelineToneStatus">Disabled</span></div><div id="timelineTone" class="timeline-strip tone-track" data-mode="off"><span class="tone-track-wave" aria-hidden="true">∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿</span></div></div>
    <div class="timeline-track"><div class="timeline-track-label voice-track-label">♫ Voice <span id="timelineVoiceStatus">Phone TTS</span></div><div id="timelineAudio" class="timeline-strip voice"></div></div>
    <input id="progressRange" class="timeline-scrub" type="range" min="0" max="0" value="0" aria-label="Scrub reading position">
    <div class="timeline-readout"><span id="timelineCurrent">00:00</span><span>Tap a word clip to jump · Drag the playhead to scrub</span></div>
   </section>
  </div>
 </main>
-<script defer src="script-blocks.js?v=blocks-2"></script>
-<script defer src="video-studio.js?v=blocks-2"></script>
-<script defer src="editor.js?v=blocks-2"></script>
-<script defer src="app.js?v=blocks-2"></script>
+<script defer src="tone-generator.js?v=tones-1"></script>
+<script defer src="script-blocks.js?v=tones-1"></script>
+<script defer src="video-studio.js?v=tones-1"></script>
+<script defer src="editor.js?v=tones-1"></script>
+<script defer src="app.js?v=tones-1"></script>
 </body>
 </html>
