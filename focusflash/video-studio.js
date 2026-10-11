@@ -6,12 +6,15 @@
 (() => {
  "use strict";
  const $ = id => document.getElementById(id);
+ // Focus on the exact middle letter; for even-length words, take the
+ // left middle. Ignore punctuation so the red focal point is a letter.
  const focusIndex = word => {
-   const n=[...word].length;
-   if(n<=1)return 0;
-   if(n<=5)return Math.max(0,Math.floor((n-1)*.40));
-   if(n<=9)return Math.max(0,Math.floor((n-1)*.38));
-   return Math.max(0,Math.floor((n-1)*.35));
+   const chars=[...word];
+   const letters=[];
+   for(let i=0;i<chars.length;i++)
+     if(/[\p{L}\p{N}]/u.test(chars[i]))letters.push(i);
+   return letters.length ? letters[Math.floor((letters.length-1)/2)] :
+     Math.max(0,Math.floor((chars.length-1)/2));
  };
  const MODEL="onnx-community/Kokoro-82M-v1.0-ONNX";
  const voices={
@@ -27,7 +30,7 @@
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let readerSource=null,readerGain=null,readerGeneration=0;
  let readerVoice=null,previewVoice=null,nativeSpeaking=false;
- const pitchEngine=()=>import("./pitch-preserve.js?v=studio-3");
+ const pitchEngine=()=>import("./pitch-preserve.js?v=font-focus-1");
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -88,20 +91,26 @@
    const shine=ctx.createRadialGradient(cx,cy,20,cx,cy,Math.max(W,H)*.55);
    shine.addColorStop(0,"#28202e");shine.addColorStop(1,"#11101900");
    ctx.fillStyle=shine;ctx.fillRect(0,0,W,H);
-   const scale=Number(sel("studioScale").value)||100;
+   const chosenPx=Math.max(16,Math.min(120,Number(sel("studioScale").value)||48));
+   const ratio=sel("studioRatio").value;
+   // Exported pixels scale to match the 270/600/330px-wide editing preview.
+   const designWidth=ratio==="wide"?600:ratio==="square"?330:270;
    const centerY=cy;const parts=[...item];
    const fi=Math.min(focusIndex(item),Math.max(0,parts.length-1));
    const left=parts.slice(0,fi).join("");
    const main=parts[fi]||" ";
    const right=parts.slice(fi+1).join("");
-   let size=Math.round(Math.min(W*.15,H*.095)*scale/100);
+   let size=Math.round(chosenPx*W/designWidth);
    const margin=W*.09;
    const weight="700";
    ctx.textBaseline="middle";
-   for(;size>=18;size-=2){
+   for(;size>=12;size-=2){
      ctx.font=weight+" "+size+"px ui-monospace, Menlo, monospace";
-     const w=ctx.measureText(item).width;
-     if(w<W-2*margin)break;
+     // The red focus character is at W/2. Both word halves must fit
+     // individually, even when the chosen focus is left of text center.
+     const half=Math.max(ctx.measureText(left).width,ctx.measureText(right).width);
+     const focusWidth=ctx.measureText(main).width;
+     if(2*half+focusWidth<=W-2*margin)break;
    }
    ctx.font=weight+" "+size+"px ui-monospace, Menlo, monospace";
    const m=ctx.measureText(main).width;
@@ -197,7 +206,7 @@
      const segments=[];let total=0;
      const gap=.11;
      if(mode==="instant"){
-       const {generateInstantExportSpeech}=await import("./instant-tts.js?v=studio-3");
+       const {generateInstantExportSpeech}=await import("./instant-tts.js?v=font-focus-1");
        const results=await generateInstantExportSpeech(text,report);
        for(const raw of results){
          segments.push(raw);
@@ -205,7 +214,7 @@
        }
      }else if(mode==="fast"){
        report("Loading faster mobile voice, then generating audio...");
-       const adapter=await import("./fast-piper.js?v=studio-3");
+       const adapter=await import("./fast-piper.js?v=font-focus-1");
        const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
        for(const raw of results){
          segments.push(raw);
@@ -608,7 +617,10 @@
    mode.value=["quality","fast","instant"].includes(saved.mode)?saved.mode:"instant";
    populate(saved.voice);
    if(["portrait","wide","square"].includes(saved.ratio))sel("studioRatio").value=saved.ratio;
-   if(Number.isFinite(saved.size))sel("studioScale").value=String(saved.size);
+   // The old control stored a 70–130% percentage, now size is in pixels.
+   // Reader's own persisted font size is the canonical size across modes.
+   const readerSize=Number(sel("fontSize")?.value)||48;
+   sel("studioScale").value=String(Math.max(16,Math.min(120,readerSize)));
    if(Number.isFinite(saved.volume))
      sel("studioVolume").value=String(Math.max(0,Math.min(100,saved.volume)));
    if(typeof saved.readerAudio==="boolean")sel("studioReaderAudio").checked=saved.readerAudio;
