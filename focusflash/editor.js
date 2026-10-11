@@ -21,8 +21,12 @@
    }
    for(const panel of panels)panel.hidden=panel.dataset.editorPanel!==name;
    try{localStorage.setItem(TOOL_KEY,name);}catch{}
-   if(scroll&&matchMedia("(max-width:710px)").matches)
-     tab.scrollIntoView({block:"nearest",inline:"nearest",behavior:"smooth"});
+   if(scroll&&matchMedia("(max-width:710px)").matches){
+     const target=panels.find(panel=>panel.dataset.editorPanel===name);
+     // Opening a tool on a phone should reveal its controls, rather than
+     // merely moving focus to the tab row above them.
+     target?.scrollIntoView({block:"start",behavior:"smooth"});
+   }
  }
  function textWords(){
    return $("sourceText").value.trim().split(/\s+/).filter(Boolean);
