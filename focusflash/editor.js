@@ -6,7 +6,7 @@
  const tabs=[...document.querySelectorAll("[data-editor-tab]")];
  const panels=[...document.querySelectorAll("[data-editor-panel]")];
  const maxClips=48;
- let zoom=1,lastClipWindow="",cachedText=null,cachedSettings="",timelineVersion=0,lastState=null,timeline=null,refreshPending=false;
+ let zoom=1,lastClipWindow="",cachedText=null,cachedSettings="",timelineVersion=0,lastState=null,timeline=null,refreshPending=false,scriptTimer=null;
 
  function selectTab(name,scroll=false){
    const tab=tabs.find(t=>t.dataset.editorTab===name);
@@ -161,6 +161,8 @@
    reader.onload=()=>{
      $("sourceText").value=String(reader.result||"");
      $("sourceText").dispatchEvent(new Event("input",{bubbles:true}));
+     if(scriptTimer)clearTimeout(scriptTimer);
+     scriptTimer=null;
      $("loadBtn").click();
      selectTab("script",true);
    };
@@ -181,7 +183,15 @@
      importFile(e.target.files?.[0]);e.target.value="";
    });
    $("studioRatio").addEventListener("change",selectRatio);
-   $("sourceText").addEventListener("input",renderSoon);
+   $("sourceText").addEventListener("input",()=>{
+     renderSoon();
+     if(scriptTimer)clearTimeout(scriptTimer);
+     // Clipchamp-like immediate preview after typing/pasting, without
+     // interrupting each keystroke or re-tokenizing large texts continuously.
+     scriptTimer=setTimeout(()=>{
+       scriptTimer=null;$("loadBtn").click();
+     },460);
+   });
    for(const id of ["wpm","punctuationPause","longWordPause"]){
      $(id).addEventListener("change",renderSoon);
      $(id).addEventListener("input",renderSoon);
