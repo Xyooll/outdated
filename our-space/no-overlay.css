@@ -1,0 +1,65 @@
+/* Our Space 3.0: layout contract — NO MODALS COVER THE WORLD CANVAS.
+   Game controls, tasks, chat and wardrobe use normal document flow. */
+html{scroll-behavior:smooth}
+.world-view,.world-shell,.sim-workspace{position:relative;overflow:visible}
+.world-shell{width:min(100%,1020px);margin-inline:auto;flex:none}
+.world-stage{position:relative;isolation:isolate;overflow:hidden}
+.world-stage canvas{position:relative;display:block;width:100%;height:auto;pointer-events:auto}
+.life-action-menu{
+ position:relative!important;inset:auto!important;display:block;
+ z-index:auto!important;background:#232b43;backdrop-filter:none!important;
+ width:100%;max-height:none!important;margin:10px 0;padding:12px;
+ border-radius:16px;border:1px solid #e4b7d76f;
+ overflow:visible!important;box-shadow:none
+}
+.life-actions-card{
+ width:100%!important;max-width:none!important;max-height:none!important;
+ overflow:visible!important;background:transparent;border:0;
+ box-shadow:none;padding:0
+}
+.life-actions-top{padding:0 0 9px;font-size:13px}
+.life-action-buttons{display:flex;flex-wrap:wrap;overflow:visible!important;max-height:none!important;gap:8px}
+.action-choice{flex:1 1 150px;max-width:100%;font-size:12px;line-height:1.5}
+.sim-workspace{width:min(100%,1020px);margin:0 auto;padding:0 clamp(8px,2vw,20px) 28px}
+.sim-drawer,.closet{
+ position:relative!important;inset:auto!important;z-index:auto!important;
+ display:block;align-items:initial;justify-content:initial;
+ width:100%;height:auto!important;max-height:none!important;
+ margin:14px auto;overflow:visible;background:transparent;
+ box-shadow:none;border:none;backdrop-filter:none
+}
+.sim-drawer-shade,.closet-shade{display:none!important}
+.sim-drawer-body,.closet-sheet{
+ position:relative!important;inset:auto!important;display:flex;flex-direction:column;
+ width:100%!important;max-width:none!important;height:auto!important;max-height:none!important;
+ margin:0;padding:15px;background:#252a42;
+ border:1px solid #a58aa76b;border-radius:17px;
+ overflow:visible!important;box-shadow:none!important
+}
+.sim-drawer-body .chat-section{
+ width:100%;flex:none;display:flex;flex-direction:column;
+ height:auto!important;min-height:0;max-height:none!important;margin:0!important;
+ border:1px solid #ffffff22
+}
+.sim-drawer-body .chat-messages{
+ flex:1 1 auto;min-height:180px;max-height:300px;
+ overflow-y:auto;overscroll-behavior:contain
+}
+.sim-drawer-body .life-duties{display:block;margin:0;max-height:none}
+.closet-sheet{display:block;padding:17px}
+.closet-body{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px}
+.closet .closet-header,.sim-drawer .sim-drawer-head{display:flex;justify-content:space-between}
+.sim-workspace:empty{display:none}
+.sim-toolbar,.life-object-quickbar{position:relative;z-index:0}
+.world-stage:focus-within{border-color:#e1bfd4}
+@media(max-width:600px){
+ .sim-workspace{padding:0 7px 18px}
+ .sim-drawer,.closet{position:relative!important;inset:auto!important;width:100%;height:auto!important;max-height:none!important;margin:8px auto}
+ .sim-drawer-body,.closet-sheet{height:auto!important;max-height:none!important;border-radius:15px;box-shadow:none!important;padding:13px}
+ .life-actions-card{width:100%!important;max-width:100%!important;max-height:none!important}
+ .life-action-buttons{display:flex;flex-direction:column;flex-wrap:nowrap;max-height:none!important}
+ .action-choice{flex:none;width:100%;min-height:44px}
+ .closet-body{grid-template-columns:1fr}
+ .closet .avatar-card{flex-direction:row;align-items:center;gap:15px}
+ .sim-drawer-body .chat-messages{min-height:180px;max-height:min(42dvh,320px)}
+}
