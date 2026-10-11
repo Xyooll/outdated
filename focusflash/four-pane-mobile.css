@@ -1,0 +1,270 @@
+/* FocusFlash four-window mobile correction.
+   Unlike the previous app-like layout, every functional window remains
+   visible at the same time on portrait and landscape mobile screens.
+   Do not hide Timeline or Inspector based on data-mobile-view.
+ */
+@media(max-width:950px){
+  html,body{height:100%;min-height:0;overflow:hidden}
+  body{margin:0}
+  .editor-app{
+    display:flex!important;flex-direction:column!important;
+    height:100dvh!important;min-height:0!important;
+    width:100%;overflow:hidden!important
+  }
+  .editor-topbar{
+    position:relative!important;flex:0 0 auto!important;
+    width:100%;z-index:3;
+  }
+  .editor-workspace#editorWorkspace{
+    --phone-tools:54px;--phone-inspector:clamp(122px,34vw,225px);
+    --phone-timeline:clamp(183px,29dvh,265px);
+    display:grid!important;flex:1 1 auto!important;
+    width:100%!important;height:auto!important;min-height:0!important;
+    overflow:hidden!important;gap:0!important;
+    grid-template-columns:var(--phone-tools) minmax(0,1fr) var(--phone-inspector)!important;
+    grid-template-rows:minmax(0,1fr) var(--phone-timeline)!important;
+    grid-template-areas:"rail canvas inspector" "timeline timeline timeline"!important;
+  }
+  /* WINDOW 01: real left-side tool window, not a horizontal tab strip. */
+  .editor-workspace #dockLeft.editor-rail{
+    grid-area:rail!important;grid-row:1!important;grid-column:1!important;
+    display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
+    position:relative!important;top:auto!important;z-index:1!important;
+    width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+    padding:0 3px 5px!important;margin:0!important;gap:4px!important;
+    overflow-y:auto!important;overflow-x:hidden!important;
+    justify-content:flex-start!important;align-items:stretch!important;
+    border:1px solid #5b506b!important;border-right:0!important;
+    background:#1b1a28!important;scroll-snap-type:none!important;
+    scrollbar-width:none
+  }
+  #dockLeft::-webkit-scrollbar{display:none}
+  #dockLeft .dock-left-heading{
+    display:flex!important;flex:0 0 auto;flex-direction:column!important;
+    align-items:center;gap:2px;padding:9px 2px!important;
+    min-height:46px!important;width:100%;
+    background:#29243a;border-bottom:1px solid #4c405e
+  }
+  #dockLeft .dock-left-heading .dock-window-kicker{display:none!important}
+  #dockLeft .dock-left-heading strong{font-size:9px;white-space:nowrap;text-align:center}
+  #dockLeft .dock-left-heading strong span{display:block;font-size:16px;line-height:1.1;margin-bottom:2px}
+  #dockLeft .dock-left-heading small,#dockLeft .dock-left-footer{display:none!important}
+  #dockLeft .editor-tab{
+    width:100%!important;min-width:0!important;min-height:45px!important;
+    max-width:100%;height:auto!important;flex:0 0 auto!important;
+    display:flex!important;flex-direction:column!important;
+    justify-content:center!important;align-items:center!important;gap:2px!important;
+    margin:0!important;padding:5px 1px!important;
+    text-align:center;font-size:8px!important;font-weight:700!important;
+    line-height:1.2;white-space:normal!important;
+    scroll-snap-align:none;border-radius:7px
+  }
+  #dockLeft .editor-tab span:first-child{font-size:17px!important;min-width:0}
+  #dockLeft .mobile-timeline-tab{display:none!important}
+  #dockLeft .editor-tab.active{background:#503568!important;border:1px solid #9168bc!important}
+  /* WINDOW 02: word reader stays in the middle, even on the phone. */
+  .editor-workspace .editor-preview-section.dock-window{
+    grid-area:canvas!important;grid-row:1!important;grid-column:2!important;
+    display:flex!important;flex-direction:column!important;
+    padding:7px 5px!important;margin:0!important;
+    min-width:0!important;min-height:0!important;
+    width:100%!important;height:100%!important;overflow:hidden!important;
+    border:1px solid #5b506b!important;border-right:0!important;
+    background:radial-gradient(ellipse at center,#292638,#151420)
+  }
+  .editor-preview-section .editor-preview-header{
+    min-height:27px;flex:0 0 auto;gap:3px!important;
+    width:100%;margin:0 0 5px!important
+  }
+  .editor-preview-section .preview-title{
+    font-size:0!important;white-space:nowrap
+  }
+  .editor-preview-section .preview-title:after{
+    content:"02 PLAYER";font-size:9px;letter-spacing:.3px;color:#d8b9f5
+  }
+  .editor-preview-section .preview-heading{margin-right:auto!important;gap:3px}
+  .editor-preview-section .preview-live-dot{display:none!important}
+  .editor-preview-section .preview-note{display:none!important}
+  .editor-preview-section .preview-font-controls{gap:2px!important;margin:0!important}
+  .editor-preview-section .preview-font-controls button{
+    min-width:24px!important;min-height:27px!important;
+    height:27px;padding:0 3px!important;font-size:17px!important
+  }
+  .editor-preview-section .preview-font-controls output{
+    min-width:31px!important;font-size:9px!important
+  }
+  .editor-preview-section .preview-fullscreen{
+    min-height:27px!important;height:27px!important;
+    width:25px!important;min-width:25px!important;
+    padding:0!important;font-size:14px!important
+  }
+  .editor-preview-section .editor-preview-holder{
+    flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+    width:100%!important;overflow:hidden!important
+  }
+  .editor-preview-section .reader-card{
+    width:100%!important;height:100%!important;min-height:0!important;
+    display:flex!important;align-items:center!important;justify-content:center!important
+  }
+  .editor-preview-section .editor-preview{
+    max-width:100%!important;max-height:100%!important;
+    border-radius:6px!important;border:1px solid #6b527f
+  }
+  .editor-preview-section .editor-preview[data-ratio="portrait"]{
+    width:min(100%,calc(55dvh * 9 / 16))!important;
+    height:auto!important;aspect-ratio:9/16!important
+  }
+  .editor-preview-section .editor-preview[data-ratio="square"]{
+    width:min(100%,50dvh)!important;height:auto!important;aspect-ratio:1!important
+  }
+  .editor-preview-section .editor-preview[data-ratio="wide"]{
+    width:100%!important;height:auto!important;aspect-ratio:16/9!important
+  }
+  .editor-preview-section .editor-preview-info{
+    flex:0 0 auto!important;margin:4px 0 1px!important;
+    width:100%;min-height:15px;font-size:9px!important;gap:3px
+  }
+  .editor-preview-section .controls{
+    flex:0 0 auto!important;display:flex!important;justify-content:center!important;
+    align-items:center!important;width:100%!important;max-width:100%!important;
+    gap:5px!important;margin:4px 0 0!important
+  }
+  .editor-preview-section .controls button{
+    flex:0 1 31px!important;height:35px!important;min-height:35px!important;
+    padding:1px!important;font-size:11px!important
+  }
+  .editor-preview-section .controls .primary{
+    flex:1 1 65px!important;max-width:96px!important;
+    font-size:11px!important;min-width:0!important
+  }
+  .editor-preview-section .preview-shortcuts{
+    flex:0 0 auto!important;display:flex!important;min-height:20px!important;
+    margin:5px 0 0!important;justify-content:center;gap:3px!important
+  }
+  .editor-preview-section .preview-shortcuts button{
+    flex:0 0 auto;min-width:0;padding:3px 4px!important;
+    min-height:23px;font-size:8px!important
+  }
+  /* WINDOW 03: right inspector stays visible and scrollable. */
+  .editor-workspace #editorInspector.editor-inspector{
+    grid-area:inspector!important;grid-row:1!important;grid-column:3!important;
+    display:block!important;
+    min-width:0!important;min-height:0!important;
+    width:100%!important;height:100%!important;
+    padding:0 6px 10px!important;margin:0!important;
+    max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;
+    border:1px solid #5b506b!important;
+    background:#232031!important;scrollbar-width:thin;
+    overscroll-behavior:contain!important
+  }
+  .editor-workspace #editorInspector .dock-inspector-heading{
+    display:flex!important;position:sticky!important;top:0;z-index:5;
+    min-height:42px!important;height:auto;
+    margin:0 -6px 7px!important;padding:6px!important;
+    background:#302a42;border-bottom:1px solid #635478
+  }
+  #editorInspector .dock-inspector-heading strong{font-size:11px!important;overflow-wrap:anywhere}
+  #editorInspector .dock-inspector-heading .dock-window-kicker{font-size:8px}
+  #editorInspector .dock-inspector-heading button{
+    min-height:27px!important;min-width:26px!important;padding:1px!important;
+    font-size:13px!important
+  }
+  #editorInspector .editor-section{padding:0 0 10px!important;max-width:100%;min-width:0!important}
+  #editorInspector .editor-panel-head{margin:4px 0 9px!important}
+  #editorInspector .editor-panel-head h2{font-size:14px!important;margin:0!important;line-height:1.25}
+  #editorInspector .editor-panel-head p,#editorInspector .editor-eyebrow{
+    display:none!important
+  }
+  #editorInspector .editor-section label{
+    font-size:10px!important;min-width:0!important;max-width:100%;overflow-wrap:anywhere
+  }
+  #editorInspector input,#editorInspector select,#editorInspector textarea{
+    max-width:100%!important;min-width:0!important;width:100%;
+    font-size:12px!important
+  }
+  #editorInspector input[type="checkbox"]{width:auto!important;min-width:15px!important}
+  #editorInspector input[type="range"]{width:100%!important}
+  #editorInspector .editor-onboarding{display:none!important}
+  #editorInspector .text-actions,#editorInspector .studio-buttons,
+  #editorInspector .script-block-actions{grid-template-columns:1fr!important}
+  #editorInspector .text-actions button,
+  #editorInspector .studio-buttons button,
+  #editorInspector .script-block-actions button{
+    min-height:33px!important;padding:5px!important;font-size:10px!important
+  }
+  #editorInspector #editorTranscript{height:auto!important;min-height:0!important;display:flex;flex-direction:column}
+  #editorInspector #editorTranscript[hidden]{display:none!important}
+  #editorInspector .transcript-toolbar{gap:4px;margin-bottom:4px}
+  #editorInspector .transcript-toolbar input{min-height:31px!important;padding:5px!important}
+  #editorInspector .transcript-meta{font-size:9px;flex-wrap:wrap}
+  #editorInspector .transcript-list{
+    min-height:120px!important;max-height:none!important;
+    flex:1 1 auto;overflow-y:auto!important
+  }
+  #editorInspector .transcript-entry{padding:8px 5px!important;min-height:49px}
+  #editorInspector .transcript-entry-top{flex-wrap:wrap}
+  #editorInspector .transcript-block-label{max-width:100%}
+  #editorInspector .transcript-sentence{font-size:10px!important;line-height:1.45}
+  #editorInspector .transcript-footer{padding-top:7px}
+  #editorInspector .transcript-footer button{min-height:34px;font-size:10px}
+  #editorInspector .transcript-footer span{display:none}
+  #editorInspector .script-block{padding:6px!important}
+  #editorInspector .script-block-head{flex-wrap:wrap}
+  #editorInspector .script-block-tools{gap:2px}
+  #editorInspector .script-block-tools button{min-height:28px;min-width:25px}
+  #editorInspector .script-block-bottom{flex-wrap:wrap}
+  #editorInspector .script-mode-switch{gap:2px}
+  #editorInspector .script-mode-switch button{font-size:9px!important;padding:6px 2px!important}
+  #editorInspector .size-adjust{flex-wrap:wrap}
+  #editorInspector .tone-exact{flex-wrap:wrap}
+  /* WINDOW 04: bottom timeline always visible; never replace it with tools. */
+  .editor-workspace #editorTimeline.editor-timeline,
+  .editor-workspace[data-mobile-view="tools"] #editorTimeline.editor-timeline{
+    grid-area:timeline!important;grid-row:2!important;grid-column:1/4!important;
+    display:block!important;min-height:0!important;max-height:none!important;
+    width:100%!important;height:100%!important;
+    padding:7px 9px 13px!important;margin:0!important;
+    overflow-y:auto!important;overflow-x:hidden!important;
+    border:1px solid #5b506b!important;
+    background:#1c1b2a!important;overscroll-behavior:contain
+  }
+  .editor-workspace[data-mobile-view="timeline"] #editorInspector.editor-inspector{
+    display:block!important
+  }
+  #editorTimeline .timeline-header{margin:0 0 5px!important;top:0!important}
+  #editorTimeline .timeline-title strong{font-size:11px!important}
+  #editorTimeline .timeline-subtitle{display:none!important}
+  #editorTimeline .timeline-ruler{height:20px!important;padding-left:69px!important}
+  #editorTimeline .timeline-track{grid-template-columns:64px minmax(0,1fr)!important;gap:5px;margin:5px 0}
+  #editorTimeline .timeline-track-label{font-size:9px;padding:7px 4px}
+  #editorTimeline .timeline-track-label span{font-size:8px}
+  #editorTimeline .timeline-strip{min-height:35px!important}
+  #editorTimeline .timeline-clip{min-height:35px!important;font-size:9px!important}
+  #editorTimeline .timeline-strip.voice{min-height:28px!important}
+  #editorTimeline .timeline-strip.tone-track{min-height:28px!important}
+  #editorTimeline .timeline-scrub{margin:5px 0 0!important;height:22px!important}
+  #editorTimeline .timeline-readout{font-size:9px!important}
+  .dock-resize,.dock-reset{display:none!important}
+}
+@media(max-width:430px){
+  .editor-workspace#editorWorkspace{
+    --phone-tools:49px;--phone-inspector:clamp(116px,34vw,160px);
+    --phone-timeline:clamp(175px,27dvh,235px)
+  }
+  #dockLeft .editor-tab{font-size:8px!important}
+  .editor-preview-section .preview-shortcuts #quickAudioBtn{display:none}
+  .editor-preview-section .preview-shortcuts #quickEditBtn{display:none}
+}
+@media(max-width:340px){
+  .editor-workspace#editorWorkspace{--phone-tools:44px;--phone-inspector:114px}
+  .editor-preview-section .preview-title:after{content:"PLAYER"}
+  .editor-preview-section .preview-font-controls output{display:none}
+  #dockLeft .editor-tab{font-size:7px!important}
+}
+@media(max-width:950px) and (orientation:landscape){
+  .editor-workspace#editorWorkspace{
+    --phone-tools:62px;--phone-inspector:clamp(180px,30vw,290px);
+    --phone-timeline:clamp(130px,32dvh,205px)
+  }
+  .editor-preview-section .preview-shortcuts{display:none!important}
+}
