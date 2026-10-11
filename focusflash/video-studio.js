@@ -179,13 +179,17 @@
    const text=sel("sourceText").value.trim();
    const intendedSignature=signature();
    if(!text){report("Paste some text before generating a narrator.");return;}
-   if(words().length>800){
-     report("For reliable phone performance, generate narration from 800 words or fewer at a time.");
+   const cap=sel("studioMode").value==="instant"?1800:800;
+   if(words().length>cap){
+     report("This voice mode supports up to "+cap+" words per export. Split longer passages into chapters.");
      return;
    }
    busy=true;sel("studioGenerate").disabled=true;sel("studioExport").disabled=true;
    stopPreview();stopReaderUndertone();voiceBuffer=null;voiceSignature="";report("Initializing narrator...");
    try{
+     // Start/resume the audio engine while the original button gesture is active.
+     // This avoids losing mobile autoplay permission during asynchronous synthesis.
+     await getContext();
      const mode=sel("studioMode").value;
      const engine=mode==="quality"?await loadModel():null;
      const phrases=splitIntoPhrases(text);
