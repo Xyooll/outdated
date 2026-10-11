@@ -7,7 +7,10 @@ CREATE TABLE public.couple_members(
 );
 CREATE TABLE public.couple_room(
  id smallint PRIMARY KEY CHECK(id=1),
- salt text NOT NULL
+ salt text NOT NULL,
+ verifier_iv text,
+ verifier_ciphertext text,
+ CONSTRAINT verifier_pair CHECK ((verifier_iv IS NULL) = (verifier_ciphertext IS NULL))
 );
 INSERT INTO public.couple_room(id,salt) VALUES(1,encode(gen_random_uuid()::text::bytea,'base64'));
 CREATE TABLE public.couple_messages(
@@ -33,9 +36,15 @@ CREATE POLICY "member sends own messages" ON public.couple_messages
  FOR INSERT TO authenticated WITH CHECK(
  sender_id=(SELECT auth.uid()) AND EXISTS(
  SELECT 1 FROM public.couple_members m WHERE m.user_id=(SELECT auth.uid())));
+CREATE POLICY "member sets verifier once" ON public.couple_room
+ FOR UPDATE TO authenticated USING(id=1 AND verifier_ciphertext IS NULL AND EXISTS(
+ SELECT 1 FROM public.couple_members m WHERE m.user_id=(SELECT auth.uid())))
+ WITH CHECK(id=1 AND verifier_iv IS NOT NULL AND verifier_ciphertext IS NOT NULL AND EXISTS(
+ SELECT 1 FROM public.couple_members m WHERE m.user_id=(SELECT auth.uid())));
 REVOKE ALL ON public.couple_members,public.couple_room,public.couple_messages FROM anon,authenticated;
 GRANT SELECT ON public.couple_members,public.couple_room TO authenticated;
 GRANT SELECT,INSERT ON public.couple_messages TO authenticated;
+GRANT UPDATE(verifier_iv,verifier_ciphertext) ON public.couple_room TO authenticated;
 DO $$
 BEGIN
  IF NOT EXISTS(

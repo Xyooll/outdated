@@ -25,7 +25,7 @@ const ready = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL) && (P
 const supabase = ready ? createClient(PROJECT_URL, PUBLISHABLE_KEY) : null;
 const encoder = new TextEncoder(), decoder = new TextDecoder();
 const aad = encoder.encode("our-space-v1");
-let me=null, salt=null, key=null, channel=null, refresh=0;
+let me=null, salt=null, verifier=null, key=null, channel=null, refresh=0;
 function show(id){ for(const name of ids)$(name).classList.toggle("hidden",name!==id);$("lockBtn").classList.toggle("hidden",id!=="chat");}
 function tell(id,message){$(id).textContent=message||"";}
 function errorText(e){return e && e.message || "Something went wrong.";}
@@ -34,6 +34,32 @@ function unbase64(value){return Uint8Array.from(atob(value),x=>x.charCodeAt(0));
 async function derive(phrase){if(phrase.length<12)throw Error("Use a long, unique phrase of at least 12 characters.");const raw=await crypto.subtle.importKey("raw",encoder.encode(phrase),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt:unbase64(salt),iterations:600000,hash:"SHA-256"},raw,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);}
 async function encrypt(text){const iv=crypto.getRandomValues(new Uint8Array(12));const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv,additionalData:aad},key,encoder.encode(text));return{iv:base64(iv),ciphertext:base64(new Uint8Array(cipher))};}
 async function decrypt(row){const raw=await crypto.subtle.decrypt({name:"AES-GCM",iv:unbase64(row.iv),additionalData:aad},key,unbase64(row.ciphertext));return decoder.decode(raw);}
+const verificationMarker = "OUR_SPACE_PHRASE_CONFIRMATION_V1";
+async function verifyPairPhrase() {
+ if (verifier?.ciphertext) {
+  let value;
+  try { value = await decrypt({iv:verifier.iv,ciphertext:verifier.ciphertext}); }
+  catch { throw Error("Wrong shared secret phrase. Enter the exact same phrase used on the first phone."); }
+  if (value !== verificationMarker) throw Error("Secret phrase verification failed.");
+  return;
+ }
+ const packet=await encrypt(verificationMarker);
+ const result=await supabase.from("couple_room")
+  .update({verifier_iv:packet.iv,verifier_ciphertext:packet.ciphertext})
+  .eq("id",1).is("verifier_ciphertext",null)
+  .select("verifier_iv,verifier_ciphertext");
+ if (result.error) throw result.error;
+ if (result.data?.length) {
+  verifier={iv:result.data[0].verifier_iv,ciphertext:result.data[0].verifier_ciphertext};
+  return;
+ }
+ const current=await supabase.from("couple_room")
+  .select("verifier_iv,verifier_ciphertext").eq("id",1).single();
+ if (current.error) throw current.error;
+ verifier={iv:current.data.verifier_iv,ciphertext:current.data.verifier_ciphertext};
+ if (!verifier.ciphertext) throw Error("Could not save the encryption verification. Try again.");
+ await verifyPairPhrase();
+}
 function lock(){key=null;refresh++;$("phrase").value="";$("messages").replaceChildren();$("entry").value="";if(channel){supabase.removeChannel(channel);channel=null;}show(me?"unlock":"login");}
 async function initialize(){
  if(!supabase){show("setup");return;}
@@ -45,9 +71,9 @@ async function initialize(){
   const allowed=await supabase.from("couple_members").select("role").eq("user_id",me.id).maybeSingle();
   if(allowed.error)throw allowed.error;
   if(!allowed.data){lock();show("login");tell("loginStatus","This email is not yet approved for this private chat.");return;}
-  const room=await supabase.from("couple_room").select("salt").eq("id",1).single();
+  const room=await supabase.from("couple_room").select("salt,verifier_iv,verifier_ciphertext").eq("id",1).single();
   if(room.error)throw room.error;
-  salt=room.data.salt;lock();
+  salt=room.data.salt;verifier={iv:room.data.verifier_iv,ciphertext:room.data.verifier_ciphertext};lock();
  }catch(e){lock();show("login");tell("loginStatus","Could not open room: "+errorText(e));}
 }
 async function load(){
@@ -82,7 +108,7 @@ $("loginForm").addEventListener("submit",async e=>{
 });
 $("unlockForm").addEventListener("submit",async e=>{
  e.preventDefault();$("unlockBtn").disabled=true;tell("unlockStatus","");
- try{key=await derive($("phrase").value);await load();$("phrase").value="";show("chat");subscribe();$("entry").focus();}
+ try{key=await derive($("phrase").value);await verifyPairPhrase();await load();$("phrase").value="";show("chat");subscribe();$("entry").focus();}
  catch(err){key=null;tell("unlockStatus",errorText(err));}finally{$("unlockBtn").disabled=false;}
 });
 $("sendForm").addEventListener("submit",async e=>{

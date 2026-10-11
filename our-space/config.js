@@ -1,4 +1,4 @@
-// Use a NEW Supabase project dedicated to your two-person chat.
-// Only the publishable/anon key belongs in client code. NEVER paste a service_role or secret key.
-export const URL = "";
-export const KEY = "";
+// Browser-safe client settings for the dedicated Our Space Supabase project.
+// Never put secret or service_role keys in the repository.
+export const URL = "https://vtlqpgmipfhdjiidssxg.supabase.co";
+export const KEY = "sb_publishable_DnOWC0v6gO6QqlRgulzyOQ__xXmpDzE";
