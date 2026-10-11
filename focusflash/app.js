@@ -251,6 +251,7 @@
     navigator.serviceWorker.register('./service-worker.js').catch(() => {});
   }
 
+  window.FocusFlashReader = {isPlaying:()=>playing,currentIndex:()=>index,pause:()=>{if(playing)stop();}};
   restoreState();
   loadText(false);
   if (window.FocusFlashStudio) window.FocusFlashStudio.mount();
