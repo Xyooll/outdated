@@ -37,3 +37,10 @@ This is a compact 2D life simulation, **not The Sims 4**. No careers, pregnancy,
 Walking animates alternating legs; eating/relaxing/watching shift the character toward a seated pose; sleeping leans the character and displays a sleep activity label. The household task list opens by default. Older avatar locations trapped in the new furniture map are safely moved to the center of the living room on first load.
 
 Partner activities are now visible on both phones through a read-only, two-member RLS-protected Realtime stream. Furniture activity labels and simple movement/sitting/resting poses appear on the corresponding character.
+
+
+## Life Sim 2.1: Old overlay removed
+
+The life simulator is now the main screen. The previous stacked world navigator and always-visible chat overlay are removed. **Outfit**, **Duties**, **Places**, and **Chat** are toolbar controls. Chat and duties open as separate drawers; Places opens a small destination selector. The mobile movement controls are outside the canvas, below the household map, rather than covering the scene.
+
+The app footer shows **Life Sim 2.1**. To force-refresh a phone that still displays the old overlay, open https://xyooll.github.io/outdated/our-space/?v=life-layout-2 in Chrome. The service worker uses cache `our-space-v8-sim-first`, and local JavaScript/CSS modules use revisioned URLs. This UI change does not alter authentication, conversations, room data, avatars, or household progress.

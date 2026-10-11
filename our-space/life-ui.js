@@ -1,5 +1,5 @@
 
-import {OBJECTS,ACTIONS,TASKS,NEEDS} from "./life-house.js";
+import {OBJECTS,ACTIONS,TASKS,NEEDS} from "./life-house.js?v=life-layout-2";
 const $=id=>document.getElementById(id);
 const numeric=n=>Math.max(0,Math.min(100,Number(n)||0));
 const explain=e=>e?.message||"Connection issue — please try again.";
