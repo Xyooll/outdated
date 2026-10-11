@@ -25,6 +25,8 @@
  let micRecorder=null,micStream=null,micChunks=[],videoBlob=null,videoFilename="focusflash-video.webm";
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let readerSource=null,readerGain=null,readerGeneration=0;
+ let readerVoice=null,previewVoice=null;
+ const pitchEngine=()=>import("./pitch-preserve.js?v=natural-pitch-1");
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -294,76 +296,89 @@
  }
  function stopReaderUndertone(){
    readerGeneration++;
-   try{readerSource?.stop();}catch{}
-   try{readerSource?.disconnect();}catch{}
-   try{readerGain?.disconnect();}catch{}
-   readerSource=null;readerGain=null;
+   readerVoice?.dispose();
+   readerVoice=null;readerSource=null;readerGain=null;
  }
  async function startReaderUndertone(wordIndex=0){
    stopReaderUndertone();
    if(!sel("studioReaderAudio").checked||!voiceBuffer||voiceSignature!==signature())return;
-   const passage=words();if(!passage.length)return;
-   const timeline=makeTimeline(passage),i=Math.max(0,Math.min(passage.length-1,wordIndex));
-   const offset=Math.max(0,Math.min(voiceBuffer.duration-.001,
-     voiceBuffer.duration*timeline.starts[i]/timeline.total));
-   const rate=narrationRate(timeline);
-   const generation=readerGeneration;
+   const token=readerGeneration,passage=words();
+   if(!passage.length)return;
+   const timeline=makeTimeline(passage),rate=narrationRate(timeline);
+   let transport;
    try{
-     const ctx=await getContext();
-     if(readerGeneration!==generation)return;
-     const src=ctx.createBufferSource(),gain=ctx.createGain();
-     src.buffer=voiceBuffer;src.playbackRate.value=rate;
-     gain.gain.value=undertoneVolume();
-     src.connect(gain);gain.connect(ctx.destination);
-     src.onended=()=>{if(readerSource===src){readerSource=null;readerGain=null;}};
-     readerSource=src;readerGain=gain;
-     src.start(ctx.currentTime,offset);
+     const ctx=await getContext(),{makePitchPreservedVoice}=await pitchEngine();
+     if(readerGeneration!==token)return;
+     transport=await makePitchPreservedVoice({
+       context:ctx,buffer:voiceBuffer,rate,volume:undertoneVolume(),
+       destination:ctx.destination,onProgress:report
+     });
+     if(readerGeneration!==token){transport.dispose();return;}
+     readerVoice=transport;
+     readerGain=transport.gain;
+     // The reader may have advanced while the voice was being prepared.
+     // Pick the current word at the precise moment playback starts.
+     const current=window.FocusFlashReader?.currentIndex?.()??wordIndex;
+     const i=Math.max(0,Math.min(passage.length-1,current));
+     const offset=voiceBuffer.duration*timeline.starts[i]/timeline.total;
+     await transport.start(offset);
+     if(readerGeneration!==token){transport.dispose();return;}
+     transport.onEnded(()=>{if(readerVoice===transport)stopReaderUndertone();});
    }catch(error){
-     report("Reader narration unavailable: "+error.message);
+     if(readerVoice===transport)stopReaderUndertone();
+     else transport?.dispose();
+     report("Pitch-preserving reader voice unavailable: "+error.message);
    }
  }
  function stopPreview(){
    cancelAnimationFrame(previewAnimation);
    previewAnimation=0;
-   try{previewSource?.stop();}catch{}
-   try{previewSource?.disconnect();}catch{}
-   try{previewGain?.disconnect();}catch{}
+   previewVoice?.dispose();previewVoice=null;
    previewSource=null;previewGain=null;
    sel("studioListen").textContent="▶ Preview synced undertone";
  }
  async function listen(){
-   if(previewSource){stopPreview();return;}
+   if(previewVoice){stopPreview();return;}
    window.FocusFlashReader?.pause?.();
    if(!voiceBuffer||voiceSignature!==signature()){
      report("Generate or record a voice for the current text first.");return;
    }
-   const passage=words();
-   if(!passage.length)return;
+   const passage=words();if(!passage.length)return;
    const timeline=makeTimeline(passage),rate=narrationRate(timeline);
-   const ctx=await getContext(),src=ctx.createBufferSource();
-   const gain=ctx.createGain();
-   src.buffer=voiceBuffer;
-   src.playbackRate.value=rate;
-   gain.gain.value=undertoneVolume();
-   src.connect(gain);gain.connect(ctx.destination);
+   const ctx=await getContext();
    const canvas=sel("studioSyncCanvas");
    const frameContext=canvas.getContext("2d",{alpha:false});
-   const startAt=ctx.currentTime+.12;
-   sel("studioListen").textContent="■ Stop synced preview";
-   sel("studioSyncCanvas").classList.remove("hidden");
-   previewSource=src;previewGain=gain;
-   src.onended=()=>{if(previewSource===src)stopPreview();};
-   const paint=()=>{
-     if(previewSource!==src)return;
-     const elapsed=Math.max(0,ctx.currentTime-startAt);
-     const i=currentWordAt(timeline,Math.min(elapsed,timeline.total));
-     drawVideoFrame(canvas,frameContext,passage[i],i,passage.length,elapsed,timeline.total);
-     if(elapsed<timeline.total+.1)previewAnimation=requestAnimationFrame(paint);
-   };
-   drawVideoFrame(canvas,frameContext,passage[0],0,passage.length,0,timeline.total);
-   src.start(startAt);
-   previewAnimation=requestAnimationFrame(paint);
-   report("Preview: "+timing().wpm+" WPM · speech "+rate.toFixed(2)+"× · "+Math.round(undertoneVolume()*100)+"% volume.");
+   sel("studioListen").disabled=true;
+   let transport;
+   try{
+     const {makePitchPreservedVoice}=await pitchEngine();
+     transport=await makePitchPreservedVoice({
+       context:ctx,buffer:voiceBuffer,rate,volume:undertoneVolume(),
+       destination:ctx.destination,onProgress:report
+     });
+     previewVoice=transport;previewGain=transport.gain;
+     sel("studioSyncCanvas").classList.remove("hidden");
+     drawVideoFrame(canvas,frameContext,passage[0],0,passage.length,0,timeline.total);
+     await transport.start(0);
+     const started=performance.now()/1000;
+     transport.onEnded(()=>{if(previewVoice===transport)stopPreview();});
+     const paint=()=>{
+       if(previewVoice!==transport)return;
+       const elapsed=Math.max(0,performance.now()/1000-started);
+       const i=currentWordAt(timeline,Math.min(elapsed,timeline.total));
+       drawVideoFrame(canvas,frameContext,passage[i],i,passage.length,elapsed,timeline.total);
+       if(elapsed<timeline.total+.1)previewAnimation=requestAnimationFrame(paint);
+     };
+     sel("studioListen").textContent="■ Stop synced preview";
+     sel("studioListen").disabled=false;
+     previewAnimation=requestAnimationFrame(paint);
+     report("Natural-pitch preview: "+timing().wpm+" WPM · "+rate.toFixed(2)+"× tempo · "+Math.round(undertoneVolume()*100)+"% volume.");
+   }catch(error){
+     transport?.dispose();
+     if(previewVoice===transport)previewVoice=null;
+     report("Preview unavailable: "+error.message);
+     sel("studioListen").disabled=false;
+   }
  }
  function wavFile(buffer){
    const samples=buffer.getChannelData(0),size=samples.length*2;
