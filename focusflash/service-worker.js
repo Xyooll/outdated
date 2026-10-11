@@ -1,18 +1,18 @@
 // FocusFlash: responsive app-like editor with split mobile tool/timeline views.
-const CACHE="focusflash-mobile-workspace-v1";
+const CACHE="focusflash-mobile-workspace-v2";
 const STATIC=[
  "./","./index.html",
- "./styles.css?v=mobile-workspace-1","./editor.css?v=mobile-workspace-1",
- "./workspace.css?v=mobile-workspace-1",
- "./reference-layout.css?v=mobile-workspace-1",
- "./layout-v3.css?v=mobile-workspace-1",
- "./profiles.js?v=mobile-workspace-1","./app.js?v=mobile-workspace-1",
- "./editor.js?v=mobile-workspace-1","./transcript.js?v=mobile-workspace-1",
- "./script-blocks.js?v=mobile-workspace-1",
- "./video-studio.js?v=mobile-workspace-1","./tone-generator.js?v=mobile-workspace-1",
- "./instant-tts.js?v=mobile-workspace-1",
- "./pitch-preserve.js?v=mobile-workspace-1",
- "./fast-piper.js?v=mobile-workspace-1",
+ "./styles.css?v=mobile-workspace-2","./editor.css?v=mobile-workspace-2",
+ "./workspace.css?v=mobile-workspace-2",
+ "./reference-layout.css?v=mobile-workspace-2",
+ "./layout-v3.css?v=mobile-workspace-2",
+ "./profiles.js?v=mobile-workspace-2","./app.js?v=mobile-workspace-2",
+ "./editor.js?v=mobile-workspace-2","./transcript.js?v=mobile-workspace-2",
+ "./script-blocks.js?v=mobile-workspace-2",
+ "./video-studio.js?v=mobile-workspace-2","./tone-generator.js?v=mobile-workspace-2",
+ "./instant-tts.js?v=mobile-workspace-2",
+ "./pitch-preserve.js?v=mobile-workspace-2",
+ "./fast-piper.js?v=mobile-workspace-2",
  "./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{

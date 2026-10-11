@@ -198,3 +198,6 @@ The desktop editor remains a purpose-built speed-reading studio: left tool rail,
 **Phone navigation:** the header keeps workspace selection and Export visible. The horizontally scrollable rail has Timeline immediately after Transcript. The lower editor panel scrolls independently, rather than moving the player away. Long script blocks, MP3 controls, and transcript lines remain accessible with normal scrolling inside the lower panel. No third-party video files, codecs, neural voices, or original user data were changed.
 
 This is a layout and interaction upgrade, not a full non-linear video editor. All document, soundscape, MP3, voice, and user data remain in per-workspace browser storage. It does not add cloud sync. Automated checks cannot substitute for a final touch/visual test on the user's device.
+
+
+Mobile Workspace v2: cache refresh and local audio-module import versions aligned for the new layout. URL: https://xyooll.github.io/outdated/focusflash/?v=mobile-workspace-2
