@@ -1,0 +1,383 @@
+/* FocusFlash Video Studio 1.0
+   In-browser Kokoro voice generation + synchronized WebM exporter.
+   Text and audio are not uploaded to any service. Initial JS/model/voice assets
+   are fetched from their public distribution hosts, then cached by the browser.
+*/
+(() => {
+ "use strict";
+ const $ = id => document.getElementById(id);
+ const focusIndex = word => {
+   const n=[...word].length;
+   if(n<=1)return 0;
+   if(n<=5)return Math.max(0,Math.floor((n-1)*.40));
+   if(n<=9)return Math.max(0,Math.floor((n-1)*.38));
+   return Math.max(0,Math.floor((n-1)*.35));
+ };
+ const MODEL="onnx-community/Kokoro-82M-v1.0-ONNX";
+ const voices={
+   af_heart:"Heart · female",af_bella:"Bella · female",
+   af_nicole:"Nicole · female",af_sky:"Sky · female",
+   am_michael:"Michael · male",am_liam:"Liam · male",
+   bf_emma:"Emma · British",bm_george:"George · British"
+ };
+ let tts=null,modelLoading=null,voiceBuffer=null,voiceSignature="",busy=false;
+ let audioContext=null,previewSource=null,renderAbort=false;
+ let downloadUrl=null,mediaUrl=null;
+ const sel=id=>$(id);
+ const report=(message)=>{sel("studioStatus").textContent=message;};
+ const words=()=>sel("sourceText").value.trim().split(/\s+/).filter(Boolean);
+ const signature=()=>sel("sourceText").value.trim()+"\n@@"+sel("studioVoice").value;
+ const timing=()=>({
+   wpm:Math.max(60,Math.min(2000,Number(sel("wpm").value)||300)),
+   punct:sel("punctuationPause").checked,long:sel("longWordPause").checked
+ });
+ function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+ function durationFor(word,settings){
+   let ms=60000/settings.wpm;
+   if(settings.punct){
+     if(/[.!?][”’"'()\]]*$/.test(word))ms*=1.8;
+     else if(/[,;:][”’"'()\]]*$/.test(word))ms*=1.35;
+   }
+   if(settings.long && [...word].length>=12)ms*=1.2;
+   return Math.max(30,ms);
+ }
+ function makeTimeline(items,audioDuration=null){
+   const times=items.map(w=>durationFor(w,timing())/1000);
+   if(audioDuration!=null){
+     // A deterministic, approximate speech alignment, not forced-alignment:
+     // distribute the generated audio by normalized word lengths and punctuation.
+     const weights=items.map(w=>{
+       const letters=(w.match(/[a-zA-Z0-9]/g)||[]).length;
+       return Math.max(.6,.4+Math.pow(Math.max(1,letters),.64))*
+         (/[.!?]["'’)]*$/.test(w)?1.32:/[,;:]["'’)]*$/.test(w)?1.13:1);
+     });
+     const sum=weights.reduce((a,b)=>a+b,0);
+     for(let i=0;i<times.length;i++)times[i]=weights[i]/sum*audioDuration;
+   }
+   const starts=[];let time=0;
+   for(const seconds of times){starts.push(time);time+=seconds;}
+   return {starts,total:Math.max(.4,time),times};
+ }
+ function currentWordAt(timeline,seconds){
+   let lo=0,hi=timeline.starts.length-1;
+   while(lo<hi){const mid=Math.ceil((lo+hi)/2);if(timeline.starts[mid]<=seconds)lo=mid;else hi=mid-1;}
+   return lo;
+ }
+ function dimensions(value){
+   if(value==="wide")return {width:1280,height:720};
+   if(value==="square")return {width:960,height:960};
+   return {width:720,height:1280};
+ }
+ function drawVideoFrame(canvas,ctx,item,position,count,elapsed,total){
+   const {width:W,height:H}=canvas;const cx=W/2,cy=H/2;
+   const bg=ctx.createLinearGradient(0,0,W,H);
+   bg.addColorStop(0,"#0d0e16");bg.addColorStop(1,"#14101b");
+   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+   const shine=ctx.createRadialGradient(cx,cy,20,cx,cy,Math.max(W,H)*.55);
+   shine.addColorStop(0,"#28202e");shine.addColorStop(1,"#11101900");
+   ctx.fillStyle=shine;ctx.fillRect(0,0,W,H);
+   const scale=Number(sel("studioScale").value)||100;
+   const centerY=cy;const parts=[...item];
+   const fi=Math.min(focusIndex(item),Math.max(0,parts.length-1));
+   const left=parts.slice(0,fi).join("");
+   const main=parts[fi]||" ";
+   const right=parts.slice(fi+1).join("");
+   let size=Math.round(Math.min(W*.15,H*.095)*scale/100);
+   const margin=W*.09;
+   const weight="700";
+   ctx.textBaseline="middle";
+   for(;size>=18;size-=2){
+     ctx.font=weight+" "+size+"px ui-monospace, Menlo, monospace";
+     const w=ctx.measureText(item).width;
+     if(w<W-2*margin)break;
+   }
+   ctx.font=weight+" "+size+"px ui-monospace, Menlo, monospace";
+   const m=ctx.measureText(main).width;
+   const leftWidth=ctx.measureText(left).width;
+   const rightWidth=ctx.measureText(right).width;
+   const startX=Math.round(cx-m/2),endX=Math.round(cx+m/2);
+   ctx.textAlign="right";ctx.fillStyle="#f7f3f6";ctx.fillText(left,startX,centerY);
+   ctx.textAlign="center";ctx.fillStyle="#f04d56";ctx.fillText(main,cx,centerY);
+   ctx.textAlign="left";ctx.fillStyle="#f7f3f6";ctx.fillText(right,endX,centerY);
+   const guideY=size*.9;
+   ctx.fillStyle="#da536080";
+   ctx.fillRect(cx-1,centerY-guideY-22,2,15);
+   ctx.fillRect(cx-1,centerY+guideY+7,2,15);
+   ctx.font=Math.max(14,Math.round(W*.022))+"px system-ui";
+   ctx.textAlign="center";ctx.fillStyle="#9995a5";
+   ctx.fillText("FOCUSFLASH",cx,H*.07);
+   const barW=W*.75,barY=H*.92;
+   ctx.fillStyle="#484552";ctx.fillRect((W-barW)/2,barY,barW,4);
+   ctx.fillStyle="#e65869";ctx.fillRect((W-barW)/2,barY,barW*Math.min(1,elapsed/total),4);
+   ctx.fillStyle="#b3adb9";ctx.font=Math.max(14,Math.round(W*.022))+"px system-ui";
+   ctx.fillText((position+1)+" / "+count,cx,barY+30);
+ }
+ async function getContext(){
+   if(!audioContext||audioContext.state==="closed")
+      audioContext=new (window.AudioContext||window.webkitAudioContext)();
+   if(audioContext.state!=="running")await audioContext.resume();
+   return audioContext;
+ }
+ async function loadModel(){
+   if(tts)return tts;
+   if(modelLoading)return modelLoading;
+   modelLoading=(async()=>{
+     report("Loading on-device narrator (first time may download ~90 MB)...");
+     // Lazy import. This is the app's only optional runtime model dependency.
+     const {KokoroTTS}=await import("https://esm.sh/kokoro-js@1.2.1?target=es2022");
+     tts=await KokoroTTS.from_pretrained(MODEL,{
+       dtype:"q8",device:"wasm",
+       progress_callback:p=>{
+         if(p?.status==="progress"&&Number.isFinite(p.progress))
+           report("Downloading local voice model: "+Math.round(p.progress)+"%");
+         else if(p?.status==="initiate")report("Loading voice assets: "+(p.file||"model")+"...");
+       }
+     });
+     report("Narrator ready. Voice generation stays on your device.");
+     return tts;
+   })();
+   try{return await modelLoading;}
+   catch(error){tts=null;throw error;}
+   finally{modelLoading=null;}
+ }
+ function splitIntoPhrases(text){
+   const chunks=[];
+   const sentences=(text.match(/[^.!?\n]+[.!?]*|\n+/g)||[text]).filter(x=>x.trim());
+   for(const sentence of sentences){
+     const seq=sentence.trim().split(/\s+/);
+     let piece="";
+     for(const token of seq){
+       if((piece+" "+token).length>175&&piece){
+         chunks.push(piece);piece=token;
+       }else piece+=(piece?" ":"")+token;
+     }
+     if(piece)chunks.push(piece);
+   }
+   return chunks;
+ }
+ function rawAudio(sound){
+   const samples=sound.audio||sound.data;
+   const sampleRate=sound.sampling_rate||sound.sample_rate||24000;
+   if(!(samples instanceof Float32Array)&&!ArrayBuffer.isView(samples))
+      throw Error("The speech engine did not return playable audio.");
+   return {samples:Float32Array.from(samples),sampleRate};
+ }
+ async function synthesize(){
+   if(busy)return;
+   const text=sel("sourceText").value.trim();
+   if(!text){report("Paste some text before generating a narrator.");return;}
+   if(words().length>800){
+     report("For reliable phone performance, generate narration from 800 words or fewer at a time.");
+     return;
+   }
+   busy=true;sel("studioGenerate").disabled=true;sel("studioExport").disabled=true;
+   stopPreview();voiceBuffer=null;voiceSignature="";report("Initializing narrator...");
+   try{
+     const engine=await loadModel();
+     const phrases=splitIntoPhrases(text);
+     if(!phrases.length)throw Error("No readable text found.");
+     const segments=[];let total=0;
+     const gap=.11;
+     for(let i=0;i<phrases.length;i++){
+       report("Generating spoken audio locally: "+(i+1)+" / "+phrases.length);
+       const raw=rawAudio(await engine.generate(phrases[i],{voice:sel("studioVoice").value}));
+       if(raw.samples.length<1)throw Error("Voice generator returned an empty phrase.");
+       segments.push(raw);
+       total+=raw.samples.length/raw.sampleRate+gap;
+       await wait(0);
+     }
+     const rate=24000;
+     const count=Math.ceil(total*rate);
+     if(count>rate*780)throw Error("Narration is too long for one video (limit 13 minutes).");
+     const context=await getContext();
+     voiceBuffer=context.createBuffer(1,count,rate);
+     const merged=voiceBuffer.getChannelData(0);
+     let offset=0;
+     for(const part of segments){
+       // Kokoro returns 24 kHz. Guard future sample rate changes.
+       const ratio=part.sampleRate/rate;
+       const len=Math.ceil(part.samples.length/ratio);
+       for(let j=0;j<len;j++)merged[offset+j]=part.samples[Math.min(part.samples.length-1,Math.floor(j*ratio))];
+       offset+=len+Math.round(gap*rate);
+     }
+     voiceSignature=signature();
+     sel("studioExport").disabled=false;
+     sel("studioListen").disabled=false;sel("studioWav").disabled=false;
+     report("Voice ready ("+Math.ceil(voiceBuffer.duration)+" sec). Preview it or export video with audio.");
+   }catch(error){
+     voiceBuffer=null;
+     report("Voice generation failed: "+error.message+
+      ". You can still export a silent video. Try desktop Chrome if this phone lacks memory.");
+   }finally{
+     busy=false;sel("studioGenerate").disabled=false;
+     sel("studioExport").disabled=false;
+   }
+ }
+ function stopPreview(){
+   try{previewSource?.stop();}catch{}
+   previewSource=null;
+   sel("studioListen").textContent="▶ Listen to voice";
+ }
+ async function listen(){
+   if(previewSource){stopPreview();return;}
+   if(!voiceBuffer||voiceSignature!==signature()){
+     report("Generate a fresh voice for the current text and selected speaker.");return;
+   }
+   const ctx=await getContext();
+   const src=ctx.createBufferSource();
+   src.buffer=voiceBuffer;src.connect(ctx.destination);
+   src.onended=()=>{if(previewSource===src)stopPreview();};
+   previewSource=src;src.start();
+   sel("studioListen").textContent="■ Stop voice";
+ }
+ function wavFile(buffer){
+   const samples=buffer.getChannelData(0),size=samples.length*2;
+   const binary=new ArrayBuffer(44+size),v=new DataView(binary);
+   const ascii=(offset,str)=>{for(let i=0;i<str.length;i++)v.setUint8(offset+i,str.charCodeAt(i));};
+   ascii(0,"RIFF");v.setUint32(4,36+size,true);ascii(8,"WAVE");
+   ascii(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);
+   v.setUint16(22,1,true);v.setUint32(24,buffer.sampleRate,true);
+   v.setUint32(28,buffer.sampleRate*2,true);v.setUint16(32,2,true);
+   v.setUint16(34,16,true);ascii(36,"data");v.setUint32(40,size,true);
+   for(let i=0;i<samples.length;i++){
+     const x=Math.max(-1,Math.min(1,samples[i]));
+     v.setInt16(44+i*2,x<0?x*32768:x*32767,true);
+   }
+   return new Blob([binary],{type:"audio/wav"});
+ }
+ function download(blob,name){
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement("a");a.href=url;a.download=name;
+   a.style.display="none";document.body.append(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),60000);
+ }
+ function nameSuffix(){return new Date().toISOString().replace(/[:.]/g,"-").slice(0,19);}
+ function downloadWav(){
+   if(!voiceBuffer||voiceSignature!==signature()){
+     report("Generate narration first.");return;
+   }
+   download(wavFile(voiceBuffer),"focusflash-voice-"+nameSuffix()+".wav");
+ }
+ function mime(){
+   for(const type of ["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus",
+      "video/webm;codecs=vp8","video/webm"])
+      if(MediaRecorder.isTypeSupported(type))return type;
+   return "";
+ }
+ async function exportVideo(){
+   if(busy)return;
+   if(typeof MediaRecorder==="undefined"||!HTMLCanvasElement.prototype.captureStream){
+     report("This browser cannot create video files. Please use recent Chrome on Android or desktop.");return;
+   }
+   const text=words();
+   if(text.length===0){report("Paste text first.");return;}
+   stopPreview();
+   let narration=sel("studioAudio").checked;
+   if(narration&&(!voiceBuffer||voiceSignature!==signature())){
+     report("Generate narration for this text first, or uncheck 'Include generated voice'.");
+     return;
+   }
+   const useVoice=narration&&!!voiceBuffer;
+   const timeline=makeTimeline(text,useVoice?voiceBuffer.duration:null);
+   if(timeline.total>480){report("Limit each exported video to 8 minutes; split longer text into chapters.");return;}
+   busy=true;renderAbort=false;sel("studioExport").disabled=true;sel("studioGenerate").disabled=true;
+   const {width,height}=dimensions(sel("studioRatio").value);
+   const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
+   const context=canvas.getContext("2d",{alpha:false});
+   drawVideoFrame(canvas,context,text[0],0,text.length,0,timeline.total);
+   let stream=null,recorder=null,src=null,ctx=null,raf=0,finished=false;
+   let audioDestination=null;
+   const chunks=[];
+   try{
+     stream=canvas.captureStream(30);
+     if(useVoice){
+       ctx=await getContext();audioDestination=ctx.createMediaStreamDestination();
+       src=ctx.createBufferSource();src.buffer=voiceBuffer;
+       src.connect(audioDestination);src.connect(ctx.destination);
+       for(const track of audioDestination.stream.getAudioTracks())stream.addTrack(track);
+     }
+     const type=mime();
+     if(!type)throw Error("No WebM video encoder is available in this browser.");
+     recorder=new MediaRecorder(stream,{mimeType:type,videoBitsPerSecond:2100000});
+     const complete=new Promise((resolve,reject)=>{
+       recorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+       recorder.onerror=e=>reject(e.error||Error("The video recorder failed."));
+       recorder.onstop=()=>resolve();
+     });
+     recorder.start(1000);
+     const startAt=useVoice?ctx.currentTime+.25:performance.now()/1000+.25;
+     if(useVoice)src.start(startAt);
+     const paint=()=>{
+       if(finished||renderAbort)return;
+       const now=useVoice?ctx.currentTime:performance.now()/1000;
+       const elapsed=Math.max(0,now-startAt);
+       const idx=currentWordAt(timeline,Math.min(elapsed,timeline.total));
+       drawVideoFrame(canvas,context,text[idx],idx,text.length,elapsed,timeline.total);
+       const pct=Math.min(100,Math.round(elapsed/timeline.total*100));
+       report("Recording video in real time: "+pct+"% · Keep this tab open.");
+       if(elapsed>=timeline.total+.4){finished=true;return;}
+       raf=requestAnimationFrame(paint);
+     };
+     raf=requestAnimationFrame(paint);
+     // Recorder operates in real time. The tab needs to stay visible.
+     while(!finished&&!renderAbort){
+       if(document.visibilityState==="hidden"){
+         throw Error("Keep the app visible while recording. Export stopped when Chrome went to the background.");
+       }
+       await wait(200);
+     }
+     if(renderAbort)throw Error("Export canceled.");
+     if(src){try{src.stop();}catch{}}
+     recorder.stop();
+     await complete;
+     if(!chunks.length)throw Error("No video data was recorded.");
+     download(new Blob(chunks,{type:recorder.mimeType.split(";")[0]}),
+       "focusflash-"+sel("studioRatio").value+"-"+nameSuffix()+".webm");
+     report("Video saved as WebM"+(useVoice?" with narration":" without narration")+
+       ". Check your Downloads folder. Nothing was uploaded.");
+   }catch(error){
+     report("Export could not finish: "+error.message);
+     if(recorder?.state==="recording"){try{recorder.stop();}catch{}}
+   }finally{
+     finished=true;cancelAnimationFrame(raf);
+     try{src?.stop();}catch{}
+     for(const track of stream?.getTracks()||[])track.stop();
+     busy=false;
+     sel("studioExport").disabled=false;sel("studioGenerate").disabled=false;
+   }
+ }
+ function setVoiceStatus(){
+   if(voiceBuffer&&signature()!==voiceSignature){
+     stopPreview();voiceBuffer=null;voiceSignature="";
+     sel("studioListen").disabled=true;sel("studioWav").disabled=true;
+     report("Text or speaker changed. Generate narration again for the new version.");
+   }
+ }
+ function mount(){
+   const voiceSelect=sel("studioVoice");
+   for(const [value,title] of Object.entries(voices)){
+     const option=document.createElement("option");option.value=value;
+     option.textContent=title;voiceSelect.append(option);
+   }
+   voiceSelect.value="af_heart";
+   try{
+     const settings=JSON.parse(localStorage.getItem("focusflash-video-v1")||"{}");
+     if(settings.voice&&voices[settings.voice])voiceSelect.value=settings.voice;
+     if(["portrait","wide","square"].includes(settings.ratio))sel("studioRatio").value=settings.ratio;
+     if(Number.isFinite(settings.size))sel("studioScale").value=String(settings.size);
+   }catch{}
+   const save=()=>{try{localStorage.setItem("focusflash-video-v1",JSON.stringify({
+      voice:voiceSelect.value,ratio:sel("studioRatio").value,size:Number(sel("studioScale").value)
+   }));}catch{}};
+   for(const element of [sel("sourceText"),voiceSelect])
+      element.addEventListener("input",setVoiceStatus);
+   for(const id of ["studioVoice","studioRatio","studioScale"])
+      sel(id).addEventListener("change",save);
+   sel("studioGenerate").addEventListener("click",synthesize);
+   sel("studioListen").addEventListener("click",()=>listen().catch(error=>report(error.message)));
+   sel("studioWav").addEventListener("click",downloadWav);
+   sel("studioExport").addEventListener("click",()=>exportVideo().catch(error=>report(error.message)));
+   report("Ready. Generate a local voice, then export your narrated video.");
+ }
+ window.FocusFlashStudio={mount};
+})();
