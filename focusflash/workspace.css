@@ -1,0 +1,187 @@
+/* FocusFlash Workspace UX v1
+ * Enhances the existing Clipchamp-inspired editor without hiding the reading
+ * preview, changing its focus-letter geometry, or floating panels over it.
+ */
+:root{
+ --ff-bg:#0c1019;--ff-surface:#1b2030;--ff-raised:#262b40;
+ --ff-border:#3f455c;--ff-text:#f3f2ff;--ff-dim:#b0b8ce;
+ --ff-purple:#d4b6ff;--ff-pink:#ffc2df;--ff-mint:#94e5cc;
+}
+html{scroll-padding-top:100px}
+body{background:#0c1019}
+.editor-app{background:linear-gradient(145deg,#111522 0%,#121628 45%,#121520 100%)}
+.editor-topbar{
+ background:linear-gradient(105deg,#222037,#181c2b 65%,#1e2135);
+ box-shadow:0 4px 20px #0004;
+ border-bottom:1px solid #65607b;
+ gap:12px;
+}
+.editor-logo{box-shadow:0 4px 14px #ce9fff40}
+.editor-brand h1{color:#fff;letter-spacing:-.45px}
+.editor-brand p{color:#bcb8cf}
+.editor-head-actions{gap:10px}
+.editor-head-actions button{transition:filter .13s,background .13s,transform .13s}
+.editor-head-actions button:hover{filter:brightness(1.12)}
+.editor-head-actions button:active{transform:scale(.97)}
+.editor-head-actions #jumpExportBtn{
+ background:linear-gradient(115deg,#e7c9ff,#d2c7ff);
+ color:#241835;border-color:#e5cbff;padding:8px 15px;
+ font-weight:800;box-shadow:0 4px 15px #d7b9ff21
+}
+.profile-switcher{
+ display:flex;align-items:center;gap:8px;flex:none;
+ padding:5px 7px 5px 7px;border:1px solid #5b526f;
+ background:#171826;border-radius:13px;min-width:0
+}
+.profile-avatar{
+ display:grid;place-items:center;flex:none;width:32px;height:32px;
+ background:linear-gradient(135deg,#c6a9eb,#f0b3cf);color:#241c36;
+ border-radius:10px;font-size:15px;font-weight:850
+}
+.profile-switcher-inner{display:flex;flex-direction:column;gap:2px;min-width:90px;max-width:150px}
+.profile-switcher-inner label{font-size:9px;letter-spacing:1px;color:#b6adc9;text-transform:uppercase;font-weight:800}
+.profile-switcher-inner select{
+ display:block;width:100%;border:0;border-radius:5px;padding:0;
+ background:transparent;color:#f6f2ff;font-size:12px;font-weight:750;
+ cursor:pointer;min-height:19px
+}
+.profile-switcher-inner option{background:#24283a;color:white}
+.profile-edit-btn{
+ border:0!important;background:transparent!important;color:#dcd1f5!important;
+ font-size:18px!important;padding:5px 6px!important;min-height:30px!important;
+ width:32px;display:grid;place-items:center
+}
+.profile-edit-btn:hover{background:#3f3555!important}
+.editor-inspector{
+ background:linear-gradient(#202334,#1b1e2c);
+ border-right-color:#45465f
+}
+.editor-rail{background:#151929;border-right-color:#45465f}
+.editor-tab{transition:background .12s,color .12s,border-color .12s}
+.editor-tab.active{background:linear-gradient(125deg,#473759,#342d48);border-color:#9f80c1;color:#f4e6ff}
+.editor-tab:hover{background:#302a45;color:#fff}
+.editor-section .editor-panel-head{margin-bottom:14px}
+.editor-panel-head h2{font-size:22px;line-height:1.2;font-weight:780}
+.editor-panel-head p{color:#b6bad1;font-size:12px}
+.editor-onboarding{
+ display:flex;align-items:flex-start;gap:11px;margin:0 0 16px;
+ padding:12px;border:1px solid #584d71;border-radius:13px;
+ background:#2b2740;
+}
+.onboarding-icon{
+ display:grid;place-items:center;background:#42345e;color:#efd2ff;
+ width:35px;height:35px;flex:none;border-radius:10px;font-size:19px
+}
+.editor-onboarding strong{font-size:13px;color:#f6e9ff}
+.editor-onboarding p{margin:6px 0 0;display:flex;gap:6px;flex-wrap:wrap}
+.editor-onboarding p span{
+ font-size:10px;color:#e0d4f3;padding:4px 7px;
+ background:#332d48;border:1px solid #544a6c;border-radius:30px
+}
+.editor-inspector .text-card textarea,.script-block textarea{
+ background:#111625;border:1px solid #5f5a76;box-shadow:inset 0 1px 5px #0003;
+ line-height:1.6;color:#f5f4ff;font-size:14px
+}
+.editor-inspector .text-card textarea:focus,
+.script-block textarea:focus,.profile-card input:focus,
+.profile-switcher-inner select:focus-visible{
+ outline:2px solid #d6b5f7;outline-offset:2px;border-color:#ac91d2
+}
+.editor-import{transition:border-color .15s,background .15s}
+.editor-import:hover{border-color:#c2a4ee;background:#342d4c}
+.editor-preview-section{
+ background:radial-gradient(ellipse at 55% 10%,#302944 0%,#1b1d32 40%,#131623 80%);
+}
+.editor-preview{
+ border-color:#6d607f;
+ box-shadow:0 18px 58px #060610aa,0 0 0 1px #bca1ec30;
+}
+.editor-preview-section .controls .primary{font-size:14px;font-weight:800}
+.editor-preview-section .controls button:focus-visible,
+.editor-rail button:focus-visible,.profile-card button:focus-visible{
+ outline:2px solid #ecc5ff;outline-offset:3px
+}
+.editor-timeline{
+ background:linear-gradient(180deg,#252637 0%,#1b1e2d 80%);
+ border-top-color:#68617d
+}
+.timeline-track-label{background:#323247}
+.timeline-track{margin:9px 0}
+.timeline-block-chip:hover,.timeline-clip:hover{filter:brightness(1.2)}
+.timeline-track-label span{font-variant-numeric:tabular-nums}
+.profile-cards{display:flex;flex-direction:column;gap:11px}
+.profiles-intro{
+ display:flex;gap:12px;align-items:center;padding:12px;margin:0 0 15px;
+ border:1px solid #726080;background:#29263c;border-radius:13px
+}
+.profile-intro-icon{
+ display:grid;place-items:center;flex:none;width:39px;height:39px;
+ background:#47335c;border-radius:11px;color:#eedaff;font-size:24px
+}
+.profiles-intro strong{font-size:13px;color:#f5e6ff}
+.profiles-intro p{margin:5px 0 0;color:#bfb6d1;font-size:11px}
+.profile-card{
+ padding:14px 12px;background:#212536;border:1px solid #575573;border-radius:13px;
+ display:flex;flex-direction:column;gap:12px
+}
+.profile-card.selected{border-color:#c7a6ea;background:#2b2840}
+.profile-card-head{display:flex;align-items:center;gap:9px}
+.profile-card-head strong{font-size:13px;color:#f4edff}
+.profile-circle{
+ display:grid;place-items:center;width:29px;height:29px;flex:none;border-radius:10px;
+ background:#dfbff3;color:#2b1c35;font-size:14px;font-weight:850
+}
+.profile-circle.alt{background:#9cdfd2}
+.profile-card label{display:flex;flex-direction:column;gap:7px}
+.profile-card input{
+ display:block;width:100%;padding:9px 10px;min-height:42px;
+ border-radius:10px;border:1px solid #68627e;
+ background:#161b29;color:#fff;font-size:14px
+}
+.profile-card button{
+ padding:10px;min-height:42px;border-radius:10px;background:#cdb9f0;
+ border-color:#dccaff;color:#271d39;font-size:12px;font-weight:800
+}
+.profile-card button:disabled{
+ background:#3b354d;border-color:#5e536b;color:#dcd0e6;
+ opacity:1;cursor:default
+}
+.profile-status{
+ margin:15px 0 10px;color:#acdbc7;padding:11px 12px;
+ background:#172e32;border:1px solid #3b6667;border-radius:10px;
+ font-size:11px;line-height:1.5
+}
+.profile-privacy{font-size:11px;color:#b7b5cd;line-height:1.65}
+#profileSummary{font-variant-numeric:tabular-nums}
+@media(max-width:980px){
+ .editor-workspace{grid-template-columns:60px minmax(240px,315px) minmax(0,1fr)}
+ .editor-head-actions{gap:7px}
+}
+@media(max-width:710px){
+ .editor-topbar{gap:8px;padding:10px}
+ .editor-brand{flex:1 1 130px}
+ .editor-brand h1{font-size:15px}
+ .editor-brand p{font-size:10px}
+ .editor-head-actions{flex:0 0 auto;max-width:100%;justify-content:flex-end}
+ .editor-head-actions #topImportBtn{display:none}
+ .profile-switcher{gap:5px;padding:4px 5px;border-radius:11px}
+ .profile-avatar{width:29px;height:29px;border-radius:9px}
+ .profile-switcher-inner{min-width:74px;max-width:105px}
+ .profile-edit-btn{font-size:16px!important;width:28px}
+ .editor-head-actions #jumpExportBtn{padding:6px 10px}
+ .editor-rail{display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:4px;padding:8px 8px}
+ .editor-tab{min-width:70px;flex:none;min-height:48px;white-space:nowrap}
+ .editor-inspector{padding:17px 14px}
+ .editor-onboarding{padding:10px}
+ .editor-preview-section{padding-top:13px}
+ .timeline-track-label{padding:9px 5px}
+}
+@media(max-width:400px){
+ .editor-topbar{flex-wrap:wrap;justify-content:space-between}
+ .editor-brand{flex:1 1 150px}
+ .editor-head-actions{flex:1 1 100%;justify-content:space-between}
+ .profile-switcher{flex:0 0 auto}
+ .editor-head-actions #jumpExportBtn{flex:none}
+ .editor-onboarding p span{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.editor-head-actions button,.editor-tab{transition:none}}
