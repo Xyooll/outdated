@@ -9,11 +9,11 @@
  <title>FocusFlash Studio · Reader & Video Editor</title>
  <link rel="icon" href="icon.svg" type="image/svg+xml">
  <link rel="manifest" href="manifest.webmanifest">
- <link rel="stylesheet" href="styles.css?v=mobile-workspace-2">
- <link rel="stylesheet" href="editor.css?v=mobile-workspace-2">
- <link rel="stylesheet" href="workspace.css?v=mobile-workspace-2">
- <link rel="stylesheet" href="reference-layout.css?v=mobile-workspace-2">
- <link rel="stylesheet" href="layout-v3.css?v=mobile-workspace-2">
+ <link rel="stylesheet" href="styles.css?v=four-panes-1">
+ <link rel="stylesheet" href="editor.css?v=four-panes-1">
+ <link rel="stylesheet" href="workspace.css?v=four-panes-1">
+ <link rel="stylesheet" href="reference-layout.css?v=four-panes-1">
+ <link rel="stylesheet" href="layout-v3.css?v=four-panes-1">
 </head>
 <body>
 <main class="editor-app">
@@ -34,12 +34,18 @@
    </div>
    <button type="button" id="topTranscriptBtn" class="ghost">≡ Transcript</button>
    <button type="button" id="topImportBtn" class="ghost">＋ Import text</button>
+   <button type="button" id="resetDockBtn" class="ghost dock-reset" title="Restore the four-window layout" aria-label="Reset window sizes">↺ Layout</button>
    <button type="button" id="installBtn" class="ghost hidden">Install</button>
    <button type="button" id="jumpExportBtn" class="primary">Export <span aria-hidden="true">↗</span></button>
   </div>
  </header>
  <div class="editor-workspace" id="editorWorkspace" data-mobile-view="tools">
-  <nav class="editor-rail" aria-label="Editor tools">
+  <nav class="editor-rail dock-window" id="dockLeft" aria-label="Left tools window">
+   <div class="dock-left-heading">
+    <span class="dock-window-kicker">WINDOW 01</span>
+    <strong><span aria-hidden="true">▦</span> Tools</strong>
+    <small>Choose what to edit</small>
+   </div>
    <button type="button" class="editor-tab active" data-editor-tab="transcript" aria-current="page"><span aria-hidden="true">≡</span>Transcript</button>
    <button type="button" class="editor-tab mobile-timeline-tab" id="mobileTimelineBtn" aria-controls="editorTimeline" aria-pressed="false"><span aria-hidden="true">▥</span>Timeline</button>
    <button type="button" class="editor-tab" data-editor-tab="script"><span aria-hidden="true">▤</span>Script</button>
@@ -49,9 +55,14 @@
    <button type="button" class="editor-tab" data-editor-tab="tones"><span aria-hidden="true">≋</span>Tones</button>
    <button type="button" class="editor-tab" data-editor-tab="export"><span aria-hidden="true">⇧</span>Export</button>
    <button type="button" class="editor-tab" data-editor-tab="profiles"><span aria-hidden="true">◎</span>Profiles</button>
-
+   <div class="dock-left-footer">TOOLS · <span id="dockActiveTool">Transcript</span></div>
   </nav>
-  <aside class="editor-inspector" id="editorInspector" aria-label="Transcript and editing tools">
+  <aside class="editor-inspector dock-window" id="editorInspector" aria-label="Right inspector window">
+   <div class="dock-inspector-heading" aria-label="Inspector window">
+    <div><span class="dock-window-kicker">WINDOW 03</span>
+     <strong id="dockInspectorTitle">Transcript</strong></div>
+    <button type="button" id="dockInspectorEdit" aria-label="Open script editor" title="Edit script">✎</button>
+   </div>
    <section id="editorTranscript" class="editor-section" data-editor-panel="transcript">
     <header class="editor-panel-head">
      <span class="editor-eyebrow">PROJECT TRANSCRIPT</span>
@@ -334,9 +345,9 @@
     <p class="profile-privacy">Each user's work is separate on this browser, but these are not password-protected accounts. Nothing syncs between phones automatically, and clearing site data can erase saved work.</p>
    </section>
   </aside>
-  <section class="editor-preview-section" aria-label="Video preview and reader">
+  <section class="editor-preview-section dock-window" aria-label="Middle player window">
    <header class="editor-preview-header">
-    <div class="preview-heading"><span class="preview-live-dot" aria-hidden="true"></span><strong class="preview-title">Player preview</strong></div>
+    <div class="preview-heading"><span class="preview-live-dot" aria-hidden="true"></span><strong class="preview-title">WINDOW 02 · Player</strong></div>
     <div class="preview-font-controls" aria-label="Quick font size adjustment">
      <button type="button" id="fontQuickMinus" aria-label="Smaller word text">−</button>
      <output id="fontQuickLabel" for="fontSize studioScale">48 px</output>
@@ -368,9 +379,9 @@
     <button id="nextBtn" type="button" aria-label="Next word">▶</button>
    </div>
   </section>
-  <section class="editor-timeline" id="editorTimeline" aria-label="Timeline editor">
+  <section class="editor-timeline dock-window" id="editorTimeline" aria-label="Bottom timeline window">
    <header class="timeline-header">
-    <div class="timeline-title"><strong>Timeline</strong><small id="timelineDuration"> · 0:00</small>
+    <div class="timeline-title"><strong>WINDOW 04 · Timeline</strong><small id="timelineDuration"> · 0:00</small>
      <p class="timeline-subtitle">Words · Repeats · Sound layers</p></div>
     <div class="timeline-actions"><span class="timeline-zoom-label" id="timelineZoomLabel">1×</span><button type="button" id="timelineZoomOut" aria-label="Zoom out">−</button><button type="button" id="timelineZoomIn" aria-label="Zoom in">＋</button></div>
    </header>
@@ -382,14 +393,18 @@
    <input id="progressRange" class="timeline-scrub" type="range" min="0" max="0" value="0" aria-label="Scrub reading position">
    <div class="timeline-readout"><span id="timelineCurrent">00:00</span><span id="profileSummary">User 1 · saved on this device</span></div>
   </section>
+  <div id="dockResizeLeft" class="dock-resize dock-resize-left" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize left tools window" aria-valuemin="110" aria-valuemax="310" aria-valuenow="168"></div>
+  <div id="dockResizeRight" class="dock-resize dock-resize-right" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize right inspector window" aria-valuemin="275" aria-valuemax="510" aria-valuenow="340"></div>
+  <div id="dockResizeBottom" class="dock-resize dock-resize-bottom" role="separator" tabindex="0" aria-orientation="horizontal" aria-label="Resize bottom timeline window" aria-valuemin="180" aria-valuemax="480" aria-valuenow="260"></div>
  </div>
 </main>
-<script defer src="profiles.js?v=mobile-workspace-2"></script>
-<script defer src="tone-generator.js?v=mobile-workspace-2"></script>
-<script defer src="script-blocks.js?v=mobile-workspace-2"></script>
-<script defer src="video-studio.js?v=mobile-workspace-2"></script>
-<script defer src="transcript.js?v=mobile-workspace-2"></script>
-<script defer src="editor.js?v=mobile-workspace-2"></script>
-<script defer src="app.js?v=mobile-workspace-2"></script>
+<script defer src="profiles.js?v=four-panes-1"></script>
+<script defer src="tone-generator.js?v=four-panes-1"></script>
+<script defer src="script-blocks.js?v=four-panes-1"></script>
+<script defer src="video-studio.js?v=four-panes-1"></script>
+<script defer src="transcript.js?v=four-panes-1"></script>
+<script defer src="dock-windows.js?v=four-panes-1"></script>
+<script defer src="editor.js?v=four-panes-1"></script>
+<script defer src="app.js?v=four-panes-1"></script>
 </body>
 </html>
