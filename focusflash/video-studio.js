@@ -66,7 +66,7 @@
    sel("studioSpeedHint").textContent=rate==null?
      "Narration will match "+wpm+" WPM; volume "+volume+"%.":
      "Narration synced to "+wpm+" WPM at "+rate.toFixed(2)+"× playback and "+volume+"% volume."+
-       (rate>3.5?" At this speed, the speech will be heavily pitch-shifted.":"");
+       (rate>3.5?" At this speed, speech may sound choppy, but its pitch is preserved.":"");
  }
  function currentWordAt(timeline,seconds){
    let lo=0,hi=timeline.starts.length-1;
@@ -192,7 +192,7 @@
      const gap=.11;
      if(mode==="fast"){
        report("Loading faster mobile voice, then generating audio...");
-       const adapter=await import("./fast-piper.js?v=undertone-2");
+       const adapter=await import("./fast-piper.js?v=natural-pitch-1");
        const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
        for(const raw of results){
          segments.push(raw);
@@ -247,7 +247,7 @@
      report("Microphone recording is not supported in this browser.");return;
    }
    busy=true;
-   stopPreview();voiceBuffer=null;voiceSignature="";
+   stopPreview();stopReaderUndertone();voiceBuffer=null;voiceSignature="";
    sel("studioGenerate").disabled=true;sel("studioExport").disabled=true;
    sel("studioMic").textContent="■ Stop voice recording";
    try{
@@ -512,7 +512,7 @@
  }
  function setVoiceStatus(){
    if(voiceBuffer&&signature()!==voiceSignature){
-     stopPreview();voiceBuffer=null;voiceSignature="";
+     stopPreview();stopReaderUndertone();voiceBuffer=null;voiceSignature="";
      sel("studioListen").disabled=true;sel("studioWav").disabled=true;
      report("Text or speaker changed. Generate narration again for the new version.");
    }
