@@ -1,9 +1,10 @@
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
-import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js?v=life-layout-2";
-import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js?v=life-layout-2";
-import { drawHouse, findHousePath, clearTile, ACTIONS } from "./life-house.js?v=life-layout-2";
-import { createLifeUI } from "./life-ui.js?v=life-layout-2";
+import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js?v=assets-v1";
+import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js?v=assets-v1";
+import { drawHouse, findHousePath, clearTile, ACTIONS, objectAt } from "./life-house.js?v=assets-v1";
+import {paintHouseDetails,paintInteractiveHighlights,paintActivityEffects} from "./life-assets.js?v=assets-v1";
+import { createLifeUI } from "./life-ui.js?v=assets-v1";
 
 const $ = id => document.getElementById(id);
 const valid = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL)
@@ -20,7 +21,7 @@ let me=null,myAvatar=null,avatars=[],rooms={},world="home";
 let chatChannel=null,avatarChannel=null,loadStamp=0,messageStamp=0;
 let lastFrame=0,lastWrite=0,writeBusy=false,dirty=false,positionTarget=null;
 let inputDirection=new Set(),timer=null,appReady=false,recovery=false,starting=null,waypoints=[],arrival=null;
-let emoted={},outfitPending=false,sessionGeneration=0;
+let emoted={},outfitPending=false,sessionGeneration=0,hoveredId=null;
 function panelState(which,showIt){
  const panel=$(which+"Panel"),button=$(which+"Btn");
  if(!panel||!button)return;
@@ -189,8 +190,8 @@ async function flushPosition(force=false){
 async function changeWorld(next){
  if(!WORLD_META[next]||!me||next===world)return;
  closePanels();
- if(life.active){message("chatStatus","Finish or cancel your activity before changing worlds.");return;}
- positionTarget=null;waypoints=[];arrival=null;inputDirection.clear();
+ if(life.active){message("lifeStatus","Finish or cancel your activity before changing worlds.");return;}
+ positionTarget=null;waypoints=[];arrival=null;hoveredId=null;inputDirection.clear();
  world=next;myAvatar.world_id=next;
  myAvatar.x=450;myAvatar.y=350;
  dirty=true;
@@ -350,7 +351,12 @@ function frame(ts){
  lastFrame=ts;
  if(appReady&&myAvatar){
   moveAvatar(dt);
-  if(world==="home")drawHouse(ctx,ts/1000);else drawWorld(ctx,world,ts/1000);
+  if(world==="home"){
+    drawHouse(ctx,ts/1000);
+    paintHouseDetails(ctx,ts/1000);
+    const v=life.visual();
+    paintInteractiveHighlights(ctx,ts/1000,hoveredId,v.selected,waypoints);
+  }else drawWorld(ctx,world,ts/1000);
   const visible=avatars.filter(a=>a.world_id===world).sort((a,b)=>a.y-b.y);
   for(const a of visible){
    const you=a.user_id===me.id, active=you||online(a);
@@ -361,6 +367,10 @@ function frame(ts){
    const y=a.y+(active?Math.sin(ts/550+a.x)*1.2:0);
    drawAvatar(ctx,a,a.x,y,{online:active,offline:!active,emote:bubble||actionText,
     scale:1.38,walking:moving,clock:ts/1000,activity});
+  }
+  if(world==="home"){
+    const v=life.visual();
+    paintActivityEffects(ctx,ts/1000,v.activities,avatars,v.celebration);
   }
   if(!$("closet").classList.contains("hidden"))drawPreview();
   life.animate();
@@ -460,9 +470,18 @@ for(const tab of document.querySelectorAll("[data-world]"))
  tab.addEventListener("click",()=>changeWorld(tab.dataset.world).catch(e=>message("chatStatus",err(e))));
 $("worldCanvas").addEventListener("pointerdown",e=>{
  e.preventDefault();const point=worldPoint(e);
+ hoveredId=null;
  if(world!=="home"||!life.interactAt(point.x,point.y))moveTo(point.x,point.y);
  $("worldCanvas").focus();
 });
+$("worldCanvas").addEventListener("pointermove",e=>{
+ if(e.pointerType!=="mouse"||!appReady||world!=="home"){hoveredId=null;return;}
+ const pt=worldPoint(e);
+ const furniture=objectAt(pt.x,pt.y);
+ hoveredId=furniture?.id||null;
+ $("worldCanvas").style.cursor=hoveredId?"pointer":"crosshair";
+});
+$("worldCanvas").addEventListener("pointerleave",()=>{hoveredId=null;});
 for(const control of document.querySelectorAll("[data-move]")){
  const dir=control.dataset.move;
  control.addEventListener("pointerdown",e=>{e.preventDefault();control.setPointerCapture(e.pointerId);inputDirection.add(dir);});
