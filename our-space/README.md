@@ -35,3 +35,5 @@ This is a compact 2D life simulation, **not The Sims 4**. No careers, pregnancy,
 ## Visual action feedback
 
 Walking animates alternating legs; eating/relaxing/watching shift the character toward a seated pose; sleeping leans the character and displays a sleep activity label. The household task list opens by default. Older avatar locations trapped in the new furniture map are safely moved to the center of the living room on first load.
+
+Partner activities are now visible on both phones through a read-only, two-member RLS-protected Realtime stream. Furniture activity labels and simple movement/sitting/resting poses appear on the corresponding character.

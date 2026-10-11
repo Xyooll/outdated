@@ -5,7 +5,7 @@ const numeric=n=>Math.max(0,Math.min(100,Number(n)||0));
 const explain=e=>e?.message||"Connection issue — please try again.";
 const today=()=>new Date().toISOString().slice(0,10);
 export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}){
- let needs=null,tasks=[],active=null,home=true,running=false;
+ let needs=null,tasks=[],active=null,home=true,running=false,activityChannel=null,otherActivities=new Map();
  let tickTimer=null,finishing=false,completeAttempt=0,lastTasks=0;
  const actionBox=$("lifeActions"),progress=$("lifeProgress");
  const status=(s)=>{$("lifeStatus").textContent=s||"";};
@@ -78,20 +78,40 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
   active=res.data;renderProgress();
   if(active&&Date.now()>=new Date(active.started_at).getTime()+active.duration_seconds*1000)await finish();
  }
+ async function refreshHouseholdActivities(){
+  if(!running||!getUser())return;
+  const result=await db.from("life_activities")
+   .select("user_id,action_key,started_at,duration_seconds")
+   .eq("status","active").limit(10);
+  if(result.error)return;
+  otherActivities=new Map((result.data||[]).map(a=>[a.user_id,a]));
+ }
+ function getActionFor(userId){
+  if(userId===getUser()?.id)return active?.action_key||null;
+  return otherActivities.get(userId)?.action_key||null;
+ }
  async function start(){
   if(running)return;
   running=true;
-  await Promise.all([refreshNeeds(true),refreshTasks(),checkActivity()]);
+  await Promise.all([refreshNeeds(true),refreshTasks(),checkActivity(),refreshHouseholdActivities()]);
+  if(activityChannel)db.removeChannel(activityChannel);
+  activityChannel=db.channel("our-space-life-activities")
+   .on("postgres_changes",{event:"*",schema:"public",table:"life_activities"},()=>{
+     refreshHouseholdActivities().catch(()=>{});
+   }).subscribe();
   tickTimer=setInterval(()=>{
    if(!running||!getUser())return;
    refreshNeeds(true).catch(()=>{});
    if(Date.now()-lastTasks>20000)refreshTasks().catch(()=>{});
+   refreshHouseholdActivities().catch(()=>{});
   },20000);
   renderProgress();
  }
  function stop(){
   running=false;clearInterval(tickTimer);tickTimer=null;
-  active=null;needs=null;tasks=[];finishing=false;
+  active=null;needs=null;tasks=[];finishing=false;otherActivities=new Map();
+  if(activityChannel)db.removeChannel(activityChannel);
+  activityChannel=null;
   closeMenu();renderProgress();
  }
  function renderProgress(){
@@ -198,5 +218,5 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
   if(document.visibilityState==="visible"&&running){refreshNeeds(true).catch(()=>{});refreshTasks().catch(()=>{});checkActivity().catch(()=>{});}
  });
  return {start,stop,onChangeWorld,animate,interactAt,menu,closeMenu,onShowWardrobe,
-   getSpeed,refreshNeeds,refreshTasks,get active(){return active;}};
+   getSpeed,refreshNeeds,refreshTasks,getActionFor,get active(){return active;}};
 }

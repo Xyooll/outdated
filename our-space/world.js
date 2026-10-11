@@ -330,7 +330,7 @@ function frame(ts){
   for(const a of visible){
    const you=a.user_id===me.id, active=you||online(a);
    const bubble=emoted[a.user_id]&&emoted[a.user_id].until>Date.now()?emoted[a.user_id].text:null;
-   const activity=you&&life.active?life.active.action_key:null;
+   const activity=life.getActionFor(a.user_id);
    const actionText=activity?ACTIONS[activity]?.emoji+" "+ACTIONS[activity]?.label:null;
    const moving=you&&(waypoints.length>0||inputDirection.size>0||!!positionTarget);
    const y=a.y+(active?Math.sin(ts/550+a.x)*1.2:0);
@@ -465,7 +465,10 @@ if(authError){
 if(db){
  db.auth.onAuthStateChange((event)=>{
   if(event==="PASSWORD_RECOVERY"){recovery=true;setTimeout(()=>show("recoverView"),0);}
-  else if(event==="SIGNED_OUT"){appReady=false;setTimeout(()=>show("loginView"),0);}
+  else if(event==="SIGNED_OUT"){
+   appReady=false;life.stop();avatars=[];me=null;myAvatar=null;
+   setTimeout(()=>show("loginView"),0);
+  }
   else if(event==="SIGNED_IN"&&!recovery){setTimeout(()=>enter(),0);}
  });
  enter();
