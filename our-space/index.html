@@ -19,19 +19,25 @@
 <button id="forgotBtn" class="textbutton" type="button" style="margin-top:18px">Forgot password? Send a reset link</button>
 <p class="note">Use the password you set for this Supabase account, not the private phrase used to encrypt messages. Only your two approved accounts can access this room.</p>
 <p class="note">If you choose an email link, open it once in the same browser where you will use the app.</p><p id="loginStatus" class="status" role="status"></p></form></section>
-<section id="passwordReset" class="gate hidden"><form id="passwordResetForm" class="panel"><span class="eyebrow">ACCOUNT RECOVERY</span><h2>Choose a new password</h2><label for="freshPassword">New account password</label><input id="freshPassword" type="password" minlength="12" required autocomplete="new-password"><label for="freshPassword2" style="margin-top:14px">Confirm password</label><input id="freshPassword2" type="password" minlength="12" required autocomplete="new-password"><button id="saveFreshPassword" class="primary">Save new password</button><p id="passwordResetStatus" class="status" role="status"></p></form></section><section id="unlock" class="gate hidden"><div class="intro"><span class="emblem">✦</span><h1>Your words. Your key.</h1><p>Messages unlock on your phone. Your encryption phrase never goes to the server.</p></div><form id="unlockForm" class="panel"><span class="eyebrow">ENCRYPTED CHAT</span><h2>Unlock our conversation</h2><label for="phrase">Our shared secret phrase</label><input id="phrase" type="password" required minlength="12" autocomplete="off" placeholder="Our private phrase"><button id="unlockBtn" class="primary">Unlock conversation ↗</button><p class="note">Use the exact same long, random phrase on both phones. Share it in person, not by email or in this chat. Losing it means losing access to older messages.</p><p id="unlockStatus" class="status" role="status"></p><button type="button" id="logout" class="textbutton">Sign out</button></form></section>
+<section id="passwordReset" class="gate hidden"><form id="passwordResetForm" class="panel"><span class="eyebrow">ACCOUNT RECOVERY</span><h2>Choose a new password</h2><label for="freshPassword">New account password</label><input id="freshPassword" type="password" minlength="12" required autocomplete="new-password"><label for="freshPassword2" style="margin-top:14px">Confirm password</label><input id="freshPassword2" type="password" minlength="12" required autocomplete="new-password"><button id="saveFreshPassword" class="primary">Save new password</button><p id="passwordResetStatus" class="status" role="status"></p></form></section><section id="unlock" class="gate hidden"><div class="intro"><span class="emblem">✦</span><h1>Your words. Your key.</h1><p>Messages unlock on your phone. Your encryption phrase never goes to the server.</p></div><form id="unlockForm" class="panel"><span class="eyebrow">ENCRYPTED CHAT</span><h2>Unlock our conversation</h2><label for="phrase">Our shared secret phrase</label><input id="phrase" type="password" required minlength="12" autocomplete="off" placeholder="Our private phrase"><button id="unlockBtn" class="primary">Unlock conversation ↗</button><label style="display:flex;align-items:flex-start;gap:10px;margin:18px 0 0;line-height:1.45;font-size:13px"><input id="rememberDevice" type="checkbox" style="width:18px;height:18px;flex:none;margin:0;accent-color:#f5b9d9"><span>Keep this conversation unlocked on this phone</span></label>
+<p class="note">For your own screen-locked phone only. Saves a non-exportable encryption key in local device storage, not the phrase. Anyone with access to this unlocked phone/browser could still read messages. Tap <b>Lock</b> to forget this device key.</p>
+<p class="note">Use the exact same long, random phrase on both phones. Share it in person. Losing it means losing access to older messages.</p><p id="unlockStatus" class="status" role="status"></p><button type="button" id="logout" class="textbutton">Sign out</button></form></section>
 <section id="chat" class="chat hidden"><div class="peer"><div class="peericon">♥</div><div><strong>Our conversation</strong><small><span id="liveStatus">Connecting…</span> · End-to-end encrypted</small></div></div><div id="messages" class="messages" role="log" aria-live="polite" aria-label="Our messages"></div><form id="sendForm" class="composer"><label for="entry" class="sr">New message</label><textarea id="entry" rows="1" maxlength="2000" enterkeyhint="send" required placeholder="Write something sweet…"></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></form><p class="feedback" id="sendStatus" role="status"></p></section>
 </main><footer class="footer">A place for two · No ads · No spectators</footer></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
 import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js";
+import { saveDeviceKey, getDeviceKey, forgetDeviceKey } from "./device-state.js";
 const $ = id => document.getElementById(id);
 const ids = ["setup","login","passwordReset","unlock","chat"];
 const ready = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL) && (PUBLISHABLE_KEY.startsWith("sb_publishable_") || PUBLISHABLE_KEY.length > 100);
-const supabase = ready ? createClient(PROJECT_URL, PUBLISHABLE_KEY) : null;
+// Session persistence survives reloads in the SAME Chrome/PWA browser profile.
+const supabase = ready ? createClient(PROJECT_URL, PUBLISHABLE_KEY, {
+ auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+}) : null;
 const encoder = new TextEncoder(), decoder = new TextDecoder();
 const aad = encoder.encode("our-space-v1");
-let me=null, salt=null, verifier=null, key=null, channel=null, refresh=0, isRecovering=false;
+let me=null, salt=null, verifier=null, key=null, channel=null, refresh=0, isRecovering=false, initializing=null, draftRevision=0, draftTimer=null;
 function show(id){ for(const name of ids)$(name).classList.toggle("hidden",name!==id);$("lockBtn").classList.toggle("hidden",id!=="chat");}
 function tell(id,message){$(id).textContent=message||"";}
 function errorText(e){return e && e.message || "Something went wrong.";}
@@ -66,22 +72,108 @@ async function verifyPairPhrase() {
  if (!verifier.ciphertext) throw Error("Could not save the encryption verification. Try again.");
  await verifyPairPhrase();
 }
-function lock(){key=null;refresh++;$("phrase").value="";$("messages").replaceChildren();$("entry").value="";if(channel){supabase.removeChannel(channel);channel=null;}show(me?"unlock":"login");}
+function lock(){
+ key=null;refresh++;draftRevision++;clearTimeout(draftTimer);
+ $("phrase").value="";$("rememberDevice").checked=false;
+ $("messages").replaceChildren();delete $("messages").dataset.initialized;
+ $("entry").value="";
+ if(channel){supabase.removeChannel(channel);channel=null;}
+ show(me?"unlock":"login");
+}
+async function manuallyLock(){
+ const who=me?.id;
+ if(who){ try{await forgetDeviceKey(PROJECT_URL,who);}catch(e){tell("chatStatus",errorText(e));} }
+ lock();
+}
+function draftName(uid=me?.id){return "our-space-draft-v1:"+PROJECT_URL+":"+uid;}
+async function saveDraft(revision){
+ const owner=me?.id, currentKey=key, value=$("entry").value;
+ if(!currentKey || !owner)return;
+ if(!value){
+  if(revision===draftRevision)localStorage.removeItem(draftName(owner));
+  return;
+ }
+ const payload=await encrypt(value);
+ if(revision!==draftRevision || key!==currentKey || me?.id!==owner)return;
+ localStorage.setItem(draftName(owner),JSON.stringify(payload));
+}
+async function restoreDraft(){
+ if(!key || !me)return;
+ const owner=me.id, currentKey=key, raw=localStorage.getItem(draftName(owner));
+ if(!raw)return;
+ try {
+  const value=await decrypt(JSON.parse(raw));
+  if(currentKey===key && me?.id===owner && !$("entry").value) $("entry").value=value;
+ }catch{
+  // A draft encrypted under an old/incorrect key is not recoverable.
+  localStorage.removeItem(draftName(owner));
+ }
+}
+function scheduleDraftSave(){
+ const revision=++draftRevision;
+ clearTimeout(draftTimer);
+ draftTimer=setTimeout(()=>saveDraft(revision).catch(()=>{}),450);
+}
+async function openChat(){
+ await load();
+ await restoreDraft();
+ show("chat");
+ subscribe();
+}
+
 async function initialize(){
+ if(initializing)return initializing;
+ initializing=initializeOnce();
+ try{return await initializing;}finally{initializing=null;}
+}
+async function initializeOnce(){
  if(!supabase){show("setup");return;}
  try{
   const identity=await supabase.auth.getUser();
-  if(identity.error||!identity.data.user){me=null;lock();return;}
+  if(identity.error||!identity.data.user){
+   if(identity.error && identity.error.name!=="AuthSessionMissingError"){
+    tell("loginStatus","Cannot check your saved sign-in. Check internet and retry: "+errorText(identity.error));
+   }
+   me=null;lock();return;
+  }
   if(isRecovering){me=identity.data.user;show("passwordReset");return;}
-  if(me && me.id===identity.data.user.id && key)return;
+  if(me?.id===identity.data.user.id && key)return;
   me=identity.data.user;
   const allowed=await supabase.from("couple_members").select("role").eq("user_id",me.id).maybeSingle();
   if(allowed.error)throw allowed.error;
-  if(!allowed.data){lock();show("login");tell("loginStatus","This email is not yet approved for this private chat.");return;}
+  if(!allowed.data){lock();show("login");tell("loginStatus","This account is not approved for this private chat.");return;}
   const room=await supabase.from("couple_room").select("salt,verifier_iv,verifier_ciphertext").eq("id",1).single();
   if(room.error)throw room.error;
-  salt=room.data.salt;verifier={iv:room.data.verifier_iv,ciphertext:room.data.verifier_ciphertext};lock();
- }catch(e){lock();show("login");tell("loginStatus","Could not open room: "+errorText(e));}
+  salt=room.data.salt;
+  verifier={iv:room.data.verifier_iv,ciphertext:room.data.verifier_ciphertext};
+  lock(); // clears only in-memory state; does NOT delete a remembered device key
+  let saved=null;
+  try{saved=await getDeviceKey(PROJECT_URL,me.id,salt);}
+  catch(e){tell("unlockStatus","Trusted-device storage unavailable. Enter your phrase to continue.");}
+  if(saved && verifier?.ciphertext){
+   key=saved;
+   try{
+    await verifyPairPhrase();  // authenticate the saved key against the room
+    await openChat();
+    return;
+   }catch(e){
+    // If the key was changed, revoked, or corrupted, require the phrase again.
+    if(e.message?.includes("Wrong shared secret phrase") || e.message?.includes("verification failed")){
+     await forgetDeviceKey(PROJECT_URL,me.id).catch(()=>{});
+    }
+    tell("unlockStatus","Could not restore saved unlock. Enter your shared phrase to continue.");
+    lock();
+   }
+  }else if(saved){
+   // First-use phrase verification must be set interactively.
+   await forgetDeviceKey(PROJECT_URL,me.id).catch(()=>{});
+  }
+  show("unlock");
+ }catch(e){
+  key=null;
+  lock();show("login");
+  tell("loginStatus","Could not open room: "+errorText(e));
+ }
 }
 async function load(){
  if(!key)return;
@@ -160,22 +252,45 @@ function surfaceRedirectError() {
 surfaceRedirectError();
 $("unlockForm").addEventListener("submit",async e=>{
  e.preventDefault();$("unlockBtn").disabled=true;tell("unlockStatus","");
- try{key=await derive($("phrase").value);await verifyPairPhrase();await load();$("phrase").value="";show("chat");subscribe();$("entry").focus();}
+ try{
+  key=await derive($("phrase").value);
+  await verifyPairPhrase();
+  await openChat();
+  if($("rememberDevice").checked){
+    try{await saveDeviceKey(PROJECT_URL,me.id,salt,key);}
+    catch(e){tell("sendStatus","Trusted-device unlock could not be saved: "+errorText(e));}
+  }
+  $("phrase").value="";
+  $("entry").focus();
+ }
  catch(err){key=null;tell("unlockStatus",errorText(err));}finally{$("unlockBtn").disabled=false;}
 });
 $("sendForm").addEventListener("submit",async e=>{
  e.preventDefault();if(!key||!me)return;const message=$("entry").value.trim();if(!message)return;
  $("sendBtn").disabled=true;tell("sendStatus","");
- try{const packet=await encrypt(message);const res=await supabase.from("couple_messages").insert({sender_id:me.id,...packet});if(res.error)throw res.error;$("entry").value="";await load();$("messages").scrollTop=$("messages").scrollHeight;}
+ try{const packet=await encrypt(message);const res=await supabase.from("couple_messages").insert({sender_id:me.id,...packet});if(res.error)throw res.error;
+  $("entry").value="";
+  draftRevision++;clearTimeout(draftTimer);localStorage.removeItem(draftName());
+  await load();$("messages").scrollTop=$("messages").scrollHeight;}
  catch(err){tell("sendStatus","Message not sent: "+errorText(err));}
  finally{$("sendBtn").disabled=false;}
 });
 $("entry").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();if(!$("sendBtn").disabled)$("sendForm").requestSubmit();}});
-$("lockBtn").addEventListener("click",lock);
-$("logout").addEventListener("click",async()=>{await supabase.auth.signOut();me=null;lock();});
+$("lockBtn").addEventListener("click",manuallyLock);
+$("entry").addEventListener("input",scheduleDraftSave);
+$("logout").addEventListener("click",async()=>{
+ const who=me?.id;
+ if(who){await forgetDeviceKey(PROJECT_URL,who).catch(()=>{});localStorage.removeItem(draftName(who));}
+ await supabase.auth.signOut();
+ me=null;lock();
+});
 if(supabase){supabase.auth.onAuthStateChange(event=>{
  if(event==="PASSWORD_RECOVERY"){isRecovering=true;setTimeout(()=>show("passwordReset"),0);}
- else if(event==="SIGNED_OUT"){isRecovering=false;setTimeout(initialize,0);}
+ else if(event==="SIGNED_OUT"){
+  const oldUser=me?.id;
+  if(oldUser)forgetDeviceKey(PROJECT_URL,oldUser).catch(()=>{});
+  isRecovering=false;me=null;lock();setTimeout(initialize,0);
+}
  else if(event==="SIGNED_IN")setTimeout(initialize,0);
 });}
 if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
