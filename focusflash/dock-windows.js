@@ -8,6 +8,10 @@
  const $=id=>document.getElementById(id);
  const KEY=window.FocusFlashProfiles?.key("focusflash-dock-layout-v1")||"focusflash-dock-layout-v1";
  const DEFAULT={left:176,right:356,bottom:272};
+ const WIDE_KEY=window.FocusFlashProfiles?.key("focusflash-inspector-wide-v1")||
+   "focusflash-inspector-wide-v1";
+ let inspectorWide=false;
+ try{inspectorWide=localStorage.getItem(WIDE_KEY)==="1";}catch{}
  const valid=x=>Number.isFinite(Number(x))?Number(x):0;
  let size={...DEFAULT},drag=null,mounted=false;
  try{
@@ -59,7 +63,17 @@
    }
  }
  function save(){try{localStorage.setItem(KEY,JSON.stringify(size));}catch{}}
- function reset(){paint(DEFAULT);save();}
+ function setInspectorWide(enabled){
+   inspectorWide=!!enabled;
+   shell().dataset.inspectorWide=inspectorWide?"true":"false";
+   const btn=$("dockInspectorWide");
+   btn.setAttribute("aria-pressed",String(inspectorWide));
+   btn.setAttribute("aria-label",inspectorWide?"Make right window compact":"Widen right window");
+   btn.title=inspectorWide?"Make right window compact":"Widen right window";
+   btn.textContent=inspectorWide?"⤡":"⤢";
+   try{localStorage.setItem(WIDE_KEY,inspectorWide?"1":"0");}catch{}
+ }
+ function reset(){paint(DEFAULT);setInspectorWide(false);save();}
  function dragValue(kind,e){
    const b=bounds();
    if(kind==="left")return e.clientX-b.rect.left;
@@ -118,10 +132,15 @@
    bind("dockResizeRight","right");
    bind("dockResizeBottom","bottom");
    $("resetDockBtn").addEventListener("click",reset);
+   $("dockInspectorWide").addEventListener("click",()=>setInspectorWide(!inspectorWide));
    $("dockInspectorEdit").addEventListener("click",()=>
      window.FocusFlashEditor?.selectTab?.("script",true));
    window.addEventListener("resize",()=>{if(desktop())paint(size);});
    paint(size);
+   setInspectorWide(inspectorWide);
  }
- window.FocusFlashDock={mount,reset,getLayout:()=>({...size}),storageKey:KEY};
+ window.FocusFlashDock={
+   mount,reset,setInspectorWide,getLayout:()=>({...size}),
+   storageKey:KEY
+ };
 })();
