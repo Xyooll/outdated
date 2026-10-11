@@ -6,10 +6,24 @@
  const tabs=[...document.querySelectorAll("[data-editor-tab]")];
  const panels=[...document.querySelectorAll("[data-editor-panel]")];
  const TOOL_KEY=window.FocusFlashProfiles?.key("focusflash-open-tool-v1")||"focusflash-open-tool-v1";
+ const VIEW_KEY=window.FocusFlashProfiles?.key("focusflash-mobile-view-v1")||"focusflash-mobile-view-v1";
+ const mobile=()=>matchMedia("(max-width:950px)").matches;
  const maxClips=48;
  let zoom=1,lastClipWindow="",cachedText=null,cachedSettings="",timelineVersion=0,lastState=null,timeline=null,refreshPending=false,scriptTimer=null;
  let lastBlockLayout="";
 
+ function setMobileView(view){
+   const requested=view==="timeline"?"timeline":"tools";
+   const workspace=$("editorWorkspace");
+   const timelineButton=$("mobileTimelineBtn");
+   workspace.dataset.mobileView=requested;
+   timelineButton.classList.toggle("active",requested==="timeline");
+   timelineButton.setAttribute("aria-pressed",String(requested==="timeline"));
+   for(const tab of tabs)tab.classList.toggle("background-tab",requested==="timeline");
+   try{localStorage.setItem(VIEW_KEY,requested);}catch{}
+   if(requested==="tools")$("editorInspector")?.scrollTo?.({top:0,behavior:"instant"});
+   else $("editorTimeline")?.scrollTo?.({top:0,behavior:"instant"});
+ }
  function selectTab(name,scroll=false){
    const tab=tabs.find(t=>t.dataset.editorTab===name);
    if(!tab)return;
@@ -21,11 +35,12 @@
    }
    for(const panel of panels)panel.hidden=panel.dataset.editorPanel!==name;
    try{localStorage.setItem(TOOL_KEY,name);}catch{}
-   if(scroll&&matchMedia("(max-width:900px)").matches){
-     const target=panels.find(panel=>panel.dataset.editorPanel===name);
-     // Opening a tool on a phone should reveal its controls, rather than
-     // merely moving focus to the tab row above them.
-     target?.scrollIntoView({block:"start",behavior:"smooth"});
+   setMobileView("tools");
+   // On phones the inspector occupies the lower half of the editor, so
+   // scroll THAT pane to the beginning without losing sight of the player.
+   if(scroll&&mobile()){
+     const inspector=$("editorInspector");
+     inspector?.scrollTo?.({top:0,behavior:"smooth"});
    }
  }
  function textWords(){
@@ -251,6 +266,19 @@
  }
  function attach(){
    for(const tab of tabs)tab.addEventListener("click",()=>selectTab(tab.dataset.editorTab,true));
+   $("mobileTimelineBtn").addEventListener("click",()=>{
+     const selected=$("editorWorkspace").dataset.mobileView==="timeline";
+     setMobileView(selected?"tools":"timeline");
+   });
+   $("quickSpeedBtn").addEventListener("click",()=>selectTab("timing",true));
+   $("quickAudioBtn").addEventListener("click",()=>selectTab("voice",true));
+   $("quickEditBtn").addEventListener("click",()=>selectTab("script",true));
+   const updateQuickSpeed=()=>{
+     $("quickWpmValue").textContent=(Number($("wpm").value)||300)+" WPM";
+   };
+   $("wpm").addEventListener("input",updateQuickSpeed);
+   $("wpm").addEventListener("change",updateQuickSpeed);
+   updateQuickSpeed();
    $("topTranscriptBtn").addEventListener("click",()=>selectTab("transcript",true));
    $("previewFullscreen").addEventListener("click",async()=>{
      const preview=$("editorPreview");
@@ -268,11 +296,7 @@
      $("previewFullscreen").setAttribute("aria-label",
        document.fullscreenElement?"Exit expanded preview":"Expand preview");
    });
-   $("jumpExportBtn").addEventListener("click",()=>{
-     selectTab("export",true);
-     if(matchMedia("(max-width:710px)").matches)
-       $("editorExport").scrollIntoView({behavior:"smooth",block:"start"});
-   });
+   $("jumpExportBtn").addEventListener("click",()=>selectTab("export",true));
    $("topImportBtn").addEventListener("click",()=>{
      selectTab("script",true);$("importFile").click();
    });
@@ -343,6 +367,11 @@
      else localStorage.setItem(introduced,"1");
    }catch{}
    selectTab(tabs.some(t=>t.dataset.editorTab===lastTool)?lastTool:"transcript");
+   if(mobile()){
+     let view="tools";
+     try{view=localStorage.getItem(VIEW_KEY)||"tools";}catch{}
+     setMobileView(view);
+   }
    selectRatio();
    // app.js loads its saved reader size before editor.mount() executes.
    // Use that saved size as the single source of truth for both preview and video.
