@@ -287,3 +287,85 @@
    --phone-timeline:clamp(105px,28dvh,180px)
  }
 }
+
+
+/* Compact single-row app header. Preserves profile switching and Export
+   without taking a second row away from the four-window editor. */
+@media(max-width:950px){
+  .editor-topbar{
+    display:flex!important;flex-direction:row!important;
+    flex-wrap:nowrap!important;grid-template-columns:none!important;
+    grid-template-rows:none!important;
+    align-items:center!important;justify-content:space-between!important;
+    gap:6px!important;
+    height:48px!important;min-height:48px!important;max-height:48px!important;
+    padding:4px 8px!important;margin:0!important;overflow:hidden!important
+  }
+  .editor-topbar .editor-brand{
+    display:flex!important;flex:1 1 auto!important;min-width:0!important;
+    grid-column:auto!important;grid-row:auto!important;
+    gap:5px!important;align-items:center!important
+  }
+  .editor-topbar .editor-logo{
+    flex:0 0 27px!important;width:27px!important;height:27px!important;
+    min-width:27px!important;min-height:27px!important;font-size:16px!important
+  }
+  .editor-topbar .editor-brand h1{
+    margin:0!important;font-size:13px!important;line-height:1.1!important;
+    font-weight:780!important;white-space:nowrap!important;
+    overflow:hidden!important;text-overflow:ellipsis!important
+  }
+  .editor-topbar .editor-brand p{display:none!important}
+  .editor-topbar .editor-head-actions{
+    display:flex!important;flex:0 0 auto!important;
+    align-items:center!important;justify-content:flex-end!important;
+    flex-wrap:nowrap!important;gap:6px!important;
+    max-width:none!important;min-width:0!important
+  }
+  .editor-topbar .editor-head-actions .profile-switcher{
+    display:flex!important;flex:0 0 auto!important;
+    grid-column:auto!important;grid-row:auto!important;
+    align-items:center!important;gap:2px!important;
+    min-width:0!important;margin:0!important;
+    padding:2px 3px 2px 5px!important;border-radius:9px!important
+  }
+  .editor-topbar .profile-avatar,
+  .editor-topbar .profile-switcher-inner label{display:none!important}
+  .editor-topbar .profile-switcher-inner{
+    display:block!important;flex:0 1 auto!important;
+    min-width:64px!important;max-width:108px!important
+  }
+  .editor-topbar .profile-switcher-inner select{
+    display:block!important;width:100%!important;max-width:108px!important;
+    height:30px!important;min-height:30px!important;
+    padding:4px 1px!important;font-size:12px!important;
+    white-space:nowrap;text-overflow:ellipsis
+  }
+  .editor-topbar .profile-edit-btn{
+    width:28px!important;min-width:28px!important;height:30px!important;
+    min-height:30px!important;padding:2px!important;
+    font-size:16px!important
+  }
+  .editor-topbar .editor-head-actions #jumpExportBtn{
+    flex:0 0 auto!important;
+    grid-column:auto!important;grid-row:auto!important;
+    height:34px!important;min-height:34px!important;
+    min-width:69px!important;margin:0!important;
+    padding:5px 7px!important;font-size:12px!important
+  }
+  .editor-topbar #topTranscriptBtn,
+  .editor-topbar #topImportBtn,
+  .editor-topbar #resetDockBtn,
+  .editor-topbar #installBtn{display:none!important}
+}
+@media(max-width:560px){
+  .editor-topbar .app-name-suffix{display:none!important}
+}
+@media(max-width:360px){
+  .editor-topbar .editor-logo{display:none!important}
+  .editor-topbar .profile-switcher-inner{max-width:82px!important}
+  .editor-topbar .editor-head-actions{gap:4px!important}
+  .editor-topbar .editor-head-actions #jumpExportBtn{
+    min-width:61px!important;padding:5px!important
+  }
+}
