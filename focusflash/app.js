@@ -30,6 +30,7 @@
   let playing = false;
   let deferredInstall = null;
   let touchStartX = null;
+  let lastSaveAt = 0;
 
   const STORAGE_KEY = 'focusflash-state-v1';
 
@@ -96,6 +97,10 @@
     els.nextBtn.disabled = index >= words.length - 1;
 
     saveState();
+    // Update the editor timeline without forcing it to re-tokenize on every frame.
+    document.dispatchEvent(new CustomEvent('focusflash:render',{
+      detail:{index,total:words.length,wpm}
+    }));
   }
 
   function stop() {
@@ -104,6 +109,7 @@
     timer = null;
     els.playBtn.textContent = '▶ Play';
     window.FocusFlashStudio?.stopReaderUndertone?.();
+    saveState(true);
   }
 
   function tick() {
@@ -142,7 +148,11 @@
     render();
   }
 
-  function saveState() {
+  function saveState(force=false) {
+    // Avoid serializing long passages to localStorage for every flashed word.
+    const now=Date.now();
+    if(!force&&now-lastSaveAt<1500)return;
+    lastSaveAt=now;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         text: els.sourceText.value,
@@ -204,7 +214,7 @@
   els.fontSize.addEventListener('input', render);
   els.punctuationPause.addEventListener('change', saveState);
   els.longWordPause.addEventListener('change', saveState);
-  els.sourceText.addEventListener('input', saveState);
+  els.sourceText.addEventListener('input', () => saveState(true));
 
   els.progressRange.addEventListener('input', () => {
     stop();
@@ -254,5 +264,6 @@
   window.FocusFlashReader = {isPlaying:()=>playing,currentIndex:()=>index,pause:()=>{if(playing)stop();}};
   restoreState();
   loadText(false);
-  if (window.FocusFlashStudio) window.FocusFlashStudio.mount();
+  if(window.FocusFlashStudio)window.FocusFlashStudio.mount();
+  if(window.FocusFlashEditor)window.FocusFlashEditor.mount();
 })();
