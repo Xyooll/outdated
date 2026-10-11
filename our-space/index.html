@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#201628"><meta name="color-scheme" content="dark">
+<meta name="description" content="Our Space: an encrypted place for two">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Our Space · Just Us</title>
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#faeef8;background:radial-gradient(ellipse at 50% 0,#47304e 0,#201628 50%,#15111b 100%)}button,input,textarea{font:inherit}button{cursor:pointer}.app{margin:auto;max-width:780px;min-height:100dvh;display:flex;flex-direction:column;border-inline:1px solid #ffffff0b}.top{height:76px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff16}.logo{display:flex;align-items:center;gap:12px}.logo b,.logo small{display:block}.logo b{font-size:16px}.logo small{font-size:11px;color:#b9a8bf;margin-top:4px}.heart{display:grid;place-items:center;width:41px;height:41px;border-radius:14px;background:#f8badd;color:#4e284c;font-size:24px}.light{border:1px solid #64506b;border-radius:99px;background:transparent;color:#e8d4e7;padding:9px 15px}.hidden{display:none!important}main{flex:1;display:flex;flex-direction:column;min-height:0}.gate{display:flex;flex:1;align-items:center;justify-content:center;flex-direction:column;padding:24px;gap:24px}.intro{text-align:center;max-width:410px}.emblem{display:block;font-size:53px;color:#f4b7d6;margin-bottom:14px}.intro h1{font-size:clamp(32px,7vw,44px);font-weight:600;letter-spacing:-1.7px;line-height:1.12;margin:0 0 13px}.intro p{margin:0;color:#bdadc2;font-size:14px;line-height:1.65}.panel{background:linear-gradient(155deg,#35243e,#251d2e);border:1px solid #5f4b62;border-radius:24px;padding:27px 24px;width:min(100%,420px);box-shadow:0 20px 45px #0004}.eyebrow{font-size:11px;color:#e1b1d1;letter-spacing:2px;font-weight:750}.panel h2{font-size:20px;font-weight:600;letter-spacing:-.4px;margin:10px 0 24px}.panel label{display:block;color:#e7d9e8;font-size:12px;margin-bottom:9px}.panel input{width:100%;background:#181320;border:1px solid #67516c;border-radius:12px;padding:15px 13px;color:white;outline:0;font-size:16px}.panel input:focus,.composer textarea:focus{border-color:#f7bddc;box-shadow:0 0 0 3px #f7bddc19}.primary{background:#f5b9d9;color:#37203a;border:0;border-radius:13px;width:100%;padding:15px;margin-top:15px;font-weight:750;font-size:14px}.primary:disabled,.send:disabled{opacity:.5}.note{font-size:12px;color:#c0aebf;line-height:1.6;margin:16px 0 0}.status{color:#fbcce5;font-size:12px;line-height:1.5}.textbutton{display:block;margin:15px auto 0;background:transparent;border:0;color:#cab8cb;text-decoration:underline;font-size:12px}.chat{flex:1;min-height:0;display:flex;flex-direction:column}.peer{padding:15px 20px;border-bottom:1px solid #ffffff16;display:flex;gap:13px;align-items:center}.peericon{display:grid;place-items:center;width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#aa739e,#ffd2e7);color:#6b3762}.peer strong{font-size:16px}.peer small{display:block;color:#b0a0b5;font-size:11px;margin-top:5px}.messages{flex:1;min-height:250px;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:24px 17px;scrollbar-color:#5a3a60 transparent}.empty{margin:auto;text-align:center;color:#b9a9bd;font-size:13px}.empty span{font-size:40px;color:#f6bbd8}.msg{max-width:85%;display:flex;flex-direction:column;gap:4px}.msg.me{align-self:flex-end;align-items:flex-end}.msg.them{align-self:flex-start;align-items:flex-start}.bubble{background:#382c42;border-radius:18px 18px 18px 5px;padding:12px 15px;font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.me .bubble{background:#f2b5d6;color:#382338;border-radius:18px 18px 5px 18px}.meta{font-size:10px;color:#9e89a4;padding:0 5px}.day{align-self:center;padding:7px 12px;margin:10px 0;background:#ffffff0b;border-radius:99px;color:#b9a6be;font-size:10px}.composer{display:flex;align-items:end;gap:10px;background:#241b2d;border-top:1px solid #ffffff17;padding:12px 15px calc(12px + env(safe-area-inset-bottom))}.composer textarea{background:#17121d;border:1px solid #66506d;border-radius:20px;color:white;padding:14px;resize:none;flex:1;font-size:16px;line-height:1.4;max-height:140px;outline:0}.send{display:grid;place-items:center;width:49px;height:49px;border:0;border-radius:50%;background:#f5b9d9;color:#3b2340;font-size:25px;flex-shrink:0}.footer{text-align:center;font-size:11px;color:#89768e;padding:12px}.feedback{color:#edb9d7;background:#241b2d;text-align:center;font-size:11px;margin:0}.feedback:not(:empty){padding:0 10px 9px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}a{color:#f6b9d8}@media(min-width:600px){.msg{max-width:68%}}@media(max-height:700px){.gate{justify-content:start;gap:15px}.emblem{margin:0;font-size:30px}.intro h1{font-size:30px}.panel{padding:20px}}
+</style>
+</head><body><div class="app">
+<header class="top"><div class="logo"><span class="heart">♥</span><div><b>Our Space</b><small>Just the two of us</small></div></div><button id="lockBtn" class="light hidden" type="button">Lock</button></header>
+<main>
+<section id="setup" class="gate hidden"><div class="intro"><span class="emblem">♥</span><h1>Something just for us.</h1><p>A little corner of the world that belongs to two people.</p></div><div class="panel"><span class="eyebrow">ONE-TIME SETUP</span><h2>Connect private messaging</h2><p class="note">Create a dedicated Supabase project, run setup.sql, invite only your two accounts, and add the project URL and publishable key to config.js.</p><p class="note">Instructions: <a href="https://github.com/Xyooll/outdated/tree/main/our-space">GitHub setup guide</a></p><p class="status">No messages can be sent until setup is complete.</p></div></section>
+<section id="login" class="gate hidden"><div class="intro"><span class="emblem">♥</span><h1>Only you & me.</h1><p>One conversation, away from all the noise.</p></div><form id="loginForm" class="panel"><span class="eyebrow">PRIVATE ACCESS</span><h2>Come on in</h2><label for="email">Your invited email</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com"><button id="loginBtn" class="primary">Send my sign-in link →</button><p class="note">Only two approved accounts can use this chat. Open the sign-in link on this phone.</p><p id="loginStatus" class="status" role="status"></p></form></section>
+<section id="unlock" class="gate hidden"><div class="intro"><span class="emblem">✦</span><h1>Your words. Your key.</h1><p>Messages unlock on your phone. Your encryption phrase never goes to the server.</p></div><form id="unlockForm" class="panel"><span class="eyebrow">ENCRYPTED CHAT</span><h2>Unlock our conversation</h2><label for="phrase">Our shared secret phrase</label><input id="phrase" type="password" required minlength="12" autocomplete="off" placeholder="Our private phrase"><button id="unlockBtn" class="primary">Unlock conversation ↗</button><p class="note">Use the exact same long, random phrase on both phones. Share it in person, not by email or in this chat. Losing it means losing access to older messages.</p><p id="unlockStatus" class="status" role="status"></p><button type="button" id="logout" class="textbutton">Sign out</button></form></section>
+<section id="chat" class="chat hidden"><div class="peer"><div class="peericon">♥</div><div><strong>Our conversation</strong><small><span id="liveStatus">Connecting…</span> · End-to-end encrypted</small></div></div><div id="messages" class="messages" role="log" aria-live="polite" aria-label="Our messages"></div><form id="sendForm" class="composer"><label for="entry" class="sr">New message</label><textarea id="entry" rows="1" maxlength="2000" enterkeyhint="send" required placeholder="Write something sweet…"></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></form><p class="feedback" id="sendStatus" role="status"></p></section>
+</main><footer class="footer">A place for two · No ads · No spectators</footer></div>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
+import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js";
+const $ = id => document.getElementById(id);
+const ids = ["setup","login","unlock","chat"];
+const ready = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL) && (PUBLISHABLE_KEY.startsWith("sb_publishable_") || PUBLISHABLE_KEY.length > 100);
+const supabase = ready ? createClient(PROJECT_URL, PUBLISHABLE_KEY) : null;
+const encoder = new TextEncoder(), decoder = new TextDecoder();
+const aad = encoder.encode("our-space-v1");
+let me=null, salt=null, key=null, channel=null, refresh=0;
+function show(id){ for(const name of ids)$(name).classList.toggle("hidden",name!==id);$("lockBtn").classList.toggle("hidden",id!=="chat");}
+function tell(id,message){$(id).textContent=message||"";}
+function errorText(e){return e && e.message || "Something went wrong.";}
+function base64(bytes){let s="";for(const b of bytes)s+=String.fromCharCode(b);return btoa(s);}
+function unbase64(value){return Uint8Array.from(atob(value),x=>x.charCodeAt(0));}
+async function derive(phrase){if(phrase.length<12)throw Error("Use a long, unique phrase of at least 12 characters.");const raw=await crypto.subtle.importKey("raw",encoder.encode(phrase),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt:unbase64(salt),iterations:600000,hash:"SHA-256"},raw,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);}
+async function encrypt(text){const iv=crypto.getRandomValues(new Uint8Array(12));const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv,additionalData:aad},key,encoder.encode(text));return{iv:base64(iv),ciphertext:base64(new Uint8Array(cipher))};}
+async function decrypt(row){const raw=await crypto.subtle.decrypt({name:"AES-GCM",iv:unbase64(row.iv),additionalData:aad},key,unbase64(row.ciphertext));return decoder.decode(raw);}
+function lock(){key=null;refresh++;$("phrase").value="";$("messages").replaceChildren();$("entry").value="";if(channel){supabase.removeChannel(channel);channel=null;}show(me?"unlock":"login");}
+async function initialize(){
+ if(!supabase){show("setup");return;}
+ try{
+  const identity=await supabase.auth.getUser();
+  if(identity.error||!identity.data.user){me=null;lock();return;}
+  if(me && me.id===identity.data.user.id && key)return;
+  me=identity.data.user;
+  const allowed=await supabase.from("couple_members").select("role").eq("user_id",me.id).maybeSingle();
+  if(allowed.error)throw allowed.error;
+  if(!allowed.data){lock();show("login");tell("loginStatus","This email is not yet approved for this private chat.");return;}
+  const room=await supabase.from("couple_room").select("salt").eq("id",1).single();
+  if(room.error)throw room.error;
+  salt=room.data.salt;lock();
+ }catch(e){lock();show("login");tell("loginStatus","Could not open room: "+errorText(e));}
+}
+async function load(){
+ if(!key)return;
+ const turn=++refresh;
+ const res=await supabase.from("couple_messages").select("id,sender_id,iv,ciphertext,created_at").order("created_at",{ascending:false}).limit(250);
+ if(res.error)throw res.error;
+ const rows=res.data.reverse();
+ const texts=await Promise.all(rows.map(row=>decrypt(row).then(t=>({row,text:t,ok:true})).catch(()=>({row,text:"🔒 Unable to decrypt",ok:false}))));
+ if(!key||turn!==refresh)return;
+ if(texts.length&&texts.every(x=>!x.ok))throw Error("The shared phrase does not match existing messages. Check that both phones use the exact same phrase.");
+ const feed=$("messages");const bottom=feed.scrollHeight-feed.scrollTop-feed.clientHeight<100;
+ const frag=document.createDocumentFragment();
+ if(!texts.length){const empty=document.createElement("div");empty.className="empty";empty.innerHTML="<span>♥</span><h2>It starts here.</h2><p>Leave a note, a thought, or just an I love you.</p>";frag.append(empty);}
+ let day="";
+ for(const item of texts){
+  const label=new Date(item.row.created_at).toLocaleDateString([],{month:"short",day:"numeric"});
+  if(label!==day){const sep=document.createElement("div");sep.className="day";sep.textContent=label;frag.append(sep);day=label;}
+  const own=item.row.sender_id===me.id;
+  const msg=document.createElement("article");msg.className="msg "+(own?"me":"them");
+  const bubble=document.createElement("div");bubble.className="bubble";bubble.textContent=item.text;
+  const time=document.createElement("span");time.className="meta";time.textContent=(own?"You · ":"♥ · ")+new Date(item.row.created_at).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+  msg.append(bubble,time);frag.append(msg);
+ }
+ feed.replaceChildren(frag);if(bottom||!feed.dataset.initialized)feed.scrollTop=feed.scrollHeight;feed.dataset.initialized="true";
+}
+function subscribe(){if(channel)supabase.removeChannel(channel);channel=supabase.channel("couple-chat-live").on("postgres_changes",{event:"INSERT",schema:"public",table:"couple_messages"},()=>{load().catch(e=>tell("sendStatus",errorText(e)));}).subscribe(status=>{$("liveStatus").textContent=status==="SUBSCRIBED"?"● Live":"Reconnecting…";});}
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();$("loginBtn").disabled=true;tell("loginStatus","");
+ try{const link=window.location.origin+window.location.pathname;const res=await supabase.auth.signInWithOtp({email:$("email").value.trim(),options:{shouldCreateUser:false,emailRedirectTo:link}});if(res.error)throw res.error;tell("loginStatus","Check your email. Open the sign-in link on this phone.");}
+ catch(err){tell("loginStatus",errorText(err));}finally{$("loginBtn").disabled=false;}
+});
+$("unlockForm").addEventListener("submit",async e=>{
+ e.preventDefault();$("unlockBtn").disabled=true;tell("unlockStatus","");
+ try{key=await derive($("phrase").value);await load();$("phrase").value="";show("chat");subscribe();$("entry").focus();}
+ catch(err){key=null;tell("unlockStatus",errorText(err));}finally{$("unlockBtn").disabled=false;}
+});
+$("sendForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!key||!me)return;const message=$("entry").value.trim();if(!message)return;
+ $("sendBtn").disabled=true;tell("sendStatus","");
+ try{const packet=await encrypt(message);const res=await supabase.from("couple_messages").insert({sender_id:me.id,...packet});if(res.error)throw res.error;$("entry").value="";await load();$("messages").scrollTop=$("messages").scrollHeight;}
+ catch(err){tell("sendStatus","Message not sent: "+errorText(err));}
+ finally{$("sendBtn").disabled=false;}
+});
+$("entry").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();if(!$("sendBtn").disabled)$("sendForm").requestSubmit();}});
+$("lockBtn").addEventListener("click",lock);
+$("logout").addEventListener("click",async()=>{await supabase.auth.signOut();me=null;lock();});
+if(supabase){supabase.auth.onAuthStateChange(event=>{if(event==="SIGNED_IN"||event==="SIGNED_OUT")setTimeout(initialize,0);});}
+if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+initialize();
+</script>
+</body></html>
