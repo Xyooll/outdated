@@ -2,15 +2,15 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1c233b">
-<meta name="description" content="Our Space: three tiny worlds for two people.">
+<meta name="description" content="Our Space: a miniature household life simulator for two.">
 <meta name="color-scheme" content="dark">
-<title>Our Space · Worlds for Two</title>
+<title>Our Space · Life Simulator</title>
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="stylesheet" href="./world.css">
+<link rel="stylesheet" href="./world.css?v=life-layout-2">
 </head>
 <body><div class="app">
-<header class="topbar"><div class="brand"><div class="logo">♥</div><div><strong>Our Space</strong><small>Worlds for two</small></div></div>
+<header class="topbar"><div class="brand"><div class="logo">♥</div><div><strong>Our Space</strong><small>Life together</small></div></div>
 <div class="top-actions"><span id="networkState" class="network">Private worlds</span><button id="signoutBtn" class="subtle hidden" type="button">Sign out</button></div></header>
 <main>
 <section id="loadingView" class="center-view"><div class="loading-glyph">✦</div><p>Opening your little universe…</p></section>
@@ -29,46 +29,68 @@
 <label for="newPasswordAgain">Confirm password</label><input id="newPasswordAgain" type="password" minlength="12" autocomplete="new-password" required>
 <button class="primary" id="recoverBtn" type="submit">Save password <span>✓</span></button>
 <p id="recoverStatus" class="form-status" role="status"></p></form></section>
+
 <section id="worldView" class="world-view hidden">
-<div class="room-nav"><div class="room-nav-label">OUR LITTLE UNIVERSE</div><div id="roomTabs" class="tabs">
-<button type="button" data-world="home" class="tab active">🏡 Cozy Cottage</button>
-<button type="button" data-world="garden" class="tab">🌙 Moon Garden</button>
-<button type="button" data-world="shore" class="tab">🌅 Sunset Shore</button>
-</div></div>
-<div class="world-shell">
-<div class="world-banner"><div><span id="worldEyebrow">A LITTLE PLACE CALLED HOME</span><h1 id="worldTitle">Cozy Cottage</h1></div>
-<button type="button" id="closetBtn" class="closet-btn"><span>✦</span> Dress up</button></div>
-<div id="lifeHud" class="life-hud">
- <div class="life-topline"><strong>♥ Your Sim's needs</strong><span id="lifeMealCount">🍲 0 meals</span></div>
- <div id="lifeNeeds" class="life-needs"></div>
-</div>
-<div class="world-stage">
-<div id="lifeActions" class="life-action-menu hidden">
- <div class="life-actions-card"><div class="life-actions-top"><strong id="lifeActionTitle">Interact</strong><button type="button" id="lifeCloseMenu" aria-label="Close actions">×</button></div>
- <div id="lifeActionButtons" class="life-action-buttons"></div></div>
-</div>
-<canvas id="worldCanvas" width="960" height="540" aria-label="2D walkable world. Tap a place to walk there, or use the directional controls." tabindex="0"></canvas>
-<div class="world-hud"><span id="worldPeople">● Connecting</span><span>Tap to walk</span></div>
-<div class="dpad" aria-label="Move your avatar">
-<button type="button" data-move="up" class="up" aria-label="Walk up">↑</button>
-<button type="button" data-move="left" class="left" aria-label="Walk left">←</button>
-<button type="button" data-move="down" class="down" aria-label="Walk down">↓</button>
-<button type="button" data-move="right" class="right" aria-label="Walk right">→</button>
-</div></div>
-<div id="lifeProgress" class="life-progress hidden"><span id="lifeProgressName">Action</span><div class="life-progress-track"><div id="lifeProgressFill"></div></div><span id="lifeProgressTime">0s</span><button type="button" id="lifeCancel">Cancel</button></div>
-<p id="lifeStatus" class="life-status" role="status"></p>
-<p class="world-subtitle" id="worldDescription">Make yourself at home. Stay a while.</p>
-<details id="lifeDutyPanel" class="life-duties" open><summary><span>✓ Household duties</span><span id="lifeScore">0/100 Home Care</span></summary><p class="duty-caption">Voluntary daily chores · complete them using furniture</p><div id="lifeTasks"></div></details>
-</div>
-<div class="chat-section">
-<div class="chat-top"><div><span class="chaticon">✉</span><strong id="chatHeading">Cottage Chat</strong></div><span class="chat-private">PRIVATE TO TWO <span aria-hidden="true">●</span></span></div>
-<div id="chatMessages" class="chat-messages" role="log" aria-label="Room messages" aria-live="polite" aria-relevant="additions"></div>
-<form id="sendForm" class="composer"><label for="message" class="sr-only">Write a message</label><input id="message" type="text" maxlength="4000" autocomplete="off" placeholder="Say something sweet…" required><button type="submit" id="sendBtn" aria-label="Send message">↑</button></form>
-<p id="chatStatus" class="chat-status" role="status"></p>
-</div>
+ <div class="sim-toolbar">
+  <div class="sim-place"><span class="eyebrow" id="worldEyebrow">OUR HOUSE · LIFE SIM 2.1</span>
+   <h1 id="worldTitle">Cozy Cottage</h1><span id="worldPeople" class="sim-presence">● Connecting</span>
+   <span id="worldDescription" class="sr-only">Our shared home</span></div>
+  <div class="sim-quick-actions">
+   <button type="button" id="closetBtn" class="sim-tool" title="Customize character">👕 <span>Outfit</span></button>
+   <button type="button" id="tasksBtn" class="sim-tool" aria-expanded="false" aria-controls="tasksPanel">✓ <span>Duties</span></button>
+   <button type="button" id="placesBtn" class="sim-tool" aria-expanded="false" aria-controls="placesPanel">🌿 <span>Places</span></button>
+   <button type="button" id="chatBtn" class="sim-tool sim-tool-emphasis" aria-expanded="false" aria-controls="chatPanel">✉ <span>Chat</span><span id="chatBadge" class="chat-badge hidden">●</span></button>
+  </div>
+ </div>
+ <div id="placesPanel" class="sim-places hidden">
+  <span class="eyebrow">SELECT A PLACE</span>
+  <div class="tabs" id="roomTabs">
+   <button type="button" data-world="home" class="tab active">🏡 Our Home</button>
+   <button type="button" data-world="garden" class="tab">🌙 Moon Garden</button>
+   <button type="button" data-world="shore" class="tab">🌅 Sunset Shore</button>
+  </div>
+ </div>
+ <div class="world-shell">
+  <div class="world-stage">
+   <div id="lifeActions" class="life-action-menu hidden">
+    <div class="life-actions-card"><div class="life-actions-top"><strong id="lifeActionTitle">Interact</strong><button type="button" id="lifeCloseMenu" aria-label="Close actions">×</button></div>
+     <div id="lifeActionButtons" class="life-action-buttons"></div>
+    </div>
+   </div>
+   <canvas id="worldCanvas" width="960" height="540" aria-label="Four-room 2D home. Tap furniture for activities or floor to move." tabindex="0"></canvas>
+  </div>
+  <div class="sim-lower">
+   <div id="lifeHud" class="life-hud"><div class="life-topline"><strong>Your character's needs</strong><span id="lifeMealCount">🍲 0 meals</span></div><div id="lifeNeeds" class="life-needs"></div></div>
+   <div class="sim-movement"><span class="move-hint">Tap floor to walk · Tap furniture to interact</span>
+    <div class="dpad" aria-label="Move your avatar">
+     <button type="button" data-move="up" class="up" aria-label="Walk up">↑</button>
+     <button type="button" data-move="left" class="left" aria-label="Walk left">←</button>
+     <button type="button" data-move="down" class="down" aria-label="Walk down">↓</button>
+     <button type="button" data-move="right" class="right" aria-label="Walk right">→</button>
+    </div>
+   </div>
+  </div>
+  <div id="lifeProgress" class="life-progress hidden"><span id="lifeProgressName">Action</span><div class="life-progress-track"><div id="lifeProgressFill"></div></div><span id="lifeProgressTime">0s</span><button type="button" id="lifeCancel">Cancel</button></div>
+  <p id="lifeStatus" class="life-status" role="status"></p>
+ </div>
 </section></main>
-<footer class="footer">Made for the two of you <span>♥</span> Messages are private to your accounts, but not end-to-end encrypted. <a href="./legacy.html">Previous encrypted messages</a></footer>
+<footer class="footer">Our Space · A private home for two · <a href="./legacy.html">Old encrypted messages</a> · <span id="buildLabel">Life Sim 2.1</span></footer>
 </div>
+
+<section id="tasksPanel" class="sim-drawer hidden" aria-label="Household duties">
+ <div class="sim-drawer-shade" data-panel-close="tasks"></div>
+ <div class="sim-drawer-body"><div class="sim-drawer-head"><div><span class="eyebrow">KEEP OUR HOME HAPPY</span><h2>Household duties</h2></div><button class="close" id="tasksClose" type="button" aria-label="Close duties">×</button></div>
+ <details id="lifeDutyPanel" class="life-duties" open><summary><span>✓ Today's responsibilities</span><span id="lifeScore">0/100 Home Care</span></summary>
+ <p class="duty-caption">Volunteer for a duty, then use the matching furniture.</p><div id="lifeTasks"></div></details>
+ </div>
+</section>
+<section id="chatPanel" class="sim-drawer hidden" aria-label="Private conversation">
+ <div class="sim-drawer-shade" data-panel-close="chat"></div>
+ <div class="sim-drawer-body"><div class="sim-drawer-head"><div><span class="eyebrow">OUR PRIVATE MESSAGES</span><h2 id="chatHeading">Cottage Chat</h2></div><button class="close" id="chatClose" type="button" aria-label="Close chat">×</button></div>
+ <div class="chat-section"><div id="chatMessages" class="chat-messages" role="log" aria-label="Room messages" aria-live="polite" aria-relevant="additions"></div>
+ <form id="sendForm" class="composer"><label for="message" class="sr-only">Write a message</label><input id="message" type="text" maxlength="4000" autocomplete="off" placeholder="Say something sweet…" required><button type="submit" id="sendBtn" aria-label="Send message">↑</button></form>
+ <p id="chatStatus" class="chat-status" role="status"></p></div></div>
+</section>
 <section id="closet" class="closet hidden" aria-label="Avatar wardrobe">
 <div class="closet-shade" id="closetShade"></div>
 <div class="closet-sheet"><div class="closet-header"><div><span class="eyebrow">YOUR VERY OWN</span><h2>Avatar closet ✨</h2></div><button type="button" id="closetClose" aria-label="Close wardrobe" class="close">×</button></div>
@@ -87,5 +109,5 @@
 <p id="outfitStatus" class="form-status" role="status"></p>
 <button class="primary" id="saveOutfit" type="submit">Save my look <span>✓</span></button></form></div>
 </div></section>
-<script type="module" src="./world.js"></script>
+<script type="module" src="./world.js?v=life-layout-2"></script>
 </body></html>
