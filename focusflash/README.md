@@ -170,3 +170,18 @@ The old single-user localStorage records are **copied without deletion into User
 
 ### Workspace 3 final UX refinements
 The mobile phone layout explicitly stays in one column below 710px, and tapping a tool or the profile management gear scrolls that tool's controls into view. The profile manager supports two named, independently persisted local workspaces with existing single-user data copied to User 1. Current release: https://xyooll.github.io/outdated/focusflash/?v=workspace-3.
+
+
+## Reference-style three-panel editor with live transcript
+
+Live version: https://xyooll.github.io/outdated/focusflash/?v=reference-ui-2
+
+The main editor is now organized like the provided video-editor screenshot: a compact vertical tool rail on the left, spacious player preview in the middle, a searchable, timecoded transcript/contextual editor on the right, and a multitrack timeline occupying the space underneath the player. The right panel includes active-passage highlighting, search across the script, click-to-seek into preview/timeline, and a direct Edit Script action. In repeated-block mode, transcript entries display the current block name and repetition number.
+
+The transcript represents the **existing script text and its word-based playback timing**; it is **not** automatically generated speech-to-text from an imported audio or video file. This distinction is important when editing MP3 tracks. The word timeline has an active vertical playhead. The preview also supports the Fullscreen API when available.
+
+For phone portrait/tablet widths up to 900px the layout becomes a readable vertical stack (player, horizontally scrollable tool rail, compact timeline, then active tool/transcript pane). Choosing a tool scrolls to its controls rather than leaving them offscreen. The desktop design uses fixed-height workspace regions with independently scrollable rail/timeline/right pane, matching the overall reference image without copying its assets or brand.
+
+This is an editable speed-reading video maker, not a full multitrack nonlinear editor: visual word clips, script blocks and the existing voice/tone/MP3 layers retain their previous capabilities; footage editing, clip transitions, automatically transcribing a recorded speaker, and audio-to-text alignment are not yet implemented. Existing 2 user workspaces and browser-local persistent state remain, with independent scripts/MP3/audio settings. The prior red fixed-center character, WPM and typography control, and narrated WebM video exporter are unchanged.
+
+Layout JS and structural checks were performed. This release has not been end-to-end visually tested in the user's phone browser.
