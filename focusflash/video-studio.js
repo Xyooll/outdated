@@ -23,7 +23,7 @@
  let tts=null,modelLoading=null,voiceBuffer=null,voiceSignature="",busy=false;
  const fastVoices={"en_US-ryan-medium":"Ryan · American male","en_US-hfc_female-medium":"American female","en_US-lessac-low":"Lessac · American"};
  let micRecorder=null,micStream=null,micChunks=[],videoBlob=null,videoFilename="focusflash-video.webm";
- let audioContext=null,previewSource=null,renderAbort=false;
+ let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -43,22 +43,27 @@
    if(settings.long && [...word].length>=12)ms*=1.2;
    return Math.max(30,ms);
  }
- function makeTimeline(items,audioDuration=null){
-   const times=items.map(w=>durationFor(w,timing())/1000);
-   if(audioDuration!=null){
-     // A deterministic, approximate speech alignment, not forced-alignment:
-     // distribute the generated audio by normalized word lengths and punctuation.
-     const weights=items.map(w=>{
-       const letters=(w.match(/[a-zA-Z0-9]/g)||[]).length;
-       return Math.max(.6,.4+Math.pow(Math.max(1,letters),.64))*
-         (/[.!?]["'’)]*$/.test(w)?1.32:/[,;:]["'’)]*$/.test(w)?1.13:1);
-     });
-     const sum=weights.reduce((a,b)=>a+b,0);
-     for(let i=0;i<times.length;i++)times[i]=weights[i]/sum*audioDuration;
-   }
-   const starts=[];let time=0;
-   for(const seconds of times){starts.push(time);time+=seconds;}
-   return {starts,total:Math.max(.4,time),times};
+ function makeTimeline(items){
+   // Visual WPM is authoritative whether or not the video has speech.
+   // The voice is played faster/slower to match the total timeline.
+   const settings=timing(),times=items.map(w=>durationFor(w,settings)/1000);
+   const starts=[];let elapsed=0;
+   for(const seconds of times){starts.push(elapsed);elapsed+=seconds;}
+   return {starts,times,total:Math.max(.4,elapsed)};
+ }
+ const undertoneVolume=()=>Math.max(0,Math.min(1,(Number(sel("studioVolume").value)||0)/100));
+ const narrationRate=(timeline)=>{
+   if(!voiceBuffer||!timeline.total)return 1;
+   return voiceBuffer.duration/timeline.total;
+ };
+ function updateSpeedHint(){
+   const totalWords=words(),rate=totalWords.length&&voiceBuffer?narrationRate(makeTimeline(totalWords)):null;
+   const wpm=timing().wpm,volume=Math.round(undertoneVolume()*100);
+   sel("studioVolumeValue").textContent=volume+"%";
+   sel("studioSpeedHint").textContent=rate==null?
+     "Narration will match "+wpm+" WPM; volume "+volume+"%.":
+     "Narration synced to "+wpm+" WPM at "+rate.toFixed(2)+"× playback and "+volume+"% volume."+
+       (rate>3.5?" At this speed, the speech will be heavily pitch-shifted.":"");
  }
  function currentWordAt(timeline,seconds){
    let lo=0,hi=timeline.starts.length-1;
@@ -184,7 +189,7 @@
      const gap=.11;
      if(mode==="fast"){
        report("Loading faster mobile voice, then generating audio...");
-       const adapter=await import("./fast-piper.js?v=voice-fast-1");
+       const adapter=await import("./fast-piper.js?v=undertone-1");
        const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
        for(const raw of results){
          segments.push(raw);
