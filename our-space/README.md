@@ -51,3 +51,10 @@ Original procedural Canvas graphics now add environment decoration and light, hi
 
 ### Living Edition 2.3
 Added a clearly marked **Your person** quick interaction button for hugs and waves when your partner is online in the Cottage. While a timed activity is running, movement and new walk destinations are disabled until it completes or is canceled. This prevents walking away from a bed, shower, or other action. The updated PWA assets use cache version v10 and browser version `assets-v2`.
+
+
+## 3.0 — Permanent non-overlapping layout correction
+
+All gameplay interface sections now exist **in the document flow**: the interaction/action choices appear beneath the game canvas, and Chat, Duties, and Wardrobe open as normal content sections beneath the main game, not as fixed or absolutely-positioned overlays. The furniture menu is physically outside the canvas. No opaque modal sheet or shade is used. Toolbar actions scroll to the relevant section on mobile, without obscuring character movement.
+
+App stylesheet `no-overlay.css` contains the single explicit no-overlay layout contract. Open `https://xyooll.github.io/outdated/our-space/?v=screen-3` for this release. Service worker `sw.js` is network-only in this release to prevent stale offline-cache layouts. Online access is required (gameplay has always needed Supabase).

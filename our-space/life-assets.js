@@ -1,7 +1,7 @@
 
 // Pure Canvas asset and feedback layer for the compact two-player life simulator.
 // Everything is procedural: no external artwork or copyrighted game assets.
-import {OBJECTS,ACTIONS} from "./life-house.js?v=assets-v2";
+import {OBJECTS,ACTIONS} from "./life-house.js?v=screen-3";
 const PI=Math.PI;
 const w=(t,s)=>Math.sin(t*s);
 const color=(ctx,c)=>{ctx.fillStyle=c;};

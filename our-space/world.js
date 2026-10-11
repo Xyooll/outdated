@@ -1,10 +1,10 @@
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
-import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js?v=assets-v2";
-import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js?v=assets-v2";
-import { drawHouse, findHousePath, clearTile, ACTIONS, objectAt } from "./life-house.js?v=assets-v2";
-import {paintHouseDetails,paintInteractiveHighlights,paintActivityEffects} from "./life-assets.js?v=assets-v2";
-import { createLifeUI } from "./life-ui.js?v=assets-v2";
+import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js?v=screen-3";
+import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js?v=screen-3";
+import { drawHouse, findHousePath, clearTile, ACTIONS, objectAt } from "./life-house.js?v=screen-3";
+import {paintHouseDetails,paintInteractiveHighlights,paintActivityEffects} from "./life-assets.js?v=screen-3";
+import { createLifeUI } from "./life-ui.js?v=screen-3";
 
 const $ = id => document.getElementById(id);
 const valid = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL)
@@ -31,9 +31,11 @@ function panelState(which,showIt){
   $("chatBadge").classList.add("hidden");
   $("chatMessages").scrollTop=$("chatMessages").scrollHeight;
  }
+ if(showIt)requestAnimationFrame(()=>panel.scrollIntoView({behavior:"smooth",block:"nearest"}));
 }
 function closePanels(){
  for(const name of ["chat","tasks","places"])panelState(name,false);
+ $("closet").classList.add("hidden");
 }
 function togglePanel(name){
  const showIt=$(name+"Panel").classList.contains("hidden");
@@ -392,6 +394,7 @@ function showCloset(){
  life.onShowWardrobe();
  for(const [id,col] of Object.entries(FIELDS))$(id).value=myAvatar[col]||"";
  $("closet").classList.remove("hidden");$("avatarName").focus();
+ requestAnimationFrame(()=>$("closet").scrollIntoView({behavior:"smooth",block:"start"}));
  drawPreview();
 }
 function closeCloset(){$("closet").classList.add("hidden");}
@@ -466,7 +469,7 @@ $("sendForm").addEventListener("submit",sendMessage);
 $("signoutBtn").addEventListener("click",signOut);
 $("closetBtn").addEventListener("click",showCloset);
 $("closetClose").addEventListener("click",closeCloset);
-$("closetShade").addEventListener("click",closeCloset);
+
 $("outfitForm").addEventListener("submit",saveOutfit);
 for(const name of ["chat","tasks","places"])
  $(name+"Btn").addEventListener("click",()=>togglePanel(name));

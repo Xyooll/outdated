@@ -1,5 +1,5 @@
 
-import {OBJECTS,ACTIONS,TASKS,NEEDS} from "./life-house.js?v=assets-v2";
+import {OBJECTS,ACTIONS,TASKS,NEEDS} from "./life-house.js?v=screen-3";
 const $=id=>document.getElementById(id);
 const numeric=n=>Math.max(0,Math.min(100,Number(n)||0));
 const explain=e=>e?.message||"Connection issue — please try again.";
@@ -219,6 +219,8 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
    $("lifeActionButtons").append(button);
   }
   actionBox.classList.remove("hidden");
+  // Dedicated docked action area below the canvas, not a modal covering the game.
+  requestAnimationFrame(()=>actionBox.scrollIntoView({behavior:"smooth",block:"nearest"}));
  }
  function perform(key,other){
   const meta=ACTIONS[key];if(!meta||active||launching)return;
