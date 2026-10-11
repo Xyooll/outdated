@@ -21,7 +21,7 @@
    timelineButton.setAttribute("aria-pressed",String(requested==="timeline"));
    for(const tab of tabs)tab.classList.toggle("background-tab",requested==="timeline");
    try{localStorage.setItem(VIEW_KEY,requested);}catch{}
-   if(requested==="tools")$("editorInspector")?.scrollTo?.({top:0,behavior:"instant"});
+   if(requested==="tools")$("editorInspector")?.scrollTo?.({top:0,behavior:"auto"});
    else $("editorTimeline")?.scrollTo?.({top:0,behavior:"instant"});
  }
  function selectTab(name,scroll=false){
@@ -356,22 +356,18 @@
    });
    window.FocusFlashBlocks?.mount?.();
    window.FocusFlashTranscript?.mount?.();
-   let lastTool="transcript";
+   let lastTool="transcript",restoredView="tools";
    try{
-     // First visit to the reference-style editor opens its new transcript
-     // pane, then respects whichever tool the user chooses afterward.
      const introduced=window.FocusFlashProfiles?.key("focusflash-transcript-intro-v1")||
        "focusflash-transcript-intro-v1";
      if(localStorage.getItem(introduced)==="1")
        lastTool=localStorage.getItem(TOOL_KEY)||"transcript";
      else localStorage.setItem(introduced,"1");
+     // Capture before selectTab writes a default view to localStorage.
+     restoredView=localStorage.getItem(VIEW_KEY)||"tools";
    }catch{}
    selectTab(tabs.some(t=>t.dataset.editorTab===lastTool)?lastTool:"transcript");
-   if(mobile()){
-     let view="tools";
-     try{view=localStorage.getItem(VIEW_KEY)||"tools";}catch{}
-     setMobileView(view);
-   }
+   if(mobile())setMobileView(restoredView);
    selectRatio();
    // app.js loads its saved reader size before editor.mount() executes.
    // Use that saved size as the single source of truth for both preview and video.
