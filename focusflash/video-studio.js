@@ -21,11 +21,12 @@
    bf_emma:"Emma · British",bm_george:"George · British"
  };
  let tts=null,modelLoading=null,voiceBuffer=null,voiceSignature="",busy=false;
+ const instantVoices={system:"Phone's voice · instant reading / compact voice in video"};
  const fastVoices={"en_US-ryan-medium":"Ryan · American male","en_US-hfc_female-medium":"American female","en_US-lessac-low":"Lessac · American"};
  let micRecorder=null,micStream=null,micChunks=[],videoBlob=null,videoFilename="focusflash-video.webm";
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let readerSource=null,readerGain=null,readerGeneration=0;
- let readerVoice=null,previewVoice=null;
+ let readerVoice=null,previewVoice=null,nativeSpeaking=false;
  const pitchEngine=()=>import("./pitch-preserve.js?v=natural-pitch-1");
  let mediaUrl=null;
  const sel=id=>$(id);
@@ -63,7 +64,8 @@
    const totalWords=words(),rate=totalWords.length&&voiceBuffer?narrationRate(makeTimeline(totalWords)):null;
    const wpm=timing().wpm,volume=Math.round(undertoneVolume()*100);
    sel("studioVolumeValue").textContent=volume+"%";
-   sel("studioSpeedHint").textContent=rate==null?
+   sel("studioSpeedHint").textContent=sel("studioMode").value==="instant"?
+     "Instant speech starts with Play. Your phone controls its maximum speaking speed; the red-letter words keep the chosen WPM. Voice level "+volume+"%.":rate==null?
      "Narration will match "+wpm+" WPM; volume "+volume+"%.":
      "Narration synced to "+wpm+" WPM at "+rate.toFixed(2)+"× playback and "+volume+"% volume."+
        (rate>3.5?" At this speed, speech may sound choppy, but its pitch is preserved.":"");
@@ -190,7 +192,14 @@
      if(!phrases.length)throw Error("No readable text found.");
      const segments=[];let total=0;
      const gap=.11;
-     if(mode==="fast"){
+     if(mode==="instant"){
+       const {generateInstantExportSpeech}=await import("./instant-tts.js?v=instant-1");
+       const results=await generateInstantExportSpeech(text,report);
+       for(const raw of results){
+         segments.push(raw);
+         total+=raw.samples.length/raw.sampleRate+gap;
+       }
+     }else if(mode==="fast"){
        report("Loading faster mobile voice, then generating audio...");
        const adapter=await import("./fast-piper.js?v=natural-pitch-1");
        const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
@@ -295,13 +304,60 @@
    catch(error){if(error.name!=="AbortError")report("Share failed: "+error.message);}
  }
  function stopReaderUndertone(){
+   if(nativeSpeaking){
+     nativeSpeaking=false;
+     try{window.speechSynthesis?.cancel();}catch{}
+   }
    readerGeneration++;
    readerVoice?.dispose();
    readerVoice=null;readerSource=null;readerGain=null;
  }
  async function startReaderUndertone(wordIndex=0){
    stopReaderUndertone();
-   if(!sel("studioReaderAudio").checked||!voiceBuffer||voiceSignature!==signature())return;
+   if(!sel("studioReaderAudio").checked)return;
+   if(sel("studioMode").value==="instant"){
+     // This branch is synchronous before the first await so Android Chrome
+     // can initiate native speech in the user's Play-button gesture.
+     if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){
+       report("This browser has no built-in text-to-speech. Choose Quick video voice instead.");
+       return;
+     }
+     const remaining=words().slice(wordIndex);
+     if(!remaining.length)return;
+     const pieces=[],MAX=200;
+     let chunk="";
+     for(const word of remaining){
+       if(chunk&&chunk.length+word.length+1>MAX){pieces.push(chunk);chunk=word;}
+       else chunk+=(chunk?" ":"")+word;
+     }
+     if(chunk)pieces.push(chunk);
+     const voices=window.speechSynthesis.getVoices();
+     const selected=voices.find(v=>v.localService&&/^en/i.test(v.lang))||
+       voices.find(v=>/^en/i.test(v.lang))||null;
+     const token=readerGeneration;
+     const rate=Math.min(10,Math.max(.5,timing().wpm/180));
+     nativeSpeaking=true;
+     let p=0;
+     const next=()=>{
+       if(token!==readerGeneration||!nativeSpeaking||p>=pieces.length){
+         if(p>=pieces.length)nativeSpeaking=false;
+         return;
+       }
+       const u=new SpeechSynthesisUtterance(pieces[p++]);
+       u.lang=selected?.lang||"en-US";
+       if(selected)u.voice=selected;
+       u.rate=rate;u.pitch=1;u.volume=undertoneVolume();
+       u.onend=()=>{if(token===readerGeneration)next();};
+       u.onerror=e=>{if(token===readerGeneration&&e.error!=="canceled"&&e.error!=="interrupted")next();};
+       window.speechSynthesis.speak(u);
+     };
+     next();
+     return;
+   }
+   if(!voiceBuffer||voiceSignature!==signature()){
+     report("Generate or record a voice first for Fast/Natural AI mode, or select Instant.");
+     return;
+   }
    const token=readerGeneration,passage=words();
    if(!passage.length)return;
    const timeline=makeTimeline(passage),rate=narrationRate(timeline);
@@ -416,6 +472,13 @@
  }
  async function exportVideo(){
    if(busy)return;
+   // Instant mode creates a small exportable audio buffer on demand. The
+   // ordinary reader already starts speaking without any preparation.
+   if(sel("studioAudio").checked&&sel("studioMode").value==="instant"&&
+      (!voiceBuffer||voiceSignature!==signature())){
+     await synthesize();
+     if(!voiceBuffer||voiceSignature!==signature())return;
+   }
    if(typeof MediaRecorder==="undefined"||!HTMLCanvasElement.prototype.captureStream){
      report("This browser cannot create video files. Please use recent Chrome on Android or desktop.");return;
    }
@@ -522,7 +585,7 @@
    let saved={};
    try{saved=JSON.parse(localStorage.getItem("focusflash-video-v1")||"{}");}catch{}
    const populate=(preferred)=>{
-     const list=mode.value==="fast"?fastVoices:voices;
+     const list=mode.value==="instant"?instantVoices:mode.value==="fast"?fastVoices:voices;
      choice.replaceChildren();
      for(const [key,label] of Object.entries(list)){
        const option=document.createElement("option");
@@ -530,7 +593,7 @@
      }
      choice.value=preferred&&list[preferred]?preferred:Object.keys(list)[0];
    };
-   mode.value=saved.mode==="quality"?"quality":"fast";
+   mode.value=["quality","fast","instant"].includes(saved.mode)?saved.mode:"instant";
    populate(saved.voice);
    if(["portrait","wide","square"].includes(saved.ratio))sel("studioRatio").value=saved.ratio;
    if(Number.isFinite(saved.size))sel("studioScale").value=String(saved.size);
@@ -544,8 +607,12 @@
      readerAudio:sel("studioReaderAudio").checked
    }));}catch{}};
    mode.addEventListener("change",()=>{
-     populate();setVoiceStatus();save();
-     report(mode.value==="fast"?"Fast mobile voice selected. Generate narration for the video.":"Natural high-quality voice selected. Slower on phones.");
+     stopReaderUndertone();populate();setVoiceStatus();save();
+     report(mode.value==="instant"?
+       "Instant phone speech ready. Press Play to hear it now. Video narration prepares automatically when exporting.":
+       mode.value==="fast"?"Fast AI voice selected; generate it before reading with sound.":
+       "Natural AI voice selected; generating it may take time.");
+     updateSpeedHint();
    });
    for(const element of [sel("sourceText"),choice])
      element.addEventListener("input",()=>{
@@ -572,6 +639,10 @@
        previewGain.gain.setTargetAtTime(level,audioContext.currentTime,.025);
      if(readerGain&&audioContext)
        readerGain.gain.setTargetAtTime(level,audioContext.currentTime,.025);
+     // Native SpeechSynthesisUtterance volume cannot change mid-utterance;
+     // restart near the displayed word to use the new level.
+     if(nativeSpeaking&&window.FocusFlashReader?.isPlaying?.())
+       startReaderUndertone(window.FocusFlashReader.currentIndex()).catch(()=>{});
      updateSpeedHint();
      save();
    });
@@ -584,7 +655,9 @@
    sel("studioWav").addEventListener("click",downloadWav);
    sel("studioExport").addEventListener("click",()=>exportVideo().catch(error=>report(error.message)));
    updateSpeedHint();
-   report("Fast mobile narrator ready. The voice will match the flashing-word speed as a quiet undertone.");
+   report(mode.value==="instant"?
+     "Instant voice is ready. Press the reader's Play button; no AI voice generation is needed.":
+     "AI voice selected. Generate it before hearing it in the reader.");
  }
  window.FocusFlashStudio={mount,startReaderUndertone,stopReaderUndertone};
 })();
