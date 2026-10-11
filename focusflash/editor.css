@@ -280,3 +280,31 @@ button,select,textarea{font-family:inherit}
  color:#fff;font-variant-numeric:tabular-nums;font-size:16px
 }
 .tone-exact input[type="number"]:focus-visible{outline:2px solid #d9c6fb;outline-offset:2px}
+
+/* Sound mixer extension — ambience beds and imported audio stay in normal flow. */
+.sound-layer-divider{display:flex;align-items:center;gap:10px;margin:5px 0 0}
+.sound-layer-divider span{white-space:nowrap;color:#dec8ef;font-size:11px;font-weight:800;letter-spacing:.4px}
+.sound-layer-divider:after{content:"";height:1px;flex:1;background:#4e4a62}
+.tone-generator .mp3-import{display:flex!important;align-items:center;justify-content:center;
+  width:100%;min-height:53px;padding:10px 13px;cursor:pointer;text-align:center;
+  background:#2f3045;border:1px dashed #a58cb9;border-radius:12px;color:#efd9ff;font-size:13px}
+.tone-generator .mp3-import:focus-within{outline:2px solid #dbb9ff;outline-offset:2px}
+.tone-generator .mp3-import input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.tone-generator .mp3-file-row{display:flex;align-items:center;gap:8px;justify-content:space-between;
+ background:#171a29;border:1px solid #4c5166;border-radius:11px;padding:9px 10px}
+.tone-generator .mp3-file-row p{min-width:0;overflow-wrap:anywhere;margin:0;color:#c0cfdd;font-size:11px;line-height:1.5}
+.tone-generator .mp3-file-row button{border:1px solid #776579;background:#373347;color:#f8e7f2;
+ font-size:11px;min-height:33px;border-radius:8px;padding:5px 10px;flex:none}
+.tone-generator .mp3-file-row button:disabled{opacity:.36}
+.tone-generator .tone-checkbox{display:flex!important;flex-direction:row!important;align-items:center;gap:10px!important;
+ font-size:12px;color:#eee6f1}
+.tone-generator .tone-checkbox input{flex:none}
+.tone-generator label[for="ambienceMode"],.tone-generator label[for="ambienceVolume"],
+.tone-generator label[for="mp3Volume"]{display:flex!important;flex-direction:column;gap:7px}
+.timeline-strip.tone-track[data-mode="ambient"]{background:#1c3f41;border-color:#468c86}
+.timeline-strip.tone-track[data-mode="ambient"] .tone-track-wave{color:#a5e2d2;opacity:1}
+.timeline-strip.tone-track[data-mode="file"]{background:#302f4c;border-color:#8673b4}
+@media(max-width:710px){
+ .tone-generator .mp3-file-row{padding:8px}
+ .tone-generator .mp3-import{min-height:50px}
+}
