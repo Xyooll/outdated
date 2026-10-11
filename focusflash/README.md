@@ -134,3 +134,20 @@ In pure mode, the app uses one Web Audio sine oscillator, fed equally to both st
 **Test tone** auditions the tone without starting the reader. The reader's Play/Pause starts/stops the tone alongside narration and flashed words. The synced narrated preview also starts/stops the tone. A separate **Include tone in exported video** checkbox controls whether the audio is mixed into WebM. Tonal audio works **without** voice narration. When voice is also enabled, both signals feed one MediaStreamDestination audio track and are recorded together; no third-party sound files or audio services are required.
 
 Tone preferences save locally in `focusflash-tones-v1` and the timeline has an optional tone track. This feature is for audio experimentation and background sound, not clinically validated entrainment, subliminal learning, treatment, or behavioral change. Use low volumes, especially with headphones; avoid using the tool while driving. Default Off leaves earlier reader behavior unchanged.
+
+
+## Sound Mixer: ambient FX and MP3 import
+
+**Live:** https://xyooll.github.io/outdated/focusflash/?v=sound-mixer-2
+
+The **Tones** pane now has three independent sound layers:
+
+1. Existing **pure sine tone or stereo binaural beats**, including exact Hz entry and independent volume, with a checkbox for inclusion in exported video.
+2. **Soundscape presets** generated locally through a Web Audio looping, stereo-buffer procedural engine: white, pink, brown noise, rainfall, ocean waves, wind, flowing stream, fireplace crackles, forest birds, a fan, and night crickets. These are synthesized ambience approximations, not high-fidelity field recordings. Effects have their own volume slider (0–40%, default 18%) and independent export checkbox.
+3. **Imported MP3 or supported audio file** (MP3, WAV, M4A, OGG, AAC/WebM as the browser allows). File import validates the browser's ability to read the audio's metadata and supports files up to 50 MB. MP3 is played through a browser MediaElementSourceNode rather than decoding the entire file into an AudioBuffer, which is more memory efficient for long tracks. Users can loop, control volume (0–100%, default 25%), remove the file, and independently choose inclusion in video export.
+
+A **Preview sound mix** button auditions all enabled layers. Pressing Play in the reader starts the same mix with TTS, and Pause stops it. In WebM export, the same mix feeds one audio destination alongside voice narration; MP3 playback is explicitly started once recording begins, and the track can loop through the entire video. Tone/ambience/MP3-only exports work with narration disabled. Binaural left/right fidelity in a rendered WebM depends on the browser's stereo audio encoder and is not guaranteed until tested on-device.
+
+Everything is local on the device; audio files aren't sent to servers by the application. Settings persist in localStorage. The imported audio file is stored **in this browser's IndexedDB** when supported and sufficient quota exists, then restored on later visits; if saving fails it remains available only for the current page session. Browser data clearing removes it. Browser's tab should remain in the foreground during real-time export.
+
+**Audio safety:** Volumes are intentionally conservative for the synthesized layers, but combined tracks can add loudness; start low, especially with headphones. Binaural auditory stimulation is not scientifically established to achieve subliminal learning or reliably induce specific mental states. Background effects are for ambience/creative mixing only.
