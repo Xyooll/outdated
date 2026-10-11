@@ -7,6 +7,7 @@
  const panels=[...document.querySelectorAll("[data-editor-panel]")];
  const maxClips=48;
  let zoom=1,lastClipWindow="",cachedText=null,cachedSettings="",timelineVersion=0,lastState=null,timeline=null,refreshPending=false,scriptTimer=null;
+ let lastBlockLayout="";
 
  function selectTab(name,scroll=false){
    const tab=tabs.find(t=>t.dataset.editorTab===name);
@@ -62,7 +63,7 @@
    cachedText=text;cachedSettings=settingsKey;timelineVersion++;
    const words=textWords();
    timeline=buildTimeline(words);
-   lastTimelineKey=key;lastClipWindow="";
+   lastClipWindow="";lastBlockLayout="";
    $("timelineClipCount").textContent=words.length.toLocaleString()+" words";
    $("editorTextStats").textContent=words.length.toLocaleString()+" words · "+readableTime(timeline.total)+" estimated";
    $("timelineDuration").textContent=" · "+readableTime(timeline.total);
@@ -130,11 +131,54 @@
      "Live phone text-to-speech for reading. Video soundtrack is synthesized on export.":
      "AI voice can be generated, previewed, and included in exported video.";
  }
+ function drawBlockTrack(index){
+   const api=window.FocusFlashBlocks;
+   const segments=api?.getSequence()||[];
+   const wrapper=$("blockTimelineTrack");
+   wrapper.classList.toggle("hidden",!api?.isEnabled()||!segments.length);
+   if(!segments.length)return;
+   const key=segments.map(v=>v.blockId+":"+v.startWord+":"+v.endWord).join("|");
+   const strip=$("timelineBlocks");
+   if(key!==lastBlockLayout){
+     lastBlockLayout=key;
+     const groups=[];
+     for(const seg of segments){
+       const last=groups[groups.length-1];
+       if(last&&last.blockId===seg.blockId){
+         last.endWord=seg.endWord;last.words+=seg.words;
+       }else groups.push({...seg});
+     }
+     const fragment=document.createDocumentFragment();
+     for(let i=0;i<groups.length;i++){
+       const group=groups[i];
+       const button=document.createElement("button");
+       button.type="button";button.className="timeline-block-chip";
+       button.dataset.start=String(group.startWord);
+       button.dataset.end=String(group.endWord);
+       button.title=group.name+" · "+group.repeats+" play(s)";
+       button.textContent=group.name+" ×"+group.repeats;
+       button.style.flex=Math.max(1,group.words)+" 1 0";
+       button.addEventListener("click",()=>{
+         const scrub=$("progressRange");scrub.value=String(group.startWord);
+         scrub.dispatchEvent(new Event("input",{bubbles:true}));
+       });
+       fragment.append(button);
+     }
+     strip.replaceChildren(fragment);
+   }
+   let current=segments.find(v=>index>=v.startWord&&index<v.endWord) || segments[segments.length-1];
+   $("timelineBlockCount").textContent=current.name+" · "+current.iteration+"/"+current.repeats;
+   for(const button of strip.querySelectorAll(".timeline-block-chip")){
+     const a=Number(button.dataset.start),b=Number(button.dataset.end);
+     button.classList.toggle("active",index>=a&&index<b);
+   }
+ }
  function updatePlayhead(state){
    const t=makeTimeline(),index=Math.min(Math.max(0,state?.index??playheadIndex()),Math.max(t.words.length-1,0));
    const seconds=t.starts[index]||0;
    $("timelineCurrent").textContent=readableTime(seconds);
    drawClips(index);
+   drawBlockTrack(index);
    drawAudioStatus();
  }
  function renderSoon(){
@@ -174,11 +218,15 @@
    }
    const reader=new FileReader();
    reader.onload=()=>{
-     $("sourceText").value=String(reader.result||"");
-     $("sourceText").dispatchEvent(new Event("input",{bubbles:true}));
      if(scriptTimer)clearTimeout(scriptTimer);
      scriptTimer=null;
-     $("loadBtn").click();
+     if(window.FocusFlashBlocks)
+       window.FocusFlashBlocks.useSingleScript(String(reader.result||""));
+     else{
+       $("sourceText").value=String(reader.result||"");
+       $("sourceText").dispatchEvent(new Event("input",{bubbles:true}));
+       $("loadBtn").click();
+     }
      selectTab("script",true);
    };
    reader.onerror=()=>alert("Could not read this file.");
@@ -241,10 +289,14 @@
    const observer=new MutationObserver(mirror);
    observer.observe($("studioStatus"),{childList:true,characterData:true,subtree:true});
    mirror();
+   document.addEventListener("focusflash:blocks-changed",()=>{
+     cachedText=null;lastBlockLayout="";renderSoon();
+   });
    document.addEventListener("focusflash:render",e=>{
      lastState=e.detail||null;
      renderSoon();
    });
+   window.FocusFlashBlocks?.mount?.();
    selectTab("script");
    selectRatio();
    // app.js loads its saved reader size before editor.mount() executes.
