@@ -136,11 +136,11 @@
    if(state.blocks.length<=1)return;
    state.blocks.splice(i,1);render();saveAndApply();
  }
- function enable(next){
+ function enable(next,restoring=false){
    if(timer){clearTimeout(timer);timer=null;}
-   if(next===state.enabled&&ready)return;
+   if(next===state.enabled&&!restoring)return;
    if(next){
-     state.singleText=$("sourceText").value;
+     if(!restoring)state.singleText=$("sourceText").value;
      if(!state.blocks.length)state.blocks.push(block(state.singleText,"Opening",1));
    }else{
      $("sourceText").value=state.singleText;
@@ -184,10 +184,20 @@
    $("sourceText").addEventListener("input",()=>{
      if(!state.enabled){state.singleText=$("sourceText").value;persist();}
    });
-   // Restore the user's original editor mode after the main reader initializes.
-   const wanted=state.enabled;state.enabled=!wanted;
-   enable(wanted);
-   if(!wanted)state.singleText=$("sourceText").value;
+   // Reader state was restored first by app.js. When restoring blocks, do
+   // not overwrite the original single-script draft with expanded text.
+   const wanted=state.enabled;
+   if(wanted){
+     state.enabled=false;
+     enable(true,true);
+   }else{
+     $("singleScriptEditor").hidden=false;
+     $("blockScriptEditor").hidden=true;
+     $("scriptModeSingle").classList.add("active");
+     $("scriptModeBlocks").classList.remove("active");
+     state.singleText=$("sourceText").value;
+     persist();
+   }
  }
  window.FocusFlashBlocks={
    mount,useSingleScript,
