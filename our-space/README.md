@@ -11,7 +11,7 @@
 - [x] Encrypted first-phone phrase verifier added so subsequent unlocks reject the wrong phrase.
 - [ ] Configure Authentication redirect URL (owner's Supabase dashboard).
 - [ ] Invite exactly two email accounts (owner's Supabase dashboard).
-- [ ] Enroll the two invited users into `public.couple_members` (ChatGPT can do this once you have created the users).
+- [x] Enrolled two confirmed accounts into `public.couple_members` (one account per role; no email addresses stored in GitHub).
 - [ ] Verify actual messaging between both phones.
 
 ## Finish setup from your phone
@@ -34,11 +34,11 @@ Under **Authentication → Users**, use **Invite user** for each of your two rea
 
 Disable public signups after the two are invited (Authentication sign-in settings). Do not confuse this with Row Level Security; RLS is already enabled and is enforced even if signups were open.
 
-**3. Enroll your accounts**
+**3. Accounts enrolled**
 
-After both accounts appear in Supabase, tell ChatGPT: **"Both Our Space users have been invited; enroll them."** ChatGPT can look up the two users in this dedicated project and assign them as `person_one` and `person_two`, without requiring you to paste the emails in chat.
+Completed: the two confirmed accounts have been assigned `person_one` and `person_two`. No additional enrollment is needed.
 
-For reference, enrollment uses SQL equivalent to:
+For reference, enrollment is equivalent to:
 
 ```sql
 INSERT INTO public.couple_members(user_id,role)
