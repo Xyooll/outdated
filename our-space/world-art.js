@@ -139,6 +139,9 @@ export function drawAvatar(ctx,a,x,y,opts={}){
  const scale=opts.scale||1;
  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
  const stride=opts.walking?Math.sin((opts.clock||0)*13)*5:0;
+ const sway=opts.walking?Math.sin((opts.clock||0)*13+Math.PI/2)*3:0;
+ const happy=["hug","wave","relax"].includes(opts.activity);
+ const blink=Math.sin((opts.clock||0)*1.6+1)>.996;
  const seated=["relax","watch","eat"].includes(opts.activity);
  if(seated){ctx.translate(0,-9);ctx.scale(1,.88);}
  if(opts.activity==="sleep"){ctx.translate(0,-25);ctx.rotate(-.26);}
@@ -156,8 +159,13 @@ export function drawAvatar(ctx,a,x,y,opts={}){
  fill(ctx,top,-18,-49,36,24);
  fill(ctx,"#f9e9d74d",-11,-46,7,3);
  const skin=SKIN[a.skin]||SKIN.warm, hair=HAIR[a.hair_color]||HAIR.chocolate;
- fill(ctx,"#343347",-25,-47,8,22);fill(ctx,skin,-23,-45,6,17);
- fill(ctx,"#343347",17,-47,8,22);fill(ctx,skin,19,-45,6,17);
+ fill(ctx,"#343347",-25,-47+sway,8,22);
+ fill(ctx,skin,-23,-45+sway,6,17);
+ fill(ctx,"#343347",17,-47-sway,8,22);
+ fill(ctx,skin,19,-45-sway,6,17);
+ // Sleeves, cuffs and belt add readable outfit detail without extra art files.
+ fill(ctx,top,-24,-47+sway,7,7);fill(ctx,top,18,-47-sway,7,7);
+ fill(ctx,"#e9d4c8",-14,-29,27,3);
  fill(ctx,skin,-7,-60,14,13); // neck
  // ears and face
  fill(ctx,"#323347",-17,-82,34,26);fill(ctx,skin,-14,-79,28,25);
@@ -180,9 +188,13 @@ export function drawAvatar(ctx,a,x,y,opts={}){
  // fringe
  fill(ctx,hair,-12,-79,22,5);
  // eyes, smiling mouth, blush
- fill(ctx,"#24283a",-8,-68,3,4);fill(ctx,"#24283a",6,-68,3,4);
+ fill(ctx,"#24283a",-8,-68,3,blink?1:4);
+ fill(ctx,"#24283a",6,-68,3,blink?1:4);
  fill(ctx,"#eaa1a4",-13,-63,5,2);fill(ctx,"#eaa1a4",9,-63,5,2);
- fill(ctx,"#7b4b50",-3,-59,7,2);
+ if(happy){
+  fill(ctx,"#7b4b50",-4,-59,9,2);
+  fill(ctx,"#f8e0db",-2,-57,5,2);
+ }else fill(ctx,"#7b4b50",-3,-59,7,2);
  switch(a.accessory){
  case "crown":
   fill(ctx,"#f9d681",-15,-99,30,8);

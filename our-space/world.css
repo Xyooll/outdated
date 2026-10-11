@@ -104,3 +104,19 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}.center-view{flex:1;
  .world-shell{grid-column:auto;grid-row:auto;max-width:980px;margin:0 auto}
  .sim-drawer-body .chat-section{max-height:none;margin:0}
 }
+
+/* Living Edition: tappable object catalog + contextual activity feedback */
+.life-object-quickbar{display:flex;align-items:center;gap:7px;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin;padding:10px 4px 5px;scroll-snap-type:x proximity;mask-image:linear-gradient(90deg,#000 0%,#000 94%,transparent 100%);}
+.furniture-chip{flex:0 0 auto;border:1px solid #ffffff3b;background:linear-gradient(155deg,#35364e,#282d47);border-radius:12px;color:#f8e7f7;padding:10px 12px;min-height:41px;font-size:12px;font-weight:650;scroll-snap-align:start;box-shadow:inset 0 1px #ffffff12;}
+.furniture-chip:hover,.furniture-chip:focus-visible,.furniture-chip.active{background:#654f6e;border-color:#f3c8da;outline:none;color:#fff}
+.furniture-chip.active{box-shadow:0 0 0 2px #e7bed570}
+.life-action-menu{background:#0e16228c;backdrop-filter:blur(1.5px)}
+.life-actions-card{border:1px solid #f8c8deab;max-height:80%;overflow-y:auto}
+.action-choice{font-weight:600;padding:13px 15px;line-height:1.4}
+.action-choice:disabled{opacity:.43}
+#lifeStatus:not(:empty){padding:8px 10px;background:#2d2942;border-radius:10px;border:1px solid #fff2}
+@media(max-width:540px){
+ .life-object-quickbar{gap:6px;padding:8px 2px 5px;}
+ .furniture-chip{font-size:11px;min-height:38px;padding:8px 9px;}
+ .life-actions-card{width:min(350px,96%)}
+}

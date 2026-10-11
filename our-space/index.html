@@ -4,10 +4,10 @@
 <meta name="theme-color" content="#1c233b">
 <meta name="description" content="Our Space: a miniature household life simulator for two.">
 <meta name="color-scheme" content="dark">
-<title>Our Space · Life Simulator</title>
+<title>Our Space · Life Simulator: Living Edition</title>
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="stylesheet" href="./world.css?v=life-layout-2">
+<link rel="stylesheet" href="./world.css?v=assets-v1">
 </head>
 <body><div class="app">
 <header class="topbar"><div class="brand"><div class="logo">♥</div><div><strong>Our Space</strong><small>Life together</small></div></div>
@@ -32,7 +32,7 @@
 
 <section id="worldView" class="world-view hidden">
  <div class="sim-toolbar">
-  <div class="sim-place"><span class="eyebrow" id="worldEyebrow">OUR HOUSE · LIFE SIM 2.1</span>
+  <div class="sim-place"><span class="eyebrow" id="worldEyebrow">OUR HOUSE · LIVING EDITION</span>
    <h1 id="worldTitle">Cozy Cottage</h1><span id="worldPeople" class="sim-presence">● Connecting</span>
    <span id="worldDescription" class="sr-only">Our shared home</span></div>
   <div class="sim-quick-actions">
@@ -59,6 +59,7 @@
    </div>
    <canvas id="worldCanvas" width="960" height="540" aria-label="Four-room 2D home. Tap furniture for activities or floor to move." tabindex="0"></canvas>
   </div>
+  <div id="lifeObjectQuickbar" class="life-object-quickbar" aria-label="Household furniture interactions"></div>
   <div class="sim-lower">
    <div id="lifeHud" class="life-hud"><div class="life-topline"><strong>Your character's needs</strong><span id="lifeMealCount">🍲 0 meals</span></div><div id="lifeNeeds" class="life-needs"></div></div>
    <div class="sim-movement"><span class="move-hint">Tap floor to walk · Tap furniture to interact</span>
@@ -74,7 +75,7 @@
   <p id="lifeStatus" class="life-status" role="status"></p>
  </div>
 </section></main>
-<footer class="footer">Our Space · A private home for two · <a href="./legacy.html">Old encrypted messages</a> · <span id="buildLabel">Life Sim 2.1</span></footer>
+<footer class="footer">Our Space · A private home for two · <a href="./legacy.html">Old encrypted messages</a> · <span id="buildLabel">Living Edition 2.2</span></footer>
 </div>
 
 <section id="tasksPanel" class="sim-drawer hidden" aria-label="Household duties">
@@ -109,5 +110,5 @@
 <p id="outfitStatus" class="form-status" role="status"></p>
 <button class="primary" id="saveOutfit" type="submit">Save my look <span>✓</span></button></form></div>
 </div></section>
-<script type="module" src="./world.js?v=life-layout-2"></script>
+<script type="module" src="./world.js?v=assets-v1"></script>
 </body></html>
