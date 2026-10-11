@@ -121,3 +121,16 @@ The video preview/reader, WPM timing, central red focal letter, source narration
 Scripts and block settings are stored on-device in localStorage, including whether Blocks mode was selected. Switching back to Single Script restores the separate original single-script draft rather than replacing it with the expanded block sequence. Importing a TXT or Markdown file switches to Single Script to avoid silently destroying an existing block composition.
 
 Limits: 60 blocks, 100 repetitions/block and 100,000 total expanded words. Video output remains limited to eight minutes; the app shows a warning if the selected repetitions would exceed that length at the chosen WPM. Optional heavy AI voices remain limited to 800 unique words and the compact voice to 1,800 unique words per project.
+
+
+## Built-in sine tone and binaural beat generator (v2)
+
+**Live:** https://xyooll.github.io/outdated/focusflash/?v=tones-2
+
+FocusFlash has an in-flow **Tones** tool for synthesizing a sine wave entirely on-device. Switch among **Off**, **Pure tone**, or **Binaural beats**. Carrier frequency is adjustable from **60–1,200 Hz** in integer Hertz (including 432/528), and binaural beat difference is **0.5–40 Hz** in 0.01 Hz increments (including 7.83 Hz). An editable number field is available alongside each slider. Volume is restricted to **0–25%**, default **8%**, with short fades at start/stop. Defaults are off, 220 Hz carrier, and 6 Hz beat difference.
+
+In pure mode, the app uses one Web Audio sine oscillator, fed equally to both stereo channels. In binaural mode, it uses two independent oscillators, **left = carrier − beatDifference/2** and **right = carrier + beatDifference/2**, hard-panned left and right. Stereo headphones are necessary to hear the binaural effect. Some browsers or video encoders may mix the exported channels to mono, so actual exported binaural-channel separation requires testing the video on a stereo-capable playback device.
+
+**Test tone** auditions the tone without starting the reader. The reader's Play/Pause starts/stops the tone alongside narration and flashed words. The synced narrated preview also starts/stops the tone. A separate **Include tone in exported video** checkbox controls whether the audio is mixed into WebM. Tonal audio works **without** voice narration. When voice is also enabled, both signals feed one MediaStreamDestination audio track and are recorded together; no third-party sound files or audio services are required.
+
+Tone preferences save locally in `focusflash-tones-v1` and the timeline has an optional tone track. This feature is for audio experimentation and background sound, not clinically validated entrainment, subliminal learning, treatment, or behavioral change. Use low volumes, especially with headphones; avoid using the tool while driving. Default Off leaves earlier reader behavior unchanged.

@@ -1,11 +1,12 @@
-// FocusFlash Script Blocks v2 — refresh the edit/playback shell.
-const CACHE="focusflash-script-blocks-v2";
+// FocusFlash Studio Tones v2 — network-first shell, local Web Audio generator.
+const CACHE="focusflash-tones-v2";
 const STATIC=[
- "./","./index.html","./styles.css?v=blocks-2","./editor.css?v=blocks-2",
- "./app.js?v=blocks-2","./editor.js?v=blocks-2",
- "./script-blocks.js?v=blocks-2","./video-studio.js?v=blocks-2",
- "./instant-tts.js?v=blocks-2","./pitch-preserve.js?v=blocks-2",
- "./fast-piper.js?v=blocks-2","./manifest.webmanifest","./icon.svg"
+ "./","./index.html","./styles.css?v=tones-2","./editor.css?v=tones-2",
+ "./app.js?v=tones-2","./editor.js?v=tones-2",
+ "./tone-generator.js?v=tones-2","./script-blocks.js?v=tones-2",
+ "./video-studio.js?v=tones-2","./instant-tts.js?v=tones-2",
+ "./pitch-preserve.js?v=tones-2","./fast-piper.js?v=tones-2",
+ "./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(c=>c.addAll(STATIC)));
