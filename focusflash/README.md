@@ -185,3 +185,16 @@ For phone portrait/tablet widths up to 900px the layout becomes a readable verti
 This is an editable speed-reading video maker, not a full multitrack nonlinear editor: visual word clips, script blocks and the existing voice/tone/MP3 layers retain their previous capabilities; footage editing, clip transitions, automatically transcribing a recorded speaker, and audio-to-text alignment are not yet implemented. Existing 2 user workspaces and browser-local persistent state remain, with independent scripts/MP3/audio settings. The prior red fixed-center character, WPM and typography control, and narrated WebM video exporter are unchanged.
 
 Layout JS and structural checks were performed. This release has not been end-to-end visually tested in the user's phone browser.
+
+
+## Mobile Workspace layout revision v1
+
+**Live:** https://xyooll.github.io/outdated/focusflash/?v=mobile-workspace-1
+
+The desktop editor remains a purpose-built speed-reading studio: left tool rail, large centered player, contextual transcript/settings on the right, and word/block/voice/sound timeline below the player. The refreshed neutral-purple palette and consistent transport buttons keep player controls easy to locate.
+
+**Phone and narrow-screen editor:** the player stays visible at the top, with the tool rail beneath. A one-tap **Timeline** tab switches the lower workspace from its editing tools to the word/block/voice/tones timeline, without a long page scroll. Tapping Script, Transcript, Voice, Speed, Canvas, Tones, Export or Profiles switches back to contextual controls in that same lower workspace. The app remembers which lower view and tool were active **for each of the two profiles**. The word-focus letter and existing video aspect ratio settings are unchanged. Quick controls below playback open Speed, Voice and Script. The player has fullscreen/expanded preview where supported.
+
+**Phone navigation:** the header keeps workspace selection and Export visible. The horizontally scrollable rail has Timeline immediately after Transcript. The lower editor panel scrolls independently, rather than moving the player away. Long script blocks, MP3 controls, and transcript lines remain accessible with normal scrolling inside the lower panel. No third-party video files, codecs, neural voices, or original user data were changed.
+
+This is a layout and interaction upgrade, not a full non-linear video editor. All document, soundscape, MP3, voice, and user data remain in per-workspace browser storage. It does not add cloud sync. Automated checks cannot substitute for a final touch/visual test on the user's device.
