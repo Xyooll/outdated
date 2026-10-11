@@ -37,7 +37,7 @@
    <button type="button" id="jumpExportBtn" class="primary">Export <span aria-hidden="true">↗</span></button>
   </div>
  </header>
- <div class="editor-workspace">
+ <div class="editor-workspace" id="editorWorkspace" data-mobile-view="tools">
   <nav class="editor-rail" aria-label="Editor tools">
    <button type="button" class="editor-tab active" data-editor-tab="transcript" aria-current="page"><span aria-hidden="true">≡</span>Transcript</button>
    <button type="button" class="editor-tab" data-editor-tab="script"><span aria-hidden="true">▤</span>Script</button>
@@ -47,6 +47,7 @@
    <button type="button" class="editor-tab" data-editor-tab="tones"><span aria-hidden="true">≋</span>Tones</button>
    <button type="button" class="editor-tab" data-editor-tab="export"><span aria-hidden="true">⇧</span>Export</button>
    <button type="button" class="editor-tab" data-editor-tab="profiles"><span aria-hidden="true">◎</span>Profiles</button>
+   <button type="button" class="editor-tab mobile-timeline-tab" id="mobileTimelineBtn" aria-controls="editorTimeline" aria-pressed="false"><span aria-hidden="true">▥</span>Timeline</button>
   </nav>
   <aside class="editor-inspector" aria-label="Transcript and editing tools">
    <section id="editorTranscript" class="editor-section" data-editor-panel="transcript">
@@ -354,15 +355,21 @@
     </div>
    </div>
    <div class="editor-preview-info"><span id="progressText">Word 1 of 1</span><span id="timeText">~0 sec left</span></div>
+   <div class="preview-shortcuts" aria-label="Quick editing actions">
+    <button type="button" id="quickSpeedBtn" aria-label="Adjust reading speed">◷ <span id="quickWpmValue">300 WPM</span></button>
+    <button type="button" id="quickAudioBtn" aria-label="Edit narration and voice">♫ Voice</button>
+    <button type="button" id="quickEditBtn" aria-label="Edit script blocks">▤ Edit script</button>
+   </div>
    <div class="controls">
     <button id="backBtn" type="button" aria-label="Previous word">◀</button>
     <button id="playBtn" class="primary" type="button">▶ Play</button>
     <button id="nextBtn" type="button" aria-label="Next word">▶</button>
    </div>
   </section>
-  <section class="editor-timeline" aria-label="Timeline editor">
+  <section class="editor-timeline" id="editorTimeline" aria-label="Timeline editor">
    <header class="timeline-header">
-    <div><strong>Editor timeline</strong><small id="timelineDuration"> · 0:00</small></div>
+    <div class="timeline-title"><strong>Timeline</strong><small id="timelineDuration"> · 0:00</small>
+     <p class="timeline-subtitle">Words · Repeats · Sound layers</p></div>
     <div class="timeline-actions"><span class="timeline-zoom-label" id="timelineZoomLabel">1×</span><button type="button" id="timelineZoomOut" aria-label="Zoom out">−</button><button type="button" id="timelineZoomIn" aria-label="Zoom in">＋</button></div>
    </header>
    <div class="timeline-ruler"><span>00:00</span><span id="timelineMid">00:00</span><span id="timelineEnd">00:00</span></div>
