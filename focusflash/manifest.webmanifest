@@ -1,12 +1,12 @@
 {
-  "name": "FocusFlash Speed Reader",
+  "name": "FocusFlash Studio — Reader & Video Editor",
   "short_name": "FocusFlash",
-  "description": "A centered-letter RSVP speed reader.",
+  "description": "Speed reading, instant phone voice, optional AI narration, and video export.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0c0c0d",
-  "theme_color": "#111111",
+  "background_color": "#0e1017",
+  "theme_color": "#151721",
   "orientation": "portrait-primary",
   "icons": [
     {
