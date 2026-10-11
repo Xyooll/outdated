@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>FocusFlash — Reader & Video Maker</title>
-  <link rel="stylesheet" href="styles.css?v=undertone-2">
+  <link rel="stylesheet" href="styles.css?v=natural-pitch-1">
 </head>
 <body>
   <main class="app">
@@ -89,11 +89,11 @@
           <input id="studioAudio" type="checkbox" checked>
           <span>Include generated voice in video</span>
         </label>
-        <label for="studioVolume">Undertone voice volume <strong id="studioVolumeValue">18%</strong>
+        <label for="studioVolume">Quiet voice level (pitch preserved) <strong id="studioVolumeValue">18%</strong>
           <input id="studioVolume" type="range" min="0" max="100" step="1" value="18">
         </label>
         <label class="studio-check" for="studioReaderAudio"><input id="studioReaderAudio" type="checkbox" checked><span>Include voice during normal reading</span></label>
-        <div class="studio-hint" id="studioSpeedHint">The voice will automatically match your word speed (WPM).</div>
+        <div class="studio-hint" id="studioSpeedHint">Your voice will follow the word speed without sounding high-pitched.</div>
       </div>
       <div class="studio-buttons">
         <button type="button" id="studioGenerate" class="primary">✦ Generate AI voice</button>
@@ -112,7 +112,7 @@
           <button id="studioShare" type="button">↗ Share video</button>
         </div>
       </div>
-      <p class="studio-help">Generate speech automatically or tap Record my voice to narrate directly in the app. Microphone recording needs permission. No account, API key, payment, or separate editing app required. Fast voice needs a one-time model download of about 63 MB. Natural voice is larger and slower. Both generate video-ready audio on the device. Video words stay at the selected WPM. Narration is compressed or stretched to match the full passage duration at low volume. Extreme speeds distort pitch; word-by-word phoneme alignment is approximate. Video exports record in real time; keep this tab open until finished. Chrome exports WebM, not MP4.</p>
+      <p class="studio-help">Generate speech automatically or tap Record my voice to narrate directly in the app. Microphone recording needs permission. No account, API key, payment, or separate editing app required. Fast voice needs a one-time model download of about 63 MB. Natural voice is larger and slower. Both generate video-ready audio on the device. Video words stay at your selected WPM. The voice is sped up without raising its pitch. At extreme speeds it can still sound choppy or hard to understand; word-by-word phoneme alignment is approximate. Video exports record in real time; keep this tab open until finished. Chrome exports WebM, not MP4.</p>
     </section>
 
     <section class="text-card">
@@ -131,7 +131,7 @@
     </section>
   </main>
 
-  <script defer src="video-studio.js?v=undertone-2"></script>
-  <script defer src="app.js?v=undertone-2"></script>
+  <script defer src="video-studio.js?v=natural-pitch-1"></script>
+  <script defer src="app.js?v=natural-pitch-1"></script>
 </body>
 </html>
