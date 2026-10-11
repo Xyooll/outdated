@@ -1,10 +1,10 @@
 // FocusFlash Studio: cache the app shell, not heavy optional voice models.
-const CACHE="focusflash-editor-v3";
+const CACHE="focusflash-font-focus-v1";
 const STATIC=[
- "./","./index.html","./styles.css?v=studio-3","./editor.css?v=studio-3",
- "./app.js?v=studio-3","./editor.js?v=studio-3",
- "./video-studio.js?v=studio-3","./instant-tts.js?v=studio-3",
- "./pitch-preserve.js?v=studio-3","./fast-piper.js?v=studio-3",
+ "./","./index.html","./styles.css?v=font-focus-1","./editor.css?v=font-focus-1",
+ "./app.js?v=font-focus-1","./editor.js?v=font-focus-1",
+ "./video-studio.js?v=font-focus-1","./instant-tts.js?v=font-focus-1",
+ "./pitch-preserve.js?v=font-focus-1","./fast-piper.js?v=font-focus-1",
  "./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{

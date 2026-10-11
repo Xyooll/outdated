@@ -101,3 +101,8 @@ Video export with the Instant voice option synthesizes a separate, compact local
 Voice speed matching is pitch preserving for recorded audio where supported; at extreme WPM, intelligibility can drop. Settings, imported script, and reading position are stored on-device. Autosaves during word playback are throttled to avoid repeated large localStorage writes.
 
 Revision studio-3 replaces older page, script, CSS and PWA cache names to avoid restoring an old reader interface. An ordinary browser hard reload should show the updated editor.
+## Fixed focus letter and working font-size controls
+
+The reading and exported-video focal letter is now selected from the **middle of the word**, excluding punctuation; for even letter counts the left-middle letter is highlighted. CSS locks that one red character in the precise center of the preview regardless of word length, using equal, minmax(0,1fr) tracks around a max-content center. The video Canvas draw path already centers the exact highlighted character on W/2.
+
+Both reader preview and video font size now use the same 16–120 pixel control. The Canvas tab has a slider, +/- buttons and exact number entry; there are also always-visible +/- controls above the video preview. Long words automatically shrink to fit while retaining the fixed red focal point. Visit `https://xyooll.github.io/outdated/focusflash/?v=font-focus-1`.
