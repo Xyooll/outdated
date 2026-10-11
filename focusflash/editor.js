@@ -240,6 +240,23 @@
  }
  function attach(){
    for(const tab of tabs)tab.addEventListener("click",()=>selectTab(tab.dataset.editorTab,true));
+   $("topTranscriptBtn").addEventListener("click",()=>selectTab("transcript",true));
+   $("previewFullscreen").addEventListener("click",async()=>{
+     const preview=$("editorPreview");
+     const button=$("previewFullscreen");
+     try{
+       if(document.fullscreenElement)await document.exitFullscreen();
+       else if(preview.requestFullscreen)await preview.requestFullscreen();
+       else throw Error("Fullscreen is not supported by this browser.");
+     }catch(error){
+       button.title="Fullscreen unavailable: "+error.message;
+     }
+   });
+   document.addEventListener("fullscreenchange",()=>{
+     $("previewFullscreen").textContent=document.fullscreenElement?"⤢":"⛶";
+     $("previewFullscreen").setAttribute("aria-label",
+       document.fullscreenElement?"Exit expanded preview":"Expand preview");
+   });
    $("jumpExportBtn").addEventListener("click",()=>{
      selectTab("export",true);
      if(matchMedia("(max-width:710px)").matches)
@@ -303,9 +320,10 @@
      renderSoon();
    });
    window.FocusFlashBlocks?.mount?.();
-   let lastTool="script";
-   try{lastTool=localStorage.getItem(TOOL_KEY)||"script";}catch{}
-   selectTab(tabs.some(t=>t.dataset.editorTab===lastTool)?lastTool:"script");
+   window.FocusFlashTranscript?.mount?.();
+   let lastTool="transcript";
+   try{lastTool=localStorage.getItem(TOOL_KEY)||"transcript";}catch{}
+   selectTab(tabs.some(t=>t.dataset.editorTab===lastTool)?lastTool:"transcript");
    selectRatio();
    // app.js loads its saved reader size before editor.mount() executes.
    // Use that saved size as the single source of truth for both preview and video.
