@@ -220,6 +220,7 @@
        offset+=len+Math.round(gap*rate);
      }
      voiceSignature=intendedSignature;
+     updateSpeedHint();
      sel("studioExport").disabled=false;
      sel("studioListen").disabled=false;sel("studioWav").disabled=false;
      if(voiceSignature!==signature())
@@ -261,6 +262,7 @@
          const ctx=await getContext();
          voiceBuffer=await ctx.decodeAudioData(await blob.arrayBuffer());
          voiceSignature=signature();
+         updateSpeedHint();
          sel("studioListen").disabled=false;sel("studioWav").disabled=false;
          report("Voice recorded ("+Math.ceil(voiceBuffer.duration)+" sec). Export to include it in your video.");
        }catch(error){report("Couldn't process recording: "+error.message);}
@@ -486,16 +488,35 @@
    populate(saved.voice);
    if(["portrait","wide","square"].includes(saved.ratio))sel("studioRatio").value=saved.ratio;
    if(Number.isFinite(saved.size))sel("studioScale").value=String(saved.size);
+   if(Number.isFinite(saved.volume))
+     sel("studioVolume").value=String(Math.max(0,Math.min(100,saved.volume)));
    const save=()=>{try{localStorage.setItem("focusflash-video-v1",JSON.stringify({
      mode:mode.value,voice:choice.value,ratio:sel("studioRatio").value,
-     size:Number(sel("studioScale").value)
+     size:Number(sel("studioScale").value),
+     volume:Number(sel("studioVolume").value)
    }));}catch{}};
    mode.addEventListener("change",()=>{
      populate();setVoiceStatus();save();
      report(mode.value==="fast"?"Fast mobile voice selected. Generate narration for the video.":"Natural high-quality voice selected. Slower on phones.");
    });
    for(const element of [sel("sourceText"),choice])
-     element.addEventListener("input",setVoiceStatus);
+     element.addEventListener("input",()=>{
+       setVoiceStatus();updateSpeedHint();
+     });
+   for(const id of ["wpm","punctuationPause","longWordPause"]){
+     const element=sel(id);
+     element.addEventListener("input",()=>{
+       if(previewSource)stopPreview();
+       updateSpeedHint();
+     });
+   }
+   sel("studioVolume").addEventListener("input",()=>{
+     const level=undertoneVolume();
+     if(previewGain&&audioContext)
+       previewGain.gain.setTargetAtTime(level,audioContext.currentTime,.025);
+     updateSpeedHint();
+     save();
+   });
    for(const id of ["studioVoice","studioRatio","studioScale"])
      sel(id).addEventListener("change",save);
    sel("studioGenerate").addEventListener("click",synthesize);
@@ -504,7 +525,8 @@
    sel("studioListen").addEventListener("click",()=>listen().catch(error=>report(error.message)));
    sel("studioWav").addEventListener("click",downloadWav);
    sel("studioExport").addEventListener("click",()=>exportVideo().catch(error=>report(error.message)));
-   report("Fast mobile narration ready to start. First use downloads a voice model.");
+   updateSpeedHint();
+   report("Fast mobile narrator ready. The voice will match the flashing-word speed as a quiet undertone.");
  }
  window.FocusFlashStudio={mount};
 })();
