@@ -91,6 +91,7 @@
      <p id="studioStatus" class="studio-status" role="status" aria-live="polite">Instant voice ready.</p>
      <canvas id="studioSyncCanvas" class="studio-sync-canvas hidden" width="360" height="640" aria-label="Synchronized voice and reading preview"></canvas>
      <p class="studio-help">The phone's built-in voice starts without an AI download. Generated narration for video needs separate audio preparation because browser system speech cannot be directly captured. Optional AI voices remain available.</p>
+     <p class="editor-small-note">Compact video narration uses open-source eSpeak NG (<a href="./vendor/GPL-3.0-LICENSE.txt" target="_blank" rel="noopener">GPLv3</a>); optional neural voices use their respective models.</p>
     </div>
    </section>
    <section id="editorTiming" class="editor-section" data-editor-panel="timing" hidden>
@@ -145,6 +146,7 @@
      <div class="studio-buttons">
       <button type="button" class="primary" id="studioExport">● Export WebM video</button>
      </div>
+     <p class="studio-status" id="editorExportStatus" role="status">Ready to create a video.</p>
      <div id="studioResult" class="studio-result hidden">
       <p class="studio-result-label">Latest rendered video</p>
       <video id="studioPreview" controls playsinline preload="metadata"></video>
