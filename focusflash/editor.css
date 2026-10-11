@@ -233,3 +233,42 @@ button,select,textarea{font-family:inherit}
  .script-block-bottom .repeat-label{flex-wrap:wrap}
  .script-block-count{max-width:70px}
 }
+
+
+/* Tone Generator: no modal; sound controls live in the editor tool pane. */
+.tone-generator{display:flex;flex-direction:column;gap:15px}
+.tone-generator>label,.tone-generator #toneBeatRow label{
+ display:flex;flex-direction:column;gap:8px;font-size:12px;color:#ece6f5;
+}
+.tone-generator select{
+ display:block;width:100%;min-height:45px;background:#101321;
+ color:#faf7ff;border:1px solid #66587a;border-radius:11px;padding:9px 11px;
+ font-size:13px
+}
+.tone-generator input[type="range"]{
+ width:100%;min-height:34px;accent-color:#c6b4fd;
+}
+.tone-generator strong{font-size:12px;color:#e6d2ff;font-variant-numeric:tabular-nums}
+#toneBeatRow[hidden],#toneHeadphones[hidden]{display:none!important}
+#toneBeatRow{padding:12px 13px;background:#25283c;border-radius:12px;border:1px solid #574d78}
+.tone-note{font-size:11px;color:#b5b9ce;line-height:1.6;margin:3px 0}
+.tone-buttons{display:flex;align-items:center;gap:9px}
+.tone-buttons button{
+ min-height:43px;padding:10px 16px;border-radius:11px;
+ background:#d9c6fb;border:1px solid #e6d7ff;color:#282038;
+ font-size:12px;font-weight:750;flex:1
+}
+.tone-readout{
+ font-size:12px;color:#e8dbf7;padding:10px 12px;border-radius:11px;
+ border:1px solid #62546f;background:#242335;text-align:center;
+ line-height:1.5;font-variant-numeric:tabular-nums
+}
+.tone-checkbox{flex-direction:row!important;align-items:center;gap:9px!important}
+.tone-checkbox input{width:19px;height:19px;accent-color:#cbadf5;flex:none}
+.tone-status{font-size:11px;color:#b9dccd;margin:0;padding:9px 10px;background:#16282b;border-radius:10px;border:1px solid #47746e}
+.timeline-strip.tone-track{min-height:35px;background:#242b3d;align-items:center;justify-content:center;border-color:#465c87}
+.timeline-strip.tone-track[data-mode="pure"]{background:#243b51;border-color:#4d86a2}
+.timeline-strip.tone-track[data-mode="binaural"]{background:#343154;border-color:#827ab4}
+.tone-track-wave{color:#9fa9c6;white-space:nowrap;font-size:15px;letter-spacing:5px;opacity:.65;overflow:hidden}
+.tone-track[data-mode="pure"] .tone-track-wave{color:#b2e8f1;opacity:.95}
+.tone-track[data-mode="binaural"] .tone-track-wave{color:#d3b5f6;opacity:.95}
