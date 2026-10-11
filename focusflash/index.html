@@ -40,6 +40,7 @@
  <div class="editor-workspace" id="editorWorkspace" data-mobile-view="tools">
   <nav class="editor-rail" aria-label="Editor tools">
    <button type="button" class="editor-tab active" data-editor-tab="transcript" aria-current="page"><span aria-hidden="true">≡</span>Transcript</button>
+   <button type="button" class="editor-tab mobile-timeline-tab" id="mobileTimelineBtn" aria-controls="editorTimeline" aria-pressed="false"><span aria-hidden="true">▥</span>Timeline</button>
    <button type="button" class="editor-tab" data-editor-tab="script"><span aria-hidden="true">▤</span>Script</button>
    <button type="button" class="editor-tab" data-editor-tab="voice"><span aria-hidden="true">♫</span>Voice</button>
    <button type="button" class="editor-tab" data-editor-tab="timing"><span aria-hidden="true">◷</span>Speed</button>
@@ -47,9 +48,9 @@
    <button type="button" class="editor-tab" data-editor-tab="tones"><span aria-hidden="true">≋</span>Tones</button>
    <button type="button" class="editor-tab" data-editor-tab="export"><span aria-hidden="true">⇧</span>Export</button>
    <button type="button" class="editor-tab" data-editor-tab="profiles"><span aria-hidden="true">◎</span>Profiles</button>
-   <button type="button" class="editor-tab mobile-timeline-tab" id="mobileTimelineBtn" aria-controls="editorTimeline" aria-pressed="false"><span aria-hidden="true">▥</span>Timeline</button>
+
   </nav>
-  <aside class="editor-inspector" aria-label="Transcript and editing tools">
+  <aside class="editor-inspector" id="editorInspector" aria-label="Transcript and editing tools">
    <section id="editorTranscript" class="editor-section" data-editor-panel="transcript">
     <header class="editor-panel-head">
      <span class="editor-eyebrow">PROJECT TRANSCRIPT</span>
