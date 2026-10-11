@@ -1,302 +1,80 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#201628"><meta name="color-scheme" content="dark">
-<meta name="description" content="Our Space: an encrypted place for two">
-<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
-<title>Our Space · Just Us</title>
-<style>
-*{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#faeef8;background:radial-gradient(ellipse at 50% 0,#47304e 0,#201628 50%,#15111b 100%)}button,input,textarea{font:inherit}button{cursor:pointer}.app{margin:auto;max-width:780px;min-height:100dvh;display:flex;flex-direction:column;border-inline:1px solid #ffffff0b}.top{height:76px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff16}.logo{display:flex;align-items:center;gap:12px}.logo b,.logo small{display:block}.logo b{font-size:16px}.logo small{font-size:11px;color:#b9a8bf;margin-top:4px}.heart{display:grid;place-items:center;width:41px;height:41px;border-radius:14px;background:#f8badd;color:#4e284c;font-size:24px}.light{border:1px solid #64506b;border-radius:99px;background:transparent;color:#e8d4e7;padding:9px 15px}.hidden{display:none!important}main{flex:1;display:flex;flex-direction:column;min-height:0}.gate{display:flex;flex:1;align-items:center;justify-content:center;flex-direction:column;padding:24px;gap:24px}.intro{text-align:center;max-width:410px}.emblem{display:block;font-size:53px;color:#f4b7d6;margin-bottom:14px}.intro h1{font-size:clamp(32px,7vw,44px);font-weight:600;letter-spacing:-1.7px;line-height:1.12;margin:0 0 13px}.intro p{margin:0;color:#bdadc2;font-size:14px;line-height:1.65}.panel{background:linear-gradient(155deg,#35243e,#251d2e);border:1px solid #5f4b62;border-radius:24px;padding:27px 24px;width:min(100%,420px);box-shadow:0 20px 45px #0004}.eyebrow{font-size:11px;color:#e1b1d1;letter-spacing:2px;font-weight:750}.panel h2{font-size:20px;font-weight:600;letter-spacing:-.4px;margin:10px 0 24px}.panel label{display:block;color:#e7d9e8;font-size:12px;margin-bottom:9px}.panel input{width:100%;background:#181320;border:1px solid #67516c;border-radius:12px;padding:15px 13px;color:white;outline:0;font-size:16px}.panel input:focus,.composer textarea:focus{border-color:#f7bddc;box-shadow:0 0 0 3px #f7bddc19}.primary{background:#f5b9d9;color:#37203a;border:0;border-radius:13px;width:100%;padding:15px;margin-top:15px;font-weight:750;font-size:14px}.primary:disabled,.send:disabled{opacity:.5}.note{font-size:12px;color:#c0aebf;line-height:1.6;margin:16px 0 0}.status{color:#fbcce5;font-size:12px;line-height:1.5}.textbutton{display:block;margin:15px auto 0;background:transparent;border:0;color:#cab8cb;text-decoration:underline;font-size:12px}.chat{flex:1;min-height:0;display:flex;flex-direction:column}.peer{padding:15px 20px;border-bottom:1px solid #ffffff16;display:flex;gap:13px;align-items:center}.peericon{display:grid;place-items:center;width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#aa739e,#ffd2e7);color:#6b3762}.peer strong{font-size:16px}.peer small{display:block;color:#b0a0b5;font-size:11px;margin-top:5px}.messages{flex:1;min-height:250px;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:24px 17px;scrollbar-color:#5a3a60 transparent}.empty{margin:auto;text-align:center;color:#b9a9bd;font-size:13px}.empty span{font-size:40px;color:#f6bbd8}.msg{max-width:85%;display:flex;flex-direction:column;gap:4px}.msg.me{align-self:flex-end;align-items:flex-end}.msg.them{align-self:flex-start;align-items:flex-start}.bubble{background:#382c42;border-radius:18px 18px 18px 5px;padding:12px 15px;font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.me .bubble{background:#f2b5d6;color:#382338;border-radius:18px 18px 5px 18px}.meta{font-size:10px;color:#9e89a4;padding:0 5px}.day{align-self:center;padding:7px 12px;margin:10px 0;background:#ffffff0b;border-radius:99px;color:#b9a6be;font-size:10px}.composer{display:flex;align-items:end;gap:10px;background:#241b2d;border-top:1px solid #ffffff17;padding:12px 15px calc(12px + env(safe-area-inset-bottom))}.composer textarea{background:#17121d;border:1px solid #66506d;border-radius:20px;color:white;padding:14px;resize:none;flex:1;font-size:16px;line-height:1.4;max-height:140px;outline:0}.send{display:grid;place-items:center;width:49px;height:49px;border:0;border-radius:50%;background:#f5b9d9;color:#3b2340;font-size:25px;flex-shrink:0}.footer{text-align:center;font-size:11px;color:#89768e;padding:12px}.feedback{color:#edb9d7;background:#241b2d;text-align:center;font-size:11px;margin:0}.feedback:not(:empty){padding:0 10px 9px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}a{color:#f6b9d8}@media(min-width:600px){.msg{max-width:68%}}@media(max-height:700px){.gate{justify-content:start;gap:15px}.emblem{margin:0;font-size:30px}.intro h1{font-size:30px}.panel{padding:20px}}
-</style>
-</head><body><div class="app">
-<header class="top"><div class="logo"><span class="heart">♥</span><div><b>Our Space</b><small>Just the two of us</small></div></div><button id="lockBtn" class="light hidden" type="button">Lock</button></header>
+<meta name="theme-color" content="#1c233b">
+<meta name="description" content="Our Space: three tiny worlds for two people.">
+<meta name="color-scheme" content="dark">
+<title>Our Space · Worlds for Two</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="stylesheet" href="./world.css">
+</head>
+<body><div class="app">
+<header class="topbar"><div class="brand"><div class="logo">♥</div><div><strong>Our Space</strong><small>Worlds for two</small></div></div>
+<div class="top-actions"><span id="networkState" class="network">Private worlds</span><button id="signoutBtn" class="subtle hidden" type="button">Sign out</button></div></header>
 <main>
-<section id="setup" class="gate hidden"><div class="intro"><span class="emblem">♥</span><h1>Something just for us.</h1><p>A little corner of the world that belongs to two people.</p></div><div class="panel"><span class="eyebrow">ONE-TIME SETUP</span><h2>Connect private messaging</h2><p class="note">Create a dedicated Supabase project, run setup.sql, invite only your two accounts, and add the project URL and publishable key to config.js.</p><p class="note">Instructions: <a href="https://github.com/Xyooll/outdated/tree/main/our-space">GitHub setup guide</a></p><p class="status">No messages can be sent until setup is complete.</p></div></section>
-<section id="login" class="gate hidden"><div class="intro"><span class="emblem">♥</span><h1>Only you & me.</h1><p>One conversation, away from all the noise.</p></div><form id="loginForm" class="panel"><span class="eyebrow">PRIVATE ACCESS</span><h2>Come on in</h2><label for="email">Your invited email</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
-<label for="loginPassword" style="margin-top:17px">Your account password</label>
-<input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Supabase account password">
-<button id="loginBtn" class="primary">Sign in securely →</button>
-<button id="forgotBtn" class="textbutton" type="button" style="margin-top:18px">Forgot password? Send a reset link</button>
-<p class="note">Use the password you set for this Supabase account, not the private phrase used to encrypt messages. Only your two approved accounts can access this room.</p>
-<p class="note">If you choose an email link, open it once in the same browser where you will use the app.</p><p id="loginStatus" class="status" role="status"></p></form></section>
-<section id="passwordReset" class="gate hidden"><form id="passwordResetForm" class="panel"><span class="eyebrow">ACCOUNT RECOVERY</span><h2>Choose a new password</h2><label for="freshPassword">New account password</label><input id="freshPassword" type="password" minlength="12" required autocomplete="new-password"><label for="freshPassword2" style="margin-top:14px">Confirm password</label><input id="freshPassword2" type="password" minlength="12" required autocomplete="new-password"><button id="saveFreshPassword" class="primary">Save new password</button><p id="passwordResetStatus" class="status" role="status"></p></form></section><section id="unlock" class="gate hidden"><div class="intro"><span class="emblem">✦</span><h1>Your words. Your key.</h1><p>Messages unlock on your phone. Your encryption phrase never goes to the server.</p></div><form id="unlockForm" class="panel"><span class="eyebrow">ENCRYPTED CHAT</span><h2>Unlock our conversation</h2><label for="phrase">Our shared secret phrase</label><input id="phrase" type="password" required minlength="12" autocomplete="off" placeholder="Our private phrase"><button id="unlockBtn" class="primary">Unlock conversation ↗</button><label style="display:flex;align-items:flex-start;gap:10px;margin:18px 0 0;line-height:1.45;font-size:13px"><input id="rememberDevice" type="checkbox" style="width:18px;height:18px;flex:none;margin:0;accent-color:#f5b9d9"><span>Keep this conversation unlocked on this phone</span></label>
-<p class="note">For your own screen-locked phone only. Saves a non-exportable encryption key in local device storage, not the phrase. Anyone with access to this unlocked phone/browser could still read messages. Tap <b>Lock</b> to forget this device key.</p>
-<p class="note">Use the exact same long, random phrase on both phones. Share it in person. Losing it means losing access to older messages.</p><p id="unlockStatus" class="status" role="status"></p><button type="button" id="logout" class="textbutton">Sign out</button></form></section>
-<section id="chat" class="chat hidden"><div class="peer"><div class="peericon">♥</div><div><strong>Our conversation</strong><small><span id="liveStatus">Connecting…</span> · End-to-end encrypted</small></div></div><div id="messages" class="messages" role="log" aria-live="polite" aria-label="Our messages"></div><form id="sendForm" class="composer"><label for="entry" class="sr">New message</label><textarea id="entry" rows="1" maxlength="2000" enterkeyhint="send" required placeholder="Write something sweet…"></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></form><p class="feedback" id="sendStatus" role="status"></p></section>
-</main><footer class="footer">A place for two · No ads · No spectators</footer></div>
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
-import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js";
-import { saveDeviceKey, getDeviceKey, forgetDeviceKey } from "./device-state.js";
-const $ = id => document.getElementById(id);
-const ids = ["setup","login","passwordReset","unlock","chat"];
-const ready = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(PROJECT_URL) && (PUBLISHABLE_KEY.startsWith("sb_publishable_") || PUBLISHABLE_KEY.length > 100);
-// Session persistence survives reloads in the SAME Chrome/PWA browser profile.
-const supabase = ready ? createClient(PROJECT_URL, PUBLISHABLE_KEY, {
- auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-}) : null;
-const encoder = new TextEncoder(), decoder = new TextDecoder();
-const aad = encoder.encode("our-space-v1");
-let me=null, salt=null, verifier=null, key=null, channel=null, refresh=0, isRecovering=false, initializing=null, draftRevision=0, draftTimer=null;
-function show(id){ for(const name of ids)$(name).classList.toggle("hidden",name!==id);$("lockBtn").classList.toggle("hidden",id!=="chat");}
-function tell(id,message){$(id).textContent=message||"";}
-function errorText(e){return e && e.message || "Something went wrong.";}
-function base64(bytes){let s="";for(const b of bytes)s+=String.fromCharCode(b);return btoa(s);}
-function unbase64(value){return Uint8Array.from(atob(value),x=>x.charCodeAt(0));}
-async function derive(phrase){if(phrase.length<12)throw Error("Use a long, unique phrase of at least 12 characters.");const raw=await crypto.subtle.importKey("raw",encoder.encode(phrase),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt:unbase64(salt),iterations:600000,hash:"SHA-256"},raw,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);}
-async function encrypt(text){const iv=crypto.getRandomValues(new Uint8Array(12));const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv,additionalData:aad},key,encoder.encode(text));return{iv:base64(iv),ciphertext:base64(new Uint8Array(cipher))};}
-async function decrypt(row){const raw=await crypto.subtle.decrypt({name:"AES-GCM",iv:unbase64(row.iv),additionalData:aad},key,unbase64(row.ciphertext));return decoder.decode(raw);}
-const verificationMarker = "OUR_SPACE_PHRASE_CONFIRMATION_V1";
-async function verifyPairPhrase() {
- if (verifier?.ciphertext) {
-  let value;
-  try { value = await decrypt({iv:verifier.iv,ciphertext:verifier.ciphertext}); }
-  catch { throw Error("Wrong shared secret phrase. Enter the exact same phrase used on the first phone."); }
-  if (value !== verificationMarker) throw Error("Secret phrase verification failed.");
-  return;
- }
- const packet=await encrypt(verificationMarker);
- const result=await supabase.from("couple_room")
-  .update({verifier_iv:packet.iv,verifier_ciphertext:packet.ciphertext})
-  .eq("id",1).is("verifier_ciphertext",null)
-  .select("verifier_iv,verifier_ciphertext");
- if (result.error) throw result.error;
- if (result.data?.length) {
-  verifier={iv:result.data[0].verifier_iv,ciphertext:result.data[0].verifier_ciphertext};
-  return;
- }
- const current=await supabase.from("couple_room")
-  .select("verifier_iv,verifier_ciphertext").eq("id",1).single();
- if (current.error) throw current.error;
- verifier={iv:current.data.verifier_iv,ciphertext:current.data.verifier_ciphertext};
- if (!verifier.ciphertext) throw Error("Could not save the encryption verification. Try again.");
- await verifyPairPhrase();
-}
-function lock(){
- key=null;refresh++;draftRevision++;clearTimeout(draftTimer);
- $("phrase").value="";$("rememberDevice").checked=false;
- $("messages").replaceChildren();delete $("messages").dataset.initialized;
- $("entry").value="";
- if(channel){supabase.removeChannel(channel);channel=null;}
- show(me?"unlock":"login");
-}
-async function manuallyLock(){
- const who=me?.id;
- if(who){
-  try{await forgetDeviceKey(PROJECT_URL,who);}
-  catch(e){tell("sendStatus","Could not clear this device unlock: "+errorText(e)+". Try again.");return;}
- }
- lock();
-}
-function draftName(uid=me?.id){return "our-space-draft-v1:"+PROJECT_URL+":"+uid;}
-async function saveDraft(revision){
- const owner=me?.id, currentKey=key, value=$("entry").value;
- if(!currentKey || !owner)return;
- if(!value){
-  if(revision===draftRevision)localStorage.removeItem(draftName(owner));
-  return;
- }
- const payload=await encrypt(value);
- if(revision!==draftRevision || key!==currentKey || me?.id!==owner)return;
- localStorage.setItem(draftName(owner),JSON.stringify(payload));
-}
-async function restoreDraft(){
- if(!key || !me)return;
- const owner=me.id, currentKey=key, raw=localStorage.getItem(draftName(owner));
- if(!raw)return;
- try {
-  const value=await decrypt(JSON.parse(raw));
-  if(currentKey===key && me?.id===owner && !$("entry").value) $("entry").value=value;
- }catch{
-  // A draft encrypted under an old/incorrect key is not recoverable.
-  localStorage.removeItem(draftName(owner));
- }
-}
-function scheduleDraftSave(){
- const revision=++draftRevision;
- clearTimeout(draftTimer);
- draftTimer=setTimeout(()=>saveDraft(revision).catch(()=>{}),450);
-}
-async function openChat(){
- await load();
- await restoreDraft();
- show("chat");
- subscribe();
-}
-
-async function initialize(){
- if(initializing)return initializing;
- initializing=initializeOnce();
- try{return await initializing;}finally{initializing=null;}
-}
-async function initializeOnce(){
- if(!supabase){show("setup");return;}
- try{
-  const identity=await supabase.auth.getUser();
-  if(identity.error||!identity.data.user){
-   if(identity.error && identity.error.name!=="AuthSessionMissingError"){
-    tell("loginStatus","Cannot check your saved sign-in. Check internet and retry: "+errorText(identity.error));
-   }
-   me=null;lock();return;
-  }
-  if(isRecovering){me=identity.data.user;show("passwordReset");return;}
-  if(me?.id===identity.data.user.id && key)return;
-  me=identity.data.user;
-  const allowed=await supabase.from("couple_members").select("role").eq("user_id",me.id).maybeSingle();
-  if(allowed.error)throw allowed.error;
-  if(!allowed.data){lock();show("login");tell("loginStatus","This account is not approved for this private chat.");return;}
-  const room=await supabase.from("couple_room").select("salt,verifier_iv,verifier_ciphertext").eq("id",1).single();
-  if(room.error)throw room.error;
-  salt=room.data.salt;
-  verifier={iv:room.data.verifier_iv,ciphertext:room.data.verifier_ciphertext};
-  lock(); // clears only in-memory state; does NOT delete a remembered device key
-  let saved=null;
-  try{saved=await getDeviceKey(PROJECT_URL,me.id,salt);}
-  catch(e){tell("unlockStatus","Trusted-device storage unavailable. Enter your phrase to continue.");}
-  if(saved && verifier?.ciphertext){
-   key=saved;
-   try{
-    await verifyPairPhrase();  // authenticate the saved key against the room
-    await openChat();
-    return;
-   }catch(e){
-    // If the key was changed, revoked, or corrupted, require the phrase again.
-    if(e.message?.includes("Wrong shared secret phrase") || e.message?.includes("verification failed")){
-     await forgetDeviceKey(PROJECT_URL,me.id).catch(()=>{});
-    }
-    tell("unlockStatus","Could not restore saved unlock. Enter your shared phrase to continue.");
-    lock();
-   }
-  }else if(saved){
-   // First-use phrase verification must be set interactively.
-   await forgetDeviceKey(PROJECT_URL,me.id).catch(()=>{});
-  }
-  show("unlock");
- }catch(e){
-  key=null;
-  lock();show("login");
-  tell("loginStatus","Could not open room: "+errorText(e));
- }
-}
-async function load(){
- if(!key)return;
- const turn=++refresh;
- const res=await supabase.from("couple_messages").select("id,sender_id,iv,ciphertext,created_at").order("created_at",{ascending:false}).limit(250);
- if(res.error)throw res.error;
- const rows=res.data.reverse();
- const texts=await Promise.all(rows.map(row=>decrypt(row).then(t=>({row,text:t,ok:true})).catch(()=>({row,text:"🔒 Unable to decrypt",ok:false}))));
- if(!key||turn!==refresh)return;
- if(texts.length&&texts.every(x=>!x.ok))throw Error("The shared phrase does not match existing messages. Check that both phones use the exact same phrase.");
- const feed=$("messages");const bottom=feed.scrollHeight-feed.scrollTop-feed.clientHeight<100;
- const frag=document.createDocumentFragment();
- if(!texts.length){const empty=document.createElement("div");empty.className="empty";empty.innerHTML="<span>♥</span><h2>It starts here.</h2><p>Leave a note, a thought, or just an I love you.</p>";frag.append(empty);}
- let day="";
- for(const item of texts){
-  const label=new Date(item.row.created_at).toLocaleDateString([],{month:"short",day:"numeric"});
-  if(label!==day){const sep=document.createElement("div");sep.className="day";sep.textContent=label;frag.append(sep);day=label;}
-  const own=item.row.sender_id===me.id;
-  const msg=document.createElement("article");msg.className="msg "+(own?"me":"them");
-  const bubble=document.createElement("div");bubble.className="bubble";bubble.textContent=item.text;
-  const time=document.createElement("span");time.className="meta";time.textContent=(own?"You · ":"♥ · ")+new Date(item.row.created_at).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
-  msg.append(bubble,time);frag.append(msg);
- }
- feed.replaceChildren(frag);if(bottom||!feed.dataset.initialized)feed.scrollTop=feed.scrollHeight;feed.dataset.initialized="true";
-}
-function subscribe(){if(channel)supabase.removeChannel(channel);channel=supabase.channel("couple-chat-live").on("postgres_changes",{event:"INSERT",schema:"public",table:"couple_messages"},()=>{load().catch(e=>tell("sendStatus",errorText(e)));}).subscribe(status=>{$("liveStatus").textContent=status==="SUBSCRIBED"?"● Live":"Reconnecting…";});}
-$("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();$("loginBtn").disabled=true;tell("loginStatus","");
- try {
-  const email=$("email").value.trim(),password=$("loginPassword").value;
-  if (!email || !password) throw Error("Enter your invited email and account password.");
-  const res=await supabase.auth.signInWithPassword({email,password});
-  if(res.error)throw res.error;
-  $("loginPassword").value="";
-  await initialize();
- } catch(err) {
-  tell("loginStatus","Sign-in unsuccessful: "+errorText(err)+". If you do not have a password, choose the email-link option below.");
- } finally { $("loginPassword").value="";$("loginBtn").disabled=false; }
-});
-$("forgotBtn").addEventListener("click",async()=>{
- const field=$("email");
- if(!field.value.trim()||!field.checkValidity()){field.reportValidity();return;}
- $("forgotBtn").disabled=true;
- try{
-  const response=await supabase.auth.resetPasswordForEmail(field.value.trim(),{redirectTo:location.origin+location.pathname});
-  if(response.error)throw response.error;
-  tell("loginStatus","Check your email for a new password reset link. Open it once. Email delivery may be temporarily rate-limited.");
- }catch(err){tell("loginStatus",errorText(err));}
- finally{$("forgotBtn").disabled=false;}
-});
-$("passwordResetForm").addEventListener("submit",async e=>{
- e.preventDefault();
- const password=$("freshPassword").value;
- if(password!==$("freshPassword2").value){tell("passwordResetStatus","Passwords do not match.");return;}
- $("saveFreshPassword").disabled=true;
- try{
-  const result=await supabase.auth.updateUser({password});
-  if(result.error)throw result.error;
-  $("freshPassword").value="";$("freshPassword2").value="";
-  isRecovering=false;history.replaceState(null,"",location.pathname);
-  await initialize();
-  tell("unlockStatus","Account password saved. Now use your separate shared encryption phrase.");
- }catch(err){tell("passwordResetStatus",errorText(err));}
- finally{$("saveFreshPassword").disabled=false;}
-});
-function surfaceRedirectError() {
- const query=new URLSearchParams(location.search);
- const fragment=new URLSearchParams(location.hash.replace(/^#/,""));
- const code=query.get("error")||fragment.get("error");
- const reason=query.get("error_description")||fragment.get("error_description");
- if(!code)return;
- const details=(reason||code).replace(/\+/g," ");
- tell("loginStatus","Email sign-in did not complete: "+details+". Request a fresh link or sign in with your account password.");
- if(!location.hash.includes("access_token"))history.replaceState(null,"",location.pathname);
-}
-surfaceRedirectError();
-$("unlockForm").addEventListener("submit",async e=>{
- e.preventDefault();$("unlockBtn").disabled=true;tell("unlockStatus","");
- try{
-  key=await derive($("phrase").value);
-  await verifyPairPhrase();
-  await openChat();
-  if($("rememberDevice").checked){
-    try{await saveDeviceKey(PROJECT_URL,me.id,salt,key);}
-    catch(e){tell("sendStatus","Trusted-device unlock could not be saved: "+errorText(e));}
-  }
-  $("phrase").value="";
-  $("entry").focus();
- }
- catch(err){key=null;tell("unlockStatus",errorText(err));}finally{$("unlockBtn").disabled=false;}
-});
-$("sendForm").addEventListener("submit",async e=>{
- e.preventDefault();if(!key||!me)return;const message=$("entry").value.trim();if(!message)return;
- $("sendBtn").disabled=true;tell("sendStatus","");
- try{const packet=await encrypt(message);const res=await supabase.from("couple_messages").insert({sender_id:me.id,...packet});if(res.error)throw res.error;
-  $("entry").value="";
-  draftRevision++;clearTimeout(draftTimer);localStorage.removeItem(draftName());
-  await load();$("messages").scrollTop=$("messages").scrollHeight;}
- catch(err){tell("sendStatus","Message not sent: "+errorText(err));}
- finally{$("sendBtn").disabled=false;}
-});
-$("entry").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();if(!$("sendBtn").disabled)$("sendForm").requestSubmit();}});
-$("lockBtn").addEventListener("click",manuallyLock);
-$("entry").addEventListener("input",scheduleDraftSave);
-$("logout").addEventListener("click",async()=>{
- const who=me?.id;
- if(who){await forgetDeviceKey(PROJECT_URL,who).catch(()=>{});localStorage.removeItem(draftName(who));}
- await supabase.auth.signOut();
- me=null;lock();
-});
-if(supabase){supabase.auth.onAuthStateChange(event=>{
- if(event==="PASSWORD_RECOVERY"){isRecovering=true;setTimeout(()=>show("passwordReset"),0);}
- else if(event==="SIGNED_OUT"){
-  const oldUser=me?.id;
-  if(oldUser)forgetDeviceKey(PROJECT_URL,oldUser).catch(()=>{});
-  isRecovering=false;me=null;lock();setTimeout(initialize,0);
-}
- else if(event==="SIGNED_IN")setTimeout(initialize,0);
-});}
-if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
-initialize();
-</script>
+<section id="loadingView" class="center-view"><div class="loading-glyph">✦</div><p>Opening your little universe…</p></section>
+<section id="loginView" class="center-view hidden">
+<div class="welcome"><span class="eyebrow">WELCOME HOME</span><h1>Just us, in our own world.</h1><p>Meet up, explore together, and make it yours.</p></div>
+<form id="loginForm" class="panel"><label for="email">Your invited email</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+<label for="password">Account password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Your account password">
+<button class="primary" id="loginBtn" type="submit">Enter Our Space <span>→</span></button>
+<button id="forgotBtn" class="text-link" type="button">Forgot password?</button>
+<p id="loginStatus" class="form-status" role="status"></p>
+<p class="fine">Only the two invited accounts can access these worlds.</p></form>
+</section>
+<section id="recoverView" class="center-view hidden"><div class="welcome"><h1>New beginnings.</h1><p>Reset your account password, then step inside.</p></div>
+<form id="recoverForm" class="panel">
+<label for="newPassword">New password</label><input id="newPassword" type="password" minlength="12" autocomplete="new-password" required>
+<label for="newPasswordAgain">Confirm password</label><input id="newPasswordAgain" type="password" minlength="12" autocomplete="new-password" required>
+<button class="primary" id="recoverBtn" type="submit">Save password <span>✓</span></button>
+<p id="recoverStatus" class="form-status" role="status"></p></form></section>
+<section id="worldView" class="world-view hidden">
+<div class="room-nav"><div class="room-nav-label">OUR LITTLE UNIVERSE</div><div id="roomTabs" class="tabs">
+<button type="button" data-world="home" class="tab active">🏡 Cozy Cottage</button>
+<button type="button" data-world="garden" class="tab">🌙 Moon Garden</button>
+<button type="button" data-world="shore" class="tab">🌅 Sunset Shore</button>
+</div></div>
+<div class="world-shell">
+<div class="world-banner"><div><span id="worldEyebrow">A LITTLE PLACE CALLED HOME</span><h1 id="worldTitle">Cozy Cottage</h1></div>
+<button type="button" id="closetBtn" class="closet-btn"><span>✦</span> Dress up</button></div>
+<div class="world-stage">
+<canvas id="worldCanvas" width="960" height="540" aria-label="2D walkable world. Tap a place to walk there, or use the directional controls." tabindex="0"></canvas>
+<div class="world-hud"><span id="worldPeople">● Connecting</span><span>Tap to walk</span></div>
+<div class="dpad" aria-label="Move your avatar">
+<button type="button" data-move="up" class="up" aria-label="Walk up">↑</button>
+<button type="button" data-move="left" class="left" aria-label="Walk left">←</button>
+<button type="button" data-move="down" class="down" aria-label="Walk down">↓</button>
+<button type="button" data-move="right" class="right" aria-label="Walk right">→</button>
+</div></div>
+<p class="world-subtitle" id="worldDescription">Make yourself at home. Stay a while.</p>
+</div>
+<div class="chat-section">
+<div class="chat-top"><div><span class="chaticon">✉</span><strong id="chatHeading">Cottage Chat</strong></div><span class="chat-private">PRIVATE TO TWO <span aria-hidden="true">●</span></span></div>
+<div id="chatMessages" class="chat-messages" role="log" aria-label="Room messages" aria-live="polite" aria-relevant="additions"></div>
+<form id="sendForm" class="composer"><label for="message" class="sr-only">Write a message</label><input id="message" type="text" maxlength="4000" autocomplete="off" placeholder="Say something sweet…" required><button type="submit" id="sendBtn" aria-label="Send message">↑</button></form>
+<p id="chatStatus" class="chat-status" role="status"></p>
+</div>
+</section></main>
+<footer class="footer">Made for the two of you <span>♥</span> Messages are private to your accounts, but not end-to-end encrypted. <a href="./legacy.html">Previous encrypted messages</a></footer>
+</div>
+<section id="closet" class="closet hidden" aria-label="Avatar wardrobe">
+<div class="closet-shade" id="closetShade"></div>
+<div class="closet-sheet"><div class="closet-header"><div><span class="eyebrow">YOUR VERY OWN</span><h2>Avatar closet ✨</h2></div><button type="button" id="closetClose" aria-label="Close wardrobe" class="close">×</button></div>
+<div class="closet-body">
+<div class="avatar-card"><canvas id="avatarCanvas" width="200" height="240" aria-label="Avatar preview"></canvas><p>Make it feel like you.</p></div>
+<form id="outfitForm" class="outfit-form">
+<label for="avatarName">Name</label><input id="avatarName" maxlength="24" minlength="1" autocomplete="off">
+<div class="closet-grid">
+<label>Skin<select id="skin"><option value="warm">Warm</option><option value="light">Light</option><option value="deep">Deep</option><option value="olive">Olive</option><option value="gold">Golden</option></select></label>
+<label>Hair style<select id="hairStyle"><option value="short">Short</option><option value="long">Long</option><option value="curly">Curly</option><option value="spiky">Spiky</option><option value="bob">Bob</option></select></label>
+<label>Hair color<select id="hairColor"><option value="chocolate">Chocolate</option><option value="black">Black</option><option value="blonde">Blonde</option><option value="rose">Rose</option><option value="silver">Silver</option><option value="violet">Violet</option></select></label>
+<label>Top<select id="shirt"><option value="pink">Rose</option><option value="blue">Sky</option><option value="green">Mint</option><option value="purple">Lavender</option><option value="orange">Peach</option><option value="black">Midnight</option></select></label>
+<label>Bottoms<select id="bottoms"><option value="denim">Denim</option><option value="plum">Plum</option><option value="cream">Cream</option><option value="charcoal">Charcoal</option></select></label>
+<label>Accessory<select id="accessory"><option value="none">None</option><option value="crown">Crown 👑</option><option value="flower">Flower 🌸</option><option value="glasses">Glasses ✨</option><option value="halo">Halo ✦</option></select></label>
+</div><p class="fine">Outfits and names save to your account and show up for both of you.</p>
+<p id="outfitStatus" class="form-status" role="status"></p>
+<button class="primary" id="saveOutfit" type="submit">Save my look <span>✓</span></button></form></div>
+</div></section>
+<script type="module" src="./world.js"></script>
 </body></html>
