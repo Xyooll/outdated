@@ -34,6 +34,14 @@
      else item.removeAttribute("aria-current");
    }
    for(const panel of panels)panel.hidden=panel.dataset.editorPanel!==name;
+   const nameMap={
+     transcript:"Transcript",script:"Script Blocks",voice:"Narration",
+     timing:"Speed & Timing",style:"Canvas & Type",tones:"Sound Mixer",
+     export:"Export Video",profiles:"User Workspaces"
+   };
+   const readable=nameMap[name]||name;
+   $("dockActiveTool").textContent=readable;
+   $("dockInspectorTitle").textContent=readable;
    try{localStorage.setItem(TOOL_KEY,name);}catch{}
    setMobileView("tools");
    // On phones the inspector occupies the lower half of the editor, so
@@ -265,6 +273,7 @@
    reader.readAsText(file);
  }
  function attach(){
+   window.FocusFlashDock?.mount?.();
    for(const tab of tabs)tab.addEventListener("click",()=>selectTab(tab.dataset.editorTab,true));
    $("mobileTimelineBtn").addEventListener("click",()=>{
      const selected=$("editorWorkspace").dataset.mobileView==="timeline";
