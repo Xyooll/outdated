@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>FocusFlash — Reader & Video Maker</title>
-  <link rel="stylesheet" href="styles.css?v=undertone-1">
+  <link rel="stylesheet" href="styles.css?v=undertone-2">
 </head>
 <body>
   <main class="app">
@@ -91,6 +91,7 @@
         </label>
         <label for="studioVolume">Undertone voice volume <strong id="studioVolumeValue">18%</strong>
           <input id="studioVolume" type="range" min="0" max="100" step="1" value="18">
+        <label class="studio-check" for="studioReaderAudio"><input id="studioReaderAudio" type="checkbox" checked><span>Include voice during normal reading</span></label>
         </label>
         <div class="studio-hint" id="studioSpeedHint">The voice will automatically match your word speed (WPM).</div>
       </div>
@@ -130,7 +131,7 @@
     </section>
   </main>
 
-  <script defer src="video-studio.js?v=undertone-1"></script>
-  <script defer src="app.js?v=undertone-1"></script>
+  <script defer src="video-studio.js?v=undertone-2"></script>
+  <script defer src="app.js?v=undertone-2"></script>
 </body>
 </html>
