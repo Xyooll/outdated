@@ -247,3 +247,20 @@
 @media(prefers-reduced-motion:reduce){
  .transcript-entry{transition:none}
 }
+
+/* The highlighted timeline word is under a clear fixed playhead marker. */
+#timelineWords{position:relative;overflow:hidden}
+#timelineWords::after{
+ content:"";position:absolute;top:0;bottom:0;
+ left:var(--clip-playhead,0%);z-index:5;
+ width:2px;pointer-events:none;
+ background:#f5d9ff;box-shadow:0 0 0 1px #26153366,0 0 10px #c47eff
+}
+/* Fullscreen is a working player mode, without displacing the fixed focus. */
+#editorPreview:fullscreen{
+ width:100vw!important;height:100dvh!important;
+ max-width:none!important;max-height:none!important;
+ margin:0;border:0;border-radius:0;
+ display:grid;place-items:center;background:#08080e
+}
+#editorPreview:fullscreen .word-stage{width:100%;height:100%}
