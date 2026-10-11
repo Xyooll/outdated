@@ -1,0 +1,168 @@
+/* FocusFlash Four Dock Windows
+   Explicit LEFT Tools, MIDDLE Player, RIGHT Inspector, BOTTOM Timeline.
+   Desktop dividers can be dragged or controlled with arrow keys.
+   Original styles and playback mechanics are intentionally preserved. */
+:root{
+ --dock-bg:#11121b;--dock-surface:#202131;--dock-line:#4a4560;
+ --dock-label:#aaa0c7;--dock-highlight:#b58bfa;
+}
+.editor-workspace{--dock-left-w:176px;--dock-right-w:356px;--dock-bottom-h:272px}
+.dock-window{min-width:0;min-height:0;border:1px solid var(--dock-line)!important}
+.dock-window-kicker{display:block;color:#a89ac8;font-size:9px;font-weight:800;letter-spacing:1.3px}
+.dock-left-heading{
+ display:flex;flex-direction:column;gap:7px;
+ padding:16px 13px 13px;position:relative;flex:none;
+ background:linear-gradient(120deg,#2a253e,#211f31);
+ border-bottom:1px solid var(--dock-line)
+}
+.dock-left-heading strong{font-size:16px;color:#faf6ff;letter-spacing:.1px}
+.dock-left-heading small{font-size:11px;color:#aaa6c1;line-height:1.3}
+.dock-left-footer{
+ padding:12px 13px;margin-top:auto;border-top:1px solid #44405a;
+ color:#b7accd;font-size:10px;letter-spacing:.4px
+}
+.dock-left-footer span{color:#f1d6ff;font-weight:750}
+.dock-inspector-heading{
+ position:sticky;top:0;z-index:7;display:flex;gap:10px;
+ align-items:center;justify-content:space-between;flex:none;
+ min-height:63px;margin:-20px -18px 15px;padding:10px 16px;
+ background:linear-gradient(100deg,#292639,#222131);
+ border-bottom:1px solid var(--dock-line)
+}
+.dock-inspector-heading strong{
+ display:block;margin-top:5px;color:#f5ecff;font-size:14px
+}
+.dock-inspector-heading button{
+ display:grid;place-items:center;min-width:34px;min-height:34px;
+ border:1px solid #685a7e;border-radius:8px;
+ background:#332c47;color:#ebdafa;font-size:18px
+}
+.dock-inspector-heading button:hover{background:#503866}
+.dock-resize{display:none}
+.dock-reset{border:1px solid #5b5070!important;border-radius:9px;color:#ded1f5!important;background:#282638!important}
+.dock-reset:hover{background:#3d3053!important}
+@media(min-width:951px){
+ .editor-workspace#editorWorkspace{
+   position:relative;display:grid!important;overflow:hidden!important;
+   grid-template-columns:var(--dock-left-w) minmax(0,1fr) var(--dock-right-w)!important;
+   grid-template-rows:minmax(0,1fr) var(--dock-bottom-h)!important;
+   grid-template-areas:"rail canvas inspector" "timeline timeline timeline"!important;
+   gap:0;width:100%;height:calc(100dvh - 66px);min-height:600px
+ }
+ .editor-rail#dockLeft{
+   grid-area:rail!important;grid-row:1!important;grid-column:1!important;
+   width:auto!important;height:100%;min-height:0;max-height:none;
+   display:flex!important;flex-direction:column!important;
+   overflow-y:auto;overflow-x:hidden;
+   gap:5px;padding:0 0 9px!important;
+   background:#1c1c29!important;border-right:1px solid var(--dock-line)
+ }
+ .editor-rail#dockLeft .editor-tab{
+   width:calc(100% - 14px);margin:0 7px;min-width:0;
+   height:auto;min-height:41px;border-radius:8px;
+   padding:7px 9px;flex:0 0 auto;flex-direction:row;
+   justify-content:flex-start;align-items:center;gap:12px;
+   font-size:12px;text-align:left
+ }
+ .editor-rail#dockLeft .editor-tab span:first-child{
+   font-size:18px;min-width:23px;text-align:center
+ }
+ .editor-rail#dockLeft .mobile-timeline-tab{display:none!important}
+ .editor-preview-section.dock-window{
+   grid-area:canvas!important;grid-row:1!important;grid-column:2!important;
+   padding:14px 18px 10px;height:100%;max-height:none;
+   border-left:0!important;border-bottom:0!important;
+   border-top:0!important;border-right:0!important;
+   overflow:hidden;display:flex;flex-direction:column
+ }
+ .editor-preview-section .editor-preview-holder{flex:1;min-height:0;max-height:none!important;overflow:hidden}
+ .editor-preview-section .reader-card{height:100%;min-height:0}
+ .editor-preview[data-ratio="portrait"]{
+   height:min(100%,530px)!important;width:auto!important;
+   max-width:100%!important;max-height:100%!important
+ }
+ .editor-preview[data-ratio="wide"]{max-height:100%!important;width:min(100%,900px)!important}
+ .editor-preview[data-ratio="square"]{
+   max-height:100%!important;width:min(100%,460px)!important
+ }
+ .editor-inspector#editorInspector{
+   grid-area:inspector!important;grid-row:1!important;grid-column:3!important;
+   height:100%;max-height:none;min-height:0;
+   padding:20px 18px 18px!important;
+   border-top:0!important;border-right:0!important;border-bottom:0!important;
+   background:#222130;overflow-y:auto;
+ }
+ .editor-inspector#editorInspector #editorTranscript{
+   min-height:0;height:calc(100% - 77px)!important
+ }
+ .editor-inspector#editorInspector #editorTranscript .transcript-list{
+   flex:1;max-height:none;min-height:90px
+ }
+ .editor-timeline#editorTimeline{
+   grid-area:timeline!important;grid-row:2!important;grid-column:1/4!important;
+   min-height:0;height:100%;overflow:auto;
+   padding:14px 18px 15px!important;
+   border:1px solid var(--dock-line)!important;
+   background:linear-gradient(#1d1c2b,#161723)
+ }
+ .editor-timeline .timeline-header{position:sticky;top:-14px;z-index:4;
+   padding:6px 1px 8px;background:#1d1c2b}
+ .editor-timeline .timeline-ruler{margin-top:0}
+ .editor-timeline .timeline-track-label{max-width:none;white-space:normal}
+ .editor-timeline .timeline-strip{max-width:100%;min-width:0}
+ .dock-resize{
+   position:absolute!important;display:flex;align-items:center;justify-content:center;
+   z-index:20;background:transparent;outline:0;touch-action:none;user-select:none
+ }
+ .dock-resize::before{
+   content:"";display:block;flex:none;border:1px solid #6b5b83;
+   background:#54436f;border-radius:999px;opacity:.72;
+   transition:background .13s,opacity .13s
+ }
+ .dock-resize:hover::before,.dock-resize:focus-visible::before,.dock-resizing .dock-resize::before{
+   opacity:1;background:#c49af7
+ }
+ .dock-resize:focus-visible{outline:2px solid #c69eff;outline-offset:-2px}
+ .dock-resize-left,.dock-resize-right{
+   top:0;height:calc(100% - var(--dock-bottom-h));
+   width:12px;cursor:col-resize
+ }
+ .dock-resize-left{left:calc(var(--dock-left-w) - 6px)}
+ .dock-resize-right{right:calc(var(--dock-right-w) - 6px)}
+ .dock-resize-left::before,.dock-resize-right::before{width:5px;height:60px}
+ .dock-resize-bottom{
+   top:calc(100% - var(--dock-bottom-h) - 6px);
+   left:0;width:100%;height:12px;cursor:row-resize
+ }
+ .dock-resize-bottom::before{height:5px;width:70px}
+ .dock-resizing,.dock-resizing *{cursor:grabbing!important;user-select:none!important}
+ .editor-workspace .dock-window-kicker{pointer-events:none}
+ .editor-preview-section .preview-shortcuts{margin-top:5px}
+}
+@media(max-width:950px){
+ .editor-workspace#editorWorkspace{
+   /* The mobile view retains the always-visible player, tool rail and a
+      switched lower pane: inspector or timeline. These are the same four
+      functional windows as desktop, simply docked for phone usability. */
+   --dock-left-w:176px;--dock-right-w:356px;--dock-bottom-h:272px
+ }
+ .dock-left-heading,.dock-left-footer,.dock-resize,.dock-reset{display:none!important}
+ .editor-rail#dockLeft{
+   padding:5px 8px!important;border:0!important;
+   border-top:1px solid #4f4266!important;
+   border-bottom:1px solid #4f4266!important;
+   background:#1d1a2b
+ }
+ .editor-inspector#editorInspector{
+   border:0!important;padding-top:0!important
+ }
+ .dock-inspector-heading{
+   top:0;min-height:46px;margin:0 -13px 13px;
+   padding:7px 13px;background:#2a263c
+ }
+ .dock-inspector-heading strong{font-size:12px;margin-top:3px}
+ .dock-inspector-heading .dock-window-kicker{font-size:8px}
+ .dock-inspector-heading button{min-width:31px;min-height:31px}
+ .editor-preview-section.dock-window{border:0!important;border-bottom:1px solid var(--dock-line)!important}
+ .editor-timeline#editorTimeline{border:0!important}
+}
