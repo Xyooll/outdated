@@ -168,7 +168,15 @@
    </section>
   </aside>
   <section class="editor-preview-section" aria-label="Video preview and reader">
-   <header class="editor-preview-header"><strong class="preview-title">Preview</strong><span class="preview-note" id="editorPreviewFormat">9:16 · Vertical</span></header>
+   <header class="editor-preview-header">
+    <strong class="preview-title">Preview</strong>
+    <div class="preview-font-controls" aria-label="Quick font size adjustment">
+     <button type="button" id="fontQuickMinus" aria-label="Smaller word text">−</button>
+     <output id="fontQuickLabel" for="fontSize studioScale">48 px</output>
+     <button type="button" id="fontQuickPlus" aria-label="Larger word text">＋</button>
+    </div>
+    <span class="preview-note" id="editorPreviewFormat">9:16 · Vertical</span>
+   </header>
    <div class="editor-preview-holder">
     <div class="reader-card">
      <div id="editorPreview" class="editor-preview" data-ratio="portrait">
