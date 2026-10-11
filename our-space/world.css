@@ -43,3 +43,64 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}.center-view{flex:1;
 .life-status{margin:4px 0;min-height:0;font-size:11px;color:#ecb5d2;text-align:center}
 .life-status:empty{display:none}
 @media(max-width:600px){.life-hud{padding:9px 9px 8px;margin-bottom:7px}.life-needs{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.need-heading{font-size:9px;display:block}.need-heading span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.need-track{height:7px}.life-topline{margin-bottom:7px}.life-progress{flex-wrap:wrap}}
+
+
+/* Life Simulator 2.1 — game-first screen. Old stacked interface is superseded. */
+.world-view{display:flex!important;flex-direction:column;min-height:0;flex:1}
+.world-view.hidden{display:none!important}
+.sim-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 15px 10px;background:#202740;border-bottom:1px solid #ffffff18}
+.sim-place{min-width:0}
+.sim-place .eyebrow{font-size:9px;letter-spacing:1.25px;color:#e6afd2}
+.sim-place h1{margin:3px 0;font-size:clamp(17px,2.8vw,23px);line-height:1.15;letter-spacing:-.5px}
+.sim-presence{font-size:10px;color:#acdabb}
+.sim-quick-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sim-tool{font-size:12px;border-radius:11px;border:1px solid #ffffff30;color:#f9e3f5;background:#30334e;padding:9px 10px;white-space:nowrap;position:relative}
+.sim-tool:focus-visible,.tab:focus-visible{outline:2px solid #f9bcde}
+.sim-tool-emphasis{background:#d9add2;color:#2d2441;font-weight:800;border-color:#e3bfe0}
+.chat-badge{position:absolute;top:-4px;right:-4px;font-size:14px;color:#ff9a9a}
+.sim-places{padding:12px 15px;background:#252941;border-bottom:1px solid #ffffff25}
+.sim-places .tabs{margin-top:7px}
+.world-shell{padding:13px clamp(8px,2vw,20px);width:100%;max-width:100%;grid-column:auto;grid-row:auto}
+.world-stage{margin:0;box-shadow:0 8px 30px #0006}
+.sim-lower{display:flex;align-items:stretch;gap:12px;margin-top:9px}
+.life-hud{margin:0;min-width:0;flex:1}
+.sim-movement{display:flex;justify-content:space-between;align-items:center;gap:10px;flex:0 0 auto}
+.move-hint{font-size:11px;color:#afbad0;max-width:150px;line-height:1.35}
+.dpad{position:static;display:grid;grid-template-columns:repeat(3,31px);grid-template-rows:repeat(2,31px);gap:3px}
+.dpad button{background:#434762;color:#fff;border:1px solid #ffffff33;border-radius:7px;font-size:18px;touch-action:none;user-select:none}
+.world-stage:focus-within{border-color:#706c90}
+.sim-drawer{position:fixed;inset:0;z-index:16;display:flex;justify-content:flex-end;align-items:stretch}
+.sim-drawer-shade{position:absolute;inset:0;background:#070918aa;backdrop-filter:blur(3px)}
+.sim-drawer-body{position:relative;display:flex;flex-direction:column;width:min(410px,100%);height:100dvh;max-height:100dvh;overflow-y:auto;background:#21273c;border-left:1px solid #ffffff2b;padding:15px;padding-bottom:calc(15px + env(safe-area-inset-bottom));box-shadow:-25px 0 60px #0008}
+.sim-drawer-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex:none;margin-bottom:13px}
+.sim-drawer-head h2{font-size:20px;letter-spacing:-.5px;margin:5px 0 0}
+.sim-drawer-body .chat-section{margin:0;flex:1;min-height:0;max-height:none;height:100%;border:1px solid #ffffff1d;grid-column:auto;grid-row:auto}
+.sim-drawer-body .chat-messages{min-height:0;flex:1}
+.sim-drawer-body .life-duties{margin:0;display:block;max-height:none}
+.sim-drawer-body .life-duties summary{font-size:13px}
+.sim-drawer .close{flex:0 0 auto}
+.life-action-menu{z-index:12}
+.footer{font-size:10px;color:#a4a7c4;padding:12px}
+@media(max-width:600px){
+ .topbar{height:55px}
+ .sim-toolbar{padding:9px 10px;gap:8px;align-items:flex-start}
+ .sim-place h1{font-size:17px}
+ .sim-place .eyebrow{font-size:8px}
+ .sim-tool{font-size:17px;padding:6px 7px;min-height:34px;min-width:35px}
+ .sim-tool span:not(.chat-badge){display:none}
+ .sim-quick-actions{gap:4px}
+ .sim-lower{flex-wrap:wrap;gap:5px;margin-top:6px}
+ .life-hud{flex:1 1 100%;order:2}
+ .sim-movement{flex:1 1 100%;order:1;justify-content:space-between;padding:0 4px}
+ .move-hint{max-width:none;flex:1}
+ .dpad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(2,28px);gap:3px}
+ .world-shell{padding:8px 7px}
+ .sim-drawer{align-items:flex-end}
+ .sim-drawer-body{height:min(75dvh,660px);width:100%;border-radius:18px 18px 0 0;border-left:0;border-top:1px solid #ffffff35}
+}
+@media(min-width:850px){
+ .world-view{display:flex!important;grid-template-columns:none;grid-template-rows:none}
+ .world-view.hidden{display:none!important}
+ .world-shell{grid-column:auto;grid-row:auto;max-width:980px;margin:0 auto}
+ .sim-drawer-body .chat-section{max-height:none;margin:0}
+}
