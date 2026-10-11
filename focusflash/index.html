@@ -9,8 +9,8 @@
  <title>FocusFlash Studio · Reader & Video Editor</title>
  <link rel="icon" href="icon.svg" type="image/svg+xml">
  <link rel="manifest" href="manifest.webmanifest">
- <link rel="stylesheet" href="styles.css?v=font-focus-1">
- <link rel="stylesheet" href="editor.css?v=font-focus-1">
+ <link rel="stylesheet" href="styles.css?v=blocks-1">
+ <link rel="stylesheet" href="editor.css?v=blocks-1">
 </head>
 <body>
 <main class="editor-app">
@@ -40,7 +40,12 @@
      <h2>Your script</h2>
      <p>Write or import the text that will appear one word at a time.</p>
     </header>
-    <div class="text-card">
+    <div class="script-mode-switch" role="group" aria-label="Script editing mode">
+     <button id="scriptModeSingle" type="button" class="active" aria-pressed="true">Single script</button>
+     <button id="scriptModeBlocks" type="button" aria-pressed="false">▦ Script blocks</button>
+    </div>
+    <div id="singleScriptEditor">
+     <div class="text-card">
      <label for="sourceText">Source text</label>
      <textarea id="sourceText" rows="10" spellcheck="true">Speed reading works by reducing unnecessary eye movement. This reader flashes one word at a time while keeping one focal letter centered, helping your eyes stay in one place.</textarea>
      <div class="editor-content-stats" id="editorTextStats">0 words · ready to edit</div>
@@ -53,6 +58,20 @@
       <input id="importFile" type="file" accept=".txt,.md,text/plain,text/markdown">
      </label>
      <p class="editor-import-note">Your text stays on this device. Long passages work for instant reading; export may take longer.</p>
+     </div>
+    </div>
+    <div id="blockScriptEditor" hidden>
+     <div class="script-blocks-intro">
+      <strong>Build a looping sequence</strong>
+      <p>Repeat Block 1 as many times as you choose, then advance automatically to Block 2, Block 3, and so on.</p>
+     </div>
+     <div id="scriptBlockList" class="script-block-list" aria-label="Editable script blocks"></div>
+     <div class="script-block-actions">
+      <button id="addScriptBlock" type="button" class="primary">＋ Add block</button>
+      <button id="applyScriptBlocks" type="button">↻ Apply sequence</button>
+     </div>
+     <p id="blocksStatus" class="script-block-status" role="status" aria-live="polite">Blocks are saved automatically on this device.</p>
+     <p class="editor-import-note">Each block can repeat 1–100 times. Dragging isn't required—use the arrows to change the order. Voice and video export use the same sequence.</p>
     </div>
    </section>
    <section id="editorVoice" class="editor-section" data-editor-panel="voice" hidden>
@@ -201,6 +220,7 @@
     <div class="timeline-actions"><span class="timeline-zoom-label" id="timelineZoomLabel">1×</span><button type="button" id="timelineZoomOut" aria-label="Zoom out">−</button><button type="button" id="timelineZoomIn" aria-label="Zoom in">＋</button></div>
    </header>
    <div class="timeline-ruler"><span>00:00</span><span id="timelineMid">00:00</span><span id="timelineEnd">00:00</span></div>
+   <div id="blockTimelineTrack" class="timeline-track hidden"><div class="timeline-track-label">▦ Blocks <span id="timelineBlockCount">0 parts</span></div><div id="timelineBlocks" class="timeline-strip blocks" aria-label="Script block sequence"></div></div>
    <div class="timeline-track"><div class="timeline-track-label">▤ Words <span id="timelineClipCount">0 clips</span></div><div id="timelineWords" class="timeline-strip" role="group" aria-label="Clickable word clips"></div></div>
    <div class="timeline-track"><div class="timeline-track-label voice-track-label">♫ Voice <span id="timelineVoiceStatus">Phone TTS</span></div><div id="timelineAudio" class="timeline-strip voice"></div></div>
    <input id="progressRange" class="timeline-scrub" type="range" min="0" max="0" value="0" aria-label="Scrub reading position">
@@ -208,8 +228,9 @@
   </section>
  </div>
 </main>
-<script defer src="video-studio.js?v=font-focus-1"></script>
-<script defer src="editor.js?v=font-focus-1"></script>
-<script defer src="app.js?v=font-focus-1"></script>
+<script defer src="script-blocks.js?v=blocks-1"></script>
+<script defer src="video-studio.js?v=blocks-1"></script>
+<script defer src="editor.js?v=blocks-1"></script>
+<script defer src="app.js?v=blocks-1"></script>
 </body>
 </html>
