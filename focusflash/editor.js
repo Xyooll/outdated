@@ -6,7 +6,7 @@
  const tabs=[...document.querySelectorAll("[data-editor-tab]")];
  const panels=[...document.querySelectorAll("[data-editor-panel]")];
  const maxClips=48;
- let zoom=1,lastClipWindow="",lastTimelineKey="",lastState=null,timeline=null,refreshPending=false;
+ let zoom=1,lastClipWindow="",cachedText=null,cachedSettings="",timelineVersion=0,lastState=null,timeline=null,refreshPending=false;
 
  function selectTab(name,scroll=false){
    const tab=tabs.find(t=>t.dataset.editorTab===name);
@@ -56,8 +56,10 @@
  }
  function makeTimeline(){
    const text=$("sourceText").value,conf=settings();
-   const key=text.length+":"+text+":"+conf.wpm+":"+conf.punct+":"+conf.long;
-   if(key===lastTimelineKey&&timeline)return timeline;
+   const settingsKey=conf.wpm+":"+conf.punct+":"+conf.long;
+   // Avoid concatenating huge source texts into a cache key on every word.
+   if(text===cachedText&&settingsKey===cachedSettings&&timeline)return timeline;
+   cachedText=text;cachedSettings=settingsKey;timelineVersion++;
    const words=textWords();
    timeline=buildTimeline(words);
    lastTimelineKey=key;lastClipWindow="";
@@ -77,7 +79,7 @@
    let first=Math.max(0,index-Math.floor(range*.38));
    if(first+range>count)first=Math.max(0,count-range);
    const end=Math.min(count,first+range);
-   const id=first+":"+end+":"+lastTimelineKey;
+   const id=first+":"+end+":"+timelineVersion;
    if(id!==lastClipWindow){
      lastClipWindow=id;
      const fragment=document.createDocumentFragment();
@@ -191,6 +193,14 @@
    $("timelineZoomOut").addEventListener("click",()=>{
      zoom=Math.max(1,zoom-1);lastClipWindow="";renderSoon();$("timelineZoomLabel").textContent=zoom+"×";
    });
+   // Keep export progress visible while the voice panel is not selected.
+   const mirror=()=>{
+     const output=$("editorExportStatus");
+     if(output)output.textContent=$("studioStatus").textContent;
+   };
+   const observer=new MutationObserver(mirror);
+   observer.observe($("studioStatus"),{childList:true,characterData:true,subtree:true});
+   mirror();
    document.addEventListener("focusflash:render",e=>{
      lastState=e.detail||null;
      renderSoon();
