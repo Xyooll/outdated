@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1c233b">
+<meta name="description" content="Our Space: three tiny worlds for two people.">
+<meta name="color-scheme" content="dark">
+<title>Our Space · Worlds for Two</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="stylesheet" href="./world.css">
+</head>
+<body><div class="app">
+<header class="topbar"><div class="brand"><div class="logo">♥</div><div><strong>Our Space</strong><small>Worlds for two</small></div></div>
+<div class="top-actions"><span id="networkState" class="network">Private worlds</span><button id="signoutBtn" class="subtle hidden" type="button">Sign out</button></div></header>
+<main>
+<section id="loadingView" class="center-view"><div class="loading-glyph">✦</div><p>Opening your little universe…</p></section>
+<section id="loginView" class="center-view hidden">
+<div class="welcome"><span class="eyebrow">WELCOME HOME</span><h1>Just us, in our own world.</h1><p>Meet up, explore together, and make it yours.</p></div>
+<form id="loginForm" class="panel"><label for="email">Your invited email</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+<label for="password">Account password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Your account password">
+<button class="primary" id="loginBtn" type="submit">Enter Our Space <span>→</span></button>
+<button id="forgotBtn" class="text-link" type="button">Forgot password?</button>
+<p id="loginStatus" class="form-status" role="status"></p>
+<p class="fine">Only the two invited accounts can access these worlds.</p></form>
+</section>
+<section id="recoverView" class="center-view hidden"><div class="welcome"><h1>New beginnings.</h1><p>Reset your account password, then step inside.</p></div>
+<form id="recoverForm" class="panel">
+<label for="newPassword">New password</label><input id="newPassword" type="password" minlength="12" autocomplete="new-password" required>
+<label for="newPasswordAgain">Confirm password</label><input id="newPasswordAgain" type="password" minlength="12" autocomplete="new-password" required>
+<button class="primary" id="recoverBtn" type="submit">Save password <span>✓</span></button>
+<p id="recoverStatus" class="form-status" role="status"></p></form></section>
+<section id="worldView" class="world-view hidden">
+<div class="room-nav"><div class="room-nav-label">OUR LITTLE UNIVERSE</div><div id="roomTabs" class="tabs">
+<button type="button" data-world="home" class="tab active">🏡 Cozy Cottage</button>
+<button type="button" data-world="garden" class="tab">🌙 Moon Garden</button>
+<button type="button" data-world="shore" class="tab">🌅 Sunset Shore</button>
+</div></div>
+<div class="world-shell">
+<div class="world-banner"><div><span id="worldEyebrow">A LITTLE PLACE CALLED HOME</span><h1 id="worldTitle">Cozy Cottage</h1></div>
+<button type="button" id="closetBtn" class="closet-btn"><span>✦</span> Dress up</button></div>
+<div class="world-stage">
+<canvas id="worldCanvas" width="960" height="540" aria-label="2D walkable world. Tap a place to walk there, or use the directional controls." tabindex="0"></canvas>
+<div class="world-hud"><span id="worldPeople">● Connecting</span><span>Tap to walk</span></div>
+<div class="dpad" aria-label="Move your avatar">
+<button type="button" data-move="up" class="up" aria-label="Walk up">↑</button>
+<button type="button" data-move="left" class="left" aria-label="Walk left">←</button>
+<button type="button" data-move="down" class="down" aria-label="Walk down">↓</button>
+<button type="button" data-move="right" class="right" aria-label="Walk right">→</button>
+</div></div>
+<p class="world-subtitle" id="worldDescription">Make yourself at home. Stay a while.</p>
+</div>
+<div class="chat-section">
+<div class="chat-top"><div><span class="chaticon">✉</span><strong id="chatHeading">Cottage Chat</strong></div><span class="chat-private">PRIVATE TO TWO <span aria-hidden="true">●</span></span></div>
+<div id="chatMessages" class="chat-messages" role="log" aria-label="Room messages" aria-live="polite" aria-relevant="additions"></div>
+<form id="sendForm" class="composer"><label for="message" class="sr-only">Write a message</label><input id="message" type="text" maxlength="4000" autocomplete="off" placeholder="Say something sweet…" required><button type="submit" id="sendBtn" aria-label="Send message">↑</button></form>
+<p id="chatStatus" class="chat-status" role="status"></p>
+</div>
+</section></main>
+<footer class="footer">Made for the two of you <span>♥</span> Messages are private to your accounts, but not end-to-end encrypted. <a href="./legacy.html">Previous encrypted messages</a></footer>
+</div>
+<section id="closet" class="closet hidden" aria-label="Avatar wardrobe">
+<div class="closet-shade" id="closetShade"></div>
+<div class="closet-sheet"><div class="closet-header"><div><span class="eyebrow">YOUR VERY OWN</span><h2>Avatar closet ✨</h2></div><button type="button" id="closetClose" aria-label="Close wardrobe" class="close">×</button></div>
+<div class="closet-body">
+<div class="avatar-card"><canvas id="avatarCanvas" width="200" height="240" aria-label="Avatar preview"></canvas><p>Make it feel like you.</p></div>
+<form id="outfitForm" class="outfit-form">
+<label for="avatarName">Name</label><input id="avatarName" maxlength="24" minlength="1" autocomplete="off">
+<div class="closet-grid">
+<label>Skin<select id="skin"><option value="warm">Warm</option><option value="light">Light</option><option value="deep">Deep</option><option value="olive">Olive</option><option value="gold">Golden</option></select></label>
+<label>Hair style<select id="hairStyle"><option value="short">Short</option><option value="long">Long</option><option value="curly">Curly</option><option value="spiky">Spiky</option><option value="bob">Bob</option></select></label>
+<label>Hair color<select id="hairColor"><option value="chocolate">Chocolate</option><option value="black">Black</option><option value="blonde">Blonde</option><option value="rose">Rose</option><option value="silver">Silver</option><option value="violet">Violet</option></select></label>
+<label>Top<select id="shirt"><option value="pink">Rose</option><option value="blue">Sky</option><option value="green">Mint</option><option value="purple">Lavender</option><option value="orange">Peach</option><option value="black">Midnight</option></select></label>
+<label>Bottoms<select id="bottoms"><option value="denim">Denim</option><option value="plum">Plum</option><option value="cream">Cream</option><option value="charcoal">Charcoal</option></select></label>
+<label>Accessory<select id="accessory"><option value="none">None</option><option value="crown">Crown 👑</option><option value="flower">Flower 🌸</option><option value="glasses">Glasses ✨</option><option value="halo">Halo ✦</option></select></label>
+</div><p class="fine">Outfits and names save to your account and show up for both of you.</p>
+<p id="outfitStatus" class="form-status" role="status"></p>
+<button class="primary" id="saveOutfit" type="submit">Save my look <span>✓</span></button></form></div>
+</div></section>
+<script type="module" src="./world.js"></script>
+</body></html>
