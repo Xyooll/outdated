@@ -21,7 +21,7 @@
    }
    for(const panel of panels)panel.hidden=panel.dataset.editorPanel!==name;
    try{localStorage.setItem(TOOL_KEY,name);}catch{}
-   if(scroll&&matchMedia("(max-width:710px)").matches){
+   if(scroll&&matchMedia("(max-width:900px)").matches){
      const target=panels.find(panel=>panel.dataset.editorPanel===name);
      // Opening a tool on a phone should reveal its controls, rather than
      // merely moving focus to the tab row above them.
@@ -114,6 +114,17 @@
      }
      canvas.replaceChildren(fragment);
    }
+   // Draw the same vertical edit playhead used by nonlinear timeline editors.
+   // Widths reflect the visible clip weights rather than the whole document.
+   let totalWeight=0,beforeWeight=0;
+   for(let i=first;i<end;i++){
+     const weight=Math.max(.4,t.starts[i+1]-t.starts[i]);
+     totalWeight+=weight;
+     if(i<index)beforeWeight+=weight;
+     else if(i===index)beforeWeight+=weight*.5;
+   }
+   const pct=totalWeight?Math.max(0,Math.min(100,100*beforeWeight/totalWeight)):0;
+   canvas.style.setProperty("--clip-playhead",pct.toFixed(2)+"%");
    for(const clip of canvas.children)
      clip.classList.toggle("active",Number(clip.dataset.wordIndex)===index);
  }
@@ -322,7 +333,15 @@
    window.FocusFlashBlocks?.mount?.();
    window.FocusFlashTranscript?.mount?.();
    let lastTool="transcript";
-   try{lastTool=localStorage.getItem(TOOL_KEY)||"transcript";}catch{}
+   try{
+     // First visit to the reference-style editor opens its new transcript
+     // pane, then respects whichever tool the user chooses afterward.
+     const introduced=window.FocusFlashProfiles?.key("focusflash-transcript-intro-v1")||
+       "focusflash-transcript-intro-v1";
+     if(localStorage.getItem(introduced)==="1")
+       lastTool=localStorage.getItem(TOOL_KEY)||"transcript";
+     else localStorage.setItem(introduced,"1");
+   }catch{}
    selectTab(tabs.some(t=>t.dataset.editorTab===lastTool)?lastTool:"transcript");
    selectRatio();
    // app.js loads its saved reader size before editor.mount() executes.
