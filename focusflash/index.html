@@ -9,8 +9,8 @@
  <title>FocusFlash Studio · Reader & Video Editor</title>
  <link rel="icon" href="icon.svg" type="image/svg+xml">
  <link rel="manifest" href="manifest.webmanifest">
- <link rel="stylesheet" href="styles.css?v=tones-2">
- <link rel="stylesheet" href="editor.css?v=tones-2">
+ <link rel="stylesheet" href="styles.css?v=sound-mixer-1">
+ <link rel="stylesheet" href="editor.css?v=sound-mixer-1">
 </head>
 <body>
 <main class="editor-app">
@@ -161,8 +161,8 @@
    <section id="editorTones" class="editor-section" data-editor-panel="tones" hidden>
     <header class="editor-panel-head">
      <span class="editor-eyebrow">05 · Soundscape</span>
-     <h2>Tone generator</h2>
-     <p>Produce clean sine-wave tones or separate left/right tones for binaural listening. Works while reading and in exported videos.</p>
+     <h2>Sounds & tones</h2>
+     <p>Mix frequency tones, ambient sound effects, and your own MP3 tracks with reading and videos.</p>
     </header>
     <div class="tone-generator">
      <label for="toneMode">Sound mode
@@ -186,13 +186,53 @@
      <label for="toneVolume">Tone volume <strong id="toneVolumeValue">8%</strong>
       <input id="toneVolume" type="range" min="0" max="25" step="1" value="8">
      </label>
-     <div class="tone-buttons">
-      <button id="tonePreview" type="button">▶ Test tone</button>
-     </div>
      <p id="toneCurrent" class="tone-readout">Sound off</p>
      <label for="toneExport" class="tone-checkbox"><input type="checkbox" id="toneExport" checked> Include tone in exported video</label>
+     <div class="sound-layer-divider"><span>Ambient sound effects</span></div>
+     <label for="ambienceMode">Soundscape preset
+      <select id="ambienceMode">
+       <option value="off">Off · no ambience</option>
+       <optgroup label="Noise colors">
+        <option value="white">White noise</option>
+        <option value="pink">Pink noise</option>
+        <option value="brown">Brown noise</option>
+       </optgroup>
+       <optgroup label="Nature and atmosphere">
+        <option value="rain">Rainfall</option>
+        <option value="waves">Ocean waves</option>
+        <option value="wind">Soft wind</option>
+        <option value="stream">Flowing stream</option>
+        <option value="fire">Fireplace crackles</option>
+        <option value="forest">Forest birds</option>
+        <option value="night">Night crickets</option>
+        <option value="fan">Fan / steady hum</option>
+       </optgroup>
+      </select>
+     </label>
+     <label for="ambienceVolume">Ambient volume <strong id="fxVolumeValue">18%</strong>
+      <input id="ambienceVolume" type="range" min="0" max="40" value="18" step="1">
+     </label>
+     <label for="ambienceExport" class="tone-checkbox">
+      <input type="checkbox" id="ambienceExport" checked> Include ambience in exported video
+     </label>
+     <p class="tone-note">Presets are generated locally as looping sound effects. For realistic rain or ocean recordings, import your own audio below.</p>
+     <div class="sound-layer-divider"><span>Imported audio · MP3</span></div>
+     <label for="mp3Import" class="mp3-import">
+      <span>＋ Import an MP3 or audio file</span>
+      <input id="mp3Import" type="file" accept=".mp3,audio/mpeg,.wav,.m4a,.ogg,.aac,.webm,audio/*">
+     </label>
+     <div class="mp3-file-row">
+      <p id="mp3FileStatus" aria-live="polite">No MP3 imported</p>
+      <button id="mp3Clear" type="button" disabled>Remove</button>
+     </div>
+     <label for="mp3Volume">Imported audio volume <strong id="mp3VolumeValue">25%</strong>
+      <input id="mp3Volume" type="range" min="0" max="100" value="25" step="1">
+     </label>
+     <label for="mp3Loop" class="tone-checkbox"><input type="checkbox" id="mp3Loop" checked> Loop imported audio through the reading session</label>
+     <label for="mp3Export" class="tone-checkbox"><input type="checkbox" id="mp3Export" checked> Include imported audio in exported video</label>
+     <div class="tone-buttons"><button id="tonePreview" type="button">▶ Preview sound mix</button></div>
      <p id="toneStatus" role="status" class="tone-status">Ready · Sound off</p>
-     <p class="tone-note">These are mathematically generated audio tones, not music. Keep volume low. Binaural beats are not a proven way to create subliminal learning or reliably change mental states.</p>
+     <p class="tone-note">All audio stays on your device. MP3s can be saved in this browser for your next visit, subject to device storage limits. Keep headphone volume comfortable. Binaural beats aren't proven to produce subliminal learning or reliably alter mental states.</p>
     </div>
    </section>
    <section id="editorExport" class="editor-section" data-editor-panel="export" hidden>
@@ -267,10 +307,10 @@
   </section>
  </div>
 </main>
-<script defer src="tone-generator.js?v=tones-2"></script>
-<script defer src="script-blocks.js?v=tones-2"></script>
-<script defer src="video-studio.js?v=tones-2"></script>
-<script defer src="editor.js?v=tones-2"></script>
-<script defer src="app.js?v=tones-2"></script>
+<script defer src="tone-generator.js?v=sound-mixer-1"></script>
+<script defer src="script-blocks.js?v=sound-mixer-1"></script>
+<script defer src="video-studio.js?v=sound-mixer-1"></script>
+<script defer src="editor.js?v=sound-mixer-1"></script>
+<script defer src="app.js?v=sound-mixer-1"></script>
 </body>
 </html>
