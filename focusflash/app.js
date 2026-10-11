@@ -103,6 +103,7 @@
     if (timer) clearTimeout(timer);
     timer = null;
     els.playBtn.textContent = '▶ Play';
+    window.FocusFlashStudio?.stopReaderUndertone?.();
   }
 
   function tick() {
