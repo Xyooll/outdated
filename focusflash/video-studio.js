@@ -30,7 +30,7 @@
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let readerSource=null,readerGain=null,readerGeneration=0;
  let readerVoice=null,previewVoice=null,nativeSpeaking=false;
- const pitchEngine=()=>import("./pitch-preserve.js?v=blocks-2");
+ const pitchEngine=()=>import("./pitch-preserve.js?v=tones-1");
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -224,10 +224,10 @@
          const phrases=splitIntoPhrases(unit.text);
          if(!phrases.length)continue;
          if(mode==="instant"){
-           const {generateInstantExportSpeech}=await import("./instant-tts.js?v=blocks-2");
+           const {generateInstantExportSpeech}=await import("./instant-tts.js?v=tones-1");
            generated=await generateInstantExportSpeech(unit.text,msg=>report("Block "+(i+1)+": "+msg));
          }else if(mode==="fast"){
-           const adapter=await import("./fast-piper.js?v=blocks-2");
+           const adapter=await import("./fast-piper.js?v=tones-1");
            generated=await adapter.generateFastPhrases(phrases,voice,
              msg=>report("Block "+(i+1)+": "+msg));
          }else{
@@ -427,6 +427,7 @@
    cancelAnimationFrame(previewAnimation);
    previewAnimation=0;
    previewVoice?.dispose();previewVoice=null;
+   window.FocusFlashTones?.stopTest?.();
    previewSource=null;previewGain=null;
    sel("studioListen").textContent="▶ Preview synced undertone";
  }
@@ -458,6 +459,10 @@
      sel("studioSyncCanvas").classList.remove("hidden");
      drawVideoFrame(canvas,frameContext,passage[0],0,passage.length,0,timeline.total);
      await transport.start(0);
+     // Tones play alongside narrated audiovisual previews, without needing
+     // a prerecorded sound file. They stop when the preview ends.
+     if(window.FocusFlashTones?.getSettings?.().mode!=="off")
+       window.FocusFlashTones?.startTest?.();
      const started=performance.now()/1000;
      transport.onEnded(()=>{if(previewVoice===transport)stopPreview();});
      const paint=()=>{
@@ -541,18 +546,27 @@
    const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
    const context=canvas.getContext("2d",{alpha:false});
    drawVideoFrame(canvas,context,text[0],0,text.length,0,timeline.total);
-   let stream=null,recorder=null,transport=null,ctx=null,raf=0,finished=false;
+   let stream=null,recorder=null,transport=null,toneSession=null,ctx=null,raf=0,finished=false;
    let audioDestination=null;
    const chunks=[];
    try{
      stream=canvas.captureStream(30);
-     if(useVoice){
-       ctx=await getContext();audioDestination=ctx.createMediaStreamDestination();
-       const {makePitchPreservedVoice}=await pitchEngine();
-       transport=await makePitchPreservedVoice({
-         context:ctx,buffer:voiceBuffer,rate:narrationRate(timeline),
-         volume:undertoneVolume(),destination:audioDestination,onProgress:report
-       });
+     const useTone=window.FocusFlashTones?.activeForExport?.()===true;
+     if(useVoice||useTone){
+       ctx=await getContext();
+       audioDestination=ctx.createMediaStreamDestination();
+       // Make stereo explicit so the left/right frequency difference survives
+       // the browser's media capture path when that browser supports stereo.
+       if("channelCount" in audioDestination)audioDestination.channelCount=2;
+       if(useVoice){
+         const {makePitchPreservedVoice}=await pitchEngine();
+         transport=await makePitchPreservedVoice({
+           context:ctx,buffer:voiceBuffer,rate:narrationRate(timeline),
+           volume:undertoneVolume(),destination:audioDestination,onProgress:report
+         });
+       }
+       // Add one mixed audio track even for tone-only exports.
+       toneSession=window.FocusFlashTones?.createExport?.(ctx,audioDestination)||null;
        for(const track of audioDestination.stream.getAudioTracks())stream.addTrack(track);
      }
      const type=mime();
@@ -587,6 +601,8 @@
      }
      if(renderAbort)throw Error("Export canceled.");
      transport?.dispose();
+     window.FocusFlashTones?.stopSession?.(toneSession);
+     toneSession=null;
      recorder.stop();
      await complete;
      if(!chunks.length)throw Error("No video data was recorded.");
@@ -602,6 +618,7 @@
      download(videoBlob,videoFilename);
      report("Video created at "+timing().wpm+" WPM"+
        (useVoice?" with pitch-preserved "+Math.round(undertoneVolume()*100)+"% undertone voice.":" without narration.")+
+       (window.FocusFlashTones?.activeForExport?.()?" Tone soundtrack included.":"")+
        " Watch it below or tap Save video. Nothing was uploaded.");
    }catch(error){
      report("Export could not finish: "+error.message);
@@ -609,6 +626,7 @@
    }finally{
      finished=true;cancelAnimationFrame(raf);
      transport?.dispose();
+     window.FocusFlashTones?.stopSession?.(toneSession);
      for(const track of stream?.getTracks()||[])track.stop();
      busy=false;
      sel("studioExport").disabled=false;sel("studioGenerate").disabled=false;
