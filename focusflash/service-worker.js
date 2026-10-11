@@ -1,8 +1,8 @@
 // Network-first FocusFlash shell; no old HTML/JS cached across releases.
-const CACHE="focusflash-video-v2";
+const CACHE="focusflash-video-v3";
 const STATIC=[
- "./index.html","./styles.css?v=video-1",
- "./app.js?v=video-1","./video-studio.js?v=video-1",
+ "./index.html","./styles.css?v=video-2",
+ "./app.js?v=video-2","./video-studio.js?v=video-2",
  "./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{

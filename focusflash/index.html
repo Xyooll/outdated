@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>FocusFlash — Reader & Video Maker</title>
-  <link rel="stylesheet" href="styles.css?v=video-1">
+  <link rel="stylesheet" href="styles.css?v=video-2">
 </head>
 <body>
   <main class="app">
@@ -91,13 +91,22 @@
         </label>
       </div>
       <div class="studio-buttons">
-        <button type="button" id="studioGenerate" class="primary">✦ Generate voice</button>
+        <button type="button" id="studioGenerate" class="primary">✦ Generate AI voice</button>
+        <button type="button" id="studioMic">● Record my voice</button>
         <button type="button" id="studioListen" disabled>▶ Listen to voice</button>
         <button type="button" id="studioWav" disabled>↓ Save voice (WAV)</button>
         <button type="button" id="studioExport" class="primary">● Export video (WebM)</button>
       </div>
       <p id="studioStatus" class="studio-status" role="status" aria-live="polite">Ready.</p>
-      <p class="studio-help">No account, API key, payment, or separate editing app required. The first AI voice download is about 90 MB, then speech is generated on your device. Narrated video timing is approximate word-by-word alignment. Video exports record in real time; keep this tab open until finished. Chrome exports WebM, not MP4.</p>
+      <div id="studioResult" class="studio-result hidden">
+        <p class="studio-result-label">Latest video · watch or save it</p>
+        <video id="studioPreview" controls playsinline preload="metadata"></video>
+        <div class="studio-result-actions">
+          <a id="studioDownload" href="#" download="focusflash-video.webm">↓ Save video</a>
+          <button id="studioShare" type="button">↗ Share video</button>
+        </div>
+      </div>
+      <p class="studio-help">Generate speech automatically or tap Record my voice to narrate directly in the app. Microphone recording needs permission. No account, API key, payment, or separate editing app required. The first AI voice download is about 90 MB, then speech is generated on your device. Narrated video timing is approximate word-by-word alignment. Video exports record in real time; keep this tab open until finished. Chrome exports WebM, not MP4.</p>
     </section>
 
     <section class="text-card">
@@ -116,7 +125,7 @@
     </section>
   </main>
 
-  <script defer src="video-studio.js?v=video-1"></script>
-  <script defer src="app.js?v=video-1"></script>
+  <script defer src="video-studio.js?v=video-2"></script>
+  <script defer src="app.js?v=video-2"></script>
 </body>
 </html>

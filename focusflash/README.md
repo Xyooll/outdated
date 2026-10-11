@@ -49,3 +49,10 @@ No sign-in, server API key, subscription, or third-party editing app is required
 **Important limitations:** The native browser video encoder usually produces `.webm`, not `.mp4`. Video is captured in real time, so leave Chrome open and the screen awake until it finishes. Narration speed sets the approximate duration of a narrated export (WPM controls silent exports). A WebM can be converted to MP4 separately if an upload service requires it, but no external tool is needed to produce the video itself.
 
 The normal RSVP reader, its focus letter, font controls, saved position and installable PWA behavior remain unchanged.
+
+
+### Device voice recording and export reliability
+
+The same Video Studio also has **Record my voice**: microphone permission, record/stop controls, and conversion of the recording into the audio track of the video. No external voice tool or audio editing app is needed. Generated speech and microphone voice both support in-app preview and download as WAV.
+
+After each export, the app shows an embedded video player, a persistent **Save video** link, and a **Share video** button when Android's Web Share API supports video files. This helps when Chrome restricts automatic downloads after longer recordings.

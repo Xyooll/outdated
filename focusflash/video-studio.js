@@ -21,8 +21,9 @@
    bf_emma:"Emma · British",bm_george:"George · British"
  };
  let tts=null,modelLoading=null,voiceBuffer=null,voiceSignature="",busy=false;
+ let micRecorder=null,micStream=null,micChunks=[],videoBlob=null,videoFilename="focusflash-video.webm";
  let audioContext=null,previewSource=null,renderAbort=false;
- let downloadUrl=null,mediaUrl=null;
+ let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
  const words=()=>sel("sourceText").value.trim().split(/\s+/).filter(Boolean);
@@ -165,6 +166,7 @@
  async function synthesize(){
    if(busy)return;
    const text=sel("sourceText").value.trim();
+   const intendedSignature=signature();
    if(!text){report("Paste some text before generating a narrator.");return;}
    if(words().length>800){
      report("For reliable phone performance, generate narration from 800 words or fewer at a time.");
@@ -200,10 +202,12 @@
        for(let j=0;j<len;j++)merged[offset+j]=part.samples[Math.min(part.samples.length-1,Math.floor(j*ratio))];
        offset+=len+Math.round(gap*rate);
      }
-     voiceSignature=signature();
+     voiceSignature=intendedSignature;
      sel("studioExport").disabled=false;
      sel("studioListen").disabled=false;sel("studioWav").disabled=false;
-     report("Voice ready ("+Math.ceil(voiceBuffer.duration)+" sec). Preview it or export video with audio.");
+     if(voiceSignature!==signature())
+       report("Narration generated, but the text or speaker changed. Regenerate to match.");
+     else report("Voice ready ("+Math.ceil(voiceBuffer.duration)+" sec). Preview it or export video with audio.");
    }catch(error){
      voiceBuffer=null;
      report("Voice generation failed: "+error.message+
@@ -212,6 +216,61 @@
      busy=false;sel("studioGenerate").disabled=false;
      sel("studioExport").disabled=false;
    }
+ }
+ async function toggleMic(){
+   if(micRecorder&&micRecorder.state==="recording"){
+     micRecorder.stop();return;
+   }
+   if(busy){report("Wait for the current operation to finish.");return;}
+   if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==="undefined"){
+     report("Microphone recording is not supported in this browser.");return;
+   }
+   busy=true;
+   stopPreview();voiceBuffer=null;voiceSignature="";
+   sel("studioGenerate").disabled=true;sel("studioExport").disabled=true;
+   sel("studioMic").textContent="■ Stop voice recording";
+   try{
+     micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true},video:false});
+     const type=["audio/webm;codecs=opus","audio/webm","audio/mp4"]
+       .find(t=>MediaRecorder.isTypeSupported(t))||"";
+     micChunks=[];
+     micRecorder=new MediaRecorder(micStream,type?{mimeType:type}:{});
+     micRecorder.ondataavailable=event=>{if(event.data.size)micChunks.push(event.data);};
+     micRecorder.onerror=event=>report("Microphone recording failed: "+(event.error?.message||"recording error"));
+     micRecorder.onstop=async()=>{
+       try{
+         const blob=new Blob(micChunks,{type:micRecorder.mimeType||"audio/webm"});
+         if(!blob.size)throw Error("No audio was recorded.");
+         const ctx=await getContext();
+         voiceBuffer=await ctx.decodeAudioData(await blob.arrayBuffer());
+         voiceSignature=signature();
+         sel("studioListen").disabled=false;sel("studioWav").disabled=false;
+         report("Voice recorded ("+Math.ceil(voiceBuffer.duration)+" sec). Export to include it in your video.");
+       }catch(error){report("Couldn't process recording: "+error.message);}
+       finally{
+         micStream?.getTracks().forEach(track=>track.stop());micStream=null;micRecorder=null;
+         sel("studioMic").textContent="● Record my voice";
+         sel("studioGenerate").disabled=false;sel("studioExport").disabled=false;busy=false;
+       }
+     };
+     micRecorder.start();
+     report("Recording your voice. Read the passage aloud, then tap Stop voice recording.");
+   }catch(error){
+     micStream?.getTracks().forEach(track=>track.stop());
+     micStream=null;micRecorder=null;busy=false;
+     sel("studioMic").textContent="● Record my voice";
+     sel("studioGenerate").disabled=false;sel("studioExport").disabled=false;
+     report("Microphone unavailable: "+error.message);
+   }
+ }
+ async function shareVideo(){
+   if(!videoBlob){report("Export a video first.");return;}
+   const file=new File([videoBlob],videoFilename,{type:videoBlob.type||"video/webm"});
+   if(!navigator.canShare?.({files:[file]})){
+     report("Sharing this video isn't supported by your browser. Use Save video below the preview.");return;
+   }
+   try{await navigator.share({files:[file],title:"FocusFlash Video"});}
+   catch(error){if(error.name!=="AbortError")report("Share failed: "+error.message);}
  }
  function stopPreview(){
    try{previewSource?.stop();}catch{}
@@ -331,10 +390,18 @@
      recorder.stop();
      await complete;
      if(!chunks.length)throw Error("No video data was recorded.");
-     download(new Blob(chunks,{type:recorder.mimeType.split(";")[0]}),
-       "focusflash-"+sel("studioRatio").value+"-"+nameSuffix()+".webm");
-     report("Video saved as WebM"+(useVoice?" with narration":" without narration")+
-       ". Check your Downloads folder. Nothing was uploaded.");
+     videoBlob=new Blob(chunks,{type:recorder.mimeType.split(";")[0]});
+     videoFilename="focusflash-"+sel("studioRatio").value+"-"+nameSuffix()+".webm";
+     if(mediaUrl)URL.revokeObjectURL(mediaUrl);
+     mediaUrl=URL.createObjectURL(videoBlob);
+     sel("studioPreview").src=mediaUrl;
+     sel("studioDownload").href=mediaUrl;
+     sel("studioDownload").download=videoFilename;
+     sel("studioResult").classList.remove("hidden");
+     // The visible Save link remains usable when auto-download is blocked.
+     download(videoBlob,videoFilename);
+     report("Video created as WebM"+(useVoice?" with narration":" without narration")+
+       ". Watch it below or tap Save video. Nothing was uploaded.");
    }catch(error){
      report("Export could not finish: "+error.message);
      if(recorder?.state==="recording"){try{recorder.stop();}catch{}}
@@ -374,6 +441,8 @@
    for(const id of ["studioVoice","studioRatio","studioScale"])
       sel(id).addEventListener("change",save);
    sel("studioGenerate").addEventListener("click",synthesize);
+   sel("studioMic").addEventListener("click",toggleMic);
+   sel("studioShare").addEventListener("click",shareVideo);
    sel("studioListen").addEventListener("click",()=>listen().catch(error=>report(error.message)));
    sel("studioWav").addEventListener("click",downloadWav);
    sel("studioExport").addEventListener("click",()=>exportVideo().catch(error=>report(error.message)));
