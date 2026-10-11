@@ -7,6 +7,7 @@ const today=()=>new Date().toISOString().slice(0,10);
 export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}){
  let needs=null,tasks=[],active=null,home=true,running=false,activityChannel=null,otherActivities=new Map();
  let tickTimer=null,finishing=false,completeAttempt=0,lastTasks=0;
+ let selectedObject=null,celebration=null,launching=false;
  const actionBox=$("lifeActions"),progress=$("lifeProgress");
  const status=(s)=>{$("lifeStatus").textContent=s||"";};
  const onHome=()=>getAvatar()?.world_id==="home";
@@ -90,9 +91,35 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
   if(userId===getUser()?.id)return active?.action_key||null;
   return otherActivities.get(userId)?.action_key||null;
  }
+
+ function makeQuickbar(){
+  const bar=$("lifeObjectQuickbar");if(!bar)return;
+  bar.replaceChildren();
+  for(const object of OBJECTS){
+   const button=document.createElement("button");
+   button.type="button";button.className="furniture-chip";
+   button.dataset.object=object.id;
+   button.textContent=object.label;
+   button.title="See actions for "+object.name;
+   button.addEventListener("click",()=>menu(object.id));
+   bar.append(button);
+  }
+ }
+ function syncQuickbar(){
+  const bar=$("lifeObjectQuickbar");if(!bar)return;
+  for(const button of bar.querySelectorAll("[data-object]"))
+   button.classList.toggle("active",button.dataset.object===selectedObject);
+ }
+ function visual(){
+  const activities=[...otherActivities.values()];
+  if(active&&!activities.some(a=>a.user_id===getUser()?.id))activities.push(active);
+  return {hover:selectedObject,selected:selectedObject,activities,
+    celebration:celebration?.until>Date.now()?celebration:null};
+ }
  async function start(){
   if(running)return;
   running=true;
+  makeQuickbar();
   await Promise.all([refreshNeeds(true),refreshTasks(),checkActivity(),refreshHouseholdActivities()]);
   if(activityChannel)db.removeChannel(activityChannel);
   activityChannel=db.channel("our-space-life-activities")
@@ -110,6 +137,7 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
  function stop(){
   running=false;clearInterval(tickTimer);tickTimer=null;
   active=null;needs=null;tasks=[];finishing=false;otherActivities=new Map();
+  selectedObject=null;celebration=null;launching=false;syncQuickbar();
   if(activityChannel)db.removeChannel(activityChannel);
   activityChannel=null;
   closeMenu();renderProgress();
@@ -139,6 +167,9 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
    if(response.error)throw response.error;
    active=null;renderProgress();
    const meta=ACTIONS[a.action_key];
+   const v=getAvatar();
+   celebration={x:v?.x??480,y:v?.y??350,until:Date.now()+1700};
+   selectedObject=null;syncQuickbar();
    status("✓ "+(meta?.label||"Activity")+" complete!");
    await Promise.all([refreshNeeds(false),refreshTasks()]);
   }catch(e){status("Couldn't complete action: "+explain(e));}
@@ -154,17 +185,22 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
   }catch(e){status(explain(e));}
   finally{$("lifeCancel").disabled=false;}
  }
- function closeMenu(){actionBox.classList.add("hidden");$("lifeActionButtons").replaceChildren();}
+ function closeMenu(){
+  actionBox.classList.add("hidden");
+  $("lifeActionButtons").replaceChildren();
+  if(!active&&!launching){selectedObject=null;syncQuickbar();}
+ }
  function menu(object,other=null){
   if(!running)return;
   closeMenu();
+  selectedObject=object==="partner"?null:object;syncQuickbar();
   const choices=Object.entries(ACTIONS).filter(([,a])=>a.object===object);
   if(!choices.length)return;
   $("lifeActionTitle").textContent=other?"Interact with "+String(other.display_name||"your person"):OBJECTS.find(o=>o.id===object)?.name||"Interact";
   for(const [key,meta] of choices){
    const button=document.createElement("button");button.type="button";button.className="action-choice";
-   button.textContent=meta.emoji+" "+meta.label+" · "+meta.duration+"s";
-   if(active)button.disabled=true;
+   button.textContent=meta.emoji+" "+meta.label+" · "+meta.duration+"s · "+meta.need;
+   if(active||launching)button.disabled=true;
    if(key==="eat"&&Number(needs?.meals||0)<1){button.disabled=true;button.title="Cook a meal at the stove first";}
    button.addEventListener("click",()=>perform(key,other));
    $("lifeActionButtons").append(button);
@@ -172,8 +208,10 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
   actionBox.classList.remove("hidden");
  }
  function perform(key,other){
-  const meta=ACTIONS[key];if(!meta||active)return;
-  closeMenu();if(!onHome()){status("Enter the cottage to perform life activities.");return;}
+  const meta=ACTIONS[key];if(!meta||active||launching)return;
+  const objectKey=meta.object;
+  closeMenu();selectedObject=objectKey==="partner"?null:objectKey;syncQuickbar();
+  if(!onHome()){status("Enter the cottage to perform life activities.");return;}
   let destination;
   if(meta.object==="partner"){
    if(!other){status("Your person is not nearby.");return;}
@@ -183,15 +221,18 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
   if(!destination){status("Couldn't find that furniture.");return;}
   status("Walking to "+(meta.object==="partner"?"your person":meta.label.toLowerCase())+"…");
   const success=goTo(destination[0],destination[1],async()=>{
-   if(!running||active||!onHome())return;
+   if(!running||active||!onHome()||launching)return;
+   launching=true;
    try{
     await savePosition();
     const result=await db.rpc("life_start",{p_action:key,p_object:meta.object});
     if(result.error)throw result.error;
     active=result.data;renderProgress();status("Doing: "+meta.label);
-   }catch(e){status("Action could not start: "+explain(e));}
+    await refreshHouseholdActivities();
+   }catch(e){selectedObject=null;syncQuickbar();status("Action could not start: "+explain(e));}
+   finally{launching=false;}
   });
-  if(!success)status("No walkable route to that object.");
+  if(!success){selectedObject=null;syncQuickbar();status("No walkable route to that object.");}
  }
  function interactAt(x,y){
   const obj=OBJECTS.find(o=>{const [rx,ry,w,h]=o.rect;return x>=rx-6&&x<=rx+w+6&&y>=ry-6&&y<=ry+h+6;});
@@ -208,6 +249,8 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
   home=id==="home";
   $("lifeHud").classList.toggle("hidden",!home);
   $("lifeDutyPanel").classList.toggle("hidden",!home);
+  $("lifeObjectQuickbar")?.classList.toggle("hidden",!home);
+  if(!home){selectedObject=null;syncQuickbar();}
   if(!home)closeMenu();
   if(home&&running){await refreshNeeds(true);await refreshTasks();}
  }
@@ -218,5 +261,6 @@ export function createLifeUI({db,getUser,getAvatar,getAvatars,goTo,savePosition}
   if(document.visibilityState==="visible"&&running){refreshNeeds(true).catch(()=>{});refreshTasks().catch(()=>{});checkActivity().catch(()=>{});}
  });
  return {start,stop,onChangeWorld,animate,interactAt,menu,closeMenu,onShowWardrobe,
-   getSpeed,refreshNeeds,refreshTasks,getActionFor,get active(){return active;}};
+   getSpeed,refreshNeeds,refreshTasks,getActionFor,visual,
+   get active(){return active;}};
 }
