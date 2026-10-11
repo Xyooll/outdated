@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111111">
+  <meta name="description" content="A rapid serial visual presentation speed reader with a centered red focal letter.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>FocusFlash Reader</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>FocusFlash</h1>
+        <p>Centered-letter speed reader</p>
+      </div>
+      <button id="installBtn" class="ghost hidden" type="button">Install</button>
+    </header>
+
+    <section class="reader-card">
+      <div class="status-row">
+        <span id="progressText">Word 1 of 1</span>
+        <span id="timeText">0 sec</span>
+      </div>
+
+      <div id="wordStage" class="word-stage" tabindex="0" aria-label="Speed reading display">
+        <div class="center-guide top"></div>
+        <div id="word" class="word">
+          <span id="leftPart" class="left"></span><span id="focusPart" class="focus">R</span><span id="rightPart" class="right">eady</span>
+        </div>
+        <div class="center-guide bottom"></div>
+      </div>
+
+      <div class="controls">
+        <button id="backBtn" type="button" aria-label="Previous word">◀</button>
+        <button id="playBtn" class="primary" type="button">▶ Play</button>
+        <button id="nextBtn" type="button" aria-label="Next word">▶</button>
+      </div>
+
+      <input id="progressRange" class="progress" type="range" min="0" max="0" value="0" aria-label="Reading position">
+    </section>
+
+    <section class="settings-card">
+      <div class="setting">
+        <label for="wpm">Speed <strong id="wpmValue">300 WPM</strong></label>
+        <input id="wpm" type="range" min="60" max="2000" step="10" value="300">
+      </div>
+
+      <div class="setting switch-row">
+        <label for="punctuationPause">Extra pause at punctuation</label>
+        <input id="punctuationPause" type="checkbox" checked>
+      </div>
+
+      <div class="setting switch-row">
+        <label for="longWordPause">Extra pause on long words</label>
+        <input id="longWordPause" type="checkbox" checked>
+      </div>
+
+      <div class="setting">
+        <label for="fontSize">Word size <strong id="fontSizeValue">64 px</strong></label>
+        <input id="fontSize" type="range" min="32" max="96" step="2" value="64">
+      </div>
+    </section>
+
+    <section class="text-card">
+      <label for="sourceText">Text</label>
+      <textarea id="sourceText" rows="9" spellcheck="true">Speed reading works by reducing unnecessary eye movement. This reader flashes one word at a time while keeping one focal letter centered, helping your eyes stay in one place.</textarea>
+      <div class="text-actions">
+        <button id="loadBtn" class="primary" type="button">Load text</button>
+        <button id="resetBtn" type="button">Restart</button>
+        <button id="clearBtn" type="button">Clear</button>
+      </div>
+    </section>
+
+    <section class="tips">
+      <h2>Controls</h2>
+      <p>Tap the reading area to pause or play. Swipe left/right to move between words. Your text, speed, and position save automatically on this device.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
