@@ -160,3 +160,30 @@ button,select,textarea{font-family:inherit}
  .preview-font-controls output{font-size:11px;min-width:35px}
  .preview-note{font-size:10px}
 }
+
+
+/* Focus lock: the red grapheme is always aligned to the exact horizontal
+   center of the canvas, regardless of word length or font size.
+   Both outer columns are equal-width; long sides shrink their font via JS
+   rather than pushing the focus cell sideways. */
+.editor-preview .word{
+ width:100%;box-sizing:border-box;position:relative;
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) max-content minmax(0,1fr)!important;
+ justify-content:stretch;align-items:baseline;
+ padding-inline:8px;
+ left:auto;right:auto;transform:none;overflow:visible
+}
+.editor-preview .word .left{
+ grid-column:1;justify-self:stretch;text-align:right;min-width:0;
+ white-space:pre;overflow:visible
+}
+.editor-preview .word .focus{
+ grid-column:2;justify-self:center;text-align:center;min-width:0;
+ white-space:pre;color:#f04d56
+}
+.editor-preview .word .right{
+ grid-column:3;justify-self:stretch;text-align:left;min-width:0;
+ white-space:pre;overflow:visible
+}
+.editor-preview .center-guide{left:50%;transform:translateX(-50%)}
