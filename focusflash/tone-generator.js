@@ -62,7 +62,7 @@
    $("mp3Clear").disabled=!fileUrl;
    $("mp3Loop").checked=settings.mp3Loop;
    $("toneExport").checked=settings.exportAudio;
-   $("fxExport").checked=settings.fxExport;
+   $("ambienceExport").checked=settings.fxExport;
    $("mp3Export").checked=settings.mp3Export;
    $("timelineToneStatus").textContent=summary().slice(0,58);
    $("timelineTone").dataset.mode=activeMix().any?(settings.fx!=="off"?"ambient":settings.mode!=="off"?settings.mode:"file"):"off";
@@ -301,7 +301,8 @@
      const a=new Audio();a.preload="metadata";
      const timer=setTimeout(()=>{cleanup();reject(Error("Could not read audio metadata in this browser."));},13000);
      const cleanup=()=>{
-       clearTimeout(timer);a.pause();a.removeAttribute("src");a.load();
+       clearTimeout(timer);a.onloadedmetadata=null;a.onerror=null;
+       a.pause();a.removeAttribute("src");a.load();
      };
      a.onloadedmetadata=()=>{
        const duration=a.duration;
@@ -344,7 +345,7 @@
    ++fileToken;
    stop(readerSession);readerSession=null;stop(testSession);testSession=null;
    if(fileUrl)URL.revokeObjectURL(fileUrl);
-   fileUrl=null;fileName="";fileDuration=0;refresh();
+   fileUrl=null;fileName="";fileDuration=0;importBusy=false;refresh();
    $("mp3Import").value="";
    try{await storeFile(null);}catch{}
  }
@@ -390,7 +391,7 @@
    });
    refresh();
    getSavedFile().then(r=>{
-     if(r?.blob&&!fileUrl)return importFile(
+     if(r?.blob&&!fileUrl&&fileToken===0)return importFile(
        new File([r.blob],r.name||"Saved audio.mp3",{type:r.type||"audio/mpeg"}),true
      );
    }).catch(()=>{});
