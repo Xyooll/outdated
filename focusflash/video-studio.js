@@ -27,7 +27,7 @@
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let readerSource=null,readerGain=null,readerGeneration=0;
  let readerVoice=null,previewVoice=null,nativeSpeaking=false;
- const pitchEngine=()=>import("./pitch-preserve.js?v=natural-pitch-1");
+ const pitchEngine=()=>import("./pitch-preserve.js?v=studio-1");
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -201,7 +201,7 @@
        }
      }else if(mode==="fast"){
        report("Loading faster mobile voice, then generating audio...");
-       const adapter=await import("./fast-piper.js?v=natural-pitch-1");
+       const adapter=await import("./fast-piper.js?v=studio-1");
        const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
        for(const raw of results){
          segments.push(raw);
@@ -395,6 +395,11 @@
  }
  async function listen(){
    if(previewVoice){stopPreview();return;}
+   if(sel("studioMode").value==="instant"&&(!voiceBuffer||voiceSignature!==signature())){
+     sel("playBtn")?.click();
+     report("Native phone speech begins with the reader. No voice generation needed.");
+     return;
+   }
    window.FocusFlashReader?.pause?.();
    if(!voiceBuffer||voiceSignature!==signature()){
      report("Generate or record a voice for the current text first.");return;
@@ -576,8 +581,11 @@
  function setVoiceStatus(){
    if(voiceBuffer&&signature()!==voiceSignature){
      stopPreview();stopReaderUndertone();voiceBuffer=null;voiceSignature="";
-     sel("studioListen").disabled=true;sel("studioWav").disabled=true;
-     report("Text or speaker changed. Generate narration again for the new version.");
+     sel("studioListen").disabled=sel("studioMode").value!=="instant";
+     sel("studioWav").disabled=true;
+     report(sel("studioMode").value==="instant"?
+       "Phone voice is available immediately. Reapply the script if it changed.":
+       "Text or speaker changed. Generate narration again for video.");
    }
  }
  function mount(){
@@ -606,8 +614,15 @@
      volume:Number(sel("studioVolume").value),
      readerAudio:sel("studioReaderAudio").checked
    }));}catch{}};
+   const updateModeButtons=()=>{
+     sel("studioGenerate").textContent=mode.value==="instant"?
+       "⚡ Prepare compact video audio":"✦ Generate AI voice";
+     sel("studioListen").disabled=mode.value!=="instant"&&(!voiceBuffer||voiceSignature!==signature());
+     sel("studioListen").textContent=mode.value==="instant"?"▶ Hear phone voice now":"▶ Preview synced narration";
+   };
    mode.addEventListener("change",()=>{
      stopReaderUndertone();populate();setVoiceStatus();save();
+     updateModeButtons();
      report(mode.value==="instant"?
        "Instant phone speech ready. Press Play to hear it now. Video narration prepares automatically when exporting.":
        mode.value==="fast"?"Fast AI voice selected; generate it before reading with sound.":
@@ -621,8 +636,8 @@
    for(const id of ["wpm","punctuationPause","longWordPause"]){
      const element=sel(id);
      element.addEventListener("input",()=>{
-       if(previewSource)stopPreview();
-       if(readerSource&&window.FocusFlashReader?.isPlaying?.())
+       if(previewVoice)stopPreview();
+       if((readerVoice||nativeSpeaking)&&window.FocusFlashReader?.isPlaying?.())
          startReaderUndertone(window.FocusFlashReader.currentIndex()).catch(()=>{});
        updateSpeedHint();
      });
@@ -655,6 +670,7 @@
    sel("studioWav").addEventListener("click",downloadWav);
    sel("studioExport").addEventListener("click",()=>exportVideo().catch(error=>report(error.message)));
    updateSpeedHint();
+   updateModeButtons();
    report(mode.value==="instant"?
      "Instant voice is ready. Press the reader's Play button; no AI voice generation is needed.":
      "AI voice selected. Generate it before hearing it in the reader.");
