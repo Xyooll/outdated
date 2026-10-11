@@ -201,3 +201,16 @@ This is a layout and interaction upgrade, not a full non-linear video editor. Al
 
 
 Mobile Workspace v2: cache refresh and local audio-module import versions aligned for the new layout. URL: https://xyooll.github.io/outdated/focusflash/?v=mobile-workspace-2
+
+
+## Four-window workspace (v2)
+
+**Live:** https://xyooll.github.io/outdated/focusflash/?v=four-panes-2
+
+The desktop app now has **four independent, bordered dock windows**: **LEFT** for Tools (actual icon/name list, not just a skinny rail), **MIDDLE** for the reading/video Player, **RIGHT** for the active Inspector/transcript/settings, and **BOTTOM** for the wide multitrack Timeline. All windows have clear labels. The bottom Timeline spans the width of the editor, beneath the other three windows, for more usable tracks.
+
+On desktop at widths >=951px, three visible splitters can be dragged to resize the left Tools window, right Inspector window, and bottom Timeline height. Splitter handles support arrow keys and Shift+arrows (larger steps), Home or double-click to reset, with a **Layout** reset button in the header. Width/height constraints ensure the Player retains usable room. Window dimensions are saved in localStorage under a key scoped to each of the two user workspaces.
+
+On phones, four functional zones remain available without cramming all four full-width windows onto a narrow screen: the middle Player stays visible, the left Tools become a horizontal tool selector, and the right Inspector or bottom Timeline can occupy the lower pane, with a dedicated Timeline button. The user can open any editing tool or timeline with one tap; profile-specific view/tab preferences still persist.
+
+This update does not alter scripts, reading state, audio tracks, the fixed focal letter, or two-user persistence. The four windows are **docked and resizable**, not arbitrary drag-and-drop floating windows; those would be a separate feature. WebM export and the optional AI voices work as before. This release needs real-device visual confirmation.
