@@ -290,21 +290,46 @@
    catch(error){if(error.name!=="AbortError")report("Share failed: "+error.message);}
  }
  function stopPreview(){
+   cancelAnimationFrame(previewAnimation);
+   previewAnimation=0;
    try{previewSource?.stop();}catch{}
-   previewSource=null;
-   sel("studioListen").textContent="▶ Listen to voice";
+   try{previewSource?.disconnect();}catch{}
+   try{previewGain?.disconnect();}catch{}
+   previewSource=null;previewGain=null;
+   sel("studioListen").textContent="▶ Preview synced undertone";
  }
  async function listen(){
    if(previewSource){stopPreview();return;}
    if(!voiceBuffer||voiceSignature!==signature()){
-     report("Generate a fresh voice for the current text and selected speaker.");return;
+     report("Generate or record a voice for the current text first.");return;
    }
-   const ctx=await getContext();
-   const src=ctx.createBufferSource();
-   src.buffer=voiceBuffer;src.connect(ctx.destination);
+   const passage=words();
+   if(!passage.length)return;
+   const timeline=makeTimeline(passage),rate=narrationRate(timeline);
+   const ctx=await getContext(),src=ctx.createBufferSource();
+   const gain=ctx.createGain();
+   src.buffer=voiceBuffer;
+   src.playbackRate.value=rate;
+   gain.gain.value=undertoneVolume();
+   src.connect(gain);gain.connect(ctx.destination);
+   const canvas=sel("studioSyncCanvas");
+   const frameContext=canvas.getContext("2d",{alpha:false});
+   const startAt=ctx.currentTime+.12;
+   sel("studioListen").textContent="■ Stop synced preview";
+   sel("studioSyncCanvas").classList.remove("hidden");
+   previewSource=src;previewGain=gain;
    src.onended=()=>{if(previewSource===src)stopPreview();};
-   previewSource=src;src.start();
-   sel("studioListen").textContent="■ Stop voice";
+   const paint=()=>{
+     if(previewSource!==src)return;
+     const elapsed=Math.max(0,ctx.currentTime-startAt);
+     const i=currentWordAt(timeline,Math.min(elapsed,timeline.total));
+     drawVideoFrame(canvas,frameContext,passage[i],i,passage.length,elapsed,timeline.total);
+     if(elapsed<timeline.total+.1)previewAnimation=requestAnimationFrame(paint);
+   };
+   drawVideoFrame(canvas,frameContext,passage[0],0,passage.length,0,timeline.total);
+   src.start(startAt);
+   previewAnimation=requestAnimationFrame(paint);
+   report("Preview: "+timing().wpm+" WPM · speech "+rate.toFixed(2)+"× · "+Math.round(undertoneVolume()*100)+"% volume.");
  }
  function wavFile(buffer){
    const samples=buffer.getChannelData(0),size=samples.length*2;
