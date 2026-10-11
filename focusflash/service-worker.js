@@ -1,16 +1,17 @@
 // Four-window dock v2, network-first to keep updated UI and data separate.
-const CACHE="focusflash-four-pane-dock-v2";
+const CACHE="focusflash-four-pane-dock-v3";
 const STATIC=[
  "./","./index.html",
- "./styles.css?v=four-panes-2","./editor.css?v=four-panes-2",
- "./workspace.css?v=four-panes-2","./reference-layout.css?v=four-panes-2",
- "./layout-v3.css?v=four-panes-2","./dock-windows.css?v=four-panes-2",
- "./profiles.js?v=four-panes-2","./dock-windows.js?v=four-panes-2",
- "./app.js?v=four-panes-2","./editor.js?v=four-panes-2",
- "./transcript.js?v=four-panes-2","./script-blocks.js?v=four-panes-2",
- "./video-studio.js?v=four-panes-2","./tone-generator.js?v=four-panes-2",
- "./instant-tts.js?v=four-panes-2","./pitch-preserve.js?v=four-panes-2",
- "./fast-piper.js?v=four-panes-2",
+ "./styles.css?v=four-panes-3","./editor.css?v=four-panes-3",
+ "./workspace.css?v=four-panes-3","./reference-layout.css?v=four-panes-3",
+ "./layout-v3.css?v=four-panes-3","./dock-windows.css?v=four-panes-3",
+ "./four-pane-mobile.css?v=four-panes-3",
+ "./profiles.js?v=four-panes-3","./dock-windows.js?v=four-panes-3",
+ "./app.js?v=four-panes-3","./editor.js?v=four-panes-3",
+ "./transcript.js?v=four-panes-3","./script-blocks.js?v=four-panes-3",
+ "./video-studio.js?v=four-panes-3","./tone-generator.js?v=four-panes-3",
+ "./instant-tts.js?v=four-panes-3","./pitch-preserve.js?v=four-panes-3",
+ "./fast-piper.js?v=four-panes-3",
  "./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{

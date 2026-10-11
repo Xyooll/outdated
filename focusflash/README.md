@@ -214,3 +214,14 @@ On desktop at widths >=951px, three visible splitters can be dragged to resize t
 On phones, four functional zones remain available without cramming all four full-width windows onto a narrow screen: the middle Player stays visible, the left Tools become a horizontal tool selector, and the right Inspector or bottom Timeline can occupy the lower pane, with a dedicated Timeline button. The user can open any editing tool or timeline with one tap; profile-specific view/tab preferences still persist.
 
 This update does not alter scripts, reading state, audio tracks, the fixed focal letter, or two-user persistence. The four windows are **docked and resizable**, not arbitrary drag-and-drop floating windows; those would be a separate feature. WebM export and the optional AI voices work as before. This release needs real-device visual confirmation.
+
+
+## Four visible windows on mobile (four-panes-3)
+
+This release fixes a specific error in the previous four-window update: below 951px the old mobile view still rearranged the UI into a player, horizontal tool strip, and *either* inspector or timeline. That prevented users on Android phones from seeing the requested four windows at once.
+
+At widths up to 950px, a final-priority stylesheet now forces the actual four-pane grid on screen **simultaneously**, with: (1) left vertical tools column, (2) center reading preview, (3) right scrollable transcript/settings inspector, and (4) full-width bottom timeline with word/block/voice/sound tracks. Selecting Tools no longer hides the timeline and selecting Timeline can no longer hide the inspector. Individual windows scroll inside their own bounds, while the overall app remains the height of the display.
+
+Mobile users can tap the widen/compact icon in the inspector header when editing needs additional width; the expanded setting persists separately per workspace. On mobile portrait the windows share a narrow display, so text is deliberately compact; landscape provides more space. Desktop draggable separators and saved desktop proportions still work. User scripts, TTS, MP3, tone settings, and separate profiles were not modified.
+
+Published at: https://xyooll.github.io/outdated/focusflash/?v=four-panes-3
