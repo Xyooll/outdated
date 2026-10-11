@@ -1,9 +1,9 @@
-// Network-first FocusFlash shell; no old HTML/JS cached across releases.
-const CACHE="focusflash-video-v3";
+// FocusFlash undertone v1: network-first PWA shell, versioned local assets.
+const CACHE="focusflash-undertone-v1";
 const STATIC=[
- "./index.html","./styles.css?v=video-2",
- "./app.js?v=video-2","./video-studio.js?v=video-2",
- "./manifest.webmanifest","./icon.svg"
+ "./index.html","./styles.css?v=undertone-1",
+ "./app.js?v=undertone-1","./video-studio.js?v=undertone-1",
+ "./fast-piper.js?v=undertone-1","./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(STATIC)));
@@ -17,6 +17,5 @@ self.addEventListener("activate",event=>{
 });
 self.addEventListener("fetch",event=>{
  if(event.request.method!=="GET"||new URL(event.request.url).origin!==self.location.origin)return;
- // No caching third-party model requests here: the runtime handles model cache.
  event.respondWith(fetch(event.request).catch(()=>caches.match(event.request)));
 });

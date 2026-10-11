@@ -83,3 +83,10 @@ textarea{width:100%;resize:vertical;background:#111113;color:var(--text);border:
 .studio-result-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .studio-result-actions a,.studio-result-actions button{display:flex;align-items:center;justify-content:center;text-decoration:none;flex:1 1 130px;min-height:45px;border-radius:12px;background:#303038;color:#fff;border:1px solid #665566;padding:9px 14px;font-size:13px}
 .studio-result-actions a{background:#f8becd;color:#2b1921;border-color:#f8becd;font-weight:750}
+
+/* Undertone sound controls and synchronized word/voice preview */
+.studio-grid label[for="studioVolume"]{display:flex;flex-direction:column;gap:7px}
+.studio-grid label[for="studioVolume"] strong{font-size:13px;color:#ffb9c4}
+.studio-grid label[for="studioVolume"] input[type="range"]{accent-color:#ff899f}
+.studio-hint{grid-column:1/-1;border:1px solid #4e404b;color:#e8cfd8;background:#14121a;padding:11px 12px;border-radius:12px;font-size:12px;line-height:1.5}
+.studio-sync-canvas{display:block;width:min(100%,280px);height:auto;max-height:350px;object-fit:contain;margin:15px auto;border:1px solid #735568;border-radius:14px;background:#101016}

@@ -56,3 +56,12 @@ The normal RSVP reader, its focus letter, font controls, saved position and inst
 The same Video Studio also has **Record my voice**: microphone permission, record/stop controls, and conversion of the recording into the audio track of the video. No external voice tool or audio editing app is needed. Generated speech and microphone voice both support in-app preview and download as WAV.
 
 After each export, the app shows an embedded video player, a persistent **Save video** link, and a **Share video** button when Android's Web Share API supports video files. This helps when Chrome restricts automatic downloads after longer recordings.
+
+
+## Fast synchronized undertone narration
+
+The video creator now respects **your chosen visual WPM** as the authoritative timing. When exporting with voice, it adjusts the audio playback rate so the **entire spoken passage fits the exact same duration as the flashing text**, using Web Audio AudioBufferSourceNode playbackRate. The audio level uses an adjustable **Undertone voice volume** slider (0–100%, default 18%). The same synchronization/volume is available via **Preview synced undertone**, which shows flashing words and plays accelerated voice together.
+
+At high WPM this is heavily accelerated and pitch-shifted rather than pitch-preserved; it may sound like a high-pitched blur, which is the intended faint/rapid undertone, not intelligible narration. Source synthesis still takes some time on phones. Word-to-phoneme correspondence is only approximate because there is no forced alignment; the *overall beginning, duration and ending* are synchronized. No claims are made that low-volume subliminal messages cause learning or behavior change.
+
+Change Speed in the original reader card to change both the resulting video pace and the voice's compression factor. The app shows the effective audio multiplier. Video export remains WebM and is recorded in real time while Chrome stays foregrounded. Voice volume/voice mode/format choices are saved locally. Visit `https://xyooll.github.io/outdated/focusflash/?v=undertone-1` for the updated version.
