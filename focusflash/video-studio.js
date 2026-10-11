@@ -24,6 +24,7 @@
  const fastVoices={"en_US-ryan-medium":"Ryan · American male","en_US-hfc_female-medium":"American female","en_US-lessac-low":"Lessac · American"};
  let micRecorder=null,micStream=null,micChunks=[],videoBlob=null,videoFilename="focusflash-video.webm";
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
+ let readerSource=null,readerGain=null,readerGeneration=0;
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -179,7 +180,7 @@
      return;
    }
    busy=true;sel("studioGenerate").disabled=true;sel("studioExport").disabled=true;
-   stopPreview();voiceBuffer=null;voiceSignature="";report("Initializing narrator...");
+   stopPreview();stopReaderUndertone();voiceBuffer=null;voiceSignature="";report("Initializing narrator...");
    try{
      const mode=sel("studioMode").value;
      const engine=mode==="quality"?await loadModel():null;
@@ -189,7 +190,7 @@
      const gap=.11;
      if(mode==="fast"){
        report("Loading faster mobile voice, then generating audio...");
-       const adapter=await import("./fast-piper.js?v=undertone-1");
+       const adapter=await import("./fast-piper.js?v=undertone-2");
        const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
        for(const raw of results){
          segments.push(raw);
@@ -291,6 +292,36 @@
    try{await navigator.share({files:[file],title:"FocusFlash Video"});}
    catch(error){if(error.name!=="AbortError")report("Share failed: "+error.message);}
  }
+ function stopReaderUndertone(){
+   readerGeneration++;
+   try{readerSource?.stop();}catch{}
+   try{readerSource?.disconnect();}catch{}
+   try{readerGain?.disconnect();}catch{}
+   readerSource=null;readerGain=null;
+ }
+ async function startReaderUndertone(wordIndex=0){
+   stopReaderUndertone();
+   if(!sel("studioReaderAudio").checked||!voiceBuffer||voiceSignature!==signature())return;
+   const passage=words();if(!passage.length)return;
+   const timeline=makeTimeline(passage),i=Math.max(0,Math.min(passage.length-1,wordIndex));
+   const offset=Math.max(0,Math.min(voiceBuffer.duration-.001,
+     voiceBuffer.duration*timeline.starts[i]/timeline.total));
+   const rate=narrationRate(timeline);
+   const generation=readerGeneration;
+   try{
+     const ctx=await getContext();
+     if(readerGeneration!==generation)return;
+     const src=ctx.createBufferSource(),gain=ctx.createGain();
+     src.buffer=voiceBuffer;src.playbackRate.value=rate;
+     gain.gain.value=undertoneVolume();
+     src.connect(gain);gain.connect(ctx.destination);
+     src.onended=()=>{if(readerSource===src){readerSource=null;readerGain=null;}};
+     readerSource=src;readerGain=gain;
+     src.start(ctx.currentTime,offset);
+   }catch(error){
+     report("Reader narration unavailable: "+error.message);
+   }
+ }
  function stopPreview(){
    cancelAnimationFrame(previewAnimation);
    previewAnimation=0;
@@ -302,6 +333,7 @@
  }
  async function listen(){
    if(previewSource){stopPreview();return;}
+   window.FocusFlashReader?.pause?.();
    if(!voiceBuffer||voiceSignature!==signature()){
      report("Generate or record a voice for the current text first.");return;
    }
@@ -374,7 +406,7 @@
    }
    const text=words();
    if(text.length===0){report("Paste text first.");return;}
-   stopPreview();
+   stopPreview();window.FocusFlashReader?.pause?.();
    let narration=sel("studioAudio").checked;
    if(narration&&(!voiceBuffer||voiceSignature!==signature())){
      report("Generate narration for this text first, or uncheck 'Include generated voice'.");
@@ -490,10 +522,12 @@
    if(Number.isFinite(saved.size))sel("studioScale").value=String(saved.size);
    if(Number.isFinite(saved.volume))
      sel("studioVolume").value=String(Math.max(0,Math.min(100,saved.volume)));
+   if(typeof saved.readerAudio==="boolean")sel("studioReaderAudio").checked=saved.readerAudio;
    const save=()=>{try{localStorage.setItem("focusflash-video-v1",JSON.stringify({
      mode:mode.value,voice:choice.value,ratio:sel("studioRatio").value,
      size:Number(sel("studioScale").value),
-     volume:Number(sel("studioVolume").value)
+     volume:Number(sel("studioVolume").value),
+     readerAudio:sel("studioReaderAudio").checked
    }));}catch{}};
    mode.addEventListener("change",()=>{
      populate();setVoiceStatus();save();
@@ -507,13 +541,23 @@
      const element=sel(id);
      element.addEventListener("input",()=>{
        if(previewSource)stopPreview();
+       if(readerSource&&window.FocusFlashReader?.isPlaying?.())
+         startReaderUndertone(window.FocusFlashReader.currentIndex()).catch(()=>{});
        updateSpeedHint();
      });
    }
+   sel("studioReaderAudio").addEventListener("change",()=>{
+     if(!sel("studioReaderAudio").checked)stopReaderUndertone();
+     else if(window.FocusFlashReader?.isPlaying?.())
+       startReaderUndertone(window.FocusFlashReader.currentIndex()).catch(()=>{});
+     save();
+   });
    sel("studioVolume").addEventListener("input",()=>{
      const level=undertoneVolume();
      if(previewGain&&audioContext)
        previewGain.gain.setTargetAtTime(level,audioContext.currentTime,.025);
+     if(readerGain&&audioContext)
+       readerGain.gain.setTargetAtTime(level,audioContext.currentTime,.025);
      updateSpeedHint();
      save();
    });
@@ -528,5 +572,5 @@
    updateSpeedHint();
    report("Fast mobile narrator ready. The voice will match the flashing-word speed as a quiet undertone.");
  }
- window.FocusFlashStudio={mount};
+ window.FocusFlashStudio={mount,startReaderUndertone,stopReaderUndertone};
 })();
