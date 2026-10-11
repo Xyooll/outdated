@@ -138,14 +138,18 @@ export function drawAvatar(ctx,a,x,y,opts={}){
  if(!a)return;
  const scale=opts.scale||1;
  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+ const stride=opts.walking?Math.sin((opts.clock||0)*13)*5:0;
+ const seated=["relax","watch","eat"].includes(opts.activity);
+ if(seated){ctx.translate(0,-9);ctx.scale(1,.88);}
+ if(opts.activity==="sleep"){ctx.translate(0,-25);ctx.rotate(-.26);}
  if(opts.offline)ctx.globalAlpha=.53;
  ellipse(ctx,"#12182758",0,-2,26,8);
  // footwear
- fill(ctx,"#2b3545",-18,-14,16,10);fill(ctx,"#2b3545",3,-14,16,10);
+ fill(ctx,"#2b3545",-18+stride,-14,16,10);fill(ctx,"#2b3545",3-stride,-14,16,10);
  // legs/pants
  const pant=PANTS[a.bottoms]||PANTS.denim;
- fill(ctx,"#343347",-16,-27,16,18);fill(ctx,"#343347",1,-27,16,18);
- fill(ctx,pant,-14,-28,12,16);fill(ctx,pant,3,-28,12,16);
+ fill(ctx,"#343347",-16+stride,-27,16,18);fill(ctx,"#343347",1-stride,-27,16,18);
+ fill(ctx,pant,-14+stride,-28,12,16);fill(ctx,pant,3-stride,-28,12,16);
  // shirt and shoulders
  const top=TOP[a.shirt]||TOP.pink;
  fill(ctx,"#343347",-20,-51,40,27);

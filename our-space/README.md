@@ -31,3 +31,7 @@ Open the live app in Chrome and refresh (or restart installed app). Sign in if n
 
 ## Limits / deliberate scope
 This is a compact 2D life simulation, **not The Sims 4**. No careers, pregnancy, building editor, inventories beyond prepared meal count, additional households, physics engine, or real-world responsibility tracking. It uses rapid example action durations (seconds) for an approachable playable prototype, not simulated multi-hour real time. Browser gameplay with two real phones must still be verified end to end after deployment.
+
+## Visual action feedback
+
+Walking animates alternating legs; eating/relaxing/watching shift the character toward a seated pose; sleeping leans the character and displays a sleep activity label. The household task list opens by default. Older avatar locations trapped in the new furniture map are safely moved to the center of the living room on first load.

@@ -2,7 +2,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
 import { URL as PROJECT_URL, KEY as PUBLISHABLE_KEY } from "./config.js";
 import { drawWorld, drawAvatar, WORLD_META } from "./world-art.js";
-import { drawHouse, findHousePath, clearTile } from "./life-house.js";
+import { drawHouse, findHousePath, clearTile, ACTIONS } from "./life-house.js";
 import { createLifeUI } from "./life-ui.js";
 
 const $ = id => document.getElementById(id);
@@ -100,11 +100,16 @@ async function doEnter(){
   }
   if(thisStart!==sessionGeneration)return;
   world=WORLD_META[myAvatar.world_id]?myAvatar.world_id:"home";
+  // Avatars from the old free-roaming Cottage might have been left inside new furniture.
+  if(world==="home"&&!clearTile(myAvatar.x,myAvatar.y)){
+    myAvatar.x=450;myAvatar.y=350;dirty=true;
+  }
   appReady=true;
   setStatus("● Connected");
   updateWorldHead();
   show("worldView");
   connectAvatarChannel();
+  if(dirty)await ensureSavedPosition();
   await changeRoomChat();
   await life.start();
   await life.onChangeWorld(world);
@@ -325,8 +330,12 @@ function frame(ts){
   for(const a of visible){
    const you=a.user_id===me.id, active=you||online(a);
    const bubble=emoted[a.user_id]&&emoted[a.user_id].until>Date.now()?emoted[a.user_id].text:null;
+   const activity=you&&life.active?life.active.action_key:null;
+   const actionText=activity?ACTIONS[activity]?.emoji+" "+ACTIONS[activity]?.label:null;
+   const moving=you&&(waypoints.length>0||inputDirection.size>0||!!positionTarget);
    const y=a.y+(active?Math.sin(ts/550+a.x)*1.2:0);
-   drawAvatar(ctx,a,a.x,y,{online:active,offline:!active,emote:bubble,scale:1.38});
+   drawAvatar(ctx,a,a.x,y,{online:active,offline:!active,emote:bubble||actionText,
+    scale:1.38,walking:moving,clock:ts/1000,activity});
   }
   if(!$("closet").classList.contains("hidden"))drawPreview();
   life.animate();
