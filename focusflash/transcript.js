@@ -167,7 +167,7 @@
      current.setAttribute("aria-current","location");
      if(!search&&$("editorTranscript")&&!$("editorTranscript").hidden){
        const visibleTop=list.scrollTop,visibleBottom=visibleTop+list.clientHeight;
-       const top=current.offsetTop-list.offsetTop;
+       const top=current.offsetTop; // list is the positioned scroll container
        if(top<visibleTop+8||top+current.offsetHeight>visibleBottom-8)
          list.scrollTop=Math.max(0,top-list.clientHeight*.33);
      }
