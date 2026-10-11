@@ -1,9 +1,9 @@
 // FocusFlash undertone v1: network-first PWA shell, versioned local assets.
-const CACHE="focusflash-undertone-v1";
+const CACHE="focusflash-undertone-v2";
 const STATIC=[
- "./index.html","./styles.css?v=undertone-1",
- "./app.js?v=undertone-1","./video-studio.js?v=undertone-1",
- "./fast-piper.js?v=undertone-1","./manifest.webmanifest","./icon.svg"
+ "./index.html","./styles.css?v=undertone-2",
+ "./app.js?v=undertone-2","./video-studio.js?v=undertone-2",
+ "./fast-piper.js?v=undertone-2","./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(STATIC)));
