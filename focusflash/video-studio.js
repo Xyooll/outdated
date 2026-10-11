@@ -185,80 +185,104 @@
  }
  async function synthesize(){
    if(busy)return;
-   const text=sel("sourceText").value.trim();
-   const intendedSignature=signature();
-   if(!text){report("Paste some text before generating a narrator.");return;}
-   const cap=sel("studioMode").value==="instant"?1800:800;
-   if(words().length>cap){
-     report("This voice mode supports up to "+cap+" words per export. Split longer passages into chapters.");
+   // In Script Blocks mode, repeat audio clips instead of synthesizing each
+   // repeated phrase again. This is especially important for neural voices.
+   const blocksAPI=window.FocusFlashBlocks;
+   blocksAPI?.flush?.();
+   const script=sel("sourceText").value.trim();
+   const signatureAtStart=signature();
+   if(!script){report("Add some words before preparing narration.");return;}
+   const mode=sel("studioMode").value,voice=sel("studioVoice").value;
+   const units=blocksAPI?.isEnabled()?
+     blocksAPI.getBlocks().filter(b=>b.text.trim()).map(b=>({
+       text:b.text.trim(),repeats:Math.max(1,Math.min(100,Number(b.repeats)||1))
+     })):
+     [{text:script,repeats:1}];
+   const uniqueWordCount=units.reduce((sum,u)=>sum+wordsIn(u.text),0);
+   const cap=mode==="instant"?1800:800;
+   if(uniqueWordCount>cap){
+     report("This voice can synthesize up to "+cap+" unique words. Divide long blocks into chapters.");
+     return;
+   }
+   const visualTimeline=makeTimeline(words());
+   if(visualTimeline.total>480){
+     report("The selected blocks would create more than 8 minutes of video. Reduce repetitions or increase WPM.");
      return;
    }
    busy=true;sel("studioGenerate").disabled=true;sel("studioExport").disabled=true;
-   stopPreview();stopReaderUndertone();voiceBuffer=null;voiceSignature="";report("Initializing narrator...");
+   stopPreview();stopReaderUndertone();voiceBuffer=null;voiceSignature="";
+   sel("studioListen").disabled=true;sel("studioWav").disabled=true;
+   report("Preparing speech; repeated blocks will reuse audio…");
    try{
-     // Start/resume the audio engine while the original button gesture is active.
-     // This avoids losing mobile autoplay permission during asynchronous synthesis.
      await getContext();
-     const mode=sel("studioMode").value;
-     const engine=mode==="quality"?await loadModel():null;
-     const phrases=splitIntoPhrases(text);
-     if(!phrases.length)throw Error("No readable text found.");
-     const segments=[];let total=0;
-     const gap=.11;
-     if(mode==="instant"){
-       const {generateInstantExportSpeech}=await import("./instant-tts.js?v=font-focus-1");
-       const results=await generateInstantExportSpeech(text,report);
-       for(const raw of results){
-         segments.push(raw);
-         total+=raw.samples.length/raw.sampleRate+gap;
-       }
-     }else if(mode==="fast"){
-       report("Loading faster mobile voice, then generating audio...");
-       const adapter=await import("./fast-piper.js?v=font-focus-1");
-       const results=await adapter.generateFastPhrases(phrases,sel("studioVoice").value,report);
-       for(const raw of results){
-         segments.push(raw);
-         total+=raw.samples.length/raw.sampleRate+gap;
-       }
-     }else{
-       for(let i=0;i<phrases.length;i++){
-         report("Generating natural narration: "+(i+1)+" / "+phrases.length);
-         const raw=rawAudio(await engine.generate(phrases[i],{voice:sel("studioVoice").value}));
-         if(!raw.samples.length)throw Error("Voice generator returned an empty phrase.");
-         segments.push(raw);
-         total+=raw.samples.length/raw.sampleRate+gap;
-         await wait(0);
-       }
+     const model=mode==="quality"?await loadModel():null;
+     const cache=new Map(),allSegments=[];
+     for(let i=0;i<units.length;i++){
+       const unit=units[i],cacheKey=mode+"|"+voice+"|"+unit.text;
+       let generated=cache.get(cacheKey);
+       if(!generated){
+         const phrases=splitIntoPhrases(unit.text);
+         if(!phrases.length)continue;
+         if(mode==="instant"){
+           const {generateInstantExportSpeech}=await import("./instant-tts.js?v=blocks-1");
+           generated=await generateInstantExportSpeech(unit.text,msg=>report("Block "+(i+1)+": "+msg));
+         }else if(mode==="fast"){
+           const adapter=await import("./fast-piper.js?v=blocks-1");
+           generated=await adapter.generateFastPhrases(phrases,voice,
+             msg=>report("Block "+(i+1)+": "+msg));
+         }else{
+           generated=[];
+           for(let j=0;j<phrases.length;j++){
+             report("Narrating unique block "+(i+1)+"/"+units.length+
+               ", phrase "+(j+1)+"/"+phrases.length);
+             const raw=rawAudio(await model.generate(phrases[j],{voice}));
+             generated.push(raw);
+             await wait(0);
+           }
+         }
+         for(const part of generated)
+           if(!part.samples?.length||!Number.isFinite(part.sampleRate)||part.sampleRate<8000)
+             throw Error("Voice engine returned an invalid audio segment.");
+         cache.set(cacheKey,generated);
+       }else report("Reusing previously generated voice for Block "+(i+1)+"…");
+       for(let k=0;k<unit.repeats;k++)allSegments.push(...generated);
      }
-     const rate=24000;
-     const count=Math.ceil(total*rate);
-     if(count>rate*780)throw Error("Narration is too long for one video (limit 13 minutes).");
+     if(!allSegments.length)throw Error("No spoken audio could be generated.");
+     const rate=24000,gap=Math.round(rate*.10);
+     const lengths=allSegments.map(part=>Math.ceil(part.samples.length*rate/part.sampleRate));
+     const totalSamples=lengths.reduce((a,b)=>a+b,0)+gap*(allSegments.length-1);
+     if(totalSamples>rate*780)
+       throw Error("The repeated narration is too long. Reduce block repetitions.");
      const context=await getContext();
-     voiceBuffer=context.createBuffer(1,count,rate);
-     const merged=voiceBuffer.getChannelData(0);
+     const assembled=context.createBuffer(1,totalSamples,rate);
+     const output=assembled.getChannelData(0);
      let offset=0;
-     for(const part of segments){
-       // Kokoro returns 24 kHz. Guard future sample rate changes.
-       const ratio=part.sampleRate/rate;
-       const len=Math.ceil(part.samples.length/ratio);
-       for(let j=0;j<len;j++)merged[offset+j]=part.samples[Math.min(part.samples.length-1,Math.floor(j*ratio))];
-       offset+=len+Math.round(gap*rate);
+     for(let i=0;i<allSegments.length;i++){
+       const part=allSegments[i],length=lengths[i],ratio=part.sampleRate/rate;
+       for(let j=0;j<length;j++)
+         output[offset+j]=part.samples[Math.min(part.samples.length-1,Math.floor(j*ratio))];
+       offset+=length+(i<allSegments.length-1?gap:0);
      }
-     voiceSignature=intendedSignature;
-     updateSpeedHint();
-     sel("studioExport").disabled=false;
+     if(signatureAtStart!==signature()){
+       report("The script or voice changed while generating. Prepare the updated version.");
+       return;
+     }
+     voiceBuffer=assembled;voiceSignature=signatureAtStart;
      sel("studioListen").disabled=false;sel("studioWav").disabled=false;
-     if(voiceSignature!==signature())
-       report("Narration generated, but the text or speaker changed. Regenerate to match.");
-     else report("Voice ready ("+Math.ceil(voiceBuffer.duration)+" sec). Preview it or export video with audio.");
+     updateSpeedHint();
+     report("Voice ready ("+Math.ceil(assembled.duration)+" sec). "+
+       "Generated "+cache.size+" unique passage"+(cache.size===1?"":"s")+
+       "; repeated blocks reuse the same recording.");
    }catch(error){
-     voiceBuffer=null;
-     report("Voice generation failed: "+error.message+
-      ". You can still export a silent video. Try desktop Chrome if this phone lacks memory.");
+     voiceBuffer=null;voiceSignature="";
+     report("Narration couldn't finish: "+error.message+
+       ". Try Instant mode, shorten the script, or export without sound.");
    }finally{
-     busy=false;sel("studioGenerate").disabled=false;
-     sel("studioExport").disabled=false;
+     busy=false;sel("studioGenerate").disabled=false;sel("studioExport").disabled=false;
    }
+ }
+ function wordsIn(text){
+   return String(text||"").trim().split(/\s+/).filter(Boolean).length;
  }
  async function toggleMic(){
    if(micRecorder&&micRecorder.state==="recording"){
