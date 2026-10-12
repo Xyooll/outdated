@@ -31,4 +31,4 @@ The caller creates a cryptographically random, Base64url-encoded 16-byte room se
 - SDP/ICE metadata (including IP addresses) is available to the signaling server/peer. Use TURN relay-only ICE when requiring IP address obfuscation.
 - Rooms are process-local. Restarts disconnect users. Horizontal scaling requires a shared state/relay. The service doesn't yet enforce per-IP quotas; add reverse-proxy rate controls, DDoS protection, monitoring, TLS, and verification before public deployment.
 - An untrusted relay can observe network metadata and traffic volume. It should not be able to read DTLS-SRTP media plaintext when negotiated correctly.
-- This server is **not deployed** and the first Android-native v0.3 alpha still uses manual offer/answer. Integrating WebSockets and hosted TURN is the next milestone.
+- This server is **not deployed**. The Android v0.3 alpha now has an optional WSS client that can exchange offer/answer through a privately deployed instance; manual offer/answer remains supported. Hosted TLS/WSS, TURN and real hardware tests are still pending.
