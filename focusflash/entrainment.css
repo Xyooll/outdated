@@ -1,0 +1,42 @@
+/* FocusFlash sound-entrainment controls, compatible with the four dock windows.
+   Effects labeled experimental; no neurological or medical outcomes implied. */
+.entrainment-head{
+ display:flex;flex-direction:column;gap:5px;
+ margin:0 0 12px;padding:11px 12px;
+ background:linear-gradient(130deg,#362e53,#25243a);
+ border:1px solid #65528b;border-radius:11px
+}
+.entrainment-head strong{font-size:13px;line-height:1.35;color:#f4e8ff}
+.entrainment-head p{
+ margin:0;font-size:11px;color:#d6c9e7;line-height:1.5
+}
+.tone-generator #tonePresetHelp,
+.tone-generator #toneMethodHelp{
+ margin:0 0 11px;padding:7px 9px;
+ border-left:2px solid #936fc4;
+ background:#272336;color:#d6cfe2;
+ border-radius:0 6px 6px 0;font-size:11px;line-height:1.45
+}
+.entrainment-settings{
+ margin:10px 0;padding:10px 11px 5px;
+ border-radius:10px;border:1px solid #524563;
+ background:#252237;display:grid;gap:7px
+}
+.entrainment-settings label{margin:0 0 6px}
+.entrainment-settings select{margin-top:5px}
+.entrainment-settings strong{color:#eed7ff}
+.tone-generator #toneCurrent{overflow-wrap:anywhere}
+@media(max-width:950px){
+ .entrainment-head{margin-bottom:8px;padding:8px 7px}
+ .entrainment-head strong{font-size:11px}
+ .entrainment-head p{font-size:10px}
+ .tone-generator #tonePresetHelp,.tone-generator #toneMethodHelp{font-size:10px;padding:6px}
+ .entrainment-settings{margin:7px 0;padding:7px 5px;gap:6px}
+ #editorInspector .tone-generator select{
+   min-height:32px!important;height:auto!important;
+   padding:5px 2px!important;font-size:11px!important;
+ }
+ #editorInspector .tone-generator input[type="number"]{padding:5px!important}
+ #editorInspector .tone-generator .tone-exact{flex-wrap:wrap!important;gap:4px!important}
+ #editorInspector .tone-generator .tone-exact span{white-space:normal!important}
+}
