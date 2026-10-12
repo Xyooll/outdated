@@ -121,7 +121,13 @@ public final class LocalPeerNode {
                             return;
                         }
                         if(!validPacket(msg)) {conn.close(1008,"Invalid packet");return;}
-                        listener.onPacket(msg);
+                        if("hangup".equals(type)||"reject".equals(type)){
+                            JSONObject ended=new JSONObject();
+                            ended.put("type","ended");
+                            ended.put("reason","peer-ended");
+                            listener.onPacket(ended);
+                            conn.close(1000,"Call ended");
+                        }else listener.onPacket(msg);
                     }catch(Exception ex){conn.close(1008,"Bad JSON");}
                 }
                 @Override public void onClose(WebSocket conn,int code,String reason,boolean remote){
@@ -218,8 +224,8 @@ public final class LocalPeerNode {
         }
         String name=info.getServiceName();
         int p=name.indexOf("XY-");
-        if(p>=0&&name.length()>=p+20){
-            String candidate=name.substring(p,p+20);
+        if(p>=0&&name.length()>=p+17){
+            String candidate=name.substring(p,p+17);
             if(candidate.matches(ID_RE))return candidate;
         }
         return null;
