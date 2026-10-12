@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-feature android:name="android.hardware.microphone" android:required="false"/>
     <uses-feature android:name="android.hardware.telephony" android:required="false"/>
     <application
-        android:label="Xyool Connect Calls"
+        android:label="Xyool Connect Native"
         android:icon="@drawable/xyool_icon"
         android:allowBackup="false"
         android:usesCleartextTraffic="false"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:name=".NativeVoiceActivity" android:exported="false"/>
         <activity android:name=".CallServicesActivity" android:exported="false"/>
         <activity
             android:name=".MainActivity"
