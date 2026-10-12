@@ -284,6 +284,43 @@
      <p class="tone-note">Use a low comfortable volume. Headphones are required only for binaural beats. The volume percentage is not a calibrated sound-level meter, so the app cannot measure headphone decibels.</p>
      <p id="toneCurrent" class="tone-readout">Sound off</p>
      <label for="toneExport" class="tone-checkbox"><input type="checkbox" id="toneExport" checked> Include tone in exported video</label>
+     <div class="sound-layer-divider"><span>3D spatial audio · headphones</span></div>
+     <div class="spatial-audio-panel">
+      <p class="spatial-intro">Make sound appear to sweep between your ears, around your head, behind you, or above you using HRTF filters. This is a listening illusion, not physical stimulation of brain regions.</p>
+      <label for="spatialEnable" class="tone-checkbox"><input id="spatialEnable" type="checkbox"> Enable moving 3D audio</label>
+      <label for="spatialSource">Sound to move
+       <select id="spatialSource">
+        <option value="probe">Built-in 3D shimmer · try instantly</option>
+        <option value="mp3">My imported audio / MP3</option>
+       </select>
+      </label>
+      <label for="spatialMotion">Movement path
+       <select id="spatialMotion">
+        <option value="orbit">Orbit all around</option>
+        <option value="left-right">Left ↔ right</option>
+        <option value="front-back">Front ↔ back</option>
+        <option value="up-down">Above ↕ below</option>
+        <option value="figure8">Figure eight</option>
+        <option value="left">Fixed position · left</option>
+        <option value="right">Fixed position · right</option>
+        <option value="center">Fixed position · in front</option>
+       </select>
+      </label>
+      <label for="spatialSpeed">Movement cycle <strong id="spatialSpeedValue">12 sec / cycle</strong>
+       <input id="spatialSpeed" type="range" min="3" max="45" step="1" value="12">
+      </label>
+      <label for="spatialWidth">Movement distance <strong id="spatialWidthValue">1.3×</strong>
+       <input id="spatialWidth" type="range" min="0.25" max="2.5" step="0.05" value="1.3">
+      </label>
+      <div id="spatialDemoVolumeRow">
+       <label for="spatialVolume">3D shimmer volume <strong id="spatialVolumeValue">12%</strong>
+        <input id="spatialVolume" type="range" min="0" max="25" step="1" value="12">
+       </label>
+      </div>
+      <label for="spatialExport" class="tone-checkbox"><input id="spatialExport" type="checkbox" checked> Include 3D positioning in exported video</label>
+      <p id="spatialHelp" class="tone-note">Enable spatial audio and preview using headphones.</p>
+      <p class="tone-note">For strongest direction cues, use stereo headphones with spatial effects in the phone's OS disabled initially. Effects vary by ear shape, headphones, and the browser. Start quiet; don't use while driving.</p>
+     </div>
      <div class="sound-layer-divider"><span>Ambient sound effects</span></div>
      <label for="ambienceMode">Soundscape preset
       <select id="ambienceMode">
