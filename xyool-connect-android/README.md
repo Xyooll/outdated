@@ -21,7 +21,7 @@ The signaling server is independent of the existing Our Space Supabase project a
 
 ## Initial two-phone alpha test
 
-1. Install the v0.4 debug APK on both Android phones. Note it uses the **same app ID as v0.3** but the CI debug signature can vary, so an existing v0.3 might fail to upgrade. Uninstalling v0.3 would erase that alpha's locally saved contacts and settings. Back up important information manually first.
+1. Install the v0.4 debug APK on both Android phones. It uses the separate package ID `org.xyool.connect.idalpha` so v0.3 and its local data remain untouched. In future, updating the debug APK may require uninstalling an old v0.4 due to different GitHub CI debug signatures; uninstalling that alpha would erase its saved Xyool ID. A stable release-signing process and ID export/recovery must be developed before relying on it.
 2. Open Xyool Connect → **Phone → My ID / Call a Xyool ID**, then **Connection settings**.
 3. Enter the same deployed Xyool WSS URL on both phones; optional STUN and authenticated TURN as needed.
 4. Both phones must stay in the calling screen, online. Share the caller/recipient's Xyool ID (not the secret).
