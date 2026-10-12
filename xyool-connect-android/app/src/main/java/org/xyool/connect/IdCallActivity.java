@@ -14,6 +14,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.widget.ImageView;
+import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -64,6 +65,7 @@ public final class IdCallActivity extends Activity {
         MUTED=0xffaec8cf, ACCENT=0xff68dbc3, ERROR=0xffffb9a7;
     private static final String ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int MIC_REQUEST=481;
+    private static final int CAMERA_REQUEST=482;
     private SharedPreferences prefs;
     private String id, token;
     private TextView stateLabel;
@@ -298,6 +300,17 @@ public final class IdCallActivity extends Activity {
         }
     }
     private void scanIdQr(){
+        if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
+            Toast.makeText(this,"This device has no camera scanner.",Toast.LENGTH_LONG).show();
+            return;
+        }
+        if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.CAMERA},CAMERA_REQUEST);
+            return;
+        }
+        openCameraScanner();
+    }
+    private void openCameraScanner(){
         try{
             new IntentIntegrator(this)
                 .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
@@ -306,7 +319,7 @@ public final class IdCallActivity extends Activity {
                 .setOrientationLocked(false)
                 .initiateScan();
         }catch(Exception e){
-            status("Camera scanner could not start. Enter the person's ID instead.");
+            Toast.makeText(this,"Camera scanner couldn't start. Enter the ID manually.",Toast.LENGTH_LONG).show();
         }
     }
     @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
@@ -475,6 +488,17 @@ public final class IdCallActivity extends Activity {
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){
         super.onRequestPermissionsResult(request,permissions,grants);
+        if(request==CAMERA_REQUEST){
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)openCameraScanner();
+            else {
+                boolean showHint=!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA);
+                new AlertDialog.Builder(this)
+                    .setTitle("Camera access needed")
+                    .setMessage(showHint?"Enable Camera in Android Settings → Apps → Xyool Connect → Permissions to scan IDs. You can still enter an ID manually.":"Allow camera access to scan a Xyool ID. You can also type the ID.")
+                    .setPositiveButton("OK",null).show();
+            }
+            return;
+        }
         if(request!=MIC_REQUEST)return;
         Runnable next=pendingMicrophone;pendingMicrophone=null;
         if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED&&next!=null)next.run();
