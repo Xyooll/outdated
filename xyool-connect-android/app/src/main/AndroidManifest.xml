@@ -8,6 +8,7 @@
         android:usesCleartextTraffic="false"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:name=".CallServicesActivity" android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
