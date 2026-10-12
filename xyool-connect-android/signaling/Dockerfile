@@ -6,9 +6,9 @@ ENV HOST=0.0.0.0
 ENV XYOOL_ID_REGISTRY=/data/registry.json
 WORKDIR /app
 
-COPY package.json ./
+COPY xyool-connect-android/signaling/package.json ./
 RUN npm install --omit=dev --ignore-scripts --no-audit --no-fund
-COPY server-id.mjs ./
+COPY xyool-connect-android/signaling/server-id.mjs ./
 
 # A persistent service volume MUST be mounted on /data.
 # Railway-provided volumes are mounted as root; keep this small isolated
