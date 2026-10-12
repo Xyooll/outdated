@@ -40,3 +40,21 @@
  #editorInspector .tone-generator .tone-exact{flex-wrap:wrap!important;gap:4px!important}
  #editorInspector .tone-generator .tone-exact span{white-space:normal!important}
 }
+
+/* Spatial headphone controls */
+.spatial-audio-panel{display:grid;gap:10px;margin:8px 0 13px;padding:11px 12px;border:1px solid #67547c;border-radius:11px;background:#29263e}
+.spatial-audio-panel label{display:flex;flex-direction:column;gap:6px;max-width:100%;min-width:0;font-size:12px;font-weight:650}
+.spatial-audio-panel label.tone-checkbox{flex-direction:row;align-items:center;gap:8px;min-height:34px}
+.spatial-audio-panel label.tone-checkbox input{min-width:16px;width:16px;height:16px;flex:0 0 16px}
+.spatial-audio-panel select,.spatial-audio-panel input[type=range]{width:100%;max-width:100%;min-width:0}
+.spatial-audio-panel select{min-height:37px;font-size:12px}
+.spatial-audio-panel strong{font-size:11px;color:#cda7fa}
+.spatial-audio-panel .tone-note{margin:0;color:#c6b9d4;font-size:11px;line-height:1.45;overflow-wrap:anywhere}
+.spatial-audio-panel .spatial-intro{margin:0;color:#decfec;font-size:11px;line-height:1.5}
+.spatial-audio-panel #spatialHelp{border-left:3px solid #aa7ed9;background:#322b44;padding:7px}
+@media(max-width:950px){
+ .spatial-audio-panel{gap:7px;padding:8px 6px}
+ .spatial-audio-panel label{font-size:10px!important;gap:3px}
+ .spatial-audio-panel select{font-size:10px!important;min-height:33px}
+ .spatial-audio-panel .tone-note,.spatial-audio-panel .spatial-intro{font-size:10px}
+}
