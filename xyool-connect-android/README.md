@@ -1,3 +1,54 @@
+# Xyool Connect Native Voice Alpha — Android v0.3
+
+This **separate Android install** is Xyool's first built-in native microphone-to-speaker WebRTC calling implementation. Package ID: `org.xyool.connect.nativealpha`. Previous v0.1 and v0.2 apps are left installed and their private contacts/avatars are not migrated.
+
+## What is new
+
+- **Xyool native P2P voice:** Direct WebRTC audio, independent of Jitsi rooms or Linphone's SIP app. PeerConnectionFactory captures microphone audio, creates SDP offers/answers, negotiates ICE connectivity and delivers DTLS-SRTP-protected audio. WebRTC supplies mature cryptography, network stack and Opus codec, not a new unreviewed cipher.
+- **Manual P2P pairing:** Caller creates offer and privately sends a long `XYOOL1:` setup message. Receiver pastes offer, creates and sends answer. Caller pastes answer. When ICE connects, both should be able to talk if media/network permission and routing are functional.
+- **Self-hosted Xyool signaling pairing:** The Android app can instead connect to your `wss://your-domain/v1/voice` with a randomly generated 128-bit bearer room secret, then exchange offer/answer automatically. See `signaling/README.md` for the Xyool signaling server. **No public hosted Xyool signaling server exists yet.**
+- Optional user-configurable STUN and TURN server connection settings. There is no mandatory Google account or preset Google STUN service.
+- Legacy Android cellular/SMS handoff, avatar, local contacts, Jitsi fallback and SIP-app fallback from v0.2 stay present.
+
+## Important limits before real testing
+
+- This is **not** a finished communications app, phone service, native SIP dialer, verified E2EE, or replacement for emergency calling.
+- Android requires microphone consent. The app has `INTERNET`, `RECORD_AUDIO`, and `MODIFY_AUDIO_SETTINGS` permissions for native voice, but **no** `CALL_PHONE`, `READ_CONTACTS`, `READ_SMS`, or `SEND_SMS` permissions.
+- The app uses microphone in the foreground; moving it to background may interrupt voice because a properly designed Android foreground-service calling subsystem isn't built yet.
+- Direct audio is encrypted with WebRTC DTLS-SRTP, but **identity/fingerprint authentication is not implemented**. Attackers controlling the signaling route could impersonate a peer. Do not discuss sensitive information until authenticated calling is implemented.
+- SDP offers and answers can contain private/public IP metadata. Distributing a setup message, room secret or TURN credentials publicly is unsafe. Servers/peers handling signaling can see some metadata.
+- On some Android/carrier NATs, direct peer-to-peer calling fails without an authenticated TURN relay. A TURN relay is not free in operating costs, although [coturn](https://github.com/coturn/coturn) itself is free and open source.
+- Xyool-to-Xyool call invitation is not an ordinary phone number. SIP/PSTN calls still require a SIP provider or gateway. Emergency calling continues through Android's proper dialer.
+
+## Test on two Android phones without an internet server
+
+1. Install the **v0.3 Alpha** APK on both phones. Keep your existing Motorola dialer installed.
+2. Put both phones on the same Wi-Fi network; open Xyool Connect Native > Phone > Xyool voice / SIP calls > Xyool native voice.
+3. Leave STUN/TURN settings blank (LAN test only). On phone A select **A · Create offer (caller)** and grant microphone access.
+4. Wait for ICE gathering to finish, then copy/share the full `XYOOL1:` offer with phone B through a trusted channel.
+5. On phone B paste the offer and tap **B · Accept pasted offer (receiver)**. Grant microphone permission and wait for its `XYOOL1:` answer.
+6. Send/paste the answer back to phone A and tap **A · Complete with pasted answer**.
+7. Look for `ICE connection: CONNECTED`, test two-way microphone/speaker audio, mute/hang-up behavior, and re-test with Wi-Fi/mobile networks. Do not conclude success based only on successful compilation.
+
+## Test with your own server
+
+1. Deploy the `signaling/` Node service behind a TLS reverse proxy, and configure TURN when needed.
+2. Both phones enter the same `wss://your-domain/v1/voice` URL and securely shared room code generated with **Generate private room code**. Select caller/host on one and joiner on the other.
+3. The Xyool server relays the offer/answer; media still flows via WebRTC, not through the signaling server.
+4. Call states, microphone, network transitions, identity verification, reconnection and a real carrier-network test remain pending.
+
+## Implementation, licenses, and provenance
+
+- **Xyool-specific code**: Android Java native UI, state machine, call setup helpers, self-hostable WSS signaling server, room-code generation and tests live in this repository.
+- **WebRTC Android**: `io.github.webrtc-sdk:android:150.7871.01` (BSD 3-Clause; upstream: https://github.com/webrtc-sdk/android). Review third-party notices and native dependency licenses for redistribution.
+- **Java-WebSocket**: `org.java-websocket:Java-WebSocket:1.6.0` (MIT).
+- **Xyool signaling server**: Node.js + pinned `ws@8.18.3` package (MIT).
+- **Research references**: https://github.com/jitsi/jitsi-meet (Apache 2.0), https://github.com/BelledonneCommunications/linphone-sdk (GPL/AGPL dual license), https://github.com/coturn/coturn (3-Clause BSD-style). We studied these components; their source has **not** been copied or relicensed into Xyool.
+
+The GitHub Actions workflow compiles this APK. The signaling workflow executes isolated room/relay tests. **Both green jobs do not establish that physical two-way calling works.** Never use an experimental app as your only means of emergency contact.
+
+---
+
 # Xyool Connect Calls Beta — Android v0.2
 
 This standalone native Android app can coexist with the original `org.xyool.connect` v0.1 debug APK. Its temporary application ID is `org.xyool.connect.callsbeta` because GitHub-hosted debug builds do **not** yet share a stable production signing key, and replacing the original might lose locally stored contacts.
