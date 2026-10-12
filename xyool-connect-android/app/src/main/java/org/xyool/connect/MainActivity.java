@@ -172,7 +172,7 @@ public final class MainActivity extends Activity {
         LinearLayout info = column();
         info.addView(text("Your 2D avatar", 18, FOREGROUND, true));
         gap(info, 6);
-        info.addView(text("A simple, private beginning for Xyool Connect.", 13, SECONDARY, false));
+        info.addView(text("Your private voice and contacts, all in one place.", 13, SECONDARY, false));
         gap(info, 9);
         info.addView(button("Customize", false, v -> { screen = "Avatar"; drawScreen(); }));
         LinearLayout.LayoutParams right = new LinearLayout.LayoutParams(0, -2, 1f);
@@ -183,7 +183,7 @@ public final class MainActivity extends Activity {
         LinearLayout actions = panel();
         actions.addView(text("Quick actions", 18, FOREGROUND, true));
         gap(actions, 12);
-        actions.addView(button("Call a number", true, v -> {screen = "Phone"; drawScreen();}));
+        actions.addView(button("Call a Xyool ID", true, v -> startActivity(new Intent(this, IdCallActivity.class))));
         gap(actions, 9);
         actions.addView(button("People", false, v -> {screen = "People"; drawScreen();}));
         gap(actions, 9);
@@ -192,7 +192,16 @@ public final class MainActivity extends Activity {
         content.addView(text("No Google Play Services or account are required. The experimental native voice module uses the Internet and microphone only when you choose to start an audio session.", 12, SECONDARY, false));
     }
     private void showPhone() {
-        title("PHONE", "Make a call");
+        title("PHONE", "Call someone");
+        LinearLayout xyoolCard = panel();
+        xyoolCard.addView(text("Xyool-to-Xyool calling", 19, FOREGROUND, true));
+        gap(xyoolCard, 7);
+        xyoolCard.addView(text("Get your free Xyool ID, share it, and call anyone by entering their ID. The other person accepts or declines.", 13, SECONDARY, false));
+        gap(xyoolCard, 13);
+        xyoolCard.addView(button("My ID / Call a Xyool ID", true, v -> startActivity(new Intent(this, IdCallActivity.class))));
+        gap(content, 7);
+        content.addView(text("REGULAR CELLULAR CALLS & SMS", 11, PRIMARY, true));
+        gap(content, 8);
         LinearLayout p = panel();
         p.addView(text("Number", 13, SECONDARY, true));
         gap(p, 8);
@@ -207,9 +216,9 @@ public final class MainActivity extends Activity {
         LinearLayout internet = panel();
         internet.addView(text("Internet voice calling", 18, FOREGROUND, true));
         gap(internet, 6);
-        internet.addView(text("Call another Xyool user with a private room invitation, or use a SIP provider to reach a SIP address.", 13, SECONDARY, false));
+        internet.addView(text("Optional SIP client integration and the earlier technical WebRTC/Jitsi diagnostic tools.", 13, SECONDARY, false));
         gap(internet, 12);
-        internet.addView(button("Xyool voice / SIP calls", true, v ->
+        internet.addView(button("Advanced SIP / diagnostic calling", false, v ->
             startActivity(new Intent(this, CallServicesActivity.class))));
     }
     private void showMessages() {
