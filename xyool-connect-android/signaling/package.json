@@ -4,7 +4,15 @@
   "private": true,
   "type": "module",
   "description": "Xyool-controlled ephemeral two-person WebRTC signaling",
-  "engines": {"node": ">=20"},
-  "scripts": {"start": "node server.mjs", "test": "node --test test/*.test.mjs"},
-  "dependencies": {"ws": "8.18.3"}
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "start:id": "node server-id.mjs"
+  },
+  "dependencies": {
+    "ws": "8.18.3"
+  }
 }
