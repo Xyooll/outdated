@@ -11,6 +11,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.widget.ImageView;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import java.util.EnumMap;
+import java.util.Map;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.InputType;
@@ -173,6 +184,8 @@ public final class IdCallActivity extends Activity {
             status("Your ID was copied.");
         });
         space(self,8);
+        button(self,"Show my QR code",false,v->showMyQr());
+        space(self,8);
         button(self,"Share my ID",false,v->{
             Intent send=new Intent(Intent.ACTION_SEND);
             send.setType("text/plain");
@@ -186,6 +199,8 @@ public final class IdCallActivity extends Activity {
         space(dialing,8);
         targetInput=input(dialing,"Type their Xyool ID",null);
         space(dialing,11);
+        button(dialing,"Scan someone's QR code",false,v->scanIdQr());
+        space(dialing,9);
         button(dialing,"Call",true,v->call());
         space(dialing,5);
         dialing.addView(text("The other person needs Xyool Connect open and online to answer.",12,MUTED,false));
@@ -245,6 +260,78 @@ public final class IdCallActivity extends Activity {
         body.addView(text("This alpha cannot ring while closed and isn't for emergency calls. Use the regular Android phone app for 911.",12,MUTED,false));
     }
 
+
+    private void showMyQr(){
+        try{
+            // The QR holds the public ID only. Never include the private auth token.
+            Map<EncodeHintType,Object> hints=new EnumMap<>(EncodeHintType.class);
+            hints.put(EncodeHintType.MARGIN,2);
+            BitMatrix grid=new MultiFormatWriter().encode(id,BarcodeFormat.QR_CODE,640,640,hints);
+            int width=grid.getWidth(),height=grid.getHeight();
+            Bitmap bitmap=Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
+            int[] pixels=new int[width*height];
+            for(int y=0;y<height;y++){
+                int offset=y*width;
+                for(int x=0;x<width;x++)pixels[offset+x]=grid.get(x,y)?Color.BLACK:Color.WHITE;
+            }
+            bitmap.setPixels(pixels,0,width,0,0,width,height);
+            ImageView qr=new ImageView(this);
+            qr.setImageBitmap(bitmap);
+            qr.setContentDescription("QR code for your Xyool ID "+id);
+            qr.setAdjustViewBounds(true);
+            qr.setPadding(dp(18),dp(18),dp(18),dp(18));
+            qr.setBackgroundColor(Color.WHITE);
+            LinearLayout frame=column();
+            frame.setPadding(dp(16),dp(12),dp(16),dp(5));
+            frame.addView(qr,new LinearLayout.LayoutParams(-1,-2));
+            TextView label=text(id,18,FG,true);
+            label.setGravity(Gravity.CENTER);
+            frame.addView(label);
+            new AlertDialog.Builder(this)
+                .setTitle("My Xyool ID")
+                .setView(frame)
+                .setMessage(null)
+                .setPositiveButton("Done",null)
+                .show();
+        }catch(Exception e){
+            status("Unable to display QR code. You can still copy your ID.");
+        }
+    }
+    private void scanIdQr(){
+        try{
+            new IntentIntegrator(this)
+                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+                .setPrompt("Scan the other person's Xyool ID")
+                .setBeepEnabled(false)
+                .setOrientationLocked(false)
+                .initiateScan();
+        }catch(Exception e){
+            status("Camera scanner could not start. Enter the person's ID instead.");
+        }
+    }
+    @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        IntentResult scanned=IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        if(scanned==null){super.onActivityResult(requestCode,resultCode,data);return;}
+        if(scanned.getContents()==null){status("QR scan canceled.");return;}
+        String raw=scanned.getContents().trim().toUpperCase(Locale.US);
+        // Allow only a public Xyool ID. Never navigate to web links, install APKs,
+        // execute scan content, or auto-place a call based on an untrusted QR.
+        if(!raw.matches("^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$")){
+            status("That QR isn't a Xyool ID. Try scanning a Xyool Connect QR.");
+            return;
+        }
+        if(raw.equals(id)){
+            status("That's your own QR code. Scan the other person's.");
+            return;
+        }
+        targetInput.setText(raw);
+        new AlertDialog.Builder(this)
+            .setTitle("Xyool ID scanned")
+            .setMessage("Ready to call "+raw+"? Check the ID before tapping Call.")
+            .setPositiveButton("OK",null)
+            .show();
+        status("ID scanned. Tap Call when you're ready.");
+    }
     private void status(String message){
         callStatus=message;
         runOnUiThread(()->{
