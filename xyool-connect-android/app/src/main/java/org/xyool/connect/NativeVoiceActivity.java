@@ -34,6 +34,8 @@ import org.webrtc.RtpReceiver;
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +66,10 @@ public final class NativeVoiceActivity extends Activity {
     private boolean closed;
     private boolean caller;
     private boolean gatheringComplete;
+    private EditText signalUrl, roomCode;
+    private XyoolSignalingClient signaling;
+    private boolean automatic;
+    private boolean automaticCaller;
 
     @Override public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
@@ -171,6 +177,25 @@ public final class NativeVoiceActivity extends Activity {
         secret=entry(connection,"TURN password (optional)",false);
         secret.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
+        LinearLayout auto=card(content);
+        auto.addView(text("Xyool server pairing (experimental)",17,FG,true));
+        gap(auto,5);
+        auto.addView(text("For automatic setup, both phones must use the same Xyool WSS server and 22-character secret room code. This server must be hosted by you or someone you trust. It is not included as a live service.",12,SUB,false));
+        gap(auto,9);
+        signalUrl=entry(auto,"wss://your-server.example/v1/voice",false);
+        gap(auto,7);
+        roomCode=entry(auto,"Secret room code (22 characters)",false);
+        gap(auto,7);
+        button(auto,"Generate private room code",false,v->makeRoom());
+        gap(auto,8);
+        button(auto,"Share server address and code",false,v->shareRoom());
+        gap(auto,8);
+        button(auto,"A · Host on Xyool server",true,v->connectSignaling(true));
+        gap(auto,8);
+        button(auto,"B · Join on Xyool server",false,v->connectSignaling(false));
+        gap(auto,10);
+        auto.addView(text("Use WSS with a valid certificate. There is no preset commercial server. For calls over mobile data, configure your own STUN/TURN above before connecting.",12,SUB,false));
+
         LinearLayout actions=card(content);
         actions.addView(text("Start the handshake",17,FG,true));
         gap(actions,7);
@@ -208,6 +233,67 @@ public final class NativeVoiceActivity extends Activity {
 
     private void say(String s) {
         runOnUiThread(()->{if(status!=null)status.setText(s);});
+    }
+    private void makeRoom() {
+        byte[] bytes=new byte[16];
+        new SecureRandom().nextBytes(bytes);
+        roomCode.setText(Base64.encodeToString(bytes,Base64.URL_SAFE|Base64.NO_WRAP|Base64.NO_PADDING));
+        say("Room secret generated. Share it privately with the other person.");
+    }
+    private void shareRoom() {
+        String server=signalUrl.getText().toString().trim();
+        String code=roomCode.getText().toString().trim();
+        if(!code.matches("^[A-Za-z0-9_-]{22}$") || !server.startsWith("wss://")) {
+            say("Enter a valid WSS server and generate a 22-character room secret.");
+            return;
+        }
+        Intent intent=new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT,"Xyool native voice invitation\\nServer: "+server+"\\nPrivate room code: "+code+"\\nInstall Xyool native voice alpha. Keep this code private.");
+        try {startActivity(Intent.createChooser(intent,"Share private Xyool invitation"));}
+        catch(ActivityNotFoundException ex){say("No sharing app available.");}
+    }
+    private void connectSignaling(boolean host) {
+        if(peer!=null || signaling!=null) {say("Hang up and reset before starting a new session.");return;}
+        final String raw=signalUrl.getText().toString().trim();
+        final String token=roomCode.getText().toString().trim();
+        if (!token.matches("^[A-Za-z0-9_-]{22}$")){say("Generate or paste the full 22-character room secret.");return;}
+        URI uri;
+        try{
+            uri=URI.create(raw);
+            if(!"wss".equalsIgnoreCase(uri.getScheme()) || uri.getHost()==null ||
+                uri.getUserInfo()!=null || uri.getFragment()!=null || uri.getQuery()!=null ||
+                !"/v1/voice".equals(uri.getPath())) throw new IllegalArgumentException();
+        } catch(Exception ex){say("Use a valid secure WSS endpoint, ending in /v1/voice.");return;}
+        automatic=true;
+        automaticCaller=host;
+        try {
+            signaling=new XyoolSignalingClient(uri,token,new XyoolSignalingClient.Listener() {
+                @Override public void onJoined(int peers){say("Joined Xyool server. "+peers+"/2 participants. Waiting...");}
+                @Override public void onReady() {runOnUiThread(()->{
+                    if(!automatic)return;
+                    if(automaticCaller)startOffer();
+                    else say("Other participant joined. Waiting for the caller's offer...");
+                });}
+                @Override public void onSignal(String type,String sdp){runOnUiThread(()->{
+                    if(!automatic)return;
+                    try {
+                        JSONObject envelope=new JSONObject();
+                        envelope.put("version",1);
+                        envelope.put("type",type);
+                        envelope.put("sdp",sdp);
+                        String wrapped="XYOOL1:"+Base64.encodeToString(envelope.toString().getBytes(StandardCharsets.UTF_8),Base64.URL_SAFE|Base64.NO_WRAP|Base64.NO_PADDING);
+                        incoming.setText(wrapped);
+                        if("offer".equals(type) && !automaticCaller)applyIncoming(true);
+                        else if("answer".equals(type) && automaticCaller)applyIncoming(false);
+                    }catch(Exception e){say("Could not interpret signaling message.");}
+                });}
+                @Override public void onPeerLeft(){say("Remote participant left the Xyool server.");}
+                @Override public void onError(String problem){say(problem);}
+            });
+            say("Connecting to your Xyool signaling server...");
+            signaling.connect();
+        }catch(Exception ex){signaling=null;automatic=false;say("Could not initialize signaling client.");}
     }
     private void startOffer() {
         if (peer!=null) { say("Hang up and reset before starting another call."); return; }
@@ -361,6 +447,7 @@ public final class NativeVoiceActivity extends Activity {
             runOnUiThread(()->{
                 generated=encoded;
                 output.setText(encoded);
+                if(automatic && signaling!=null)signaling.transmit(local.type.canonicalForm(),local.description);
                 say(local.type==SessionDescription.Type.OFFER?
                     "Offer ready. Copy/share it with the receiver; then paste their answer.":
                     "Answer ready. Copy/share it back to the caller. Stay in this app for the voice call.");
@@ -396,6 +483,8 @@ public final class NativeVoiceActivity extends Activity {
         catch(ActivityNotFoundException e){say("No text-sharing app was found.");}
     }
     private void reset() {
+        if(signaling!=null){signaling.end();signaling=null;}
+        automatic=false;
         cleanup();
         generated="";
         incoming.setText("");
@@ -415,7 +504,12 @@ public final class NativeVoiceActivity extends Activity {
         }
         gatheringComplete=false;
     }
-    @Override protected void onDestroy(){cleanup();super.onDestroy();}
+    @Override protected void onDestroy(){
+        if(signaling!=null){signaling.end();signaling=null;}
+        automatic=false;
+        cleanup();
+        super.onDestroy();
+    }
 
     private abstract class SimpleSdp implements SdpObserver {
         @Override public void onCreateSuccess(SessionDescription desc) { }
