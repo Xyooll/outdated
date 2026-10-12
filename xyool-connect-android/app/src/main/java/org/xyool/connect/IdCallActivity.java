@@ -65,6 +65,7 @@ public final class IdCallActivity extends Activity {
         MUTED=0xffaec8cf, ACCENT=0xff68dbc3, ERROR=0xffffb9a7;
     private static final String ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int MIC_REQUEST=481;
+    private static final String DEFAULT_SERVER="wss://xyool-id-signaling-production.up.railway.app/v1/id";
     private static final int CAMERA_REQUEST=482;
     private SharedPreferences prefs;
     private String id, token;
@@ -72,6 +73,8 @@ public final class IdCallActivity extends Activity {
     private EditText targetInput,serverInput,stunInput,turnInput,turnUser,turnPass;
     private LinearLayout body, advancedPanel;
     private WebSocketClient ws;
+    private LocalPeerNode nearby;
+    private boolean usingLocal;
     private boolean registered, outgoing, peerActive, remoteReady, callAuthorized, disposed;
     private String waitingId;
     private PeerConnectionFactory factory;
@@ -97,8 +100,36 @@ public final class IdCallActivity extends Activity {
         }
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
+        nearby=new LocalPeerNode(this,id,new LocalPeerNode.Listener(){
+            @Override public void onPeerChanged(String peerId,boolean online){
+                runOnUiThread(()->{
+                    if(!peerActive&&waitingId==null)connectionStatus();
+                });
+            }
+            @Override public void onPacket(JSONObject packet){
+                runOnUiThread(()->received(packet,true));
+            }
+            @Override public void onNodeStatus(String message){
+                // Local discovery is informational, never proof of peer identity.
+                if(message.contains("failed")||message.contains("couldn't")||message.contains("requires"))
+                    status(message);
+                else connectionStatus();
+            }
+        });
         render();
         connect();
+    }
+    @Override protected void onResume(){
+        super.onResume();
+        if(nearby!=null)nearby.start();
+    }
+    @Override protected void onStop(){
+        if(nearby!=null)nearby.stop();
+        if(usingLocal&&waitingId!=null){
+            endMedia();
+            status("Nearby call ended when the calling screen closed.");
+        }
+        super.onStop();
     }
     private void makeIdentity(){
         SecureRandom random=new SecureRandom();
@@ -166,7 +197,8 @@ public final class IdCallActivity extends Activity {
         connection.addView(stateLabel);
         space(connection,9);
         button(connection,"Check connection",false,v->{
-            if(registered)status("Connected. You can call a Xyool ID.");
+            if(nearby!=null)nearby.start();
+            if(registered)connectionStatus();
             else {disconnect();connect();}
         });
 
@@ -225,7 +257,7 @@ public final class IdCallActivity extends Activity {
         help.addView(advancedPanel);
         advancedPanel.addView(text("Only for testing a server you control. Normal callers should never need these fields.",12,MUTED,false));
         space(advancedPanel,10);
-        serverInput=input(advancedPanel,"Secure server address",prefs.getString("xyool_id_server",""));
+        serverInput=input(advancedPanel,"Secure server address",prefs.getString("xyool_id_server",DEFAULT_SERVER));
         space(advancedPanel,7);
         stunInput=input(advancedPanel,"STUN server (optional)",prefs.getString("xyool_stun",""));
         space(advancedPanel,7);
@@ -345,6 +377,18 @@ public final class IdCallActivity extends Activity {
             .show();
         status("ID scanned. Tap Call when you're ready.");
     }
+    private void connectionStatus(){
+        int n=nearby==null?0:nearby.peerCount();
+        if(registered){
+            status(n>0?"Nearby phones: "+n+" · Internet calling online.":"Internet calling online · Nearby Wi-Fi discovery on.");
+        }else if(n>0){
+            status("Nearby Xyool phones: "+n+" · Wi-Fi calling available.");
+        }else if(LocalPeerNode.onWifi(this)){
+            status("Searching for Xyool phones nearby · Internet calling offline.");
+        }else{
+            status("Internet calling offline · Join Wi-Fi for direct nearby calls.");
+        }
+    }
     private void status(String message){
         callStatus=message;
         runOnUiThread(()->{
@@ -358,8 +402,8 @@ public final class IdCallActivity extends Activity {
         return "XY-"+clean.substring(0,4)+"-"+clean.substring(4,8)+"-"+clean.substring(8);
     }
     private void connect(){
-        String raw=prefs.getString("xyool_id_server","").trim();
-        if(raw.isEmpty()){registered=false;status("Not available yet · Xyool calling service hasn't launched.");return;}
+        String raw=prefs.getString("xyool_id_server",DEFAULT_SERVER).trim();
+        if(raw.isEmpty()){registered=false;connectionStatus();return;}
         URI uri;
         try{
             uri=URI.create(raw);
@@ -381,17 +425,17 @@ public final class IdCallActivity extends Activity {
                 try{
                     if(raw.length()>50000)return;
                     JSONObject message=new JSONObject(raw);
-                    runOnUiThread(()->received(message));
+                    runOnUiThread(()->received(message,false));
                 }catch(Exception ex){status("Unrecognized server response.");}
             }
             @Override public void onClose(int code,String reason,boolean remote){
                 runOnUiThread(()->{
                     registered=false;
-                    if(!disposed)status("Offline · Tap Check connection to retry.");
+                    if(!disposed)connectionStatus();
                 });
             }
             @Override public void onError(Exception ex){
-                status("Can't reach Xyool calling. Tap Check connection to retry.");
+                connectionStatus();
             }
         };
         ws.setConnectionLostTimeout(30);
@@ -402,6 +446,13 @@ public final class IdCallActivity extends Activity {
         if(ws!=null){ws.close();ws=null;}
     }
     private void send(JSONObject obj){
+        if(usingLocal && nearby!=null){
+            nearby.send(obj);
+            return;
+        }
+        sendCloud(obj);
+    }
+    private void sendCloud(JSONObject obj){
         if(ws!=null&&ws.isOpen())ws.send(obj.toString());
     }
     private void packet(String type){
@@ -409,39 +460,70 @@ public final class IdCallActivity extends Activity {
         catch(Exception ex){status("Could not send call command.");}
     }
     private void call(){
-        if(!registered){status("Xyool calling isn't online yet. Your ID is saved.");return;}
         if(peerActive||waitingId!=null){status("Finish your current call first.");return;}
         String dest=normalize(targetInput.getText().toString());
         if(dest==null){status("Enter a valid Xyool ID, like XY-ABCD-EFGH-JKLM.");return;}
         if(dest.equals(id)){status("You cannot call your own ID.");return;}
+        boolean localAvailable=nearby!=null&&nearby.hasPeer(dest)&&LocalPeerNode.onWifi(this);
+        if(!localAvailable&&!registered){
+            status("That ID isn't nearby. Internet calling is offline. Both phones must be online.");
+            return;
+        }
         requestMicrophone(()->{
             if(!initPeer())return;
-            outgoing=true;waitingId=dest;
+            outgoing=true;
+            waitingId=dest;
+            usingLocal=localAvailable;
             try{
-                JSONObject obj=new JSONObject();obj.put("type","call");obj.put("to",dest);send(obj);
-                status("Calling "+dest+" …");
+                if(localAvailable){
+                    if(!nearby.call(dest)){
+                        endMedia();
+                        status("Couldn't reach the nearby phone. Try again.");
+                        return;
+                    }
+                    status("Calling nearby Xyool phone directly…");
+                }else{
+                    JSONObject obj=new JSONObject();
+                    obj.put("type","call");
+                    obj.put("to",dest);
+                    sendCloud(obj);
+                    status("Calling "+dest+" over the internet…");
+                }
             }catch(Exception ex){endMedia();status("Could not request call.");}
         });
     }
-    private void received(JSONObject msg){
+    private void received(JSONObject msg,boolean fromLocal){
         String type=msg.optString("type","");
+        if("incoming".equals(type)){
+            if(peerActive||waitingId!=null){
+                try{
+                    JSONObject reject=new JSONObject();reject.put("type","reject");
+                    if(fromLocal && nearby!=null)nearby.send(reject);
+                    else sendCloud(reject);
+                    if(fromLocal && nearby!=null)nearby.closeSession();
+                }catch(Exception ignored){}
+                return;
+            }
+            usingLocal=fromLocal;
+            waitingId=msg.optString("from");
+            outgoing=false;
+            incomingDialog(waitingId);
+            return;
+        }
+        // Never allow a LAN session to consume signaling from a parallel
+        // Railway session or vice versa.
+        if((waitingId!=null||peerActive)&&fromLocal!=usingLocal)return;
         switch(type){
             case "registered":
                 registered=true;
-                status("Online. Share your ID or enter an ID to call.");
+                connectionStatus();
                 break;
             case "ringing":
-                status("Ringing… waiting for the other person.");
-                break;
-            case "incoming":
-                if(peerActive||waitingId!=null){packet("reject");return;}
-                waitingId=msg.optString("from");
-                outgoing=false;
-                incomingDialog(waitingId);
+                status(fromLocal?"Ringing nearby phone…":"Ringing… waiting for the other person.");
                 break;
             case "accepted":
                 callAuthorized=true;
-                status("Call accepted. Connecting encrypted audio…");
+                status("Call accepted. Connecting voice…");
                 if(outgoing)createOffer();
                 break;
             case "signal":
@@ -452,13 +534,15 @@ public final class IdCallActivity extends Activity {
                 status("Call ended: "+msg.optString("reason","disconnected"));
                 break;
             case "busy":
-                endMedia();status("That Xyool ID is on another call.");
+                endMedia();
+                status("That Xyool ID is on another call.");
                 break;
             case "unavailable":
-                endMedia();status("That ID isn't online. Both phones must have Xyool Connect open.");
+                endMedia();
+                status("That ID isn't online. The other person's app needs to be open.");
                 break;
             case "error":
-                String detail=msg.optString("message","Server reported an error");
+                String detail=msg.optString("message","The calling network reported an error");
                 if(waitingId!=null)endMedia();
                 status(detail);
                 break;
@@ -475,6 +559,7 @@ public final class IdCallActivity extends Activity {
             .setPositiveButton("Accept",(d,w)->requestMicrophone(()->{
                 if(!initPeer()){packet("reject");return;}
                 outgoing=false;
+                if(usingLocal)callAuthorized=true;
                 packet("accept");
                 status("Accepted. Waiting for connection…");
             })).show();
@@ -643,6 +728,8 @@ public final class IdCallActivity extends Activity {
         status("Call ended.");
     }
     private void endMedia(){
+        if(usingLocal&&nearby!=null)nearby.closeSession();
+        usingLocal=false;
         pendingCandidates.clear();
         waitingId=null;
         peerActive=false;remoteReady=false;callAuthorized=false;outgoing=false;
@@ -660,6 +747,7 @@ public final class IdCallActivity extends Activity {
         disposed=true;
         if(waitingId!=null)packet("hangup");
         disconnect();endMedia();
+        if(nearby!=null){nearby.stop();nearby=null;}
         super.onDestroy();
     }
 }
