@@ -118,6 +118,13 @@ public final class CallServicesActivity extends Activity {
         parent.addView(text("Two internet options alongside your normal cellular calls.",14,SECONDARY,false));
         space(parent,16);
 
+        LinearLayout nativeBox = card();
+        nativeBox.addView(text("Xyool native calling engine · Alpha",19,FG,true));
+        space(nativeBox,6);
+        nativeBox.addView(text("Built-in encrypted WebRTC audio. Two phones exchange offer/answer messages manually. A STUN or TURN server may be needed outside the same network. No Jitsi or SIP app required for this mode.",13,SECONDARY,false));
+        space(nativeBox,12);
+        nativeBox.addView(button("Open Xyool native voice",true,v->startActivity(new Intent(this,NativeVoiceActivity.class))));
+
         LinearLayout xyool = card();
         xyool.addView(text("Xyool-to-Xyool voice",19,FG,true));
         space(xyool,6);
