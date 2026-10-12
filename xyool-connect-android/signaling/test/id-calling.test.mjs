@@ -101,3 +101,48 @@ test('offline, busy targets and nonmembers cannot force a call signal',async()=>
   a.close();b.close();
  });
 });
+
+
+test('registry survives a server restart and rejects a different owner',async()=>{
+ const dir=mkdtempSync(join(tmpdir(),'xyool-id-restart-'));
+ const db=join(dir,'registry.json');
+ let service=createIdServer({host:'127.0.0.1',port:0,registryPath:db});
+ try {
+  await service.listen();
+  const firstUrl='ws://127.0.0.1:'+service.address().port+'/v1/id';
+  const owner=secret();
+  const a=await register(firstUrl,base(),owner);
+  await new Promise(resolve=>{a.once('close',resolve);a.close();});
+  await service.close();
+  service=createIdServer({host:'127.0.0.1',port:0,registryPath:db});
+  await service.listen();
+  const secondUrl='ws://127.0.0.1:'+service.address().port+'/v1/id';
+  const fake=await connection(secondUrl);
+  const err=waitType(fake,'error');
+  send(fake,{type:'register',id:base(),token:secret()});
+  assert.equal((await err).message,'This ID is already registered');
+  await once(fake,'close');
+  const restored=await register(secondUrl,base(),owner);
+  restored.close();
+ } finally {
+  await service.close();
+  rmSync(dir,{recursive:true,force:true});
+ }
+});
+
+test('missing persistence directory rejects startup rather than losing IDs',()=>{
+ const dir=join(tmpdir(),'xyool-missing-storage-'+randomBytes(8).toString('hex'));
+ assert.throws(
+   ()=>createIdServer({port:0,registryPath:join(dir,'registry.json')}),
+   /Missing identity registry directory/
+ );
+});
+
+test('health endpoint responds while server is running',async()=>{
+ await setup(async({url})=>{
+  const address=url.replace('ws://','http://').replace('/v1/id','/health');
+  const response=await fetch(address);
+  assert.equal(response.status,200);
+  assert.deepEqual(await response.json(),{ok:true});
+ });
+});
