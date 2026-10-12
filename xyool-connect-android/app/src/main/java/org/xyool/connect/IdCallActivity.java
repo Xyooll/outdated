@@ -244,9 +244,9 @@ public final class IdCallActivity extends Activity {
         button(dialing,"Mute / Unmute",false,v->toggleMute());
 
         LinearLayout help=panel();
-        help.addView(text("No connection?",17,FG,true));
+        help.addView(text("How calling works",17,FG,true));
         space(help,5);
-        help.addView(text("The Xyool calling network has not been launched yet. Your ID works locally, but calls need the Xyool service to be online. This is not something you should have to configure.",13,MUTED,false));
+        help.addView(text("For nearby calls, put both phones on the same trusted Wi-Fi and leave this screen open. Other calls use Xyool’s online connection service automatically. No setup needed.",13,MUTED,false));
         space(help,10);
         button(help,"Developer setup (optional)",false,v->{
             advancedPanel.setVisibility(advancedPanel.getVisibility()==View.GONE?View.VISIBLE:View.GONE);
