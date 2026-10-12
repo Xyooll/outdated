@@ -1,3 +1,32 @@
+# Xyool Connect v0.5 — QR IDs and simple calling
+
+**Everyday interface:** My Xyool ID → Show my QR code → friend scans it → ID fills into their call box → tap Call → other person taps Accept. Typing or copying an ID also works.
+
+## QR security and implementation
+
+- The QR contains only the **public ID**, for example `XY-ABCD-EFGH-JKLM`. It never contains the authentication secret, TURN credentials, server address, or profile data.
+- QR codes are generated locally with ZXing and displayed offline. Embedded QR scanning uses the phone camera through ZXing Android Embedded; no Google account or Google Play Services are needed.
+- The camera is needed only to scan. Android can request permission when the scanner opens.
+- Scanning requires a strictly formatted Xyool ID. A QR containing an unrelated URL, text, or script is rejected. The app fills in the ID but never calls someone automatically.
+- Users should check the ID/person they're calling. A QR code by itself doesn't establish who owns the ID or verify the call's encryption keys.
+- The scanner is embedded in this APK; it does not require a separate barcode app.
+- Xyool v0.5 uses a separate alpha package name `org.xyool.connect.qralpha` to prevent debug-key install conflicts or uninstallation of v0.4. **This means it generates a new Xyool ID on first launch.** Neither v0.4 nor v0.5 has a recovery/export process yet; protect any old app data you need.
+
+## No network service yet
+
+The ID-based calling service is **not deployed publicly**. QR sharing/display/scan are usable locally, but voice calls will not connect until the Xyool WSS signaling service is hosted and the app is connected. The normal UI now shows a clear **Not available yet** state; technical STUN/TURN/WSS configuration is hidden behind Developer setup rather than required during normal use.
+
+Automated builds verify APK compilation; a camera scan and real Android two-device call still require physical-device testing. Do not use this experimental client for emergency calls.
+
+## Third-party QR dependencies
+
+- [ZXing](https://github.com/zxing/zxing) (Apache-2.0)
+- [ZXing Android Embedded](https://github.com/journeyapps/zxing-android-embedded) (Apache-2.0); scanner bundled in Xyool.
+
+The project retains its other open-source WebRTC/WebSocket dependencies and their applicable licenses. No code has been decompiled or stripped of upstream licensing.
+
+---
+
 # Xyool Connect — ID-to-ID Calling v0.4
 
 The normal workflow now is **Get ID → Share ID → Enter another ID → Call → Accept/Decline**. No manually exchanging WebRTC offers, SDP, network candidates, meeting links, or long secret rooms. The old diagnostic tools remain under **Phone → Advanced SIP / diagnostic calling**.
