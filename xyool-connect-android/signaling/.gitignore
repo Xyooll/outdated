@@ -1,0 +1,8 @@
+node_modules/
+.env
+.env.*
+xyool-id-registry.json
+xyool-id-registry.json.tmp
+registry.json
+registry.json.tmp
+*.log
