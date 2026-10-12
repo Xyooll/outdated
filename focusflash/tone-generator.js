@@ -64,17 +64,21 @@
    const t=settings.mode!=="off"&&(!forExport||settings.exportAudio);
    const fx=settings.fx!=="off"&&(!forExport||settings.fxExport);
    const file=!!fileUrl&&(!forExport||settings.mp3Export);
-   return {tone:t,fx,file,any:t||fx||file};
+   const spatial=window.FocusFlashSpatial?.active?.(forExport,file)||{demo:false,mp3:false};
+   return {tone:t,fx,file,spatial,any:t||fx||file||spatial.demo};
  }
  function summary(forExport=false){
    const mix=activeMix(forExport),parts=[];
    if(mix.tone)parts.push(settings.mode==="pure"?"Pure "+settings.carrier+" Hz":
      (settings.mode==="binaural"?"Binaural":settings.mode==="monaural"?"Monaural":"Isochronic")+" "+fmt(settings.beat)+" Hz");
    if(mix.fx)parts.push(FX_LABELS[settings.fx]);
-   if(mix.file)parts.push("MP3: "+fileName);
+   if(mix.file)parts.push("MP3: "+fileName+(mix.spatial.mp3?" · 3D":""));
+   const spatial=window.FocusFlashSpatial?.label?.(forExport,mix.file)||"";
+   if(mix.spatial.demo&&spatial)parts.push(spatial);
    return parts.join(" + ")||"Sound off";
  }
  function refresh(){
+   window.FocusFlashSpatial?.refresh?.();
    $("toneCurrent").textContent=summary();
    $("toneHeadphones").hidden=settings.mode!=="binaural";
    $("toneBeatRow").hidden=settings.mode==="off"||settings.mode==="pure";
@@ -188,15 +192,22 @@
  function build(ctx,destination,forExport=false){
    const mix=activeMix(forExport);
    if(!mix.any)return null;
-   const session={ctx,nodes:[],sources:[],media:[],tone:null,fx:null,file:null,
+   const session={ctx,nodes:[],sources:[],media:[],tone:null,fx:null,file:null,spatial:null,
      signature:settings.mode+"|"+settings.fx+"|"+(fileUrl||""),stopped:false};
-   const gain=(level)=>{
+   const gain=(level,target=destination)=>{
      const node=ctx.createGain();
      node.gain.setValueAtTime(0,ctx.currentTime);
      node.gain.setTargetAtTime(level,ctx.currentTime,.025);
-     node.connect(destination);session.nodes.push(node);
+     node.connect(target);session.nodes.push(node);
      return node;
    };
+   if(mix.spatial.demo||mix.spatial.mp3){
+     session.spatial=window.FocusFlashSpatial.create(ctx,destination,forExport,mix.file);
+     if(session.spatial){
+       session.nodes.push(...session.spatial.nodes);
+       session.sources.push(...session.spatial.sources);
+     }
+   }
    const osc=hz=>{
      const node=ctx.createOscillator();node.type="sine";
      node.frequency.setValueAtTime(hz,ctx.currentTime);
@@ -259,7 +270,8 @@
      session.nodes.push(node);session.sources.push(node);session.fx={gain:g};
    }
    if(mix.file){
-     const g=gain(settings.mp3Volume/100);
+     const g=gain(settings.mp3Volume/100,
+       mix.spatial.mp3&&session.spatial?session.spatial.input:destination);
      const element=new Audio();
      element.preload="auto";element.src=fileUrl;
      element.loop=settings.mp3Loop;
@@ -283,6 +295,8 @@
    for(const layer of [session.tone,session.fx,session.file]){
      try{layer?.gain.gain.setTargetAtTime(0,now,.008);}catch{}
    }
+   try{session.spatial?.fadeGain?.gain.setTargetAtTime(0,now,.008);}catch{}
+   session.spatial?.dispose?.();
    for(const source of session.sources){try{source.stop(now+.055);}catch{}}
    setTimeout(()=>{for(const node of session.nodes){try{node.disconnect();}catch{}}},100);
  }
@@ -531,6 +545,7 @@
  }
  window.FocusFlashTones={
    mount,startReader,stopReader,startTest,stopTest,
+   restartMix:()=>update(true),refreshMix:refresh,
    createExport,startSession:startMedia,stopSession:stop,
    getSettings:()=>({...settings}),activeForExport,
    getImportedFile:()=>({name:fileName,duration:fileDuration,loaded:!!fileUrl}),
