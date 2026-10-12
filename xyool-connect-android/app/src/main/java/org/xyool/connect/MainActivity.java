@@ -203,6 +203,14 @@ public final class MainActivity extends Activity {
         gap(p, 10);
         p.addView(button("Write an SMS", false, v -> launchNumber(number.getText().toString(), true)));
         content.addView(text("Xyool opens your existing Android calling or SMS app. A cellular plan is normally required for regular calls and texts.", 13, SECONDARY, false));
+        gap(content, 16);
+        LinearLayout internet = panel();
+        internet.addView(text("Internet voice calling", 18, FOREGROUND, true));
+        gap(internet, 6);
+        internet.addView(text("Call another Xyool user with a private room invitation, or use a SIP provider to reach a SIP address.", 13, SECONDARY, false));
+        gap(internet, 12);
+        internet.addView(button("Xyool voice / SIP calls", true, v ->
+            startActivity(new Intent(this, CallServicesActivity.class))));
     }
     private void showMessages() {
         title("MESSAGES", "Text someone");
