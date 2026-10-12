@@ -1,3 +1,37 @@
+# Xyool Connect Calls Beta — Android v0.2
+
+This standalone native Android app can coexist with the original `org.xyool.connect` v0.1 debug APK. Its temporary application ID is `org.xyool.connect.callsbeta` because GitHub-hosted debug builds do **not** yet share a stable production signing key, and replacing the original might lose locally stored contacts.
+
+## Working calling paths
+
+- **Cellular**: launches Android's normal dialer with `ACTION_DIAL` (you place the call using your carrier).
+- **SMS**: opens Android's native text composer with `ACTION_SENDTO`.
+- **Xyool-to-Xyool voice invitations**: generates a cryptographically random 128-bit Jitsi meeting path, lets you share it, and opens the actual Jitsi voice/video service. The organizer must usually authenticate on public meet.jit.si; invitees can join without signing in. Both people connect through Jitsi, **not yet a native, Xyool-owned WebRTC network**. Disable the camera for audio-only use. Public service infrastructure can see metadata, and end-to-end encryption is NOT asserted.
+- **SIP internet calls**: accepts a SIP address (`user@sip.example.org`) and hands it to an installed SIP app through an Android `sip:` intent. A SIP account and SIP provider/endpoint are required. SIP-to-ordinary-phone number calls typically need a paid gateway.
+
+## Installation (no PC)
+
+GitHub Actions builds a signed development APK on every update to `xyool-connect-android/`. From [Android build workflow](https://github.com/Xyooll/outdated/actions/workflows/xyool-connect-android.yml), open the successful run and download `xyool-connect-android-debug-apk`. Extract the ZIP, then install `app-debug.apk`.
+
+The Xyool Connect Calls Beta APK runs next to the v0.1 APK without uninstalling the old app. Contacts and avatar settings are private per app; they don't automatically migrate. Until we establish a durable user-controlled release signing key, later debug builds may need to be installed alongside or uninstalled/reinstalled. Never delete the old app without preserving data you still need.
+
+No microphone permission is requested by Xyool Connect itself: the external Jitsi browser/app or installed SIP client asks for microphone permission and actually carries the call.
+
+## Real-world tests to perform on two phones
+
+1. Install the same Xyool Connect Calls Beta on both phones.
+2. On phone A: Phone > Xyool voice / SIP calls > Create new voice invite > Share invitation.
+3. Send the invitation privately to phone B; both phones open the room link. The first participant authenticates if Jitsi requests it. Turn off cameras for voice-only.
+4. Confirm audio in both directions, hang up, check network interruptions and headset routing. No connection claim is made before these are tested.
+5. For SIP: configure a Linphone (or other SIP) account on each phone, enter the other's SIP URI in Xyool and tap Call with installed SIP app. Test registration, outbound/inbound voice, and provider charges.
+6. Verify normal Android dialer, SMS, contact storage, and avatar customization still work.
+
+## Deliberate limits
+
+Jitsi links are **bearer invites**: anyone who receives one may try to enter the meeting, subject to Jitsi lobby controls. Treat invites as private. This beta does not support direct incoming call ringing, phone-to-phone presence, push notifications, persistent Xyool account identities, dedicated signaling/TURN, or native E2EE voice. A separate backend and reviewed WebRTC engine are required for that. No emergency calls are handled by the beta.
+
+---
+
 # Xyool Connect — Native Android app v0.1
 
 **Standalone Android app** for the Moto G Power 5G (2024) XT2415V and other phones running Android 8+ (API 26+).
