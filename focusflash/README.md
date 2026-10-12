@@ -262,3 +262,7 @@ The Sounds & Tones panel has a separate spatial audio layer, not to be confused 
 - Headphones strongly recommended. Spatial location is perceptual, not actual sound in specific brain areas; individual head-related transfer functions, equipment and surrounding noise affect perceived direction. No medical effects claimed.
 
 Link: https://xyooll.github.io/outdated/focusflash/?v=spatial-v1
+
+
+## Audio dropdown folders (audio-folders-v1)
+The left tool formerly labelled **Tones** now appears as **Audio** and opens an Audio editor containing four accessible native disclosure menus: Frequency & entrainment; 3D spatial audio; Ambient soundscapes; and Imported music & audio. Each can be expanded or collapsed independently, with open groups remembered per local user profile. The sound mixer preview is visible below these folders regardless of their state. All previous form IDs and saved tone/spatial settings are preserved. The internal `tones` panel identifier is intentionally retained for backward compatibility. Native details/summary controls work by keyboard and touch, even if open-state persistence is unavailable.

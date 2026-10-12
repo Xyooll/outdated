@@ -1,18 +1,18 @@
 // Four-window dock v2, network-first to keep updated UI and data separate.
-const CACHE="focusflash-spatial-v1";
+const CACHE="focusflash-audio-folders-v1";
 const STATIC=[
  "./","./index.html",
- "./styles.css?v=spatial-v1","./editor.css?v=spatial-v1",
- "./workspace.css?v=spatial-v1","./reference-layout.css?v=spatial-v1",
- "./layout-v3.css?v=spatial-v1","./dock-windows.css?v=spatial-v1",
- "./four-pane-mobile.css?v=spatial-v1","./entrainment.css?v=spatial-v1",
- "./profiles.js?v=spatial-v1","./dock-windows.js?v=spatial-v1",
- "./app.js?v=spatial-v1","./editor.js?v=spatial-v1",
- "./transcript.js?v=spatial-v1","./script-blocks.js?v=spatial-v1",
- "./video-studio.js?v=spatial-v1","./tone-generator.js?v=spatial-v1",
- "./spatial-audio.js?v=spatial-v1",
- "./instant-tts.js?v=spatial-v1","./pitch-preserve.js?v=spatial-v1",
- "./fast-piper.js?v=spatial-v1",
+ "./styles.css?v=audio-folders-v1","./editor.css?v=audio-folders-v1",
+ "./workspace.css?v=audio-folders-v1","./reference-layout.css?v=audio-folders-v1",
+ "./layout-v3.css?v=audio-folders-v1","./dock-windows.css?v=audio-folders-v1",
+ "./four-pane-mobile.css?v=audio-folders-v1","./entrainment.css?v=audio-folders-v1",
+ "./profiles.js?v=audio-folders-v1","./dock-windows.js?v=audio-folders-v1",
+ "./app.js?v=audio-folders-v1","./editor.js?v=audio-folders-v1",
+ "./transcript.js?v=audio-folders-v1","./script-blocks.js?v=audio-folders-v1",
+ "./video-studio.js?v=audio-folders-v1","./tone-generator.js?v=audio-folders-v1",
+ "./spatial-audio.js?v=audio-folders-v1",
+ "./instant-tts.js?v=audio-folders-v1","./pitch-preserve.js?v=audio-folders-v1",
+ "./fast-piper.js?v=audio-folders-v1",
  "./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{

@@ -58,3 +58,78 @@
  .spatial-audio-panel select{font-size:10px!important;min-height:33px}
  .spatial-audio-panel .tone-note,.spatial-audio-panel .spatial-intro{font-size:10px}
 }
+
+
+/* Accessible, individually collapsible audio sections.
+   Native details/summary works without JavaScript; profile-local storage
+   remembers which groups the user left open when scripts are available. */
+#editorTones .tone-generator{min-width:0;max-width:100%}
+#editorTones .audio-accordion{
+ margin:0 0 10px;padding:0;min-width:0;
+ border:1px solid #5d516f;border-radius:11px;overflow:hidden;
+ background:#242133
+}
+#editorTones .audio-accordion[open]{
+ border-color:#8063a3;background:#252236
+}
+#editorTones .audio-accordion-heading{
+ display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;
+ list-style:none!important;padding:12px 11px;min-height:57px;
+ background:#2b273d;transition:background .16s;
+ -webkit-tap-highlight-color:transparent
+}
+#editorTones .audio-accordion-heading::-webkit-details-marker{display:none}
+#editorTones .audio-accordion-heading::marker{content:""}
+#editorTones .audio-accordion-heading:hover{background:#352c4a}
+#editorTones .audio-accordion-heading:focus-visible{
+ outline:2px solid #d2a4ff;outline-offset:-3px
+}
+#editorTones .audio-accordion[open] > .audio-accordion-heading{
+ background:#3b3052;border-bottom:1px solid #665579
+}
+#editorTones .audio-accordion-symbol{
+ display:grid;place-items:center;flex:0 0 30px;height:30px;
+ border-radius:8px;background:#49375c;color:#eed4ff;font-size:19px
+}
+#editorTones .audio-accordion-copy{
+ flex:1;min-width:0;display:flex;flex-direction:column;gap:3px
+}
+#editorTones .audio-accordion-copy strong{
+ font-size:12px;line-height:1.35;color:#fff2ff;overflow-wrap:anywhere
+}
+#editorTones .audio-accordion-copy small{
+ font-size:10px;line-height:1.3;color:#c0b4d1;overflow-wrap:anywhere
+}
+#editorTones .audio-accordion-chevron{
+ flex:0 0 18px;font-size:19px;line-height:1;
+ color:#e1c0ff;text-align:center;transition:transform .15s
+}
+#editorTones .audio-accordion[open] .audio-accordion-chevron{transform:rotate(180deg)}
+#editorTones .audio-accordion-body{
+ padding:11px 12px 12px;min-width:0;display:flex;flex-direction:column;gap:7px
+}
+#editorTones .audio-accordion:not([open]) > .audio-accordion-body{display:none!important}
+#editorTones .audio-accordion-body .entrainment-head{margin-top:0}
+#editorTones .audio-accordion-body .spatial-audio-panel{
+ margin:0;padding:3px 0;box-shadow:none;background:transparent;border:0
+}
+#editorTones .audio-preview-row{
+ display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+ gap:3px 8px;margin:11px 0 6px
+}
+#editorTones .audio-preview-title{font-size:12px;font-weight:750;color:#faf0ff}
+#editorTones .audio-preview-subtitle{font-size:10px;color:#baaccb}
+#editorTones .tone-buttons{margin:0 0 5px}
+#editorTones .tone-buttons button{width:100%;min-height:39px}
+@media(max-width:950px){
+ #editorTones .audio-accordion{margin-bottom:7px;border-radius:8px}
+ #editorTones .audio-accordion-heading{
+   gap:5px;padding:8px 5px;min-height:52px
+ }
+ #editorTones .audio-accordion-symbol{flex-basis:23px;height:25px;font-size:15px}
+ #editorTones .audio-accordion-copy strong{font-size:10px}
+ #editorTones .audio-accordion-copy small{font-size:9px}
+ #editorTones .audio-accordion-chevron{flex-basis:11px;font-size:16px}
+ #editorTones .audio-accordion-body{padding:7px 6px;gap:5px}
+ #editorTones .audio-preview-subtitle{font-size:9px}
+}

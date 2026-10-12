@@ -36,7 +36,7 @@
    for(const panel of panels)panel.hidden=panel.dataset.editorPanel!==name;
    const nameMap={
      transcript:"Transcript",script:"Script Blocks",voice:"Narration",
-     timing:"Speed & Timing",style:"Canvas & Type",tones:"Sound Mixer",
+     timing:"Speed & Timing",style:"Canvas & Type",tones:"Audio",
      export:"Export Video",profiles:"User Workspaces"
    };
    const readable=nameMap[name]||name;
@@ -272,7 +272,29 @@
    reader.onerror=()=>alert("Could not read this file.");
    reader.readAsText(file);
  }
+ function mountAudioAccordions(){
+   const ids=["audioPanelFrequency","audioPanelSpatial","audioPanelAmbience","audioPanelImported"];
+   const sections=ids.map(id=>document.getElementById(id)).filter(Boolean);
+   if(sections.length!==ids.length)return;
+   const key=window.FocusFlashProfiles?.key("focusflash-audio-accordion-v1")||
+     "focusflash-audio-accordion-v1";
+   let opened=null;
+   try{
+     const saved=JSON.parse(localStorage.getItem(key)||"null");
+     if(Array.isArray(saved))opened=new Set(saved.filter(id=>ids.includes(id)));
+   }catch{}
+   // Only the first group starts open until a user explicitly changes it.
+   for(const section of sections)
+     section.open=opened?opened.has(section.id):section.id==="audioPanelFrequency";
+   const remember=()=>{
+     try{localStorage.setItem(key,JSON.stringify(
+       sections.filter(section=>section.open).map(section=>section.id)
+     ));}catch{}
+   };
+   for(const section of sections)section.addEventListener("toggle",remember);
+ }
  function attach(){
+   mountAudioAccordions();
    window.FocusFlashDock?.mount?.();
    for(const tab of tabs)tab.addEventListener("click",()=>selectTab(tab.dataset.editorTab,true));
    $("mobileTimelineBtn").addEventListener("click",()=>{
