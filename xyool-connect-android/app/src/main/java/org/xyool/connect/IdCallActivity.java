@@ -70,7 +70,7 @@ public final class IdCallActivity extends Activity {
     private boolean oldSpeaker;
     private final List<IceCandidate> pendingCandidates=new ArrayList<>();
     private Runnable pendingMicrophone;
-    private String callStatus="Not connected to a Xyool calling server.";
+    private String callStatus="Checking Xyool calling service…";
     private boolean muted;
 
     @Override public void onCreate(Bundle b){
@@ -131,70 +131,92 @@ public final class IdCallActivity extends Activity {
         return e;
     }
     private void render(){
-        LinearLayout root=column();root.setBackgroundColor(BG);
+        LinearLayout root=column();
+        root.setBackgroundColor(BG);
         ScrollView scroll=new ScrollView(this);
-        body=column();body.setPadding(dp(15),dp(15),dp(15),dp(20));
-        scroll.addView(body);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1f));
+        body=column();
+        body.setPadding(dp(15),dp(15),dp(15),dp(20));
+        scroll.addView(body);
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1f));
         button(root,"← Xyool Connect",false,v->finish());
         setContentView(root);
 
-        body.addView(text("XYOOL CONNECT",12,ACCENT,true));space(body,4);
-        body.addView(text("Call by ID",28,FG,true));space(body,6);
-        body.addView(text("Your ID is like a phone number for internet calls.",14,MUTED,false));
-        space(body,15);
+        body.addView(text("XYOOL CONNECT",12,ACCENT,true));
+        space(body,5);
+        body.addView(text("Call by ID",28,FG,true));
+        space(body,8);
+
+        LinearLayout connection=panel();
+        connection.addView(text("CALLING NETWORK",12,MUTED,true));
+        space(connection,6);
+        stateLabel=text(callStatus,14,MUTED,false);
+        connection.addView(stateLabel);
+        space(connection,9);
+        button(connection,"Check connection",false,v->{
+            if(registered)status("Connected. You can call a Xyool ID.");
+            else {disconnect();connect();}
+        });
 
         LinearLayout self=panel();
-        self.addView(text("YOUR XYOOL ID",12,MUTED,true));space(self,8);
+        self.addView(text("YOUR XYOOL ID",12,MUTED,true));
+        space(self,6);
         TextView address=text(id,23,ACCENT,true);
-        address.setTextIsSelectable(true);address.setGravity(Gravity.CENTER_HORIZONTAL);
-        self.addView(address);space(self,12);
+        address.setTextIsSelectable(true);
+        address.setGravity(Gravity.CENTER_HORIZONTAL);
+        self.addView(address);
+        space(self,5);
+        self.addView(text("Save this ID or share it with a friend. Don't share your private account key.",12,MUTED,false));
+        space(self,12);
         button(self,"Copy my ID",true,v->{
             ClipboardManager clip=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
             if(clip!=null)clip.setPrimaryClip(ClipData.newPlainText("Xyool ID",id));
-            status("Your ID is copied. Share it with someone you trust.");
+            status("Your ID was copied.");
         });
         space(self,8);
         button(self,"Share my ID",false,v->{
-            Intent send=new Intent(Intent.ACTION_SEND);send.setType("text/plain");
-            send.putExtra(Intent.EXTRA_TEXT,"Call my Xyool ID: "+id);
+            Intent send=new Intent(Intent.ACTION_SEND);
+            send.setType("text/plain");
+            send.putExtra(Intent.EXTRA_TEXT,"Call me on Xyool Connect: "+id);
             try{startActivity(Intent.createChooser(send,"Share Xyool ID"));}
             catch(ActivityNotFoundException ex){status("No sharing app found.");}
         });
 
         LinearLayout dialing=panel();
-        dialing.addView(text("CALL SOMEONE",12,MUTED,true));space(dialing,8);
-        targetInput=input(dialing,"Enter their Xyool ID",null);
-        space(dialing,12);
+        dialing.addView(text("CALL SOMEONE",12,MUTED,true));
+        space(dialing,8);
+        targetInput=input(dialing,"Type their Xyool ID",null);
+        space(dialing,11);
         button(dialing,"Call",true,v->call());
-        space(dialing,9);
+        space(dialing,5);
+        dialing.addView(text("The other person needs Xyool Connect open and online to answer.",12,MUTED,false));
+        space(dialing,12);
         button(dialing,"Hang up",false,v->hangup());
+        space(dialing,8);
+        button(dialing,"Mute / Unmute",false,v->toggleMute());
 
-        LinearLayout state=panel();
-        state.addView(text("CALL STATUS",12,MUTED,true));space(state,7);
-        stateLabel=text(callStatus,14,MUTED,false);state.addView(stateLabel);
-        space(state,9);
-        button(state,"Mute / Unmute microphone",false,v->toggleMute());
-
-        LinearLayout advanced=panel();
-        Button configure=button(advanced,"⚙  Connection settings",false,v->{
-            advancedPanel.setVisibility(
-                advancedPanel.getVisibility()==View.GONE?View.VISIBLE:View.GONE);
+        LinearLayout help=panel();
+        help.addView(text("No connection?",17,FG,true));
+        space(help,5);
+        help.addView(text("The Xyool calling network has not been launched yet. Your ID works locally, but calls need the Xyool service to be online. This is not something you should have to configure.",13,MUTED,false));
+        space(help,10);
+        button(help,"Developer setup (optional)",false,v->{
+            advancedPanel.setVisibility(advancedPanel.getVisibility()==View.GONE?View.VISIBLE:View.GONE);
         });
-        space(advanced,8);
+        space(help,9);
         advancedPanel=column();
         advancedPanel.setVisibility(View.GONE);
-        advanced.addView(advancedPanel);
-        advancedPanel.addView(text("Xyool's own WSS server is needed for ID calls. This alpha has no default server yet.",12,MUTED,false));
-        space(advancedPanel,8);
-        serverInput=input(advancedPanel,"wss://your-domain/v1/id",prefs.getString("xyool_id_server",""));
+        help.addView(advancedPanel);
+        advancedPanel.addView(text("Only for testing a server you control. Normal callers should never need these fields.",12,MUTED,false));
+        space(advancedPanel,10);
+        serverInput=input(advancedPanel,"Secure server address",prefs.getString("xyool_id_server",""));
         space(advancedPanel,7);
-        stunInput=input(advancedPanel,"Optional STUN: stun:host:3478",prefs.getString("xyool_stun",""));
+        stunInput=input(advancedPanel,"STUN server (optional)",prefs.getString("xyool_stun",""));
         space(advancedPanel,7);
-        turnInput=input(advancedPanel,"Optional TURN: turn:host:3478",prefs.getString("xyool_turn",""));
+        turnInput=input(advancedPanel,"TURN relay (optional)",prefs.getString("xyool_turn",""));
         space(advancedPanel,7);
-        turnUser=input(advancedPanel,"TURN username",prefs.getString("xyool_turn_user",""));
+        turnUser=input(advancedPanel,"TURN username (optional)",prefs.getString("xyool_turn_user",""));
         space(advancedPanel,7);
-        turnPass=input(advancedPanel,"TURN password",prefs.getString("xyool_turn_pass",""));
+        turnPass=input(advancedPanel,"TURN password (optional)",prefs.getString("xyool_turn_pass",""));
         turnPass.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
         space(advancedPanel,10);
         button(advancedPanel,"Save and connect",true,v->{
@@ -205,18 +227,24 @@ public final class IdCallActivity extends Activity {
                     !"/v1/id".equals(uri.getPath())||
                     uri.getUserInfo()!=null||uri.getQuery()!=null||uri.getFragment()!=null)
                     throw new IllegalArgumentException();
-            }catch(Exception e){status("Invalid URL. Use wss://your-server/v1/id");return;}
+            }catch(Exception ex){
+                status("Developer server address must start with wss:// and end in /v1/id.");
+                return;
+            }
             prefs.edit().putString("xyool_id_server",url)
                 .putString("xyool_stun",stunInput.getText().toString().trim())
                 .putString("xyool_turn",turnInput.getText().toString().trim())
                 .putString("xyool_turn_user",turnUser.getText().toString())
                 .putString("xyool_turn_pass",turnPass.getText().toString()).apply();
-            disconnect();connect();
+            disconnect();
+            connect();
             advancedPanel.setVisibility(View.GONE);
         });
-        space(body,3);
-        body.addView(text("Both people must have Xyool Connect open and connected. No background ringing or emergency calls in this alpha. Never depend on this app for 911.",12,MUTED,false));
+
+        space(body,5);
+        body.addView(text("This alpha cannot ring while closed and isn't for emergency calls. Use the regular Android phone app for 911.",12,MUTED,false));
     }
+
     private void status(String message){
         callStatus=message;
         runOnUiThread(()->{
@@ -231,7 +259,7 @@ public final class IdCallActivity extends Activity {
     }
     private void connect(){
         String raw=prefs.getString("xyool_id_server","").trim();
-        if(raw.isEmpty()){registered=false;status("Your ID is ready. Calling needs a Xyool server—open Connection settings.");return;}
+        if(raw.isEmpty()){registered=false;status("Not available yet · Xyool calling service hasn't launched.");return;}
         URI uri;
         try{
             uri=URI.create(raw);
@@ -259,11 +287,11 @@ public final class IdCallActivity extends Activity {
             @Override public void onClose(int code,String reason,boolean remote){
                 runOnUiThread(()->{
                     registered=false;
-                    if(!disposed)status("Connection lost. Open the calling screen to reconnect.");
+                    if(!disposed)status("Offline · Tap Check connection to retry.");
                 });
             }
             @Override public void onError(Exception ex){
-                status("Xyool server unreachable. Check Connection settings.");
+                status("Can't reach Xyool calling. Tap Check connection to retry.");
             }
         };
         ws.setConnectionLostTimeout(30);
@@ -281,7 +309,7 @@ public final class IdCallActivity extends Activity {
         catch(Exception ex){status("Could not send call command.");}
     }
     private void call(){
-        if(!registered){status("Not connected. Set up a Xyool calling server first.");return;}
+        if(!registered){status("Xyool calling isn't online yet. Your ID is saved.");return;}
         if(peerActive||waitingId!=null){status("Finish your current call first.");return;}
         String dest=normalize(targetInput.getText().toString());
         if(dest==null){status("Enter a valid Xyool ID, like XY-ABCD-EFGH-JKLM.");return;}
