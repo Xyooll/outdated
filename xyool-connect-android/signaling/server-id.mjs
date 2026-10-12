@@ -1,5 +1,6 @@
 import http from 'node:http';
 import fs from 'node:fs';
+import path from 'node:path';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
 
@@ -19,6 +20,17 @@ const deliver=(socket,obj)=>{
 
 export function createIdServer({ host='127.0.0.1',port=8788,
   registryPath=process.env.XYOOL_ID_REGISTRY || './xyool-id-registry.json'}={}){
+  // Fail closed rather than silently issuing non-persistent IDs.
+  // On Railway, attach a persistent volume before booting this service.
+  const storageDir=path.dirname(path.resolve(registryPath));
+  if(!fs.existsSync(storageDir))throw new Error('Missing identity registry directory: '+storageDir);
+  const probe=path.join(storageDir,'.xyool-writecheck-'+randomUUID());
+  try {
+    fs.writeFileSync(probe,'ok',{flag:'wx',mode:0o600});
+    fs.unlinkSync(probe);
+  } catch(err) {
+    throw new Error('Identity registry storage must be writable and persistent: '+err.message);
+  }
   const registry = new Map();
   if (fs.existsSync(registryPath)) {
     const persisted=JSON.parse(fs.readFileSync(registryPath,'utf8'));
@@ -168,11 +180,22 @@ export function createIdServer({ host='127.0.0.1',port=8788,
 }
 
 if(process.argv[1]&&import.meta.url===new URL('file://'+process.argv[1]).href){
- const service=createIdServer();
- service.listen().then(()=>{
-   console.log('Xyool ID signaling listening on 127.0.0.1:8788');
-   console.log('Use a HTTPS reverse proxy with a valid certificate (WSS).');
- });
- process.on('SIGTERM',()=>service.close().then(()=>process.exit(0)));
- process.on('SIGINT',()=>service.close().then(()=>process.exit(0)));
+  // The platform provides TLS at the edge and a writable registry volume.
+  // A Railway deploy without a volume is rejected to avoid losing all IDs.
+  if(process.env.RAILWAY_ENVIRONMENT && !process.env.RAILWAY_VOLUME_MOUNT_PATH){
+    throw new Error('Attach a Railway Volume at /data before deployment. Refusing ephemeral Xyool IDs.');
+  }
+  if(process.env.NODE_ENV==='production' && !process.env.XYOOL_ID_REGISTRY){
+    throw new Error('Set XYOOL_ID_REGISTRY to a durable volume path.');
+  }
+  const port=Number(process.env.PORT||8788);
+  const host=process.env.HOST||'127.0.0.1';
+  if(!Number.isInteger(port)||port<1||port>65535)throw new Error('Invalid PORT');
+  const service=createIdServer({port,host});
+  service.listen().then(()=>{
+    console.log('Xyool ID signaling ready at '+host+':'+port);
+    console.log('Expose via HTTPS/WSS; do not expose plaintext WebSocket on the public internet.');
+  }).catch(err=>{console.error('Startup error: '+err.message);process.exit(1);});
+  process.on('SIGTERM',()=>service.close().then(()=>process.exit(0)));
+  process.on('SIGINT',()=>service.close().then(()=>process.exit(0)));
 }
