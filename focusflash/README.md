@@ -229,3 +229,20 @@ Published at: https://xyooll.github.io/outdated/focusflash/?v=four-panes-3
 
 ### Single-line mobile top bar (four-panes-4)
 The phone/tablet header is exactly one row, 48px high, with compact FocusFlash brand, user workspace selector + profile settings, and Export. Nonessential links are accessible via their existing editing tools instead of cluttering the header. The full four-window area gets the reclaimed vertical space. No saved workspace data or audio processing is changed.
+
+
+## Auditory entrainment experiments (entrainment-v1)
+
+FocusFlash's existing tone, ambience and imported MP3 mixer now includes optional **monaural** and **isochronic** rhythm modes alongside existing binaural and pure tones.
+
+- **Binaural**: independent left and right oscillator frequencies (carrier ± beat/2), requires stereo headphones for the intended binaural percept.
+- **Monaural**: two nearby equal-level oscillators mixed into the same output channel, creating an audible beat; headphones not required.
+- **Isochronic**: carrier oscillator modulated by a 0..1 smooth-edged approximately 50%-duty pulse envelope produced by an audio-rate LFO and WaveshaperNode; headphones not required.
+- **Experimental presets**: 15 Hz "Focus," 8 Hz "Calm," 4 Hz "Wind-down," 40 Hz "Attention experiment." The presets are test configurations, **not verified interventions** or guaranteed neural entrainment.
+- **Timed tone stimulation**: Continuous or 5–90 minutes with configurable 0–15-second smooth fade. AudioContext audio-clock scheduling is used for tone fades so the export soundtrack obeys timer settings even while the tab is in the background. Standalone preview automatically stops at the selected duration; reading and exporting continue, but tones fade out when their own timer ends.
+- Ambience and imported MP3 layers are not muted at the end of a timed *tone* session. Existing video export, dual independent local user workspaces, sound layers, and script blocks are preserved.
+- **Safety**: visible low-volume advice; clear stereo headphone reminder only for binaural; the UI does not claim to calculate decibels or detect physical headphone use. Do not use during driving or tasks requiring situational awareness.
+
+Modes and presets are persisted in each profile's existing local tone settings. Audio is generated locally via the Web Audio API. No EEG sensing or verified brainwave measurements are made. The research evidence for cognitive or sleep enhancement from rhythmic audio is mixed.
+
+Published URL: https://xyooll.github.io/outdated/focusflash/?v=entrainment-v1

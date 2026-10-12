@@ -1,17 +1,17 @@
 // Four-window dock v2, network-first to keep updated UI and data separate.
-const CACHE="focusflash-four-pane-dock-v4";
+const CACHE="focusflash-entrainment-v1";
 const STATIC=[
  "./","./index.html",
- "./styles.css?v=four-panes-4","./editor.css?v=four-panes-4",
- "./workspace.css?v=four-panes-4","./reference-layout.css?v=four-panes-4",
- "./layout-v3.css?v=four-panes-4","./dock-windows.css?v=four-panes-4",
- "./four-pane-mobile.css?v=four-panes-4",
- "./profiles.js?v=four-panes-4","./dock-windows.js?v=four-panes-4",
- "./app.js?v=four-panes-4","./editor.js?v=four-panes-4",
- "./transcript.js?v=four-panes-4","./script-blocks.js?v=four-panes-4",
- "./video-studio.js?v=four-panes-4","./tone-generator.js?v=four-panes-4",
- "./instant-tts.js?v=four-panes-4","./pitch-preserve.js?v=four-panes-4",
- "./fast-piper.js?v=four-panes-4",
+ "./styles.css?v=entrainment-v1","./editor.css?v=entrainment-v1",
+ "./workspace.css?v=entrainment-v1","./reference-layout.css?v=entrainment-v1",
+ "./layout-v3.css?v=entrainment-v1","./dock-windows.css?v=entrainment-v1",
+ "./four-pane-mobile.css?v=entrainment-v1","./entrainment.css?v=entrainment-v1",
+ "./profiles.js?v=entrainment-v1","./dock-windows.js?v=entrainment-v1",
+ "./app.js?v=entrainment-v1","./editor.js?v=entrainment-v1",
+ "./transcript.js?v=entrainment-v1","./script-blocks.js?v=entrainment-v1",
+ "./video-studio.js?v=entrainment-v1","./tone-generator.js?v=entrainment-v1",
+ "./instant-tts.js?v=entrainment-v1","./pitch-preserve.js?v=entrainment-v1",
+ "./fast-piper.js?v=entrainment-v1",
  "./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{

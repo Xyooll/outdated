@@ -30,7 +30,7 @@
  let audioContext=null,previewSource=null,previewGain=null,previewAnimation=0,renderAbort=false;
  let readerSource=null,readerGain=null,readerGeneration=0;
  let readerVoice=null,previewVoice=null,nativeSpeaking=false;
- const pitchEngine=()=>import("./pitch-preserve.js?v=mobile-workspace-2");
+ const pitchEngine=()=>import("./pitch-preserve.js?v=entrainment-v1");
  let mediaUrl=null;
  const sel=id=>$(id);
  const report=(message)=>{sel("studioStatus").textContent=message;};
@@ -224,10 +224,10 @@
          const phrases=splitIntoPhrases(unit.text);
          if(!phrases.length)continue;
          if(mode==="instant"){
-           const {generateInstantExportSpeech}=await import("./instant-tts.js?v=mobile-workspace-2");
+           const {generateInstantExportSpeech}=await import("./instant-tts.js?v=entrainment-v1");
            generated=await generateInstantExportSpeech(unit.text,msg=>report("Block "+(i+1)+": "+msg));
          }else if(mode==="fast"){
-           const adapter=await import("./fast-piper.js?v=mobile-workspace-2");
+           const adapter=await import("./fast-piper.js?v=entrainment-v1");
            generated=await adapter.generateFastPhrases(phrases,voice,
              msg=>report("Block "+(i+1)+": "+msg));
          }else{
