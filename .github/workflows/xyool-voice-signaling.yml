@@ -28,7 +28,7 @@ jobs:
       - name: Run room isolation and signaling tests
         run: npm test
       - name: Build deployment container
-        run: docker build --pull -t xyool-id-signaling:ci .
+        run: cd ../.. && docker build --pull -f xyool-connect-android/signaling/Dockerfile -t xyool-id-signaling:ci .
       - name: Verify Railway-style container with a persistent volume
         shell: bash
         run: |
