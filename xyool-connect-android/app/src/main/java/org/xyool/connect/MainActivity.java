@@ -189,7 +189,7 @@ public final class MainActivity extends Activity {
         gap(actions, 9);
         actions.addView(button("Send an SMS", false, v -> {screen = "Messages"; drawScreen();}));
         gap(content, 8);
-        content.addView(text("No account, advertisements, network permission, or Google services are required by Xyool Connect.", 12, SECONDARY, false));
+        content.addView(text("No Google Play Services or account are required. The experimental native voice module uses the Internet and microphone only when you choose to start an audio session.", 12, SECONDARY, false));
     }
     private void showPhone() {
         title("PHONE", "Make a call");
@@ -366,7 +366,7 @@ public final class MainActivity extends Activity {
         LinearLayout privacy = panel();
         privacy.addView(text("Local data", 18, FOREGROUND, true));
         gap(privacy, 6);
-        privacy.addView(text("Xyool uses private Android app storage. It does not have Internet, Contacts, Phone, or SMS permissions.", 13, SECONDARY, false));
+        privacy.addView(text("Xyool stores your contacts and avatar in private Android app storage. Native calls use Internet and optional microphone permission, but the app does not request Contacts, Phone, or SMS data access.", 13, SECONDARY, false));
         gap(privacy, 12);
         privacy.addView(button("Erase Xyool data", false, v ->
             new AlertDialog.Builder(this).setTitle("Erase local data?")
