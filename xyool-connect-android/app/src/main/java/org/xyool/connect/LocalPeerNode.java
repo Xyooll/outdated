@@ -2,6 +2,7 @@ package org.xyool.connect;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
@@ -73,7 +74,15 @@ public final class LocalPeerNode {
         ConnectivityManager mgr=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if(mgr==null)return false;
         NetworkCapabilities caps=mgr.getNetworkCapabilities(mgr.getActiveNetwork());
-        return caps!=null&&caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI);
+        if(caps!=null&&caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))return true;
+        // Rethink DNS and other VPN clients can be the active network while
+        // the underlying Wi-Fi is still available for local node discovery.
+        for(Network network:mgr.getAllNetworks()){
+            NetworkCapabilities underlying=mgr.getNetworkCapabilities(network);
+            if(underlying!=null&&underlying.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
+                return true;
+        }
+        return false;
     }
 
     public synchronized void start(){
@@ -243,7 +252,7 @@ public final class LocalPeerNode {
                 @Override public void onServiceResolved(NsdServiceInfo service){
                     String peerId=extractId(service);
                     InetAddress addr=service.getHost();
-                    if(peerId!=null&&!peerId.equals(myId)&&addr!=null
+                    if(started&&peerId!=null&&!peerId.equals(myId)&&addr!=null
                         &&service.getPort()>0&&service.getPort()<65536){
                         discovered.put(peerId,new InetSocketAddress(addr,service.getPort()));
                         listener.onPeerChanged(peerId,true);
