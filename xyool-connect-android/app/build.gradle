@@ -5,7 +5,7 @@ android {
     namespace 'org.xyool.connect'
     compileSdk 35
     defaultConfig {
-        applicationId 'org.xyool.connect.nativealpha'
+        applicationId 'org.xyool.connect.idalpha'
         minSdk 26
         targetSdk 34
         versionCode 4
