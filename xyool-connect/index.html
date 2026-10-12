@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#122735"><meta name="referrer" content="no-referrer">
+<title>Xyool Connect — Basics</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#eef8f6;background:#0c1822;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 25% -10%,#285b61,transparent 55%),#0c1822;min-height:100vh}
+main{max-width:720px;margin:auto;padding:16px 16px 110px}header{display:flex;align-items:center;justify-content:space-between;margin:4px 0 22px;gap:12px}
+.brand{font-weight:850;letter-spacing:-.04em;font-size:24px}.brand em{font-style:normal;color:#7ee5d1}.tag{font-size:11px;border:1px solid #31505d;border-radius:20px;padding:7px 9px;color:#a3d7d0}
+h1{font-size:28px;letter-spacing:-.03em;margin:6px 0 10px}h2{font-size:17px;margin:16px 0 10px}.eyebrow{font-size:11px;letter-spacing:.16em;font-weight:800;color:#91dacb}
+p{color:#b4cad3;font-size:14px;line-height:1.55}.card{border:1px solid #294b57;background:#182c39;border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 7px 24px #0002}
+.hero{display:flex;align-items:center;gap:18px}.hero svg{width:108px;min-width:108px;background:linear-gradient(140deg,#395a6a,#2c4f68);border-radius:19px}
+button,input,select{font:inherit}button{cursor:pointer;border:1px solid #397b79;color:#eafdf6;background:#244953;border-radius:12px;padding:12px;font-weight:700}
+button.primary{background:#50c4af;color:#10282a;border-color:#50c4af}.btns{display:flex;gap:8px}.btns>*{flex:1}.action-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+.action-grid button{display:flex;flex-direction:column;align-items:flex-start;min-height:105px;gap:7px;padding:13px;text-align:left}
+.action-grid b{font-size:24px;color:#83eedb}.action-grid small{font-size:11px;color:#c2d8dc}
+.screen[hidden]{display:none!important}.fields{display:grid;gap:10px}.fields label{font-size:13px;font-weight:700;color:#cbdfdf}
+input,select{border:1px solid #3b6373;border-radius:12px;background:#102432;color:#eff;padding:13px;min-width:0;width:100%;font-size:16px}
+input:focus,select:focus,button:focus-visible{outline:2px solid #8be8d8;outline-offset:2px}.person{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.person .meta{flex:1;min-width:120px}.person .meta b,.person .meta small{display:block;overflow-wrap:anywhere}.person .meta small{color:#adc4ca}.person a{font-size:13px;color:#9bf2db;padding:9px;text-decoration:none;border:1px solid #426472;border-radius:11px}.person button{font-size:13px;padding:8px}.muted{color:#aac0c9;font-size:12px}#notice{color:#9ce4c9;font-size:13px;min-height:20px}nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);background:#142936f7;backdrop-filter:blur(12px);border-top:1px solid #37616a;padding:7px 7px calc(7px + env(safe-area-inset-bottom));z-index:4}nav button{padding:9px 3px;border:0;background:transparent;font-size:11px;color:#adc4ca}nav button.active{background:#27555d;color:#98ffe6}nav button span{display:block;font-size:21px;margin-bottom:3px}@media(max-width:430px){main{padding:12px 12px 115px}.card{padding:14px}.hero{gap:12px}.hero svg{width:92px;min-width:92px}h1{font-size:25px}.person .actions{width:100%}}
+</style></head>
+<body><main>
+<header><div class="brand">✦ Xyool <em>Connect</em></div><div class="tag">v0.1 · local</div></header>
+<section class="screen" id="home">
+<div class="card hero"><svg viewBox="0 0 120 140" aria-label="Your 2D avatar" role="img"><ellipse cx="60" cy="130" rx="41" ry="7" fill="#061824" opacity=".3"/><path id="body" d="M18 133Q17 93 60 93Q103 93 102 133Z" fill="#50b5bb"/><ellipse id="face" cx="60" cy="66" rx="32" ry="38" fill="#dba574"/><path id="hair" d="M28 65Q17 18 62 18Q105 18 94 66L86 49Q63 35 35 49Z" fill="#26232e"/><circle cx="48" cy="67" r="3" fill="#19212e"/><circle cx="72" cy="67" r="3" fill="#19212e"/><path d="M52 83Q60 91 68 83" fill="none" stroke="#8b5946" stroke-width="2.5" stroke-linecap="round"/></svg>
+<div><div class="eyebrow">MY SPACE</div><h1>Hello, <span id="displayName">Friend</span>.</h1><p>Simple calling, messaging, and contacts. Everything else can wait.</p><button type="button" data-go="profile">Edit avatar</button></div></div>
+<h2>Quick actions</h2><div class="action-grid">
+<button type="button" data-go="phone"><b>☎</b>Phone<small>Android dialer</small></button>
+<button type="button" data-go="people"><b>♧</b>Contacts<small>Saved locally</small></button>
+<button type="button" data-go="chat"><b>✉</b>Messages<small>SMS handoff</small></button>
+</div><p class="muted">The web app does not replace your Android phone/SMS systems. It hands the number to the existing apps.</p>
+</section>
+<section class="screen" id="phone" hidden><div class="eyebrow">PHONE</div><h1>Call or text</h1><div class="card"><form id="dial"><div class="fields"><label for="number">Phone number</label><input id="number" type="tel" autocomplete="tel" inputmode="tel" placeholder="+1 555 123 4567" required><div class="btns"><button class="primary" type="submit">Call</button><button id="sendSMS" type="button">SMS</button></div></div></form><p id="dialNotice" role="status"></p></div><p>Cellular calling and SMS require your carrier service. Internet calling is not implemented yet.</p></section>
+<section class="screen" id="people" hidden><div class="eyebrow">ADDRESS BOOK</div><h1>People</h1><div class="card"><form id="add"><div class="fields"><label for="personName">Name</label><input id="personName" maxlength="64" required placeholder="Name"><label for="personNumber">Phone number</label><input id="personNumber" type="tel" required placeholder="+1 555 123 4567"><button class="primary" type="submit">Save contact</button></div></form><p id="notice" role="status"></p></div><div id="peopleList"></div><p class="muted">Contacts are stored in this browser only and are not encrypted at rest.</p></section>
+<section class="screen" id="chat" hidden><div class="eyebrow">MESSAGES</div><h1>Messages</h1><div class="card"><h2>SMS</h2><p>Use the Phone tab to open Android's SMS app. For now, your regular inbox remains in Android Messages.</p><button type="button" data-go="phone" class="primary">Write a text</button></div><div class="card"><h2>Private internet chat</h2><p>Not active yet. Next version will add account-to-account messaging and end-to-end encryption. No fake chat history or unprotected messaging.</p></div></section>
+<section class="screen" id="profile" hidden><div class="eyebrow">YOUR AVATAR</div><h1>Profile settings</h1><div class="card"><div class="fields">
+<label for="name">Display name</label><input id="name" maxlength="40" placeholder="Friend">
+<label for="skin">Skin tone</label><select id="skin"><option value="#f2c9a0">Light</option><option value="#dba574">Tan</option><option value="#ab734e">Brown</option><option value="#70472f">Deep</option></select>
+<label for="hairstyle">Hair color</label><select id="hairstyle"><option value="#26232e">Dark</option><option value="#6b402b">Brown</option><option value="#c79a52">Blond</option><option value="#a14e40">Red</option></select>
+<label for="shirt">Shirt</label><select id="shirt"><option value="#50b5bb">Teal</option><option value="#577ee3">Blue</option><option value="#a477d1">Purple</option><option value="#d76e8a">Pink</option></select>
+<button class="primary" type="button" id="save">Save my avatar</button></div></div>
+<div class="card"><h2>Privacy</h2><p>No trackers or account needed for local features. Your data stays in your browser storage until cleared, but other software with access to the unlocked phone could read it.</p><button type="button" id="clear">Delete saved contacts & avatar</button></div></section>
+</main>
+<nav aria-label="Main navigation">
+<button type="button" class="active" data-go="home"><span>⌂</span>Home</button>
+<button type="button" data-go="phone"><span>☎</span>Phone</button>
+<button type="button" data-go="people"><span>♧</span>People</button>
+<button type="button" data-go="chat"><span>✉</span>Chat</button>
+<button type="button" data-go="profile"><span>⚙</span>Profile</button>
+</nav>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const K={p:'xyool-connect-lite-profile-v1',c:'xyool-connect-lite-contacts-v1'};
+const defaults={name:'Friend',skin:'#dba574',hair:'#26232e',shirt:'#50b5bb'};
+const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+let p={...defaults,...read(K.p,{})}, people=read(K.c,[]);
+if(!Array.isArray(people))people=[];
+const allowed={skin:['#f2c9a0','#dba574','#ab734e','#70472f'],hair:['#26232e','#6b402b','#c79a52','#a14e40'],shirt:['#50b5bb','#577ee3','#a477d1','#d76e8a']};
+const phone=s=>{const v=String(s).trim().replace(/[\s().-]/g,'');return /^\+?[0-9]{3,15}$/.test(v)?v:null};
+function view(tab){document.querySelectorAll('section.screen').forEach(e=>e.hidden=e.id!==tab);document.querySelectorAll('nav button').forEach(e=>e.classList.toggle('active',e.dataset.go===tab));window.scrollTo(0,0)}
+document.querySelectorAll('[data-go]').forEach(e=>e.addEventListener('click',()=>view(e.dataset.go)));
+function avatar(){p.name=String(p.name||'Friend').slice(0,40);$('displayName').textContent=p.name;for(const [key,id] of [['skin','face'],['hair','hair'],['shirt','body']]){const color=allowed[key].includes(p[key])?p[key]:defaults[key];$(id).setAttribute('fill',color)}$('name').value=p.name;$('skin').value=allowed.skin.includes(p.skin)?p.skin:defaults.skin;$('hairstyle').value=allowed.hair.includes(p.hair)?p.hair:defaults.hair;$('shirt').value=allowed.shirt.includes(p.shirt)?p.shirt:defaults.shirt}
+$('save').addEventListener('click',()=>{p={name:$('name').value.trim().slice(0,40)||'Friend',skin:$('skin').value,hair:$('hairstyle').value,shirt:$('shirt').value};localStorage.setItem(K.p,JSON.stringify(p));avatar();view('home')});
+function intent(kind,v){const n=phone(v);if(!n){$('dialNotice').textContent='Enter a valid number first.';return}window.location.href=kind+':'+n}
+$('dial').addEventListener('submit',e=>{e.preventDefault();intent('tel',$('number').value)});
+$('sendSMS').addEventListener('click',()=>intent('sms',$('number').value));
+function render(){const root=$('peopleList');root.replaceChildren();if(!people.length){const t=document.createElement('p');t.textContent='No saved contacts yet.';root.append(t);return}
+for(const person of people){const card=document.createElement('div');card.className='card person';const meta=document.createElement('div');meta.className='meta';const title=document.createElement('b');title.textContent=person.name;const digits=document.createElement('small');digits.textContent=person.number;meta.append(title,digits);const actions=document.createElement('div');actions.className='actions btns';
+for(const [label,scheme] of [['Call','tel'],['SMS','sms']]){const link=document.createElement('a');link.textContent=label;link.href=scheme+':'+person.number;actions.append(link)}
+const del=document.createElement('button');del.textContent='Remove';del.addEventListener('click',()=>{people=people.filter(x=>x.id!==person.id);localStorage.setItem(K.c,JSON.stringify(people));render()});actions.append(del);card.append(meta,actions);root.append(card)}}
+$('add').addEventListener('submit',e=>{e.preventDefault();const name=$('personName').value.trim().slice(0,64),number=phone($('personNumber').value);if(!name||!number){$('notice').textContent='Enter a valid name and phone number.';return}people.push({id:crypto.randomUUID(),name,number});localStorage.setItem(K.c,JSON.stringify(people));$('add').reset();$('notice').textContent='Contact saved on this phone.';render()});
+$('clear').addEventListener('click',()=>{if(!confirm('Delete the avatar and local contacts on this phone?'))return;localStorage.removeItem(K.p);localStorage.removeItem(K.c);p={...defaults};people=[];avatar();render();view('home')});
+avatar();render();
+</script></body></html>
