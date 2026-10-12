@@ -1,0 +1,29 @@
+name: Test Xyool Voice Signaling
+
+on:
+  push:
+    paths:
+      - 'xyool-connect-android/signaling/**'
+      - '.github/workflows/xyool-voice-signaling.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-signaling:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: xyool-connect-android/signaling
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned signaling dependency
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Run room isolation and signaling tests
+        run: npm test
