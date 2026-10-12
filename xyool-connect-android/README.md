@@ -1,3 +1,42 @@
+# Xyool Connect — ID-to-ID Calling v0.4
+
+The normal workflow now is **Get ID → Share ID → Enter another ID → Call → Accept/Decline**. No manually exchanging WebRTC offers, SDP, network candidates, meeting links, or long secret rooms. The old diagnostic tools remain under **Phone → Advanced SIP / diagnostic calling**.
+
+## What is actually available
+
+- A first-run Xyool ID such as `XY-ABCD-EFGH-JKLM`, randomly generated and stored in private Android preferences.
+- A separate 256-bit secret stored in the app to authenticate ID ownership with the Xyool server. The secret is **not** displayed or shared with contacts.
+- A dedicated **Call by ID** screen with Copy/Share ID, Call, Hang up, Mute, and incoming Accept/Decline dialog.
+- Xyool's Node signaling service `signaling/server-id.mjs` supports durable ID registration, caller lookup, incoming-call delivery, call state, and automatic WebRTC offer/answer/ICE candidate relay.
+- The actual voice is still built on the native WebRTC audio engine and DTLS-SRTP. Calls and audio are not recorded by this service.
+- Ordinary carrier telephone calls/SMS and optional SIP fallback are retained.
+
+## Important: no live server yet
+
+**This is a completed compiled APK prototype, not yet a completed global calling network.** Currently the app can generate your ID offline, but **ID calls cannot connect until the separate Xyool signaling server is deployed behind HTTPS/WSS** and configured in Connection settings. There is no public Xyool service endpoint hardcoded into the APK, and GitHub Pages cannot host this WebSocket service.
+
+**First setup on your own server:** start the Node 20+ process `node signaling/server-id.mjs` behind a TLS/WSS reverse proxy. WSS endpoint must be `wss://your-domain/v1/id`. Run coturn for relay-capable calls across carriers. Once a real endpoint exists, the next APK will ship with it preconfigured so nobody needs to type a server address.
+
+The signaling server is independent of the existing Our Space Supabase project and does not alter its two-person authorization/database.
+
+## Initial two-phone alpha test
+
+1. Install the v0.4 debug APK on both Android phones. Note it uses the **same app ID as v0.3** but the CI debug signature can vary, so an existing v0.3 might fail to upgrade. Uninstalling v0.3 would erase that alpha's locally saved contacts and settings. Back up important information manually first.
+2. Open Xyool Connect → **Phone → My ID / Call a Xyool ID**, then **Connection settings**.
+3. Enter the same deployed Xyool WSS URL on both phones; optional STUN and authenticated TURN as needed.
+4. Both phones must stay in the calling screen, online. Share the caller/recipient's Xyool ID (not the secret).
+5. Enter the recipient's ID and tap **Call**. Recipient taps **Accept**. The app automatically negotiates WebRTC media. Check two-way audio on same Wi-Fi, then across different Wi-Fi/mobile networks.
+
+**Not working yet:** incoming calls while app closed, reliable push notifications, identity verification against malicious signaling, persistent accounts across reinstall, easy ID recovery/migration, global signaling hosting, deployed TURN, self-hosted SIP-to-phone-number gateway, call quality verification or emergency dialing. The ID owner secret is stored in private preferences but not Android Keystore hardware-backed encryption. A compromised unlocked phone can still compromise its credentials. Never use this alpha for emergency calls.
+
+## Server ownership and security
+
+`signaling/server-id.mjs` persists SHA-256 hashes of ID-authentication tokens in a private local JSON file, not raw tokens, and accepts only one currently connected socket per ID. Protect and back up this registry; a lost registry permits unauthorized first-claim of a known ID. This alpha relies on WSS/TLS authentication of the server; its WebRTC media is encrypted but identity-binding/verified peer fingerprints are still missing. The server is single-instance and requires rate-limits, abuse controls and audits before exposure to the public.
+
+GitHub Actions tests confirm registration, ID ownership, call delivery, accept/reject, SDP/ICE relay and offline/busy errors. Green tests are **not** proof of working voice over real devices. Physical two-way calls have not been tested.
+
+---
+
 # Xyool Connect Native Voice Alpha — Android v0.3
 
 This **separate Android install** is Xyool's first built-in native microphone-to-speaker WebRTC calling implementation. Package ID: `org.xyool.connect.nativealpha`. Previous v0.1 and v0.2 apps are left installed and their private contacts/avatars are not migrated.
