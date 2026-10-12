@@ -303,6 +303,7 @@
   restoreState();
   loadText(false);
   if(window.FocusFlashTones)window.FocusFlashTones.mount();
+  if(window.FocusFlashSpatial)window.FocusFlashSpatial.mount();
   if(window.FocusFlashStudio)window.FocusFlashStudio.mount();
   if(window.FocusFlashEditor)window.FocusFlashEditor.mount();
 })();

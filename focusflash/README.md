@@ -246,3 +246,19 @@ FocusFlash's existing tone, ambience and imported MP3 mixer now includes optiona
 Modes and presets are persisted in each profile's existing local tone settings. Audio is generated locally via the Web Audio API. No EEG sensing or verified brainwave measurements are made. The research evidence for cognitive or sleep enhancement from rhythmic audio is mixed.
 
 Published URL: https://xyooll.github.io/outdated/focusflash/?v=entrainment-v1
+
+
+## HRTF 3D spatial audio (spatial-v1)
+
+The Sounds & Tones panel has a separate spatial audio layer, not to be confused with binaural beat difference frequencies. Web Audio's HRTF PannerNode simulates the direction of a virtual audio source by filtering a mono input into left/right headphone signals. Movement uses audio-rate oscillators connected directly to positionX/positionY/positionZ AudioParams; no animation intervals are needed and it stays stable through video recording.
+
+- Sources: built-in softly pitched/broadband shimmer, or spatialization of an imported audio/MP3 track in place.
+- Movement: around-head orbit, left-right, front-back, above-below, figure eight, or stationary left/right/front.
+- Speed: 3 to 45 seconds per circuit; movement distance: 0.25 to 2.5 nominal units. Input source and movement can be changed live. For the built-in demo, volume is capped at 25% of digital full-scale gain; this does not measure acoustic hearing safety.
+- Users can enable/disable spatial effects, choose import versus demo, choose paths, and choose whether spatial positioning is in the WebM export.
+- Per-user settings persist with the existing local profile system.
+- Spatialization is applied to the mixed signal only when the source selected is a demo or imported audio. Existing binaural beats retain their original dedicated stereo left/right oscillators, so the spatializer does not defeat their stereo separation.
+- A moving imported MP3 remains audible in export if the MP3 export toggle is on. If spatial export is off, imported audio is exported without 3D movement. If MP3 is not loaded, its moving-audio mode asks the user to import first.
+- Headphones strongly recommended. Spatial location is perceptual, not actual sound in specific brain areas; individual head-related transfer functions, equipment and surrounding noise affect perceived direction. No medical effects claimed.
+
+Link: https://xyooll.github.io/outdated/focusflash/?v=spatial-v1

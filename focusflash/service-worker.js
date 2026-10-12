@@ -1,17 +1,18 @@
 // Four-window dock v2, network-first to keep updated UI and data separate.
-const CACHE="focusflash-entrainment-v1";
+const CACHE="focusflash-spatial-v1";
 const STATIC=[
  "./","./index.html",
- "./styles.css?v=entrainment-v1","./editor.css?v=entrainment-v1",
- "./workspace.css?v=entrainment-v1","./reference-layout.css?v=entrainment-v1",
- "./layout-v3.css?v=entrainment-v1","./dock-windows.css?v=entrainment-v1",
- "./four-pane-mobile.css?v=entrainment-v1","./entrainment.css?v=entrainment-v1",
- "./profiles.js?v=entrainment-v1","./dock-windows.js?v=entrainment-v1",
- "./app.js?v=entrainment-v1","./editor.js?v=entrainment-v1",
- "./transcript.js?v=entrainment-v1","./script-blocks.js?v=entrainment-v1",
- "./video-studio.js?v=entrainment-v1","./tone-generator.js?v=entrainment-v1",
- "./instant-tts.js?v=entrainment-v1","./pitch-preserve.js?v=entrainment-v1",
- "./fast-piper.js?v=entrainment-v1",
+ "./styles.css?v=spatial-v1","./editor.css?v=spatial-v1",
+ "./workspace.css?v=spatial-v1","./reference-layout.css?v=spatial-v1",
+ "./layout-v3.css?v=spatial-v1","./dock-windows.css?v=spatial-v1",
+ "./four-pane-mobile.css?v=spatial-v1","./entrainment.css?v=spatial-v1",
+ "./profiles.js?v=spatial-v1","./dock-windows.js?v=spatial-v1",
+ "./app.js?v=spatial-v1","./editor.js?v=spatial-v1",
+ "./transcript.js?v=spatial-v1","./script-blocks.js?v=spatial-v1",
+ "./video-studio.js?v=spatial-v1","./tone-generator.js?v=spatial-v1",
+ "./spatial-audio.js?v=spatial-v1",
+ "./instant-tts.js?v=spatial-v1","./pitch-preserve.js?v=spatial-v1",
+ "./fast-piper.js?v=spatial-v1",
  "./manifest.webmanifest","./icon.svg"
 ];
 self.addEventListener("install",event=>{
