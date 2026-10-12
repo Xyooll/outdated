@@ -9,7 +9,28 @@
        DB_NAME="focusflash-soundtrack-v1",
        FILE_ID="active-"+(window.FocusFlashProfiles?.id?.()||"1");
  const LIMIT=50*1024*1024;
- const MODES=["off","pure","binaural"];
+ const MODES=["off","pure","binaural","monaural","isochronic"];
+ const PRESETS={
+   custom:null,
+   focus:{mode:"binaural",carrier:240,beat:15,volume:7,fx:"pink",fxVolume:12},
+   calm:{mode:"binaural",carrier:220,beat:8,volume:6,fx:"rain",fxVolume:12},
+   winddown:{mode:"binaural",carrier:200,beat:4,volume:5,fx:"brown",fxVolume:12},
+   gamma:{mode:"binaural",carrier:240,beat:40,volume:5,fx:"off",fxVolume:12}
+ };
+ const PRESET_INFO={
+   custom:"Choose your own sound and rhythm. No brainwave effect is guaranteed.",
+   focus:"15 Hz experimental beta-range binaural rhythm with gentle pink noise. Evidence for attention is mixed.",
+   calm:"8 Hz experimental alpha-range binaural rhythm with rain. This is not a treatment for anxiety.",
+   winddown:"4 Hz experimental low-frequency binaural rhythm with brown noise. Do not use while driving.",
+   gamma:"40 Hz experimental binaural rhythm. Some small studies report attention effects without confirming EEG entrainment."
+ };
+ const METHOD_INFO={
+   off:"No rhythmic tone. Ambient effects and imported audio can still play.",
+   pure:"A steady audible carrier tone; no rhythmic stimulation.",
+   binaural:"Separate left/right frequencies: stereo headphones required for the binaural perception.",
+   monaural:"Two nearby tones mixed into both channels, creating an audible amplitude beat; works with speakers.",
+   isochronic:"A smooth-edged repeating tone pulse. Works with speakers or headphones; may sound distracting."
+ };
  const FX=["off","white","pink","brown","rain","waves","wind","stream","fire","forest","fan","night"];
  const FX_LABELS={off:"Off",white:"White noise",pink:"Pink noise",brown:"Brown noise",
    rain:"Rain",waves:"Ocean waves",wind:"Wind",stream:"Flowing stream",
@@ -17,6 +38,9 @@
  const clamp=(x,min,max)=>Math.max(min,Math.min(max,Number.isFinite(Number(x))?Number(x):min));
  const normalize=s=>({
    mode:MODES.includes(s?.mode)?s.mode:"off",
+   preset:Object.hasOwn(PRESETS,s?.preset)?s.preset:"custom",
+   minutes:clamp(s?.minutes??0,0,90),
+   fade:clamp(s?.fade??3,0,15),
    carrier:clamp(s?.carrier??220,60,1200),
    beat:clamp(s?.beat??6,.5,40),
    volume:clamp(s?.volume??8,0,25),
@@ -30,7 +54,7 @@
  });
  let settings=normalize({});
  try{settings=normalize(JSON.parse(localStorage.getItem(KEY)||"null"));}catch{}
- let sharedContext=null,readerSession=null,testSession=null;
+ let sharedContext=null,readerSession=null,testSession=null,previewStopTimer=null;
  let fileUrl=null,fileName="",fileDuration=0,fileToken=0,importBusy=false;
  const generatedCache=new Map();
  const fmt=n=>Number(n.toFixed(2)).toString();
@@ -44,7 +68,8 @@
  }
  function summary(forExport=false){
    const mix=activeMix(forExport),parts=[];
-   if(mix.tone)parts.push(settings.mode==="pure"?"Pure "+settings.carrier+" Hz":"Binaural "+fmt(settings.beat)+" Hz");
+   if(mix.tone)parts.push(settings.mode==="pure"?"Pure "+settings.carrier+" Hz":
+     (settings.mode==="binaural"?"Binaural":settings.mode==="monaural"?"Monaural":"Isochronic")+" "+fmt(settings.beat)+" Hz");
    if(mix.fx)parts.push(FX_LABELS[settings.fx]);
    if(mix.file)parts.push("MP3: "+fileName);
    return parts.join(" + ")||"Sound off";
@@ -52,10 +77,26 @@
  function refresh(){
    $("toneCurrent").textContent=summary();
    $("toneHeadphones").hidden=settings.mode!=="binaural";
-   $("toneBeatRow").hidden=settings.mode!=="binaural";
+   $("toneBeatRow").hidden=settings.mode==="off"||settings.mode==="pure";
+   $("toneMethodHelp").textContent=METHOD_INFO[settings.mode];
+   $("tonePresetHelp").textContent=PRESET_INFO[settings.preset];
    $("toneCarrierValue").textContent=settings.carrier+" Hz";
    $("toneBeatValue").textContent=fmt(settings.beat)+" Hz";
    $("toneVolumeValue").textContent=settings.volume+"%";
+   $("toneSessionValue").textContent=settings.minutes?settings.minutes+" minutes":"Continuous";
+   $("toneFadeValue").textContent=settings.fade+" sec";
+   $("tonePreset").value=settings.preset;
+   $("toneMode").value=settings.mode;
+   $("tonePreset").value=settings.preset;
+   $("toneSession").value=String(settings.minutes);
+   $("toneFade").value=String(settings.fade);
+   $("toneCarrier").value=String(settings.carrier);
+   $("toneBeat").value=String(settings.beat);
+   $("toneVolume").value=String(settings.volume);
+   $("toneSession").value=String(settings.minutes);
+   $("toneFade").value=String(settings.fade);
+   $("ambienceMode").value=settings.fx;
+   $("ambienceVolume").value=String(settings.fxVolume);
    $("fxVolumeValue").textContent=settings.fxVolume+"%";
    $("mp3VolumeValue").textContent=settings.mp3Volume+"%";
    $("tonePreview").textContent=testSession?"■ Stop sound preview":"▶ Preview sound mix";
@@ -162,15 +203,50 @@
      session.sources.push(node);session.nodes.push(node);return node;
    };
    if(mix.tone){
-     const g=gain(settings.volume/100);session.tone={gain:g,oscillators:[]};
+     const g=gain(settings.volume/100),gate=ctx.createGain();
+     session.nodes.push(gate);gate.connect(g);
+     session.tone={gain:g,gate,oscillators:[],lfo:null};
+     // Scheduling in the audio clock also works in video recording and background tabs.
+     const now=ctx.currentTime,duration=settings.minutes*60;
+     const fade=Math.min(settings.fade,duration?duration/3:settings.fade);
+     gate.gain.setValueAtTime(fade>0?0:1,now);
+     if(fade>0)gate.gain.linearRampToValueAtTime(1,now+fade);
+     if(duration>0){
+       const end=now+duration;
+       gate.gain.setValueAtTime(1,end-fade);
+       if(fade>0)gate.gain.linearRampToValueAtTime(0,end);
+       else gate.gain.setValueAtTime(0,end);
+     }
      if(settings.mode==="pure"){
-       const o=osc(settings.carrier);o.connect(g);o.start();
+       const o=osc(settings.carrier);o.connect(gate);o.start();
        session.tone.oscillators.push(o);
-     }else{
+     }else if(settings.mode==="isochronic"){
+       // True smooth-edged on/off envelope driven at the rhythm frequency.
+       // Audio-rate modulation avoids setInterval drift on Android and during export.
+       const o=osc(settings.carrier),pulse=ctx.createGain(),shape=ctx.createWaveShaper();
+       const curve=new Float32Array(1025);
+       for(let i=0;i<curve.length;i++){
+         const x=2*i/(curve.length-1)-1;
+         curve[i]=.5+.5*Math.tanh(x*10);
+       }
+       shape.curve=curve;pulse.gain.value=0;
+       const lfo=osc(settings.beat);
+       lfo.type="sine";lfo.connect(shape);shape.connect(pulse.gain);
+       o.connect(pulse);pulse.connect(gate);
+       session.nodes.push(pulse,shape);
+       o.start();lfo.start();
+       session.tone.oscillators.push(o);session.tone.lfo=lfo;
+     }else if(settings.mode==="monaural"){
+       for(const hz of [settings.carrier-settings.beat/2,settings.carrier+settings.beat/2]){
+         const o=osc(hz),level=ctx.createGain();level.gain.value=.5;
+         session.nodes.push(level);o.connect(level);level.connect(gate);o.start();
+         session.tone.oscillators.push(o);
+       }
+     }else if(settings.mode==="binaural"){
        if(!ctx.createStereoPanner)throw Error("Binaural beats require a stereo-capable browser.");
        for(const [hz,pan] of [[settings.carrier-settings.beat/2,-1],[settings.carrier+settings.beat/2,1]]){
          const o=osc(hz),p=ctx.createStereoPanner();p.pan.value=pan;
-         session.nodes.push(p);o.connect(p);p.connect(g);o.start();
+         session.nodes.push(p);o.connect(p);p.connect(gate);o.start();
          session.tone.oscillators.push(o);
        }
      }
@@ -217,9 +293,10 @@
    const now=session.ctx.currentTime;
    if(session.tone){
      session.tone.gain.gain.setTargetAtTime(settings.volume/100,now,.025);
-     const frequencies=settings.mode==="pure"?[settings.carrier]:
+     const frequencies=settings.mode==="pure"||settings.mode==="isochronic"?[settings.carrier]:
        [settings.carrier-settings.beat/2,settings.carrier+settings.beat/2];
      session.tone.oscillators.forEach((o,i)=>o.frequency.setTargetAtTime(frequencies[i],now,.035));
+     if(session.tone.lfo)session.tone.lfo.frequency.setTargetAtTime(settings.beat,now,.035);
    }
    if(session.fx)session.fx.gain.gain.setTargetAtTime(settings.fxVolume/100,now,.025);
    if(session.file){
@@ -239,6 +316,7 @@
    refresh();
  }
  function startReader(){
+   if(previewStopTimer!==null){clearTimeout(previewStopTimer);previewStopTimer=null;}
    stop(testSession);testSession=null;
    stop(readerSession);readerSession=null;
    if(!activeMix().any){refresh();return;}
@@ -251,6 +329,7 @@
  }
  function stopReader(){stop(readerSession);readerSession=null;refresh();}
  function startTest(){
+   if(previewStopTimer!==null){clearTimeout(previewStopTimer);previewStopTimer=null;}
    stop(readerSession);readerSession=null;
    stop(testSession);testSession=null;
    if(!activeMix().any){setError(Error("Choose a tone, an ambience preset, or import an MP3 first."));return;}
@@ -258,10 +337,16 @@
      const ctx=audioContext();
      testSession=build(ctx,ctx.destination);
      startMedia(testSession).catch(err=>setError(err));
+     if(settings.mode!=="off"&&settings.minutes>0){
+       previewStopTimer=setTimeout(()=>stopTest(),settings.minutes*60000);
+     }
      refresh();
    }catch(err){setError(err);}
  }
- function stopTest(){stop(testSession);testSession=null;refresh();}
+ function stopTest(){
+   if(previewStopTimer!==null){clearTimeout(previewStopTimer);previewStopTimer=null;}
+   stop(testSession);testSession=null;refresh();
+ }
  function setError(err){$("toneStatus").textContent="Audio issue: "+(err?.message||err);}
  function createExport(ctx,destination){
    if(!activeMix(true).any)return null;
@@ -389,20 +474,42 @@
    $("toneExport").checked=settings.exportAudio;
    $("ambienceExport").checked=settings.fxExport;
    $("mp3Export").checked=settings.mp3Export;
-   $("toneMode").addEventListener("change",e=>{settings.mode=e.target.value;update();});
+   $("tonePreset").addEventListener("change",e=>{
+     const chosen=e.target.value;
+     if(!Object.hasOwn(PRESETS,chosen))return;
+     if(PRESETS[chosen])Object.assign(settings,PRESETS[chosen]);
+     settings.preset=chosen;update(true);
+   });
+   $("toneMode").addEventListener("change",e=>{
+     settings.mode=MODES.includes(e.target.value)?e.target.value:"off";
+     settings.preset="custom";update(true);
+   });
+   $("toneSession").addEventListener("change",e=>{
+     settings.minutes=clamp(e.target.value,0,90);
+     update(true);
+   });
+   $("toneFade").addEventListener("input",e=>{
+     settings.fade=clamp(e.target.value,0,15);
+     update(true);
+   });
    $("ambienceMode").addEventListener("change",e=>{settings.fx=e.target.value;update();});
    for(const [id,key,low,high] of [
      ["toneCarrier","carrier",60,1200],["toneBeat","beat",.5,40],
      ["toneVolume","volume",0,25],["ambienceVolume","fxVolume",0,40],
      ["mp3Volume","mp3Volume",0,100]
-   ])$(id).addEventListener("input",e=>{settings[key]=clamp(e.target.value,low,high);update();});
+   ])$(id).addEventListener("input",e=>{
+     settings[key]=clamp(e.target.value,low,high);
+     if(key==="carrier"||key==="beat"||key==="volume")settings.preset="custom";
+     update();
+   });
    for(const [id,key,range,low,high,digits] of [
      ["toneCarrierNumber","carrier","toneCarrier",60,1200,0],
      ["toneBeatNumber","beat","toneBeat",.5,40,2]
    ])$(id).addEventListener("change",e=>{
      settings[key]=Number(clamp(e.target.value,low,high).toFixed(digits));
      e.target.value=String(settings[key]);
-     $(range).value=e.target.value;update();
+     $(range).value=e.target.value;
+     settings.preset="custom";update();
    });
    for(const [id,key] of [
      ["toneExport","exportAudio"],["ambienceExport","fxExport"],
