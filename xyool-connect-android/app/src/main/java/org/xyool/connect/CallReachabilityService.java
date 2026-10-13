@@ -334,7 +334,7 @@ public final class CallReachabilityService extends Service {
             if(incoming!=null){
                 // Reject this new internet invitation without accidentally rejecting
                 // an already-ringing nearby call or clearing its notification.
-                if(socket!=null&&socket.isOpen())socket.send("{\\"type\\":\\"reject\\"}");
+                if(socket!=null&&socket.isOpen())socket.send("{\"type\":\"reject\"}");
                 return;
             }
             incomingLocal=false;
