@@ -52,6 +52,7 @@ public final class VoiceCallSession {
     private int iceRestartAttempts;
     private Runnable pendingIceRecovery;
     private String lastIceReport="No previous call diagnostics.";
+    private String iceRecoveryDecision="No recovery requested.";
 
     public VoiceCallSession(Context context,Handler main,Host host){
         this.context=context.getApplicationContext();
@@ -64,9 +65,13 @@ public final class VoiceCallSession {
     public String state(){return lastStatus;}
     /** Safe to copy: counts and categories only; no IPs, keys, IDs or SDP. */
     public String diagnostics(){
-        return (peer==null?lastIceReport:inspector.summary()+
+        return peer==null?lastIceReport:
+            inspector.summary()+
+            "\nCall role: "+(outgoing?"caller":"receiver")+
+            "\nRemote answer applied: "+remoteReady+
             "\nAutomatic ICE restarts: "+iceRestartAttempts+"/"+
-            IceRecoveryPolicy.MAX_AUTOMATIC_RESTARTS);
+                IceRecoveryPolicy.MAX_AUTOMATIC_RESTARTS+
+            "\nRecovery: "+iceRecoveryDecision;
     }
 
     public boolean dial(String target,boolean localRoute){
@@ -204,6 +209,7 @@ public final class VoiceCallSession {
             }
             diag.setTurnConfigured(!turn.isEmpty());
             iceRestartAttempts=0;
+            iceRecoveryDecision="No recovery requested.";
             PeerConnection.RTCConfiguration configuration=new PeerConnection.RTCConfiguration(servers);
             peer=factory.createPeerConnection(configuration,new PeerConnection.Observer(){
                 @Override public void onSignalingChange(PeerConnection.SignalingState state){}
@@ -217,12 +223,18 @@ public final class VoiceCallSession {
                             state==PeerConnection.IceConnectionState.COMPLETED){
                             connected=true;
                             cancelIceRecovery();
-                            VoiceCallSession.this.state("Encrypted voice connected.");
+                            // A completed ICE state overrides any stale
+                            // "offer being negotiated" recovery diagnostic.
+                            iceRecoveryDecision=IceRecoveryPolicy.connectedOutcome(
+                                iceRestartAttempts);
+                            VoiceCallSession.this.state(iceRestartAttempts>0?
+                                "Encrypted voice connected after ICE restart.":
+                                "Encrypted voice connected.");
                         }else if(state==PeerConnection.IceConnectionState.FAILED){
                             connected=false;
                             scheduleIceRecovery(diag,1200L);
-                            if(outgoing&&iceRestartAttempts==0)
-                                VoiceCallSession.this.state("ICE path failed. Checking recovery…");
+                            if(pendingIceRecovery!=null)
+                                VoiceCallSession.this.state("ICE path failed. Preparing one recovery attempt…");
                             else
                                 VoiceCallSession.this.state("Voice ICE failed: "+diag.interpretation());
                         }else if(state==PeerConnection.IceConnectionState.DISCONNECTED){
@@ -276,20 +288,35 @@ public final class VoiceCallSession {
     }
     /** Only the original caller may send an SDP offer through current server. */
     private void scheduleIceRecovery(IcePathInspector diag,long delayMs){
+        boolean stable=peer!=null&&
+            peer.signalingState()==PeerConnection.SignalingState.STABLE;
         if(!outgoing||!authorized||remoteId==null||peer==null||
-            iceRestartAttempts>=IceRecoveryPolicy.MAX_AUTOMATIC_RESTARTS||
-            pendingIceRecovery!=null)return;
+            iceRestartAttempts>=IceRecoveryPolicy.MAX_AUTOMATIC_RESTARTS){
+            iceRecoveryDecision=IceRecoveryPolicy.reason(outgoing,hasSession(),
+                authorized,remoteReady,stable,iceRestartAttempts);
+            return;
+        }
+        if(pendingIceRecovery!=null){
+            iceRecoveryDecision="ICE retry waiting for scheduled attempt";
+            return;
+        }
         final PeerConnection expected=peer;
         Runnable retry=()->{
             pendingIceRecovery=null;
-            if(peer!=expected||inspector!=diag||remoteId==null||connected)return;
-            boolean stable=expected.signalingState()==PeerConnection.SignalingState.STABLE;
+            if(peer!=expected||inspector!=diag||remoteId==null||connected){
+                iceRecoveryDecision="Recovery canceled: call or ICE state changed";
+                return;
+            }
+            boolean nowStable=expected.signalingState()==PeerConnection.SignalingState.STABLE;
+            iceRecoveryDecision=IceRecoveryPolicy.reason(outgoing,hasSession(),
+                authorized,remoteReady,nowStable,iceRestartAttempts);
             if(!IceRecoveryPolicy.mayRestart(outgoing,hasSession(),authorized,
-                remoteReady,stable,iceRestartAttempts)){
-                state("ICE recovery unavailable. Hang up and call again.");
+                remoteReady,nowStable,iceRestartAttempts)){
+                state("ICE retry not possible. "+iceRecoveryDecision+".");
                 return;
             }
             iceRestartAttempts++;
+            iceRecoveryDecision="ICE restart offer being negotiated";
             remoteReady=false;
             pendingCandidates.clear();
             state("Reconnecting voice (ICE restart 1/1)…");
@@ -303,6 +330,7 @@ public final class VoiceCallSession {
             },constraints);
         };
         pendingIceRecovery=retry;
+        iceRecoveryDecision="ICE retry scheduled";
         main.postDelayed(retry,delayMs);
     }
     private void cancelIceRecovery(){
@@ -373,8 +401,7 @@ public final class VoiceCallSession {
         @Override public void onSetFailure(String why){state("Audio negotiation failed.");}
     }
     private void clear(boolean unused){
-        lastIceReport=inspector.summary()+"\nAutomatic ICE restarts: "+
-            iceRestartAttempts+"/"+IceRecoveryPolicy.MAX_AUTOMATIC_RESTARTS;
+        lastIceReport=diagnostics();
         boolean wasLocal=local;
         remoteId=null;outgoing=false;authorized=false;remoteReady=false;
         local=false;connected=false;
