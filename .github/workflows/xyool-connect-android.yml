@@ -11,6 +11,14 @@ on:
       - 'xyool-connect-android/gradle.properties'
       - 'xyool-connect-android/settings.gradle'
       - '.github/workflows/xyool-connect-android.yml'
+  pull_request:
+    paths:
+      - 'xyool-connect-android/app/**'
+      - 'xyool-connect-android/tools/**'
+      - 'xyool-connect-android/build.gradle'
+      - 'xyool-connect-android/gradle.properties'
+      - 'xyool-connect-android/settings.gradle'
+      - '.github/workflows/xyool-connect-android.yml'
   workflow_dispatch:
 
 permissions:
