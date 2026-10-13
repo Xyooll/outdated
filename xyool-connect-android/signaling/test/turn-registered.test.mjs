@@ -53,7 +53,32 @@ test('only registered clients get a bounded TURN lease; no credential in /health
     assert.deepEqual(lease.iceServers[0].urls,['turn:relay.example.com:3478?transport=udp']);
     ws.send(JSON.stringify({type:'turn-refresh'}));
     await new Promise(resolve=>setTimeout(resolve,75));
-    assert.equal(issued,1); // five-minute per-socket cooldown
+    assert.equal(issued,1); // five-minute identity cooldown
+    // Reconnecting under the same registered ID must not issue a second lease.
+    const closed=new Promise(resolve=>ws.once('close',resolve));
+    ws.close();
+    await closed;
+    ws=new WebSocket('ws://127.0.0.1:'+port+'/v1/id');
+    await new Promise((resolve,reject)=>{
+      ws.once('open',resolve);ws.once('error',reject);
+    });
+    const reconnectMessages=[];
+    ws.on('message',raw=>reconnectMessages.push(JSON.parse(String(raw))));
+    ws.send(JSON.stringify({type:'register',id,token}));
+    await new Promise((resolve,reject)=>{
+      let n=0;
+      const tick=()=>{
+        if(reconnectMessages.some(x=>x.type==='registered'))resolve();
+        else if(++n>100)reject(new Error('re-registration timeout'));
+        else setTimeout(tick,10);
+      };tick();
+    });
+    await new Promise(resolve=>setTimeout(resolve,75));
+    assert.equal(issued,1,'reconnect must not bypass per-ID lease cooldown');
+    ws.send(JSON.stringify({type:'turn-refresh'}));
+    await new Promise(resolve=>setTimeout(resolve,75));
+    assert.equal(issued,1,'refresh after reconnect must remain throttled');
+    assert.equal(reconnectMessages.filter(x=>x.type==='turn-credentials').length,0);
     const res=await fetch('http://127.0.0.1:'+port+'/health');
     assert.equal(res.status,200);
     assert.ok(!(await res.text()).includes('turn:'));
