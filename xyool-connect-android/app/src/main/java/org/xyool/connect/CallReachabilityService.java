@@ -147,6 +147,17 @@ public final class CallReachabilityService extends Service {
         if(globalMesh!=null)globalMesh.setForwarding(enabled);
     }
     public boolean probeGlobalRoute(String target){return globalMesh!=null&&globalMesh.ping(target);}
+    public boolean peerHintReceiving(){
+        return prefs.getBoolean(GlobalPhoneMesh.PREF_PEER_HINTS,false);
+    }
+    public void setPeerHintReceiving(boolean enabled){
+        if(!foreground&&enabled)return;
+        prefs.edit().putBoolean(GlobalPhoneMesh.PREF_PEER_HINTS,enabled).apply();
+        if(globalMesh!=null)globalMesh.setPeerHintReceiving(enabled);
+    }
+    public int introduceVerifiedContact(String suggestedId,boolean explicitlyConfirmed){
+        return globalMesh==null?0:globalMesh.sharePeerHint(suggestedId,explicitlyConfirmed);
+    }
     public boolean hasIncoming(){return incoming!=null;}
     public boolean hasLocalPeer(String id){return localNode!=null&&localNode.hasPeer(id);}
     public int localPeerCount(){return localNode==null?0:localNode.peerCount();}
