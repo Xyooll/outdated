@@ -77,7 +77,7 @@ public final class IdCallActivity extends Activity {
     private SharedPreferences prefs;
     private String id, token;
     private TextView stateLabel;
-    private EditText targetInput,serverInput,stunInput,turnInput,turnUser,turnPass;
+    private EditText targetInput,serverInput,stunInput,turnInput,turnUser,turnPass,nodesInput;
     private LinearLayout body, advancedPanel;
     private CallReachabilityService cloud;
     private boolean cloudBound;
@@ -86,8 +86,10 @@ public final class IdCallActivity extends Activity {
     private final ServiceConnection cloudLink=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){
             cloud=((CallReachabilityService.LocalBinder)binder).service();
+            if(hasReachability()&&nearby!=null)nearby.stop();
             cloud.setListener(new CallReachabilityService.Listener(){
                 @Override public void onPacket(JSONObject message){received(message,false);}
+                @Override public void onLocalPacket(JSONObject message){received(message,true);}
                 @Override public void onConnection(boolean online,String explanation){
                     registered=online;
                     if(!disposed && waitingId==null)connectionStatus();
@@ -135,17 +137,19 @@ public final class IdCallActivity extends Activity {
             return;
         }
         prefs.edit().putString(BridgePolicy.PREF_MODE,mode).apply();
-        disconnect();
-        if(!BridgePolicy.allowsCloud(mode)&&hasReachability())disableReachability();
-        if(BridgePolicy.allowsCloud(mode))connect();
-        else connectionStatus();
+        if(cloud!=null)cloud.reloadNetworkPolicy();
+        else{
+            disconnect();
+            if(BridgePolicy.allowsCloud(mode)||hasReachability())connect();
+        }
+        connectionStatus();
         status(BridgePolicy.description(mode));
     }
     private void copyNetworkReport(){
         String report="Xyool Connect network report (no IDs/IP addresses)\n" +
             "Mode: "+bridgeMode()+
             "\nLocal Wi-Fi available: "+LocalPeerNode.onWifi(this)+
-            "\nNearby peers: "+(nearby==null?0:nearby.peerCount())+
+            "\nNearby peers: "+(cloud!=null&&hasReachability()?cloud.localPeerCount():(nearby==null?0:nearby.peerCount()))+
             "\nCloud registered: "+(BridgePolicy.allowsCloud(bridgeMode())&&registered)+
             "\n"+iceDiagnostics.summary()+
             "\n"+iceDiagnostics.interpretation();
@@ -200,10 +204,8 @@ public final class IdCallActivity extends Activity {
     }
     @Override protected void onResume(){
         super.onResume();
-        if(nearby!=null)nearby.start();
-        // The direct-call lab closes the cloud socket before opening. Restore
-        // it only when returning to ordinary internet-ID calling.
-        if(prefs!=null && !cloudBound && BridgePolicy.allowsCloud(bridgeMode()))
+        if(nearby!=null && !hasReachability())nearby.start();
+        if(prefs!=null && !cloudBound && (hasReachability()||BridgePolicy.allowsCloud(bridgeMode())))
             connect();
     }
     @Override protected void onStop(){
@@ -345,8 +347,9 @@ public final class IdCallActivity extends Activity {
             v->selectBridgeMode(BridgePolicy.HYBRID));
         space(advancedPanel,8);
         button(advancedPanel,"Refresh network",false,v->{
-            if(nearby!=null)nearby.start();
-            if(cloud!=null)cloud.reconnectNow();
+            if(cloud!=null&&hasReachability())cloud.refreshLocal();
+            else if(nearby!=null)nearby.start();
+            if(cloud!=null)cloud.reloadNetworkPolicy();
             else if(BridgePolicy.allowsCloud(bridgeMode())){disconnect();connect();}
             else connectionStatus();
         });
@@ -354,6 +357,9 @@ public final class IdCallActivity extends Activity {
         button(advancedPanel,"Copy connection report",false,v->copyNetworkReport());
         space(advancedPanel,9);
         serverInput=input(advancedPanel,"Signaling WSS address",prefs.getString("xyool_id_server",DEFAULT_SERVER));
+        space(advancedPanel,7);
+        nodesInput=input(advancedPanel,"Additional WSS network nodes (comma separated)",
+            prefs.getString(RendezvousPool.PREF_NODES,""));
         space(advancedPanel,7);
         stunInput=input(advancedPanel,"STUN (blank=automatic, off=disabled)",prefs.getString("xyool_stun",""));
         space(advancedPanel,7);
@@ -376,12 +382,18 @@ public final class IdCallActivity extends Activity {
                 status("Signaling address must be wss://.../v1/id.");
                 return;
             }
+            try{new RendezvousPool(url,nodesInput.getText().toString());}
+            catch(IllegalArgumentException invalid){
+                status("Each additional node must be a valid wss:// address ending /v1/id (maximum 5).");
+                return;
+            }
             prefs.edit().putString("xyool_id_server",url)
+                .putString(RendezvousPool.PREF_NODES,nodesInput.getText().toString().trim())
                 .putString("xyool_stun",stunInput.getText().toString().trim())
                 .putString("xyool_turn",turnInput.getText().toString().trim())
                 .putString("xyool_turn_user",turnUser.getText().toString())
                 .putString("xyool_turn_pass",turnPass.getText().toString()).apply();
-            if(cloud!=null)cloud.reconnectNow();
+            if(cloud!=null)cloud.reloadNetworkPolicy();
             else {disconnect();connect();}
             advancedPanel.setVisibility(View.GONE);
         });
@@ -496,7 +508,7 @@ public final class IdCallActivity extends Activity {
         return "XY-"+clean.substring(0,4)+"-"+clean.substring(4,8)+"-"+clean.substring(8);
     }
     private void connect(){
-        if(!BridgePolicy.allowsCloud(bridgeMode())){
+        if(!BridgePolicy.allowsCloud(bridgeMode())&&!hasReachability()){
             registered=false;connectionStatus();return;
         }
         if(cloudBound)return;
@@ -519,9 +531,6 @@ public final class IdCallActivity extends Activity {
                 "Background call alerts: OFF • Tap to enable");
     }
     private void enableReachability(){
-        if(!BridgePolicy.allowsCloud(bridgeMode())){
-            status("Use Hybrid mode to enable background internet calls.");return;
-        }
         if(Build.VERSION.SDK_INT>=33 &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},482);
@@ -532,6 +541,8 @@ public final class IdCallActivity extends Activity {
             Intent start=new Intent(this,CallReachabilityService.class)
                 .setAction(CallReachabilityService.ACTION_ENABLE);
             startForegroundService(start);
+            if(nearby!=null)nearby.stop();
+            if(!cloudBound)connect();
             updateReachabilityButton();
             status("Background alerts enabled while Android permits the service to run.");
         }catch(RuntimeException ex){
@@ -544,6 +555,7 @@ public final class IdCallActivity extends Activity {
         prefs.edit().putBoolean(CallReachabilityService.PREF_ENABLED,false).apply();
         startService(new Intent(this,CallReachabilityService.class)
             .setAction(CallReachabilityService.ACTION_DISABLE));
+        if(nearby!=null)nearby.start();
         updateReachabilityButton();
         status("Background call alerts disabled; calls work while the screen is open.");
     }
@@ -552,8 +564,9 @@ public final class IdCallActivity extends Activity {
         else enableReachability();
     }
     private void send(JSONObject obj){
-        if(usingLocal && nearby!=null){
-            nearby.send(obj);
+        if(usingLocal){
+            if(cloud!=null&&hasReachability())cloud.localSend(obj);
+            else if(nearby!=null)nearby.send(obj);
             return;
         }
         sendCloud(obj);
@@ -570,7 +583,9 @@ public final class IdCallActivity extends Activity {
         String dest=normalize(targetInput.getText().toString());
         if(dest==null){status("Enter a valid Xyool ID, like XY-ABCD-EFGH-JKLM.");return;}
         if(dest.equals(id)){status("You cannot call your own ID.");return;}
-        boolean localAvailable=nearby!=null&&nearby.hasPeer(dest)&&LocalPeerNode.onWifi(this);
+        boolean localAvailable=LocalPeerNode.onWifi(this)&&
+            (cloud!=null&&hasReachability()?cloud.hasLocalPeer(dest):
+                nearby!=null&&nearby.hasPeer(dest));
         BridgePolicy.Route route=BridgePolicy.choose(bridgeMode(),localAvailable,registered);
         if(route==BridgePolicy.Route.MANUAL_DIRECT_REQUIRED){
             status("No route to this ID in Direct-only mode. Switch to Hybrid for calls across networks.");
@@ -583,7 +598,9 @@ public final class IdCallActivity extends Activity {
             waitingId=dest;
             try{
                 if(localAvailable){
-                    if(!nearby.call(dest)){
+                    boolean started=cloud!=null&&hasReachability()?cloud.localCall(dest):
+                        nearby!=null&&nearby.call(dest);
+                    if(!started){
                         endMedia();
                         status("Couldn't reach the nearby phone. Try again.");
                         return;
@@ -605,16 +622,18 @@ public final class IdCallActivity extends Activity {
             if(peerActive||waitingId!=null){
                 try{
                     JSONObject reject=new JSONObject();reject.put("type","reject");
-                    if(fromLocal && nearby!=null)nearby.send(reject);
+                    if(fromLocal && cloud!=null&&hasReachability())cloud.localSend(reject);
+                    else if(fromLocal && nearby!=null)nearby.send(reject);
                     else sendCloud(reject);
-                    if(fromLocal && nearby!=null)nearby.closeSession();
+                    if(fromLocal && cloud!=null&&hasReachability())cloud.localClose();
+                    else if(fromLocal && nearby!=null)nearby.closeSession();
                 }catch(Exception ignored){}
                 return;
             }
             usingLocal=fromLocal;
             waitingId=msg.optString("from");
             outgoing=false;
-            if(autoAnswerRequested&&!fromLocal){
+            if(autoAnswerRequested){
                 autoAnswerRequested=false;
                 acceptIncomingCall();
             }else incomingDialog(waitingId);
