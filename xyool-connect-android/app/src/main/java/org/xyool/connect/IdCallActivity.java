@@ -223,6 +223,18 @@ public final class IdCallActivity extends Activity {
         updateReachabilityButton();
         space(net,7);
         net.addView(text("Turn ON to receive calls by ID, including while this screen is closed. Internet registration uses a signaling service; Android may interrupt background access.",12,MUTED,false));
+        space(net,6);
+        button(net,"Copy call diagnostics",false,v->{
+            if(cloud==null){
+                status("Network service unavailable. Turn on Xyool Network.");return;
+            }
+            String report=cloud.voiceDiagnostics();
+            ClipboardManager cb=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+            if(cb!=null){
+                cb.setPrimaryClip(ClipData.newPlainText("Xyool voice ICE report",report));
+                status("Sanitized call diagnostics copied. Paste into ChatGPT for troubleshooting.");
+            }
+        });
 
         LinearLayout self=panel();
         self.addView(text("YOUR ID",12,MUTED,true));
