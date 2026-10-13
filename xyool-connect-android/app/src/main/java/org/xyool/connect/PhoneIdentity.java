@@ -105,6 +105,24 @@ public final class PhoneIdentity {
         context.getSharedPreferences(STORE,Context.MODE_PRIVATE).edit()
             .putString(PIN_PREFIX+remoteId,fingerprint).apply();
     }
+    public static String pinnedFingerprint(Context context,String id){
+        if(id==null)return null;
+        return context.getSharedPreferences(STORE,Context.MODE_PRIVATE)
+            .getString(PIN_PREFIX+id,null);
+    }
+    public static String meshEnableProof(String id,long when){
+        return "xyool-peer-enable-v1|"+canonicalFields(id,Long.toString(when));
+    }
+    public static String meshSignalProof(String from,String to,String kind,long when,
+        String sdp,String candidate,String mid,int index){
+        return "xyool-peer-signal-v1|"+canonicalFields(from,to,kind,
+            Long.toString(when),sdp,candidate,mid,Integer.toString(index));
+    }
+    private static String canonicalFields(String... values){
+        StringBuilder output=new StringBuilder();
+        for(String value:values)field(output,value);
+        return output.toString();
+    }
     public static String newNonce(){
         byte[] b=new byte[16];new SecureRandom().nextBytes(b);
         StringBuilder text=new StringBuilder(32);
