@@ -48,6 +48,7 @@ public final class CallReachabilityService extends Service {
 
     public interface Listener {
         void onPacket(JSONObject value);
+        void onLocalPacket(JSONObject value);
         void onConnection(boolean online,String explanation);
     }
     public final class LocalBinder extends Binder {
@@ -58,6 +59,11 @@ public final class CallReachabilityService extends Service {
     private SharedPreferences prefs;
     private NotificationManager notices;
     private WebSocketClient socket;
+    private LocalPeerNode localNode;
+    private boolean incomingLocal=false;
+    private RendezvousPool bootstrap;
+    private URI connectedUri;
+
     private Listener listener;
     private JSONObject incoming;
     private Ringtone ringtone;
@@ -76,6 +82,7 @@ public final class CallReachabilityService extends Service {
         prefs=getSharedPreferences("xyool_private",MODE_PRIVATE);
         notices=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         installChannels();
+        if(prefs.getBoolean(PREF_ENABLED,false))startLocalNode();
         openSocket();
     }
     @Override public IBinder onBind(Intent intent){return binder;}
@@ -90,15 +97,15 @@ public final class CallReachabilityService extends Service {
             foreground=false;
             stopForeground(STOP_FOREGROUND_REMOVE);
             if(incoming!=null){sendType("reject");clearIncoming();}
+            stopLocalNode();
             stopSelf();
             return START_NOT_STICKY;
         }
-        if(prefs.getBoolean(PREF_ENABLED,false) &&
-                BridgePolicy.allowsCloud(BridgePolicy.sanitize(
-                    prefs.getString(BridgePolicy.PREF_MODE,BridgePolicy.HYBRID)))){
+        if(prefs.getBoolean(PREF_ENABLED,false)){
             foreground=true;
             showForeground();
-            openSocket();
+            startLocalNode();
+            if(cloudAllowed())openSocket();
             return START_STICKY;
         }
         stopSelf();
@@ -110,13 +117,40 @@ public final class CallReachabilityService extends Service {
             stopRing();
             notices.cancel(INCOMING_ID);
             next.onConnection(registered,registered?"Internet calling online.":"Connecting to Xyool calling network…");
-            if(incoming!=null)next.onPacket(incoming);
+            if(incoming!=null){
+                if(incomingLocal)next.onLocalPacket(incoming);
+                else next.onPacket(incoming);
+            }
         }else if(incoming!=null && foreground){
             showIncoming(incoming.optString("from","Unknown Xyool ID"));
         }
     }
     public boolean isRegistered(){return registered;}
     public boolean hasIncoming(){return incoming!=null;}
+    public boolean hasLocalPeer(String id){return localNode!=null&&localNode.hasPeer(id);}
+    public int localPeerCount(){return localNode==null?0:localNode.peerCount();}
+    public boolean localCall(String to){return localNode!=null&&localNode.call(to);}
+    public boolean localSend(JSONObject message){
+        if(localNode==null)return false;
+        boolean ok=localNode.send(message);
+        if(ok && ("accept".equals(message.optString("type")) ||
+            "reject".equals(message.optString("type"))))clearIncoming();
+        return ok;
+    }
+    public void localClose(){if(localNode!=null)localNode.closeSession();}
+    public void reloadNetworkPolicy(){
+        if(cloudAllowed())reconnectNow();
+        else{
+            main.removeCallbacks(retry);
+            WebSocketClient old=socket;socket=null;registered=false;
+            if(old!=null)old.close();
+            notifyConnection(false,"Direct-only local node mode.");
+        }
+    }
+    public void refreshLocal(){
+        if(localNode!=null)stopLocalNode();
+        if(prefs.getBoolean(PREF_ENABLED,false))startLocalNode();
+    }
     public boolean send(JSONObject message){
         if(socket==null||!socket.isOpen())return false;
         try{
@@ -128,12 +162,14 @@ public final class CallReachabilityService extends Service {
     }
     public void reconnectNow(){
         main.removeCallbacks(retry);
+        bootstrap=null;
         WebSocketClient old=socket;socket=null;registered=false;
         if(old!=null)old.close();
         openSocket();
     }
     private void sendType(String type){
-        try{JSONObject j=new JSONObject();j.put("type",type);send(j);}
+        try{JSONObject j=new JSONObject();j.put("type",type);
+            if(incomingLocal)localSend(j); else send(j);}
         catch(Exception ignored){}
     }
     private boolean cloudAllowed(){
@@ -147,11 +183,12 @@ public final class CallReachabilityService extends Service {
             ||!token.matches("^[0-9a-f]{64}$"))return;
         URI uri;
         try{
-            uri=URI.create(prefs.getString("xyool_id_server",DEFAULT_SERVER).trim());
-            if(!"wss".equalsIgnoreCase(uri.getScheme())||uri.getHost()==null||
-               !"/v1/id".equals(uri.getPath())||uri.getUserInfo()!=null||
-               uri.getQuery()!=null||uri.getFragment()!=null)throw new IllegalArgumentException();
-        }catch(Exception invalid){notifyConnection(false,"Invalid Xyool server URL.");return;}
+            if(bootstrap==null)bootstrap=new RendezvousPool(
+                prefs.getString("xyool_id_server",DEFAULT_SERVER),
+                prefs.getString(RendezvousPool.PREF_NODES,""));
+            uri=bootstrap.current();
+        }catch(Exception invalid){notifyConnection(false,"Invalid Xyool bootstrap settings.");return;}
+        connectedUri=uri;
         final String ownId=id,ownToken=token;
         WebSocketClient candidate=new WebSocketClient(uri){
             @Override public void onOpen(ServerHandshake handshake){
@@ -188,7 +225,8 @@ public final class CallReachabilityService extends Service {
         if(socket!=failed||destroyed)return;
         boolean wasRegistered=registered;
         socket=null;registered=false;
-        if(incoming!=null)clearIncoming();
+        if(incoming!=null&&!incomingLocal)clearIncoming();
+        if(bootstrap!=null)bootstrap.failover();
         if(wasRegistered || listener!=null)packetEnded();
         notifyConnection(false,"Xyool signaling disconnected; reconnecting…");
         if(listener!=null||foreground){
@@ -204,6 +242,49 @@ public final class CallReachabilityService extends Service {
             }catch(Exception ignored){}
         }
     }
+    private void startLocalNode(){
+        if(localNode!=null||!LocalPeerNode.onWifi(this))return;
+        String id=prefs.getString("xyool_id","");
+        if(!id.matches("^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$"))return;
+        localNode=new LocalPeerNode(this,id,new LocalPeerNode.Listener(){
+            @Override public void onPeerChanged(String id,boolean online){
+                main.post(()->notifyConnection(registered,online?"Local peer discovered.":"Local peer disconnected."));
+            }
+            @Override public void onPacket(JSONObject packet){
+                main.post(()->processLocal(packet));
+            }
+            @Override public void onNodeStatus(String explanation){
+                main.post(()->notifyConnection(registered,explanation));
+            }
+        });
+        localNode.start();
+    }
+    private void stopLocalNode(){
+        LocalPeerNode old=localNode;localNode=null;
+        if(old!=null)old.stop();
+    }
+    private void processLocal(JSONObject packet){
+        if(destroyed)return;
+        String type=packet.optString("type","");
+        if("incoming".equals(type)){
+            if(incoming!=null){
+                if(localNode!=null){
+                    try{JSONObject rejected=new JSONObject();rejected.put("type","reject");
+                        localNode.send(rejected);}catch(Exception ignored){}
+                }
+                return;
+            }
+            incomingLocal=true;
+            incoming=packet;
+            main.removeCallbacks(ringTimeout);
+            main.postDelayed(ringTimeout,RING_LIMIT_MS);
+            if(listener==null)showIncoming(packet.optString("from","Unknown nearby ID"));
+        }else if(("ended".equals(type)||"busy".equals(type)||"unavailable".equals(type)) && incomingLocal){
+            clearIncoming();
+        }
+        if(listener!=null)listener.onLocalPacket(packet);
+    }
+
     private void process(JSONObject message){
         String type=message.optString("type","");
         if("registered".equals(type)){
@@ -217,7 +298,7 @@ public final class CallReachabilityService extends Service {
             main.postDelayed(ringTimeout,RING_LIMIT_MS);
             if(listener==null)showIncoming(message.optString("from","Unknown Xyool ID"));
         }
-        if("ended".equals(type)||"busy".equals(type)||"unavailable".equals(type)){
+        if(("ended".equals(type)||"busy".equals(type)||"unavailable".equals(type)) && !incomingLocal){
             clearIncoming();
         }
         if(listener!=null)listener.onPacket(message);
@@ -249,7 +330,8 @@ public final class CallReachabilityService extends Service {
         Notification n=new Notification.Builder(this,CHANNEL_STATUS)
             .setSmallIcon(android.R.drawable.ic_menu_call)
             .setContentTitle("Xyool Connect • reachability enabled")
-            .setContentText(registered?"Ready for Xyool ID calls":"Connecting to Xyool Network…")
+            .setContentText(registered?"Local node + internet rendezvous online":
+                (localNode!=null?"Local node active; internet reconnecting":"Connecting to Xyool Network…"))
             .setOngoing(true).setCategory(Notification.CATEGORY_SERVICE)
             .setContentIntent(launch(ACTION_VIEW,1931)).build();
         if(Build.VERSION.SDK_INT>=34)
@@ -297,6 +379,7 @@ public final class CallReachabilityService extends Service {
     }
     private void clearIncoming(){
         incoming=null;
+        incomingLocal=false;
         main.removeCallbacks(ringTimeout);
         stopRing();
         if(notices!=null)notices.cancel(INCOMING_ID);
@@ -305,6 +388,7 @@ public final class CallReachabilityService extends Service {
         destroyed=true;foreground=false;listener=null;
         main.removeCallbacks(retry);main.removeCallbacks(ringTimeout);
         clearIncoming();
+        stopLocalNode();
         WebSocketClient old=socket;socket=null;
         if(old!=null)old.close();
         super.onDestroy();
