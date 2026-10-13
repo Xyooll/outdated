@@ -1,0 +1,24 @@
+# Xyool TURN fallback only. TURN is not used unless WebRTC ICE selects it.
+# Deploy on a dedicated host/VPS with a public IP and reachable UDP ports.
+# Docker host networking is intended for Linux. See README.md.
+services:
+  turn:
+    image: coturn/coturn:4.18.0
+    network_mode: host
+    restart: unless-stopped
+    command:
+      - "--no-cli"
+      - "--log-file=stdout"
+      - "--fingerprint"
+      - "--use-auth-secret"
+      - "--static-auth-secret=${XYOOL_TURN_SHARED_SECRET:?set_a_strong_private_secret}"
+      - "--realm=${XYOOL_TURN_REALM:?set_public_realm}"
+      - "--listening-port=3478"
+      - "--min-port=49160"
+      - "--max-port=49260"
+      - "--no-loopback-peers"
+      - "--no-multicast-peers"
+      - "--stale-nonce"
+      - "--no-tls"
+      - "--no-dtls"
+      - "--no-software-attribute"
