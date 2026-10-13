@@ -54,6 +54,15 @@ jobs:
             xyool-connect-android/app/src/main/java/org/xyool/connect/IcePathInspector.java \
             xyool-connect-android/tools/BridgeSelfTest.java
           java -cp "$RUNNER_TEMP/xyool-bridge-tests" org.xyool.connect.BridgeSelfTest
+      - name: Test multi-node peer bootstrap and validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/xyool-bootstrap-tests"
+          javac -d "$RUNNER_TEMP/xyool-bootstrap-tests" \
+            xyool-connect-android/app/src/main/java/org/xyool/connect/RendezvousPool.java \
+            xyool-connect-android/tools/RendezvousPoolSelfTest.java
+          java -cp "$RUNNER_TEMP/xyool-bootstrap-tests" org.xyool.connect.RendezvousPoolSelfTest
       - name: Restore ONE permanent test APK signing key
         shell: bash
         run: |
