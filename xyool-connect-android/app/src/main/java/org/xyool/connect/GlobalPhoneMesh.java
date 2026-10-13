@@ -55,6 +55,7 @@ public final class GlobalPhoneMesh {
     private final String self;
     private final SharedPreferences prefs;
     private final HashMap<String,Link> links=new HashMap<>();
+    private final HashMap<String,String> serverKeys=new HashMap<>();
     private final LinkedHashMap<String,Long> seen=new LinkedHashMap<>();
     private PeerConnectionFactory factory;
     private boolean online;
@@ -104,7 +105,10 @@ public final class GlobalPhoneMesh {
             }
             if(factory!=null){
                 JSONObject msg=new JSONObject();
-                msg.put("type","mesh-enable");
+                long when=System.currentTimeMillis();
+                msg.put("type","mesh-enable");msg.put("authTs",when);
+                msg.put("authKey",PhoneIdentity.publicKey());
+                msg.put("authSig",PhoneIdentity.sign(PhoneIdentity.meshEnableProof(self,when)));
                 transport.send(msg);
             }
         }catch(Exception error){
@@ -115,6 +119,7 @@ public final class GlobalPhoneMesh {
         online=false;
         for(Link link:new ArrayList<>(links.values()))closeLink(link);
         links.clear();
+        serverKeys.clear();
         seen.clear();
     }
     public void stop(){
@@ -128,10 +133,19 @@ public final class GlobalPhoneMesh {
         if("mesh-peers".equals(type)){
             JSONArray peers=msg.optJSONArray("ids");
             if(peers==null)return;
+            JSONObject pins=msg.optJSONObject("pins");
+            if(pins==null)return;
+            for(int i=0;i<peers.length();i++){
+                String id=peers.optString(i,"");
+                String fingerprint=pins.optString(id,"");
+                if(id.matches(ID_RE)&&fingerprint.matches("^[a-f0-9]{64}$"))
+                    serverKeys.put(id,fingerprint);
+            }
             // The smaller ID initiates each pair; prevents conflicting offers.
             for(int i=0;i<peers.length()&&links.size()<MAX_NEIGHBORS;i++){
                 String id=peers.optString(i,"");
-                if(!id.matches(ID_RE)||self.equals(id)||links.containsKey(id))continue;
+                if(!id.matches(ID_RE)||self.equals(id)||links.containsKey(id)||
+                    !serverKeys.containsKey(id))continue;
                 if(self.compareTo(id)<0){
                     Link l=createLink(id);
                     if(l!=null)makeOffer(l);
@@ -142,7 +156,7 @@ public final class GlobalPhoneMesh {
         if(!"mesh-signal".equals(type))return;
         String from=msg.optString("from","");
         String kind=msg.optString("kind","");
-        if(!from.matches(ID_RE)||self.equals(from))return;
+        if(!from.matches(ID_RE)||self.equals(from)||!verifySignal(msg,from,kind))return;
         Link l=links.get(from);
         if("offer".equals(kind)){
             if(l==null){
@@ -163,6 +177,39 @@ public final class GlobalPhoneMesh {
                 }
             }else if("close".equals(kind))closeLink(l);
         }
+    }
+    private static String evidence(JSONObject data,String key){
+        return data.optString(key,"");
+    }
+    private JSONObject authenticatedSignal(String to,String kind,String sdp,
+        String candidate,String mid,int index)throws Exception{
+        long when=System.currentTimeMillis();
+        JSONObject m=new JSONObject();
+        m.put("type","mesh-signal");m.put("to",to);m.put("kind",kind);
+        if(!sdp.isEmpty())m.put("sdp",sdp);
+        if(!candidate.isEmpty())m.put("candidate",candidate);
+        if(!mid.isEmpty())m.put("mid",mid);
+        if(index>=0)m.put("index",index);
+        m.put("authTs",when);m.put("authKey",PhoneIdentity.publicKey());
+        m.put("authSig",PhoneIdentity.sign(
+            PhoneIdentity.meshSignalProof(self,to,kind,when,sdp,candidate,mid,index)));
+        return m;
+    }
+    private boolean verifySignal(JSONObject packet,String from,String kind){
+        try{
+            long when=packet.optLong("authTs",-1L);
+            String key=packet.optString("authKey","");
+            String fingerprint=PhoneIdentity.fingerprintFor(key);
+            String expected=serverKeys.get(from);
+            if(expected==null||!expected.equals(fingerprint)||
+                Math.abs(System.currentTimeMillis()-when)>30000L)return false;
+            String manuallyPinned=PhoneIdentity.pinnedFingerprint(context,from);
+            if(manuallyPinned!=null&&!manuallyPinned.equals(fingerprint))return false;
+            return PhoneIdentity.verify(key,packet.optString("authSig",""),
+                PhoneIdentity.meshSignalProof(from,self,kind,when,
+                    packet.optString("sdp",""),packet.optString("candidate",""),
+                    packet.optString("mid",""),packet.optInt("index",-1)));
+        }catch(Exception invalid){return false;}
     }
     private List<PeerConnection.IceServer> iceServers(){
         ArrayList<PeerConnection.IceServer> servers=new ArrayList<>();
@@ -194,10 +241,8 @@ public final class GlobalPhoneMesh {
             @Override public void onIceGatheringChange(PeerConnection.IceGatheringState state){}
             @Override public void onIceCandidate(IceCandidate c){
                 try{
-                    JSONObject m=new JSONObject();
-                    m.put("type","mesh-signal");m.put("to",id);m.put("kind","candidate");
-                    m.put("candidate",c.sdp);m.put("mid",c.sdpMid==null?"":c.sdpMid);
-                    m.put("index",c.sdpMLineIndex);
+                    JSONObject m=authenticatedSignal(id,"candidate","",c.sdp,
+                        c.sdpMid==null?"":c.sdpMid,c.sdpMLineIndex);
                     main.post(()->transport.send(m));
                 }catch(Exception ignored){}
             }
@@ -237,9 +282,7 @@ public final class GlobalPhoneMesh {
     }
     private void sendSignal(Link l,String kind,SessionDescription description){
         try{
-            JSONObject m=new JSONObject();
-            m.put("type","mesh-signal");m.put("to",l.id);m.put("kind",kind);
-            m.put("sdp",description.description);
+            JSONObject m=authenticatedSignal(l.id,kind,description.description,"","",-1);
             transport.send(m);
         }catch(Exception ignored){}
     }
@@ -364,6 +407,9 @@ public final class GlobalPhoneMesh {
                !PhoneIdentity.verify(pub,sig,canonical(from,to,nonce,ts,payload))||
                !dedup(nonce))return;
             if(self.equals(to)){
+                String manuallyPinned=PhoneIdentity.pinnedFingerprint(context,from);
+                if(manuallyPinned==null ||
+                    !manuallyPinned.equals(PhoneIdentity.fingerprintFor(pub)))return;
                 JSONObject body=new JSONObject(payload);
                 String kind=body.optString("kind","");
                 if("ping".equals(kind)){
