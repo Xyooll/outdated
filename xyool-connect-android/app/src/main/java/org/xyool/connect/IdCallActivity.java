@@ -208,12 +208,15 @@ public final class IdCallActivity extends Activity {
     }
     @Override protected void onStop(){
         stopIncomingRing();
+        // WebRTC media is activity-owned in this alpha. A background calling
+        // service must not leave a ghost active call after the UI stops.
+        if(waitingId!=null){
+            packet("hangup");
+            endMedia();
+            status("Call ended when the calling screen closed.");
+        }
         disconnect();
         if(nearby!=null)nearby.stop();
-        if(usingLocal&&waitingId!=null){
-            endMedia();
-            status("Nearby call ended when the calling screen closed.");
-        }
         super.onStop();
     }
     private void makeIdentity(){
