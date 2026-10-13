@@ -1,0 +1,7 @@
+# Never commit the decoded signing key. The base64-encoded key itself is
+# intentionally PUBLIC and intended ONLY for development APKs.
+signing/xyool-test-debug.p12
+app/build/
+.gradle/
+build/
+local.properties
