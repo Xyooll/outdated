@@ -17,6 +17,7 @@ import path from 'node:path';
 import {createHash,createHmac,randomBytes,randomUUID,timingSafeEqual} from 'node:crypto';
 import {WebSocket,WebSocketServer} from 'ws';
 import {enableProof,signalProof,verifiedPublicKey} from './overlay-auth.mjs';
+import {chooseMeshPeers} from './peer-sampler.mjs';
 
 const ID=/^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/;
 const HEX=/^[a-f0-9]{64}$/;
@@ -111,8 +112,7 @@ export function createXyoolNetworkNode({
         known.push({id,fp:record.fingerprint});
     for(const client of meshEnabled){
       if(!client.xyid)continue;
-      const peers=known.filter(x=>x.id!==client.xyid&&x.fp)
-        .sort((a,b)=>a.id.localeCompare(b.id)).slice(0,16);
+      const peers=chooseMeshPeers(client.xyid,known,16);
       const pins={};for(const p of peers)pins[p.id]=p.fp;
       send(client,{type:'mesh-peers',ids:peers.map(p=>p.id),pins});
     }
