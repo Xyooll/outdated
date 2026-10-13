@@ -1,0 +1,15 @@
+# Xyool Network — federated rendezvous node
+# Run from the repository root:
+# docker build -f xyool-connect-android/signaling/Dockerfile.network .
+# HTTPS/WSS is terminated by the hosting proxy. Media does not pass here.
+FROM node:22-alpine
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV XYOOL_ID_REGISTRY=/data/registry.json
+WORKDIR /app
+COPY xyool-connect-android/signaling/package.json ./
+RUN npm install --omit=dev --ignore-scripts --no-audit --no-fund
+COPY xyool-connect-android/signaling/network-node.mjs ./
+RUN mkdir -p /data
+EXPOSE 8788
+CMD ["node","network-node.mjs"]
