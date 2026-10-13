@@ -56,6 +56,7 @@ public final class GlobalPhoneMesh {
     private final SharedPreferences prefs;
     private final HashMap<String,Link> links=new HashMap<>();
     private final HashMap<String,String> serverKeys=new HashMap<>();
+    private final HashMap<String,List<IceCandidate>> earlyCandidates=new HashMap<>();
     private final LinkedHashMap<String,Long> seen=new LinkedHashMap<>();
     private PeerConnectionFactory factory;
     private boolean online;
@@ -124,6 +125,7 @@ public final class GlobalPhoneMesh {
         for(Link link:new ArrayList<>(links.values()))closeLink(link);
         links.clear();
         serverKeys.clear();
+        earlyCandidates.clear();
         seen.clear();
     }
     public void stop(){
@@ -168,6 +170,13 @@ public final class GlobalPhoneMesh {
                 l=createLink(from);
             }
             if(l!=null)applyRemote(l,msg,"offer");
+        }else if("candidate".equals(kind) && l==null){
+            IceCandidate ice=parseCandidate(msg);
+            if(ice!=null && earlyCandidates.size()<16){
+                List<IceCandidate> queue=earlyCandidates.get(from);
+                if(queue==null){queue=new ArrayList<>();earlyCandidates.put(from,queue);}
+                if(queue.size()<40)queue.add(ice);
+            }
         }else if(l!=null){
             if("answer".equals(kind))applyRemote(l,msg,"answer");
             else if("candidate".equals(kind)){
@@ -215,6 +224,14 @@ public final class GlobalPhoneMesh {
                     packet.optString("mid",""),packet.optInt("index",-1)));
         }catch(Exception invalid){return false;}
     }
+    private IceCandidate parseCandidate(JSONObject msg){
+        String candidate=msg.optString("candidate","");
+        int index=msg.optInt("index",-1);
+        String mid=msg.optString("mid","");
+        if(candidate.isEmpty()||candidate.length()>4000||index<0||index>50||mid.length()>50)
+            return null;
+        return new IceCandidate(mid,index,candidate);
+    }
     private List<PeerConnection.IceServer> iceServers(){
         ArrayList<PeerConnection.IceServer> servers=new ArrayList<>();
         String stun=prefs.getString("xyool_stun","").trim();
@@ -261,6 +278,8 @@ public final class GlobalPhoneMesh {
         });
         if(l.pc==null)return null;
         links.put(id,l);
+        List<IceCandidate> early=earlyCandidates.remove(id);
+        if(early!=null)l.queued.addAll(early);
         return l;
     }
     private void observe(Link l,DataChannel dc){
