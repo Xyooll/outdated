@@ -3,7 +3,12 @@ name: Build Xyool Connect Android
 on:
   push:
     paths:
-      - 'xyool-connect-android/**'
+      - 'xyool-connect-android/app/**'
+      - 'xyool-connect-android/signing/xyool-test-debug.p12.b64'
+      - 'xyool-connect-android/signing/xyool-test-debug.sha256'
+      - 'xyool-connect-android/build.gradle'
+      - 'xyool-connect-android/gradle.properties'
+      - 'xyool-connect-android/settings.gradle'
       - '.github/workflows/xyool-connect-android.yml'
   workflow_dispatch:
 
@@ -11,11 +16,11 @@ permissions:
   contents: read
 
 jobs:
-  android-debug:
+  android-test-apk:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Check out source
+      - name: Check out Xyool source
         uses: actions/checkout@v4
       - name: Install Java 17
         uses: actions/setup-java@v4
@@ -23,27 +28,58 @@ jobs:
           distribution: temurin
           java-version: '17'
       - name: Use runner Android SDK
+        shell: bash
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
+          set -euo pipefail
           SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' | sort -V | tail -1)"
           test -n "$SDKMANAGER"
-          echo "sdkmanager=$SDKMANAGER"
           "$SDKMANAGER" --install 'platforms;android-35' 'build-tools;35.0.0'
       - name: Install Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build Android APK
+      - name: Restore ONE permanent test APK signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 --decode xyool-connect-android/signing/xyool-test-debug.p12.b64 \
+            > xyool-connect-android/signing/xyool-test-debug.p12
+          keytool -list -storetype PKCS12 \
+            -keystore xyool-connect-android/signing/xyool-test-debug.p12 \
+            -storepass xyool-test-only -alias xyool-test-debug > /dev/null
+      - name: Build installable test APK (no secrets needed)
         working-directory: xyool-connect-android
+        env:
+          XYOOL_DEBUG_BUILD_NUMBER: ${{ github.run_number }}
         run: gradle :app:assembleDebug --no-daemon --stacktrace
-      - name: Verify installable release variant can compile (unsigned until key is initialized)
-        working-directory: xyool-connect-android
-        run: gradle :app:assembleRelease --no-daemon
-      - name: Upload APK
-        if: success()
+      - name: Verify package, increasing version and SAME signing certificate
+        shell: bash
+        env:
+          XYOOL_DEBUG_BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          APK=xyool-connect-android/app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          BADGING=$("$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK")
+          echo "$BADGING" | grep '^package:'
+          echo "$BADGING" | grep -F "name='org.xyool.connect.crossnetworkalpha'"
+          echo "$BADGING" | grep -F "versionCode='$((1000 + XYOOL_DEBUG_BUILD_NUMBER))'"
+          SIGNATURE=$("$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK")
+          echo "$SIGNATURE"
+          EXPECTED=$(sed -n 's/^SHA256: //p' xyool-connect-android/signing/xyool-test-debug.sha256 | tr -d ':' | tr '[:upper:]' '[:lower:]')
+          ACTUAL=$(printf '%s\n' "$SIGNATURE" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -1 | tr '[:upper:]' '[:lower:]')
+          if [ -z "$EXPECTED" ] || [ "$EXPECTED" != "$ACTUAL" ]; then
+            echo "::error::Signing key changed — refusing an update-incompatible APK."
+            exit 1
+          fi
+          cp "$APK" xyool-connect-android/Xyool-Connect-Test-Update.apk
+      - name: Upload tap-to-update Android APK
         uses: actions/upload-artifact@v4
         with:
-          name: xyool-connect-android-debug-apk
-          path: xyool-connect-android/app/build/outputs/apk/debug/app-debug.apk
+          name: Xyool-Connect-Test-Update
+          path: xyool-connect-android/Xyool-Connect-Test-Update.apk
           if-no-files-found: error
           retention-days: 30
+      - name: Clean decoded test key
+        if: always()
+        run: rm -f xyool-connect-android/signing/xyool-test-debug.p12
