@@ -47,7 +47,6 @@ public final class PhoneIdentity {
         return k;
     }
     public static String publicKey()throws Exception{
-        KeyStore.CertificateEntry ignore=null; // no private material exported
         byte[] encoded=store().getCertificate(ALIAS).getPublicKey().getEncoded();
         return Base64.encodeToString(encoded,Base64.NO_WRAP);
     }
