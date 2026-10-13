@@ -82,12 +82,13 @@ public final class IdCallActivity extends Activity {
     private CallReachabilityService cloud;
     private boolean cloudBound;
     private boolean autoAnswerRequested;
-    private Button reachabilityButton,meshRelayButton;
+    private Button reachabilityButton,meshRelayButton,peerHintButton;
     private final ServiceConnection cloudLink=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){
             cloud=((CallReachabilityService.LocalBinder)binder).service();
             if(hasReachability()&&nearby!=null)nearby.stop();
             updateMeshRelayButton();
+            updatePeerHintButton();
             cloud.setListener(new CallReachabilityService.Listener(){
                 @Override public void onPacket(JSONObject message){received(message,false);}
                 @Override public void onLocalPacket(JSONObject message){received(message,true);}
@@ -353,6 +354,34 @@ public final class IdCallActivity extends Activity {
             v->toggleMeshRelay());
         updateMeshRelayButton();
         space(advancedPanel,6);
+        peerHintButton=button(advancedPanel,"Receive peer introductions: OFF",false,
+            v->togglePeerHints());
+        updatePeerHintButton();
+        space(advancedPanel,6);
+        button(advancedPanel,"Introduce entered ID to verified connected peers",false,v->{
+            String candidate=normalize(targetInput.getText().toString());
+            if(candidate==null||candidate.equals(id)){
+                status("Enter a different Xyool ID first.");return;
+            }
+            if(cloud==null||!hasReachability()){
+                status("Enable the background phone node first.");return;
+            }
+            if(PhoneIdentity.qrVerifiedFingerprint(this,candidate)==null){
+                status("Scan this contact's identity QR before sharing their ID.");return;
+            }
+            new AlertDialog.Builder(this)
+                .setTitle("Share a contact introduction?")
+                .setMessage("Share the entered Xyool ID and its public-key fingerprint with up to three directly connected, QR-verified peers? No IP, contact book or wallet data will be shared. It will not add or connect contacts automatically.")
+                .setNegativeButton("Cancel",(dialog,which)->{})
+                .setPositiveButton("Share",(dialog,which)->{
+                    int count=cloud==null?0:cloud.introduceVerifiedContact(candidate,true);
+                    status(count>0?"Shared one untrusted introduction with "+count+
+                        " connected peer(s).":"No eligible verified peer data channels connected.");
+                }).show();
+        });
+        space(advancedPanel,6);
+        advancedPanel.addView(text("Peer introductions are OFF for receiving until you enable them. Introduced IDs are untrusted hints: independently scan a QR to verify a new contact. Introductions do not dial, store new keys or seed files.",12,MUTED,false));
+        space(advancedPanel,6);
         button(advancedPanel,"Probe entered Xyool ID through peer mesh",false,v->{
             String dest=normalize(targetInput.getText().toString());
             if(dest==null||dest.equals(id)){
@@ -563,6 +592,19 @@ public final class IdCallActivity extends Activity {
         if(meshRelayButton!=null)meshRelayButton.setText(
             cloud!=null&&cloud.meshRelayEnabled()?"Mesh forwarding: ON • Tap to stop":
             "Mesh forwarding: OFF • Tap to enable");
+    }
+    private void updatePeerHintButton(){
+        if(peerHintButton!=null)peerHintButton.setText(
+            cloud!=null&&cloud.peerHintReceiving()?
+            "Receive peer introductions: ON • Tap to stop":
+            "Receive peer introductions: OFF • Tap to enable");
+    }
+    private void togglePeerHints(){
+        if(!hasReachability()||cloud==null){
+            status("Enable background call alerts first to receive introductions.");return;
+        }
+        cloud.setPeerHintReceiving(!cloud.peerHintReceiving());
+        updatePeerHintButton();
     }
     private void toggleMeshRelay(){
         if(!hasReachability()||cloud==null){

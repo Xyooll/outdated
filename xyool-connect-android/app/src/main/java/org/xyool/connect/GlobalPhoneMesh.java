@@ -41,6 +41,7 @@ import java.util.Iterator;
  */
 public final class GlobalPhoneMesh {
     public static final String PREF_RELAY="xyool_global_relay_opt_in";
+    public static final String PREF_PEER_HINTS="xyool_peer_hints_receive_opt_in";
     private static final int MAX_NEIGHBORS=3;
     private static final int MAX_FRAME=4096;
     private static final String DEFAULT_STUN="stun:stun.cloudflare.com:3478";
@@ -87,6 +88,46 @@ public final class GlobalPhoneMesh {
         prefs.edit().putBoolean(PREF_RELAY,enabled).apply();
         transport.status(enabled?"Limited peer control-packet forwarding enabled.":
             "Peer forwarding disabled.");
+    }
+    /** Receive hints only after the owner explicitly opts in. Off by default. */
+    public void setPeerHintReceiving(boolean enabled){
+        prefs.edit().putBoolean(PREF_PEER_HINTS,enabled).apply();
+        transport.status(enabled?"Peer introductions enabled (hints only; no auto-connect).":
+            "Peer introductions disabled.");
+    }
+    public boolean peerHintReceiving(){return prefs.getBoolean(PREF_PEER_HINTS,false);}
+    /**
+     * Explicit user-action only. Share ONE QR-verified contact's ID/key
+     * fingerprint with at most three QR-verified, directly connected peers.
+     * Nothing here updates contacts, dials another peer, or exposes IPs.
+     */
+    public int sharePeerHint(String suggestedId,boolean explicitlyConfirmed){
+        if(!explicitlyConfirmed||closed||!PeerHintPolicy.validId(suggestedId))return 0;
+        String subjectKey=PhoneIdentity.qrVerifiedFingerprint(context,suggestedId);
+        if(subjectKey==null)return 0;
+        int sent=0;
+        for(Link link:links.values()){
+            String recipientKey=PhoneIdentity.qrVerifiedFingerprint(context,link.id);
+            if(!PeerHintPolicy.sendable(self,link.id,suggestedId,
+                recipientKey,subjectKey,true)||!link.open()||
+                link.dc.bufferedAmount()>131072L||!allowPacket())continue;
+            try {
+                JSONObject body=new JSONObject();
+                body.put("kind","peer-hint");
+                body.put("subject",suggestedId);
+                body.put("fingerprint",subjectKey);
+                String payload=body.toString();
+                JSONObject frame=signFrame(link.id,"peer-hint");
+                frame.put("payload",payload);
+                frame.put("ttl",1); // Hints are never multi-hop forwarded.
+                frame.put("signature",PhoneIdentity.sign(canonical(self,link.id,
+                    frame.getString("nonce"),frame.getLong("when"),payload)));
+                byte[] bytes=frame.toString().getBytes(StandardCharsets.UTF_8);
+                if(bytes.length<=MAX_FRAME &&
+                    link.dc.send(new DataChannel.Buffer(ByteBuffer.wrap(bytes),false)))sent++;
+            }catch(Exception ignored){}
+        }
+        return sent;
     }
     public int neighbors(){
         int n=0;
@@ -441,8 +482,25 @@ public final class GlobalPhoneMesh {
                     broadcast(signFrame(from,"pong"),null);
                 }else if("pong".equals(kind)){
                     transport.status("Authenticated multi-hop phone route reached "+from);
+                }else if("peer-hint".equals(kind) && ttl==1){
+                    // Only the directly linked, explicitly QR-verified sender
+                    // may introduce a candidate. An introduction NEVER pins,
+                    // enrolls, connects to, or authorizes the suggested peer.
+                    String verified=PhoneIdentity.qrVerifiedFingerprint(context,from);
+                    String subject=body.optString("subject","");
+                    String subjectFingerprint=body.optString("fingerprint","");
+                    if(PeerHintPolicy.receivable(self,via.id,from,to,subject,
+                        subjectFingerprint,peerHintReceiving(),
+                        verified!=null &&
+                        verified.equals(PhoneIdentity.fingerprintFor(pub)))){
+                        transport.status("Unverified peer introduction: "+subject+
+                            ". Verify this person's identity QR independently.");
+                    }
                 }
             }else if(forwarding && ttl>1 && !self.equals(from)){
+                // A peer may edit unsigned TTL, but peer introductions must
+                // NEVER be rebroadcast, regardless of their declared TTL.
+                if("peer-hint".equals(new JSONObject(payload).optString("kind","")))return;
                 packet.put("ttl",ttl-1);
                 broadcast(packet,via.id);
             }
