@@ -19,8 +19,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import java.util.EnumMap;
 import java.util.Map;
 import android.media.AudioManager;
@@ -331,52 +329,47 @@ public final class IdCallActivity extends Activity {
             status("Unable to display QR code. You can still copy your ID.");
         }
     }
+    private static final int QR_SCAN_REQUEST = 493;
+
     private void scanIdQr(){
-        if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
-            Toast.makeText(this,"This device has no camera scanner.",Toast.LENGTH_LONG).show();
-            return;
-        }
-        if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.CAMERA},CAMERA_REQUEST);
-            return;
-        }
-        openCameraScanner();
-    }
-    private void openCameraScanner(){
         try{
-            new IntentIntegrator(this)
-                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
-                .setPrompt("Scan the other person's Xyool ID")
-                .setBeepEnabled(false)
-                .setOrientationLocked(false)
-                .initiateScan();
+            Intent scanner = new Intent(this, QrScannerActivity.class);
+            startActivityForResult(scanner, QR_SCAN_REQUEST);
         }catch(Exception e){
-            Toast.makeText(this,"Camera scanner couldn't start. Enter the ID manually.",Toast.LENGTH_LONG).show();
+            status("Unable to start QR scanner. Enter their ID manually.");
+            Toast.makeText(this,"QR scanner couldn't open. Try Camera permission in app settings.",Toast.LENGTH_LONG).show();
         }
     }
     @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
-        IntentResult scanned=IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
-        if(scanned==null){super.onActivityResult(requestCode,resultCode,data);return;}
-        if(scanned.getContents()==null){status("QR scan canceled.");return;}
-        String raw=scanned.getContents().trim().toUpperCase(Locale.US);
-        // Allow only a public Xyool ID. Never navigate to web links, install APKs,
-        // execute scan content, or auto-place a call based on an untrusted QR.
+        if(requestCode != QR_SCAN_REQUEST){
+            super.onActivityResult(requestCode,resultCode,data);
+            return;
+        }
+        if(resultCode != RESULT_OK || data == null){
+            status("No ID scanned. You can also type an ID.");
+            return;
+        }
+        String scanned = data.getStringExtra(QrScannerActivity.EXTRA_ID);
+        if(scanned == null)return;
+        String raw = scanned.trim().toUpperCase(Locale.US);
+        // Only the exact public Xyool ID is allowed; never execute QR contents.
         if(!raw.matches("^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$")){
-            status("That QR isn't a Xyool ID. Try scanning a Xyool Connect QR.");
+            status("That QR wasn't a valid Xyool ID.");
             return;
         }
         if(raw.equals(id)){
-            status("That's your own QR code. Scan the other person's.");
+            status("That's your own QR. Scan the other person's code.");
             return;
         }
         targetInput.setText(raw);
         new AlertDialog.Builder(this)
             .setTitle("Xyool ID scanned")
-            .setMessage("Ready to call "+raw+"? Check the ID before tapping Call.")
+            .setMessage(raw + " is ready. Tap Call when you're ready.")
             .setPositiveButton("OK",null)
             .show();
-        status("ID scanned. Tap Call when you're ready.");
+        status("ID scanned successfully.");
     }
+
     private void connectionStatus(){
         int n=nearby==null?0:nearby.peerCount();
         if(registered){
