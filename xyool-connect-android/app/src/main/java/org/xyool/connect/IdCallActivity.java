@@ -64,7 +64,6 @@ public final class IdCallActivity extends Activity {
     private static final String ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int MIC_REQUEST=481;
     private static final String DEFAULT_SERVER="wss://xyool-id-signaling-production.up.railway.app/v1/id";
-    private static final int CAMERA_REQUEST=482;
     private SharedPreferences prefs;
     private String id, token;
     private TextView stateLabel;
@@ -566,17 +565,6 @@ public final class IdCallActivity extends Activity {
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){
         super.onRequestPermissionsResult(request,permissions,grants);
-        if(request==CAMERA_REQUEST){
-            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)openCameraScanner();
-            else {
-                boolean showHint=!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA);
-                new AlertDialog.Builder(this)
-                    .setTitle("Camera access needed")
-                    .setMessage(showHint?"Enable Camera in Android Settings → Apps → Xyool Connect → Permissions to scan IDs. You can still enter an ID manually.":"Allow camera access to scan a Xyool ID. You can also type the ID.")
-                    .setPositiveButton("OK",null).show();
-            }
-            return;
-        }
         if(request!=MIC_REQUEST)return;
         Runnable next=pendingMicrophone;pendingMicrophone=null;
         if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED&&next!=null)next.run();
