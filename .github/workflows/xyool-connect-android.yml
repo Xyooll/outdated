@@ -70,8 +70,9 @@ jobs:
         working-directory: xyool-connect-android
         env:
           XYOOL_DEBUG_BUILD_NUMBER: ${{ github.run_number }}
+          XYOOL_TARGET_ABI: arm64-v8a
         run: gradle :app:assembleDebug --no-daemon --stacktrace
-      - name: Verify package, increasing version and SAME signing certificate
+      - name: Verify package, ARM64 native calling engine, and SAME signing certificate
         shell: bash
         env:
           XYOOL_DEBUG_BUILD_NUMBER: ${{ github.run_number }}
@@ -79,6 +80,34 @@ jobs:
           set -euo pipefail
           APK=xyool-connect-android/app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
+          unzip -Z1 "$APK" | grep -q '^lib/arm64-v8a/libjingle_peerconnection_so.so          BADGING=$("$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK")
+          echo "$BADGING" | grep '^package:'
+          echo "$BADGING" | grep -F "name='org.xyool.connect.crossnetworkalpha'"
+          echo "$BADGING" | grep -F "versionCode='$((1000 + XYOOL_DEBUG_BUILD_NUMBER))'"
+          SIGNATURE=$("$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK")
+          echo "$SIGNATURE"
+          EXPECTED=$(sed -n 's/^SHA256: //p' xyool-connect-android/signing/xyool-test-debug.sha256 | tr -d ':' | tr '[:upper:]' '[:lower:]')
+          ACTUAL=$(printf '%s\n' "$SIGNATURE" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -1 | tr '[:upper:]' '[:lower:]')
+          if [ -z "$EXPECTED" ] || [ "$EXPECTED" != "$ACTUAL" ]; then
+            echo "::error::Signing key changed — refusing an update-incompatible APK."
+            exit 1
+          fi
+          cp "$APK" xyool-connect-android/Xyool-Connect-Lite-ARM64.apk
+      - name: Upload tap-to-update Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Xyool-Connect-Lite-ARM64
+          path: xyool-connect-android/Xyool-Connect-Lite-ARM64.apk
+          if-no-files-found: error
+          retention-days: 30
+      - name: Clean decoded test key
+        if: always()
+        run: rm -f xyool-connect-android/signing/xyool-test-debug.p12
+
+          if unzip -Z1 "$APK" | grep -qE '^lib/(x86|x86_64|armeabi-v7a)/'; then
+            echo "::error::Wrong target ABI added to slim Android APK."
+            exit 1
+          fi
           BADGING=$("$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK")
           echo "$BADGING" | grep '^package:'
           echo "$BADGING" | grep -F "name='org.xyool.connect.crossnetworkalpha'"
