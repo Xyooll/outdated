@@ -115,6 +115,10 @@ public final class GlobalPhoneMesh {
             transport.status("Phone mesh unavailable on this Android device.");
         }
     }
+    /** Keep existing encrypted peer links alive when the rendezvous node goes away. */
+    public void rendezvousOffline(){
+        online=false;
+    }
     public void disconnected(){
         online=false;
         for(Link link:new ArrayList<>(links.values()))closeLink(link);
