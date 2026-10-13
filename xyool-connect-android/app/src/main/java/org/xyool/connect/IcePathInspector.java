@@ -11,6 +11,8 @@ import java.util.Locale;
  */
 public final class IcePathInspector {
     private int host, srflx, prflx, relay, unknown, ipv6;
+    private int receivedTrickle;
+    private boolean turnConfigured;
     private String iceState = "NEW";
     private String discovery = "Not evaluated";
 
@@ -36,6 +38,14 @@ public final class IcePathInspector {
         if (fields.length > 4 && fields[4].indexOf(':') != -1) ipv6++;
     }
 
+    /** Count incoming ICE trickle frames only; never retain or report IPs. */
+    public synchronized void recordRemote(String candidate){
+        if(candidate!=null && candidate.length()<=4096 &&
+            candidate.trim().startsWith("candidate:"))receivedTrickle++;
+    }
+
+    public synchronized void setTurnConfigured(boolean value){turnConfigured=value;}
+
     public synchronized void setState(String state) {
         if (state == null || !state.matches("^[A-Z_]{2,30}$")) return;
         iceState = state;
@@ -58,6 +68,8 @@ public final class IcePathInspector {
             " / relay " + relay +
             " / other " + unknown +
             "\nIPv6 candidates: " + ipv6 +
+            "\nRemote trickle frames: " + receivedTrickle +
+            "\nTURN fallback configured: " + (turnConfigured?"yes":"no") +
             "\nSignaling: " + discovery;
     }
 
@@ -71,8 +83,9 @@ public final class IcePathInspector {
             if (srflx == 0 && relay == 0)
                 return "Only local network candidates were found; STUN, IPv6 " +
                     "reachability and network restrictions need investigation.";
-            return "Candidate discovery succeeded, but ICE connectivity checks " +
-                "failed. A router, firewall or carrier NAT may block direct media.";
+            return "ICE checks could not establish a media path. " +
+                (turnConfigured?"A relay was configured; check TURN connectivity.":
+                    "No TURN relay is configured; some NAT/firewall pairs require one.");
         }
         if ("CHECKING".equals(iceState))
             return "Testing candidate pairs. Discovery does not guarantee a route.";
