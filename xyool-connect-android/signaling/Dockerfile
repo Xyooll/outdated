@@ -9,6 +9,8 @@ WORKDIR /app
 COPY xyool-connect-android/signaling/package.json ./
 RUN npm install --omit=dev --ignore-scripts --no-audit --no-fund
 COPY xyool-connect-android/signaling/server-id.mjs ./
+COPY xyool-connect-android/signaling/overlay-auth.mjs ./
+COPY xyool-connect-android/signaling/peer-sampler.mjs ./
 
 # A persistent service volume MUST be mounted on /data.
 # Railway-provided volumes are mounted as root; keep this small isolated
