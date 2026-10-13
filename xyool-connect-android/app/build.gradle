@@ -16,6 +16,7 @@ android {
         minSdk 26
         targetSdk 34
         // CI run number strictly increases so later APKs upgrade earlier ones.
+        // Test builds intentionally reuse the same package and signer on every CI run.
         versionCode 1000 + xyoolBuildNumber
         versionName "0.8.test.${xyoolBuildNumber}"
     }
