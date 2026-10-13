@@ -301,11 +301,19 @@ public final class LocalPeerNode {
             // Include square brackets for IPv6 literals.
             String host=ip.contains(":")?"["+ip.replace("%","%25")+"]":ip;
             URI endpoint=URI.create("ws://"+host+":"+address.getPort()+PATH);
+            outboundPeerId=to;outboundPeerKey=null;
+            outboundNonce=PhoneIdentity.newNonce();
+            outboundSent=0;outboundSeen=0;
             outgoing=new WebSocketClient(endpoint){
                 @Override public void onOpen(ServerHandshake handshake){
                     try{
                         JSONObject data=new JSONObject();
+                        long ts=System.currentTimeMillis();
                         data.put("type","call");data.put("from",myId);data.put("to",to);
+                        data.put("authKey",PhoneIdentity.publicKey());
+                        data.put("authTs",ts);data.put("authNonce",outboundNonce);
+                        data.put("authSig",PhoneIdentity.sign(
+                            PhoneIdentity.callProof(myId,to,ts,outboundNonce)));
                         send(data.toString());
                     }catch(Exception e){listener.onNodeStatus("Nearby calling failed.");}
                 }
@@ -313,11 +321,11 @@ public final class LocalPeerNode {
                     if(raw.length()>45000)return;
                     try{
                         JSONObject msg=new JSONObject(raw);
-                        if("accepted".equals(msg.optString("type","")))
-                            listener.onPacket(msg);
-                        else if(validPacket(msg)||"ringing".equals(msg.optString("type",""))
-                            ||"busy".equals(msg.optString("type",""))
-                            ||"ended".equals(msg.optString("type","")))
+                        String type=msg.optString("type","");
+                        if("busy".equals(type)){listener.onPacket(msg);return;}
+                        if(("ringing".equals(type)||"accepted".equals(type)||
+                            "signal".equals(type)||"ended".equals(type))
+                            &&verifyIncoming(msg,false))
                             listener.onPacket(msg);
                     }catch(Exception ignored){}
                 }
@@ -327,7 +335,10 @@ public final class LocalPeerNode {
                         active=outgoing==this;
                         if(active)outgoing=null;
                     }
-                    if(active)notifyEnded();
+                    if(active){
+                        outboundPeerId=null;outboundPeerKey=null;outboundNonce=null;
+                        notifyEnded();
+                    }
                 }
                 @Override public void onError(Exception e){
                     listener.onNodeStatus("Nearby peer isn't reachable on this Wi-Fi.");
@@ -340,28 +351,61 @@ public final class LocalPeerNode {
             return false;
         }
     }
-    /** Send only on the single currently accepted LAN connection. */
+    private synchronized JSONObject authenticated(JSONObject packet,boolean inbound)throws Exception{
+        String nonce=inbound?inboundNonce:outboundNonce;
+        if(nonce==null)throw new IllegalStateException("No authenticated call session");
+        JSONObject result=new JSONObject(packet.toString());
+        int seq=inbound?++inboundSent:++outboundSent;
+        result.put("authSeq",seq);
+        result.put("authNonce",nonce);
+        result.put("authKey",PhoneIdentity.publicKey());
+        result.put("authSig",PhoneIdentity.sign(
+            PhoneIdentity.packetProof(myId,nonce,seq,result)));
+        return result;
+    }
+    private synchronized boolean verifyIncoming(JSONObject packet,boolean inbound){
+        String nonce=inbound?inboundNonce:outboundNonce;
+        String id=inbound?inboundPeerId:outboundPeerId;
+        String key=inbound?inboundPeerKey:outboundPeerKey;
+        if(nonce==null||id==null||!nonce.equals(packet.optString("authNonce","")))
+            return false;
+        int seq=packet.optInt("authSeq",-1);
+        int last=inbound?inboundSeen:outboundSeen;
+        if(seq<1||seq<=last)return false;
+        String announced=packet.optString("authKey","");
+        if(key==null){
+            if(inbound||announced.isEmpty()||
+                !PhoneIdentity.verify(announced,packet.optString("authSig",""),
+                    PhoneIdentity.packetProof(id,nonce,seq,packet))||
+                !PhoneIdentity.pinOrVerify(context,id,announced))return false;
+            key=announced;
+        }else if(!key.equals(announced))return false;
+        if(!PhoneIdentity.verify(key,packet.optString("authSig",""),
+            PhoneIdentity.packetProof(id,nonce,seq,packet)))return false;
+        if(inbound)inboundSeen=seq;
+        else{outboundSeen=seq;outboundPeerKey=key;}
+        return true;
+    }
+    /** Only send authenticated frames on the current trusted-LAN connection. */
     public synchronized boolean send(JSONObject msg){
         String type=msg.optString("type","");
         if(!validPacket(msg))return false;
-        String payload=msg.toString();
-        if(outgoing!=null&&outgoing.isOpen()){outgoing.send(payload);return true;}
-        if(incoming!=null&&incoming.isOpen()){
-            try{
+        try{
+            if(outgoing!=null&&outgoing.isOpen()){
+                outgoing.send(authenticated(msg,false).toString());return true;
+            }
+            if(incoming!=null&&incoming.isOpen()){
+                JSONObject result=msg;
                 if("accept".equals(type)){
-                    // Incoming phone sends accepted to caller; receiver's
-                    // local Activity must enter accepted state separately.
-                    incoming.send("{\"type\":\"accepted\"}");
-                    return true;
+                    result=new JSONObject();result.put("type","accepted");
+                }else if("reject".equals(type)||"hangup".equals(type)){
+                    result=new JSONObject();result.put("type","ended");
+                    result.put("reason","peer-ended");
                 }
-                if("reject".equals(type)||"hangup".equals(type)){
-                    incoming.send("{\"type\":\"ended\",\"reason\":\"peer-ended\"}");
-                    return true;
-                }
-                incoming.send(payload);
+                incoming.send(authenticated(result,true).toString());
                 return true;
-            }catch(Exception ignored){return false;}
-        }
+            }
+        }catch(Exception ignored){}
         return false;
     }
 
@@ -371,6 +415,8 @@ public final class LocalPeerNode {
         WebSocket b=incoming;incoming=null;
         if(a!=null)a.close();
         if(b!=null)b.close();
+        inboundPeerId=null;inboundPeerKey=null;inboundNonce=null;
+        outboundPeerId=null;outboundPeerKey=null;outboundNonce=null;
     }
     private void notifyEnded(){
         try{
