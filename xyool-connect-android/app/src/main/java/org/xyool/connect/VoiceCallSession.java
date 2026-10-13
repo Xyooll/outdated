@@ -31,6 +31,7 @@ public final class VoiceCallSession {
         boolean send(JSONObject message,boolean local);
         boolean dialLocal(String id);
         void closeLocal();
+        java.util.List<PeerConnection.IceServer> currentTurnServers();
         void status(String message);
         void sessionChanged();
     }
@@ -212,7 +213,14 @@ public final class VoiceCallSession {
                 servers.add(PeerConnection.IceServer.builder(turn)
                     .setUsername(username).setPassword(password).createIceServer());
             }
-            diag.setTurnConfigured(!turn.isEmpty());
+            // Short-lived credentials from the registered signaling service
+            // are preferred over optional legacy manual TURN settings.
+            java.util.List<PeerConnection.IceServer> ephemeral=host.currentTurnServers();
+            if(ephemeral!=null&&!ephemeral.isEmpty()){
+                servers.addAll(ephemeral);
+            }
+            diag.setTurnConfigured(!turn.isEmpty()||
+                (ephemeral!=null&&!ephemeral.isEmpty()));
             iceRestartAttempts=0;
             lastIceState="NEW";
             iceRecoveryDecision="No recovery requested.";
