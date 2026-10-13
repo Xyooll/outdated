@@ -37,8 +37,17 @@ public final class BridgeSelfTest {
             !summary.contains("2001:db8")&&!summary.contains("candidate:"),
             "never copy actual addresses or raw SDP into reports");
         inspector.setState("FAILED");
-        require(inspector.interpretation().contains("ICE connectivity checks failed"),
-            "failure classification after discovery");
+        require(inspector.interpretation().contains("No TURN relay is configured"),
+            "failure must distinguish missing TURN fallback");
+        inspector.recordRemote("candidate:4 1 udp 123 198.51.100.7 50222 typ srflx");
+        inspector.setTurnConfigured(true);
+        String safe=inspector.summary();
+        require(safe.contains("Remote trickle frames: 1")&&
+            safe.contains("TURN fallback configured: yes")&&
+            !safe.contains("198.51.100.7"),
+            "remote ICE report must be sanitized");
+        require(inspector.interpretation().contains("TURN connectivity"),
+            "failure after configured relay is different");
         System.out.println("PASS: "+passed+" privacy-preserving bridge policy checks");
     }
 }

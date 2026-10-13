@@ -195,6 +195,7 @@ public final class CallReachabilityService extends Service {
     public boolean hasIncomingVoice(){return voice!=null&&voice.isIncoming();}
     public String voicePeerId(){return voice==null?null:voice.peerId();}
     public String voiceState(){return voice==null?"":voice.state();}
+    public String voiceDiagnostics(){return voice==null?"No call diagnostics.":voice.diagnostics();}
     public boolean dialVoice(String target,boolean local){
         return foreground&&voice!=null&&voice.dial(target,local);
     }
