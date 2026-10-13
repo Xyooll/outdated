@@ -111,6 +111,19 @@ public final class CallReachabilityService extends Service {
             return START_NOT_STICKY;
         }
         if(prefs.getBoolean(PREF_ENABLED,false)){
+            // Developer mesh-forwarding and introduction switches have been
+            // removed from the calling UI. Never preserve old hidden opt-ins:
+            // keep both disabled until user-facing consent is redesigned.
+            boolean relay=prefs.getBoolean(GlobalPhoneMesh.PREF_RELAY,false);
+            boolean hints=prefs.getBoolean(GlobalPhoneMesh.PREF_PEER_HINTS,false);
+            if(relay||hints){
+                prefs.edit().putBoolean(GlobalPhoneMesh.PREF_RELAY,false)
+                    .putBoolean(GlobalPhoneMesh.PREF_PEER_HINTS,false).apply();
+                if(globalMesh!=null){
+                    globalMesh.setForwarding(false);
+                    globalMesh.setPeerHintReceiving(false);
+                }
+            }
             foreground=true;
             showForeground();
             watchWifi();
@@ -138,24 +151,6 @@ public final class CallReachabilityService extends Service {
     }
     public boolean isRegistered(){return registered;}
     public int globalPeerCount(){return globalMesh==null?0:globalMesh.neighbors();}
-    public boolean meshRelayEnabled(){return prefs.getBoolean(GlobalPhoneMesh.PREF_RELAY,false);}
-    public void setMeshRelayEnabled(boolean enabled){
-        if(!foreground && enabled)return;
-        prefs.edit().putBoolean(GlobalPhoneMesh.PREF_RELAY,enabled).apply();
-        if(globalMesh!=null)globalMesh.setForwarding(enabled);
-    }
-    public boolean probeGlobalRoute(String target){return globalMesh!=null&&globalMesh.ping(target);}
-    public boolean peerHintReceiving(){
-        return prefs.getBoolean(GlobalPhoneMesh.PREF_PEER_HINTS,false);
-    }
-    public void setPeerHintReceiving(boolean enabled){
-        if(!foreground&&enabled)return;
-        prefs.edit().putBoolean(GlobalPhoneMesh.PREF_PEER_HINTS,enabled).apply();
-        if(globalMesh!=null)globalMesh.setPeerHintReceiving(enabled);
-    }
-    public int introduceVerifiedContact(String suggestedId,boolean explicitlyConfirmed){
-        return globalMesh==null?0:globalMesh.sharePeerHint(suggestedId,explicitlyConfirmed);
-    }
     public boolean hasIncoming(){return incoming!=null;}
     public boolean hasLocalPeer(String id){return localNode!=null&&localNode.hasPeer(id);}
     public int localPeerCount(){return localNode==null?0:localNode.peerCount();}
