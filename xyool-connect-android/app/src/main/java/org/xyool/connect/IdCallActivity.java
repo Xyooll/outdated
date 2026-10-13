@@ -142,7 +142,7 @@ public final class IdCallActivity extends Activity {
         if(cloud!=null)cloud.reloadNetworkPolicy();
         else{
             disconnect();
-            if(BridgePolicy.allowsCloud(mode)||hasReachability())connect();
+            if(hasReachability())connect();
         }
         connectionStatus();
         status(BridgePolicy.description(mode));
@@ -193,7 +193,7 @@ public final class IdCallActivity extends Activity {
             }
         });
         render();
-        connect();
+        if(hasReachability())connect();
     }
     @Override protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
@@ -208,9 +208,19 @@ public final class IdCallActivity extends Activity {
     }
     @Override protected void onResume(){
         super.onResume();
-        if(nearby!=null && !hasReachability())nearby.start();
-        if(prefs!=null && !cloudBound && (hasReachability()||BridgePolicy.allowsCloud(bridgeMode())))
-            connect();
+        if(nearby!=null && !hasReachability())nearby.stop();
+        // Explicitly enabled nodes recover if Android stopped the foreground
+        // service while the UI was closed. Never auto-enable a disabled node.
+        if(hasReachability() && NetworkBootPolicy.canRestore(true,id,token)){
+            try{
+                startForegroundService(new Intent(this,CallReachabilityService.class)
+                    .setAction(CallReachabilityService.ACTION_ENABLE));
+            }catch(RuntimeException restricted){
+                status("Xyool Network restart blocked by Android. Check notification and battery settings.");
+            }
+        }
+        updateReachabilityButton();
+        if(prefs!=null && !cloudBound && hasReachability())connect();
     }
     @Override protected void onStop(){
         stopIncomingRing();
@@ -290,6 +300,11 @@ public final class IdCallActivity extends Activity {
         space(net,4);
         stateLabel=text(callStatus,14,FG,false);
         net.addView(stateLabel);
+        space(net,9);
+        reachabilityButton=button(net,"Xyool Network: OFF",true,v->toggleReachability());
+        updateReachabilityButton();
+        space(net,7);
+        net.addView(text("ON keeps your Xyool ID available for incoming calls while the app is closed, using a visible Android foreground-service notification. Android may still stop or restrict the connection.",12,MUTED,false));
 
         LinearLayout self=panel();
         self.addView(text("YOUR ID",12,MUTED,true));
@@ -331,9 +346,7 @@ public final class IdCallActivity extends Activity {
         LinearLayout settings=panel();
         settings.addView(text("CALL SETTINGS",12,MUTED,true));
         space(settings,7);
-        reachabilityButton=button(settings,"Background call alerts: OFF",false,
-            v->toggleReachability());
-        updateReachabilityButton();
+        settings.addView(text("The main Xyool Network switch also controls background reachability and incoming call alerts.",12,MUTED,false));
         space(settings,6);
         button(settings,"Advanced network settings ▾",false,v->
             advancedPanel.setVisibility(advancedPanel.getVisibility()==View.GONE?
@@ -448,7 +461,7 @@ public final class IdCallActivity extends Activity {
             advancedPanel.setVisibility(View.GONE);
         });
         space(body,7);
-        body.addView(text("Early test build. Background alerts require permission and aren't guaranteed after a force-stop. Not for emergency calls.",12,MUTED,false));
+        body.addView(text("Early test build. Network OFF prevents listening and calls. Network ON persists across app closure and attempts reboot recovery; Android battery limits, force-stop and offline networks may interrupt reachability. Not for emergency calls.",12,MUTED,false));
     }
 
     private void showMyQr(){
@@ -541,6 +554,10 @@ public final class IdCallActivity extends Activity {
     }
 
     private void connectionStatus(){
+        if(!hasReachability()){
+            status("Xyool Network OFF · Turn it on to become reachable by ID.");
+            return;
+        }
         int n=cloud!=null&&hasReachability()?cloud.localPeerCount():
             (nearby==null?0:nearby.peerCount());
         if(!BridgePolicy.allowsCloud(bridgeMode())){
@@ -571,7 +588,7 @@ public final class IdCallActivity extends Activity {
         return "XY-"+clean.substring(0,4)+"-"+clean.substring(4,8)+"-"+clean.substring(8);
     }
     private void connect(){
-        if(!BridgePolicy.allowsCloud(bridgeMode())&&!hasReachability()){
+        if(!hasReachability()){
             registered=false;connectionStatus();return;
         }
         if(cloudBound)return;
@@ -616,8 +633,8 @@ public final class IdCallActivity extends Activity {
     }
     private void updateReachabilityButton(){
         if(reachabilityButton!=null)reachabilityButton.setText(
-            hasReachability()?"Background call alerts: ON • Tap to disable":
-                "Background call alerts: OFF • Tap to enable");
+            hasReachability()?"Xyool Network: ON • Tap to stop":
+                "Xyool Network: OFF • Tap to enable");
     }
     private void enableReachability(){
         if(Build.VERSION.SDK_INT>=33 &&
@@ -633,21 +650,26 @@ public final class IdCallActivity extends Activity {
             startForegroundService(start);
             if(!cloudBound)connect();
             updateReachabilityButton();
-            status("Background alerts enabled while Android permits the service to run.");
+            status("Xyool Network enabled. Reachable by ID while the foreground service runs.");
         }catch(RuntimeException ex){
             prefs.edit().putBoolean(CallReachabilityService.PREF_ENABLED,false).apply();
             updateReachabilityButton();
-            status("Android couldn't start persistent call listening.");
+            status("Android couldn't start Xyool Network. Check app permissions.");
         }
     }
     private void disableReachability(){
+        if(waitingId!=null||peerActive){
+            packet("hangup");
+            endMedia();
+        }
         prefs.edit().putBoolean(CallReachabilityService.PREF_ENABLED,false).apply();
         startService(new Intent(this,CallReachabilityService.class)
             .setAction(CallReachabilityService.ACTION_DISABLE));
-        if(nearby!=null)nearby.start();
+        if(nearby!=null)nearby.stop();
+        disconnect();
         updateReachabilityButton();
         updateMeshRelayButton();
-        status("Background call alerts disabled; calls work while the screen is open.");
+        status("Xyool Network OFF. ID registration, local discovery, and incoming listening stopped.");
     }
     private void toggleReachability(){
         if(hasReachability())disableReachability();
@@ -669,6 +691,7 @@ public final class IdCallActivity extends Activity {
         catch(Exception ex){status("Could not send call command.");}
     }
     private void call(){
+        if(!hasReachability()){status("Turn on Xyool Network before calling by ID.");return;}
         if(peerActive||waitingId!=null){status("Finish your current call first.");return;}
         String dest=normalize(targetInput.getText().toString());
         if(dest==null){status("Enter a valid Xyool ID, like XY-ABCD-EFGH-JKLM.");return;}

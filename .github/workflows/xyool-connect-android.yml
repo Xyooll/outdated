@@ -72,6 +72,15 @@ jobs:
             xyool-connect-android/app/src/main/java/org/xyool/connect/PeerHintPolicy.java \
             xyool-connect-android/tools/PeerHintSelfTest.java
           java -cp "$RUNNER_TEMP/xyool-peer-hints-tests" org.xyool.connect.PeerHintSelfTest
+      - name: Test Xyool Network consent-gated boot restoration
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/xyool-boot-policy"
+          javac -d "$RUNNER_TEMP/xyool-boot-policy" \
+            xyool-connect-android/app/src/main/java/org/xyool/connect/NetworkBootPolicy.java \
+            xyool-connect-android/tools/NetworkBootPolicySelfTest.java
+          java -cp "$RUNNER_TEMP/xyool-boot-policy" org.xyool.connect.NetworkBootPolicySelfTest
       - name: Restore ONE permanent test APK signing key
         shell: bash
         run: |
