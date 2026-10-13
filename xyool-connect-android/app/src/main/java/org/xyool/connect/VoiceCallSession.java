@@ -130,8 +130,13 @@ public final class VoiceCallSession {
             case "ringing":
                 state("Ringing "+remoteId+"…");break;
             case "accepted":
-                if(!outgoing||peer==null)return;
-                authorized=true;state("Call accepted. Connecting voice…");createOffer();break;
+                if(peer==null)return;
+                // The server sends accepted to BOTH participants. The callee
+                // must authorize the incoming offer too, not just the caller.
+                authorized=true;
+                state("Call accepted. Connecting voice…");
+                if(outgoing)createOffer();
+                break;
             case "signal":
                 signal(msg);break;
             case "ended":
