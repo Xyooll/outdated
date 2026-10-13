@@ -244,6 +244,14 @@ public final class IdCallActivity extends Activity {
         space(dialing,8);
         button(dialing,"Mute / Unmute",false,v->toggleMute());
 
+        LinearLayout p2p=panel();
+        p2p.addView(text("SERVER-FREE CALLING TEST",15,ACCENT,true));
+        space(p2p,6);
+        p2p.addView(text("Test direct WebRTC between two different Wi-Fi networks. Each phone exchanges one offer and one answer through a trusted channel; Xyool's Railway server is not contacted by the direct-call screen.",12,MUTED,false));
+        space(p2p,8);
+        button(p2p,"Direct call lab · No Xyool server",true,
+            v->startActivity(new Intent(this,DirectCallActivity.class)));
+
         LinearLayout help=panel();
         help.addView(text("How calling works",17,FG,true));
         space(help,5);
