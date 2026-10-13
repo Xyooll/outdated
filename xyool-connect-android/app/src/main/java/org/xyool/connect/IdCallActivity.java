@@ -64,6 +64,10 @@ public final class IdCallActivity extends Activity {
     private static final String ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int MIC_REQUEST=481;
     private static final String DEFAULT_SERVER="wss://xyool-id-signaling-production.up.railway.app/v1/id";
+    // Public STUN gives WebRTC public/translated ICE candidates when on separate networks.
+    // This is used ONLY for internet calls. Enter "off" in Advanced to disable it.
+    // Cloudflare receives source IP and basic binding metadata, not call audio.
+    private static final String DEFAULT_STUN="stun:stun.cloudflare.com:3478";
     private SharedPreferences prefs;
     private String id, token;
     private TextView stateLabel;
@@ -252,11 +256,11 @@ public final class IdCallActivity extends Activity {
         advancedPanel=column();
         advancedPanel.setVisibility(View.GONE);
         help.addView(advancedPanel);
-        advancedPanel.addView(text("Only for testing a server you control. Normal callers should never need these fields.",12,MUTED,false));
+        advancedPanel.addView(text("Advanced testing only. Internet calls use Cloudflare's public STUN server unless disabled, which reveals your public IP to Cloudflare. Encrypted audio is sent peer-to-peer when possible. A private TURN relay is not configured yet.",12,MUTED,false));
         space(advancedPanel,10);
         serverInput=input(advancedPanel,"Secure server address",prefs.getString("xyool_id_server",DEFAULT_SERVER));
         space(advancedPanel,7);
-        stunInput=input(advancedPanel,"STUN server (optional)",prefs.getString("xyool_stun",""));
+        stunInput=input(advancedPanel,"STUN address (blank = automatic; off = disabled)",prefs.getString("xyool_stun",""));
         space(advancedPanel,7);
         turnInput=input(advancedPanel,"TURN relay (optional)",prefs.getString("xyool_turn",""));
         space(advancedPanel,7);
@@ -553,7 +557,7 @@ public final class IdCallActivity extends Activity {
                 outgoing=false;
                 if(usingLocal)callAuthorized=true;
                 packet("accept");
-                status("Accepted. Waiting for connection…");
+                status("Accepted. Negotiating audio connection…");
             })).show();
     }
     private void requestMicrophone(Runnable next){
@@ -578,6 +582,8 @@ public final class IdCallActivity extends Activity {
             if(factory==null)throw new IllegalStateException("WebRTC unavailable");
             List<PeerConnection.IceServer> ice=new ArrayList<>();
             String s=prefs.getString("xyool_stun","").trim();
+            if(!usingLocal && s.isEmpty())s=DEFAULT_STUN;
+            if("off".equalsIgnoreCase(s))s="";
             String t=prefs.getString("xyool_turn","").trim();
             if(!s.isEmpty()){
                 if(!s.matches("^stuns?:[A-Za-z0-9._-]+:[0-9]{2,5}$"))
@@ -594,15 +600,19 @@ public final class IdCallActivity extends Activity {
                 ice.add(PeerConnection.IceServer.builder(t).setUsername(username)
                     .setPassword(password).createIceServer());
             }
-            peer=factory.createPeerConnection(new PeerConnection.RTCConfiguration(ice),
+            PeerConnection.RTCConfiguration iceConfig=new PeerConnection.RTCConfiguration(ice);
+            // Keep direct host routes first; ICE will also try a public STUN path.
+            peer=factory.createPeerConnection(iceConfig,
                 new PeerConnection.Observer(){
                     @Override public void onSignalingChange(PeerConnection.SignalingState state){}
                     @Override public void onIceConnectionChange(PeerConnection.IceConnectionState state){
-                        if(state==PeerConnection.IceConnectionState.CONNECTED||
+                        if(state==PeerConnection.IceConnectionState.CHECKING){
+                            status("Trying direct encrypted audio across networks…");
+                        }else if(state==PeerConnection.IceConnectionState.CONNECTED||
                             state==PeerConnection.IceConnectionState.COMPLETED){
                             status("Connected · Encrypted voice call");
                         }else if(state==PeerConnection.IceConnectionState.FAILED){
-                            status("Connection failed. A TURN relay may be required.");
+                            status("Audio path blocked across networks. Xyool needs a TURN relay for this connection.");
                         }else if(state==PeerConnection.IceConnectionState.DISCONNECTED){
                             status("Audio disconnected. Check internet.");
                         }
