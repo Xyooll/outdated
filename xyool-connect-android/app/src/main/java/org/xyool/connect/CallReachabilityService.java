@@ -64,6 +64,7 @@ public final class CallReachabilityService extends Service {
     private NotificationManager notices;
     private WebSocketClient socket;
     private LocalPeerNode localNode;
+    private GlobalPhoneMesh globalMesh;
     private boolean incomingLocal=false;
     private RendezvousPool bootstrap;
     private ConnectivityManager networkManager;
@@ -107,6 +108,7 @@ public final class CallReachabilityService extends Service {
             if(incoming!=null){sendType("reject");clearIncoming();}
             stopLocalNode();
             unwatchWifi();
+            stopGlobalMesh();
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -115,6 +117,7 @@ public final class CallReachabilityService extends Service {
             showForeground();
             watchWifi();
             startLocalNode();
+            startGlobalMesh();
             if(cloudAllowed())openSocket();
             return START_STICKY;
         }
@@ -136,6 +139,14 @@ public final class CallReachabilityService extends Service {
         }
     }
     public boolean isRegistered(){return registered;}
+    public int globalPeerCount(){return globalMesh==null?0:globalMesh.neighbors();}
+    public boolean meshRelayEnabled(){return prefs.getBoolean(GlobalPhoneMesh.PREF_RELAY,false);}
+    public void setMeshRelayEnabled(boolean enabled){
+        if(!foreground && enabled)return;
+        prefs.edit().putBoolean(GlobalPhoneMesh.PREF_RELAY,enabled).apply();
+        if(globalMesh!=null)globalMesh.setForwarding(enabled);
+    }
+    public boolean probeGlobalRoute(String target){return globalMesh!=null&&globalMesh.ping(target);}
     public boolean hasIncoming(){return incoming!=null;}
     public boolean hasLocalPeer(String id){return localNode!=null&&localNode.hasPeer(id);}
     public int localPeerCount(){return localNode==null?0:localNode.peerCount();}
@@ -176,6 +187,7 @@ public final class CallReachabilityService extends Service {
         bootstrap=null;
         WebSocketClient old=socket;socket=null;registered=false;
         if(old!=null)old.close();
+        if(globalMesh!=null)globalMesh.disconnected();
         openSocket();
     }
     private void sendType(String type){
@@ -236,6 +248,7 @@ public final class CallReachabilityService extends Service {
         boolean wasRegistered=registered;
         socket=null;registered=false;
         if(incoming!=null&&!incomingLocal)clearIncoming();
+        if(globalMesh!=null)globalMesh.disconnected();
         if(bootstrap!=null)bootstrap.failover();
         if(wasRegistered || listener!=null)packetEnded();
         notifyConnection(false,"Xyool signaling disconnected; reconnecting…");
@@ -250,6 +263,32 @@ public final class CallReachabilityService extends Service {
             try{JSONObject ended=new JSONObject();ended.put("type","ended");
                 ended.put("reason","network-disconnected");listener.onPacket(ended);
             }catch(Exception ignored){}
+        }
+    }
+    private void startGlobalMesh(){
+        if(globalMesh!=null||!prefs.getBoolean(PREF_ENABLED,false))return;
+        String id=prefs.getString("xyool_id","");
+        if(!id.matches("^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$"))return;
+        globalMesh=new GlobalPhoneMesh(this,main,id,new GlobalPhoneMesh.Transport(){
+            @Override public void send(JSONObject packet){
+                if(socket!=null&&socket.isOpen())socket.send(packet.toString());
+            }
+            @Override public void status(String message){
+                main.post(()->{
+                    if(listener!=null)listener.onConnection(registered,message);
+                    if(foreground)showForeground();
+                });
+            }
+        });
+        if(registered)globalMesh.connected();
+    }
+    private void stopGlobalMesh(){
+        GlobalPhoneMesh old=globalMesh;
+        globalMesh=null;
+        if(old!=null){
+            if(socket!=null&&socket.isOpen())
+                socket.send("{\"type\":\"mesh-disable\"}");
+            old.stop();
         }
     }
     private void watchWifi(){
@@ -326,8 +365,13 @@ public final class CallReachabilityService extends Service {
 
     private void process(JSONObject message){
         String type=message.optString("type","");
+        if("mesh-peers".equals(type)||"mesh-signal".equals(type)){
+            if(globalMesh!=null)globalMesh.fromRendezvous(message);
+            return;
+        }
         if("registered".equals(type)){
             registered=true;reconnectDelayMs=2000;
+            if(globalMesh!=null)globalMesh.connected();
             notifyConnection(true,"Internet calling online.");
         }
         if("incoming".equals(type)){
@@ -375,7 +419,8 @@ public final class CallReachabilityService extends Service {
         Notification n=new Notification.Builder(this,CHANNEL_STATUS)
             .setSmallIcon(android.R.drawable.ic_menu_call)
             .setContentTitle("Xyool Connect • reachability enabled")
-            .setContentText(registered?"Phone node + internet rendezvous online":
+            .setContentText(registered?
+                ("Xyool network node • "+globalPeerCount()+" direct mesh peers"):
                 (!cloudAllowed()?"Direct-only local node mode":
                 (localNode!=null?"Phone node active; internet reconnecting":"Connecting to Xyool Network…")))
             .setOngoing(true).setCategory(Notification.CATEGORY_SERVICE)
@@ -435,6 +480,7 @@ public final class CallReachabilityService extends Service {
         main.removeCallbacks(retry);main.removeCallbacks(ringTimeout);
         clearIncoming();
         unwatchWifi();
+        stopGlobalMesh();
         stopLocalNode();
         WebSocketClient old=socket;socket=null;
         if(old!=null)old.close();
