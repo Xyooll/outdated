@@ -32,7 +32,7 @@ jobs:
         working-directory: xyool-connect-android/signaling
         run: node --check network-node.mjs
       - name: Verify production signaling Docker image
-        run: docker build -f xyool-connect-android/signaling/Dockerfile -t xyool-signaling-test .
+        run: docker build -f xyool-connect-android/signaling/Dockerfile -t xyool-signaling-test xyool-connect-android/signaling
 
       - name: 'Prove peer federation across 2 and 3 nodes with mesh authentication'
         working-directory: xyool-connect-android/signaling
