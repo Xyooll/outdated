@@ -405,10 +405,12 @@ public final class IdCallActivity extends Activity {
 
     private void showMyQr(){
         try{
-            // The QR holds the public ID only. Never include the private auth token.
+            // QR carries public Xyool ID + public key fingerprint, not any secret.
             Map<EncodeHintType,Object> hints=new EnumMap<>(EncodeHintType.class);
             hints.put(EncodeHintType.MARGIN,2);
-            BitMatrix grid=new MultiFormatWriter().encode(id,BarcodeFormat.QR_CODE,640,640,hints);
+            String fingerprint=PhoneIdentity.fingerprint();
+            String qrPayload="XYOOL2:"+id+":"+fingerprint;
+            BitMatrix grid=new MultiFormatWriter().encode(qrPayload,BarcodeFormat.QR_CODE,640,640,hints);
             int width=grid.getWidth(),height=grid.getHeight();
             Bitmap bitmap=Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
             int[] pixels=new int[width*height];
@@ -429,6 +431,9 @@ public final class IdCallActivity extends Activity {
             TextView label=text(id,18,FG,true);
             label.setGravity(Gravity.CENTER);
             frame.addView(label);
+            TextView pinLabel=text("Device key: "+fingerprint,11,MUTED,false);
+            pinLabel.setTextIsSelectable(true);
+            frame.addView(pinLabel);
             new AlertDialog.Builder(this)
                 .setTitle("My Xyool ID")
                 .setView(frame)
@@ -436,7 +441,7 @@ public final class IdCallActivity extends Activity {
                 .setPositiveButton("Done",null)
                 .show();
         }catch(Exception e){
-            status("Unable to display QR code. You can still copy your ID.");
+            status("Android Keystore unavailable. Secure identity QR could not be displayed.");
         }
     }
     private static final int QR_SCAN_REQUEST = 493;
@@ -471,10 +476,17 @@ public final class IdCallActivity extends Activity {
             status("That's your own QR. Scan the other person's code.");
             return;
         }
+        String fingerprint=data.getStringExtra(QrScannerActivity.EXTRA_KEY_PIN);
+        if(fingerprint!=null){
+            try{PhoneIdentity.pinFromQr(this,raw,fingerprint);}
+            catch(IllegalArgumentException bad){status("Invalid QR public-key fingerprint.");return;}
+        }
         targetInput.setText(raw);
         new AlertDialog.Builder(this)
             .setTitle("Xyool ID scanned")
-            .setMessage(raw + " is ready. Tap Call when you're ready.")
+            .setMessage(raw + (fingerprint!=null?
+                " • Device key pinned from QR. Tap Call.":
+                " • Legacy QR has no verified device key. Verify identity separately before calling."))
             .setPositiveButton("OK",null)
             .show();
         status("ID scanned successfully.");
