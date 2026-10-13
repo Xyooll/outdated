@@ -223,7 +223,13 @@ public final class VoiceCallSession {
                             state==PeerConnection.IceConnectionState.COMPLETED){
                             connected=true;
                             cancelIceRecovery();
-                            VoiceCallSession.this.state("Encrypted voice connected.");
+                            // A completed ICE state overrides any stale
+                            // "offer being negotiated" recovery diagnostic.
+                            iceRecoveryDecision=IceRecoveryPolicy.connectedOutcome(
+                                iceRestartAttempts);
+                            VoiceCallSession.this.state(iceRestartAttempts>0?
+                                "Encrypted voice connected after ICE restart.":
+                                "Encrypted voice connected.");
                         }else if(state==PeerConnection.IceConnectionState.FAILED){
                             connected=false;
                             scheduleIceRecovery(diag,1200L);
