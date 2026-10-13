@@ -37,6 +37,7 @@ import java.util.Locale;
  */
 public final class QrScannerActivity extends Activity {
     public static final String EXTRA_ID = "org.xyool.connect.SCANNED_PUBLIC_ID";
+    public static final String EXTRA_KEY_PIN = "org.xyool.connect.SCANNED_KEY_FINGERPRINT";
     private static final int CAMERA_REQUEST = 830;
     private static final int BG = 0xff0c1822;
     private static final int FG = 0xffe8f8f4;
@@ -143,14 +144,28 @@ public final class QrScannerActivity extends Activity {
                 String raw = result.getText();
                 if (raw == null) return;
                 String value = raw.trim().toUpperCase(Locale.US);
-                if (!value.matches("^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$")) {
-                    message("This is not a Xyool ID QR code. Try the other phone's Show my QR.");
+                String id=value;
+                String fingerprint=null;
+                if(value.startsWith("XYOOL2:")){
+                    String[] parts=value.split(":",-1);
+                    if(parts.length!=3){
+                        message("Unrecognized Xyool identity QR.");return;
+                    }
+                    id=parts[1];
+                    fingerprint=parts[2].toLowerCase(Locale.US);
+                    if(!fingerprint.matches("^[a-f0-9]{64}$")){
+                        message("Invalid public-key fingerprint.");return;
+                    }
+                }
+                if (!id.matches("^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$")) {
+                    message("This is not a valid Xyool ID QR code.");
                     return;
                 }
                 finished = true;
                 scanner.pause();
                 Intent data = new Intent();
-                data.putExtra(EXTRA_ID, value);
+                data.putExtra(EXTRA_ID, id);
+                if(fingerprint!=null)data.putExtra(EXTRA_KEY_PIN,fingerprint);
                 setResult(RESULT_OK, data);
                 finish();
             }
