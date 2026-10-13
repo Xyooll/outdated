@@ -17,6 +17,7 @@
         android:usesCleartextTraffic="false"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:name=".DirectCallActivity" android:exported="false"/>
         <activity android:name=".QrScannerActivity" android:exported="false" android:screenOrientation="portrait"/>
         <activity android:name=".IdCallActivity" android:exported="false"/>
         <activity android:name=".NativeVoiceActivity" android:exported="false"/>
