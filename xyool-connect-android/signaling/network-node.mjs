@@ -297,7 +297,7 @@ export function createXyoolNetworkNode({
     await new Promise(resolve=>meshWss.close(resolve));
     await new Promise(resolve=>app.close(resolve));
   }
-  return {listen:()=>new Promise(resolve=>app.listen(port,host,resolve)),
+  return {listen:()=>new Promise(resolve=>app.listen(port,host,()=>{for(const url of peerUrls)connectMesh(url);resolve();})),
     address:()=>app.address(),close,stats:()=>({phones:local.size,neighbors:neighbors.size,remote:routes.size})};
 }
 if(process.argv[1] && import.meta.url===new URL('file://'+process.argv[1]).href){
