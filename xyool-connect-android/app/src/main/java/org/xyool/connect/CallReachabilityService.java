@@ -88,13 +88,9 @@ public final class CallReachabilityService extends Service {
         prefs=getSharedPreferences("xyool_private",MODE_PRIVATE);
         notices=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         installChannels();
-        // Do not open a network socket simply because Android creates/binds
-        // this service: the owner must explicitly enable Xyool Network.
-        // onStartCommand handles foreground promotion before opening sockets.
-        if(prefs.getBoolean(PREF_ENABLED,false)){
-            watchWifi();
-            startLocalNode();
-        }
+        // Never open a socket or local node from onCreate. On Android 14+
+        // foreground promotion must precede reachability initialization.
+        // onStartCommand checks opt-in before starting any network listeners.
     }
     @Override public IBinder onBind(Intent intent){return binder;}
     @Override public int onStartCommand(Intent intent,int flags,int startId){
