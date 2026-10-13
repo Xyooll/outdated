@@ -221,6 +221,12 @@ public final class CallReachabilityService extends Service {
     public boolean dialVoice(String target,boolean local){
         return foreground&&voice!=null&&voice.dial(target,local);
     }
+    public boolean dialRelayTest(String target){
+        return foreground&&registered&&voice!=null&&
+            currentTurnLease!=null&&
+            currentTurnLease.validAt(System.currentTimeMillis())&&
+            voice.dial(target,false,true);
+    }
     public boolean acceptVoice(){return voice!=null&&voice.accept();}
     public void declineVoice(){if(voice!=null)voice.reject();clearIncoming();}
     public void hangupVoice(){if(voice!=null)voice.hangup();clearIncoming();}
