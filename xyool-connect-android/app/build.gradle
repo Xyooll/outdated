@@ -6,13 +6,20 @@ plugins {
 // from signing/xyool-test-debug.p12.b64. This is NOT production security.
 // The GitHub Actions workflow decodes the same file for every run.
 def xyoolBuildNumber = (System.getenv('XYOOL_DEBUG_BUILD_NUMBER') ?: '10').toInteger()
+// Migration-safe alternative: keep a separately installable test app for
+// existing users whose older APK had a different signing certificate.
+// Once installed, this ID and its test signing key MUST remain unchanged.
+def xyoolSideBySide = 'true'.equalsIgnoreCase(System.getenv('XYOOL_SIDE_BY_SIDE') ?: 'false')
 
 android {
     namespace 'org.xyool.connect'
     compileSdk 35
     defaultConfig {
         // Keep this unchanged: Android considers a different ID another app.
-        applicationId 'org.xyool.connect.crossnetworkalpha'
+        applicationId xyoolSideBySide ?
+            'org.xyool.connect.next' : 'org.xyool.connect.crossnetworkalpha'
+        manifestPlaceholders = [xyoolAppLabel: xyoolSideBySide ?
+            'Xyool Connect Next' : 'Xyool QR Fix']
         minSdk 26
         targetSdk 34
         // CI run number strictly increases so later APKs upgrade earlier ones.
