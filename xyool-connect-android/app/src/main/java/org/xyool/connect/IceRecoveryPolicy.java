@@ -9,6 +9,13 @@ public final class IceRecoveryPolicy {
     public static final int MAX_AUTOMATIC_RESTARTS=1;
     private IceRecoveryPolicy(){}
 
+    /** An ICE connection event supersedes any pending negotiation status. */
+    public static String connectedOutcome(int restartAttempts){
+        return restartAttempts>0 ?
+            "ICE connected after automatic restart" :
+            "ICE connected without a restart";
+    }
+
     public static String reason(boolean caller,boolean sessionLive,
         boolean accepted,boolean remoteReady,boolean stable,int attempts){
         if(!sessionLive)return "No active Xyool call";
