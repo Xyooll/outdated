@@ -17,6 +17,18 @@ public final class IceRecoveryPolicySelfTest {
         test("no infinite retries",IceRecoveryPolicy.mayRestart(true,true,true,true,true,1),false);
         test("over budget",IceRecoveryPolicy.mayRestart(true,true,true,true,true,10),false);
         test("invalid negative attempts",IceRecoveryPolicy.mayRestart(true,true,true,true,true,-1),false);
+        if(!IceRecoveryPolicy.reason(false,true,true,true,true,0)
+            .contains("Receiving phone"))throw new AssertionError("receiver reason");
+        total++;
+        if(!IceRecoveryPolicy.reason(true,true,true,false,true,0)
+            .contains("remote SDP answer"))throw new AssertionError("missing remote answer");
+        total++;
+        if(!IceRecoveryPolicy.reason(true,true,true,true,false,0)
+            .contains("not stable"))throw new AssertionError("unstable reason");
+        total++;
+        if(!IceRecoveryPolicy.reason(true,true,true,true,true,1)
+            .contains("budget exhausted"))throw new AssertionError("budget reason");
+        total++;
         System.out.println("ICE recovery policy "+total+"/"+total+" PASS (network paths not tested)");
     }
 }
