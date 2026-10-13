@@ -1,0 +1,79 @@
+name: Initialize Xyool Stable Signing Key
+
+# Owner-only, one-time action. The generated PKCS12 key is encrypted before
+# being committed. The required passphrase is stored in Actions Secrets, NOT
+# the repository. Never rerun to rotate a key; Android upgrades require the
+# same original certificate.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Generate private signing certificate only once
+        env:
+          XYOOL_SIGNING_PASSPHRASE: ${{ secrets.XYOOL_SIGNING_PASSPHRASE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${XYOOL_SIGNING_PASSPHRASE}" ]; then
+            echo "::error::Add the XYOOL_SIGNING_PASSPHRASE repository Actions secret first."
+            exit 1
+          fi
+          if [ -e xyool-connect-android/signing/xyool-stable.p12.enc.b64 ]; then
+            echo "::notice::Existing signing identity detected. Refusing to rotate the certificate."
+            exit 0
+          fi
+          mkdir -p xyool-connect-android/signing
+          umask 077
+          keytool -genkeypair -noprompt -storetype PKCS12 \
+            -keystore "${RUNNER_TEMP}/xyool-stable.p12" \
+            -alias xyool-stable -keyalg RSA -keysize 3072 -sigalg SHA256withRSA \
+            -validity 10000 \
+            -dname "CN=Xyool Connect, OU=Mobile Development, O=Xyool, C=US" \
+            -storepass:env XYOOL_SIGNING_PASSPHRASE \
+            -keypass:env XYOOL_SIGNING_PASSPHRASE
+          openssl enc -aes-256-cbc -pbkdf2 -iter 300000 -salt \
+            -pass env:XYOOL_SIGNING_PASSPHRASE \
+            -in "${RUNNER_TEMP}/xyool-stable.p12" \
+            -out "${RUNNER_TEMP}/xyool-stable.p12.enc"
+          base64 -w 0 "${RUNNER_TEMP}/xyool-stable.p12.enc" \
+            > xyool-connect-android/signing/xyool-stable.p12.enc.b64
+          printf '\n' >> xyool-connect-android/signing/xyool-stable.p12.enc.b64
+          keytool -list -v \
+            -keystore "${RUNNER_TEMP}/xyool-stable.p12" \
+            -storetype PKCS12 -alias xyool-stable \
+            -storepass:env XYOOL_SIGNING_PASSPHRASE \
+            | grep 'SHA256:' \
+            > xyool-connect-android/signing/CERTIFICATE_FINGERPRINT.txt
+          rm -f "${RUNNER_TEMP}/xyool-stable.p12" "${RUNNER_TEMP}/xyool-stable.p12.enc"
+          git config user.name "Xyool Release Automation"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add xyool-connect-android/signing/xyool-stable.p12.enc.b64 \
+                  xyool-connect-android/signing/CERTIFICATE_FINGERPRINT.txt
+          git commit -m "Initialize encrypted stable Android release signing certificate"
+          git push origin HEAD:main
+      - name: Start first stable Android release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if [ -f xyool-connect-android/signing/xyool-stable.p12.enc.b64 ]; then
+            echo "Signing key already existed; run release workflow manually if necessary."
+          else
+            # GitHub GITHUB_TOKEN pushes intentionally do not trigger 'on: push'.
+            gh workflow run xyool-release-android.yml --ref main
+          fi
