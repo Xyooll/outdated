@@ -4,6 +4,7 @@ import path from 'node:path';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
 import {enableProof,signalProof,verifiedPublicKey} from './overlay-auth.mjs';
+import {chooseMeshPeers} from './peer-sampler.mjs';
 
 const ID = /^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/;
 const HEX = /^[0-9a-f]{64}$/;
@@ -71,11 +72,11 @@ export function createIdServer({ host='127.0.0.1',port=8788,
     // A bounded, soft-state list of online IDs: never publish IP addresses or tokens.
     for(const socket of meshEnabled){
       if(!socket.xyid||socket.readyState!==WebSocket.OPEN)continue;
-      const available=[...meshEnabled].filter(x=>x!==socket&&x.xyid&&x.readyState===WebSocket.OPEN)
-        .slice(0,16).map(x=>x.xyid);
-      const pins={};
-      for(const id of available)if(knownMeshKeys.has(id))pins[id]=knownMeshKeys.get(id);
-      deliver(socket,{type:'mesh-peers',ids:available,pins});
+      const available=chooseMeshPeers(socket.xyid,
+        [...meshEnabled].filter(x=>x!==socket&&x.xyid&&x.readyState===WebSocket.OPEN)
+          .map(x=>({id:x.xyid,fp:knownMeshKeys.get(x.xyid)})),16);
+      const pins={};for(const p of available)pins[p.id]=p.fp;
+      deliver(socket,{type:'mesh-peers',ids:available.map(p=>p.id),pins});
     }
   }
   const callFor=socket=>socket.session&&sessions.get(socket.session);
