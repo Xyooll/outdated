@@ -74,10 +74,11 @@ public final class IdCallActivity extends Activity {
     // Cloudflare receives source IP and basic binding metadata, not call audio.
     private static final String DEFAULT_STUN="stun:stun.cloudflare.com:3478";
     private SharedPreferences prefs;
+    private SavedContacts savedContacts;
     private String id, token;
     private TextView stateLabel;
     private EditText targetInput;
-    private LinearLayout body;
+    private LinearLayout body, contactsList;
     private CallReachabilityService cloud;
     private boolean cloudBound;
     private boolean autoAnswerRequested;
@@ -132,6 +133,7 @@ public final class IdCallActivity extends Activity {
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         prefs=getSharedPreferences("xyool_private",MODE_PRIVATE);
+        savedContacts=new SavedContacts(this);
         autoAnswerRequested=CallReachabilityService.ACTION_ANSWER.equals(getIntent().getAction());
         id=prefs.getString("xyool_id","");
         token=prefs.getString("xyool_auth","");
@@ -301,12 +303,23 @@ public final class IdCallActivity extends Activity {
         targetInput=input(dial,"Xyool ID",null);
         space(dial,7);
         button(dial,"Scan their QR code",false,v->scanIdQr());
+        space(dial,6);
+        button(dial,"Save entered ID",false,v->saveEnteredContact());
         space(dial,11);
         button(dial,"Call",true,v->call());
         space(dial,6);
         button(dial,"Hang up",false,v->hangup());
         space(dial,6);
         button(dial,"Mute / Unmute",false,v->toggleMute());
+
+        LinearLayout contacts=panel();
+        contacts.addView(text("SAVED CONTACTS",12,MUTED,true));
+        space(contacts,7);
+        contacts.addView(text("Scan a QR code once, or save an ID manually. Tap a saved contact to call. Unverified IDs stay labeled unverified.",12,MUTED,false));
+        space(contacts,5);
+        contactsList=column();
+        contacts.addView(contactsList);
+        showSavedContacts();
 
         space(body,7);
         body.addView(text("Test build • Network reachability depends on Android and connectivity. Not for emergency calls.",12,MUTED,false));
@@ -391,6 +404,14 @@ public final class IdCallActivity extends Activity {
             catch(IllegalArgumentException bad){status("Invalid QR public-key fingerprint.");return;}
         }
         targetInput.setText(raw);
+        if(savedContacts!=null){
+            // Save the public ID once. QR key verification is held independently
+            // in PhoneIdentity; manual contacts never become QR-verified.
+            boolean exists=false;
+            for(SavedContacts.Entry c:savedContacts.all())if(c.id.equals(raw))exists=true;
+            if(!exists)savedContacts.save(raw,raw);
+            showSavedContacts();
+        }
         new AlertDialog.Builder(this)
             .setTitle("Xyool ID scanned")
             .setMessage(raw + (fingerprint!=null?
@@ -399,6 +420,69 @@ public final class IdCallActivity extends Activity {
             .setPositiveButton("OK",null)
             .show();
         status("ID scanned successfully.");
+    }
+
+    private void showSavedContacts(){
+        if(contactsList==null||savedContacts==null)return;
+        contactsList.removeAllViews();
+        List<SavedContacts.Entry> entries=savedContacts.all();
+        if(entries.isEmpty()){
+            contactsList.addView(text("No saved Xyool IDs yet.",13,MUTED,false));return;
+        }
+        for(SavedContacts.Entry contact:entries){
+            final String target=contact.id;
+            space(contactsList,5);
+            boolean verified=PhoneIdentity.qrVerifiedFingerprint(this,target)!=null;
+            button(contactsList,contact.name+" • "+(verified?"QR verified":"Unverified")+
+                " • Call",false,v->{
+                targetInput.setText(target);
+                call();
+            });
+            space(contactsList,3);
+            button(contactsList,"Edit / remove "+contact.name,false,v->editContact(contact));
+        }
+    }
+    private void saveEnteredContact(){
+        String target=normalize(targetInput.getText().toString());
+        if(target==null||target.equals(id)){
+            status("Enter a valid different Xyool ID to save.");return;
+        }
+        promptSaveContact(target,target);
+    }
+    private void promptSaveContact(String target,String currentName){
+        EditText name=new EditText(this);
+        name.setSingleLine(true);
+        name.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        name.setText(currentName.equals(target)?"":currentName);
+        name.setHint("Contact name (optional)");
+        new AlertDialog.Builder(this)
+            .setTitle("Save Xyool contact")
+            .setMessage("Saved only on this phone. A typed ID is not identity verification.")
+            .setView(name)
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Save",(d,w)->{
+                if(!savedContacts.save(target,name.getText().toString())){
+                    status("Contact could not be saved.");return;
+                }
+                showSavedContacts();
+                status("Saved "+target+" to Xyool contacts.");
+            }).show();
+    }
+    private void editContact(SavedContacts.Entry entry){
+        new AlertDialog.Builder(this)
+            .setTitle(entry.name)
+            .setItems(new String[]{"Rename contact","Remove saved contact"},(d,which)->{
+                if(which==0)promptSaveContact(entry.id,entry.name);
+                else new AlertDialog.Builder(this)
+                    .setTitle("Remove saved contact?")
+                    .setMessage("Remove "+entry.name+" from this app's saved contact list? This does not remove separately pinned QR keys.")
+                    .setNegativeButton("Cancel",null)
+                    .setPositiveButton("Remove",(dialog,choice)->{
+                        if(savedContacts.remove(entry.id)){
+                            showSavedContacts();status("Contact removed.");
+                        }
+                    }).show();
+            }).show();
     }
 
     private void connectionStatus(){
