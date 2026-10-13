@@ -37,6 +37,20 @@ public final class IceRecoveryPolicySelfTest {
             .equals("ICE connected after automatic restart"))
             throw new AssertionError("recovered ICE must supersede pending negotiation");
         total++;
+        test("long CHECKING must be watched",
+            IceRecoveryPolicy.shouldWatchChecking("CHECKING",true,false),true);
+        test("recovered ICE cannot timeout",
+            IceRecoveryPolicy.shouldWatchChecking("COMPLETED",true,true),false);
+        test("disconnected state uses separate recovery",
+            IceRecoveryPolicy.shouldWatchChecking("DISCONNECTED",true,false),false);
+        test("ended call cannot timeout",
+            IceRecoveryPolicy.shouldWatchChecking("CHECKING",false,false),false);
+        test("connected state cannot timeout",
+            IceRecoveryPolicy.shouldWatchChecking("CHECKING",true,true),false);
+        if(IceRecoveryPolicy.CHECKING_TIMEOUT_MS!=30000L ||
+            IceRecoveryPolicy.RESTART_OUTCOME_TIMEOUT_MS!=30000L)
+            throw new AssertionError("Bounded ICE watchdog timings");
+        total++;
         System.out.println("ICE recovery policy "+total+"/"+total+" PASS (network paths not tested)");
     }
 }
