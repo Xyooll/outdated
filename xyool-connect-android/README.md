@@ -1,3 +1,23 @@
+# Xyool Connect — Simple Updatable Test APKs (current workflow)
+
+**No production-release setup or GitHub Actions secret is needed to test.**
+
+Xyool's normal Android build at [Build Xyool Connect Android](https://github.com/Xyooll/outdated/actions/workflows/xyool-connect-android.yml) now publishes **`Xyool-Connect-Test-Update.apk`**. Every run:
+
+1. Keeps the exact Android package ID `org.xyool.connect.crossnetworkalpha`.
+2. Reuses the same **PUBLIC test-only signing certificate** from `signing/xyool-test-debug.p12.b64`.
+3. Automatically raises `versionCode` using the workflow run number (1000 + run number), so the latest APK is an update.
+4. Verifies the APK signature, app package and increasing version before offering the artifact.
+5. Does not depend on GitHub repository secrets or any special release workflow.
+
+**First-time transition:** Older v0.7 / earlier GitHub debug APKs used temporary signing keys. Android cannot upgrade an installed APK to a new signing certificate. The first time you install the new **updatable test APK**, Android may require you to uninstall the previous `org.xyool.connect.crossnetworkalpha` app. Other alpha versions use separate package IDs, so you can leave them installed. Before uninstalling an old Xyool test app, remember that Android erases its saved Xyool ID and token; the server cannot recover ownership using only the visible ID. A future recovery/export mechanism is still needed.
+
+**Thereafter:** Download the newest `Xyool-Connect-Test-Update.apk` artifact from the same workflow, tap the APK on your phone, and Android should offer **Update** without erasing local data, provided the version is newer. You still approve APK installation; this is *in-place updating*, not unattended automatic installation.
+
+**Important:** The test signing key is deliberately public for easy development. Anyone with the repository can sign APKs with this test identity, so install test packages only from your trusted GitHub Actions build. Never use this key as a production trusted identity. Production signing and app-store distribution remain a separate later project.
+
+---
+
 # Xyool Connect v0.5 — QR IDs and simple calling
 
 **Everyday interface:** My Xyool ID → Show my QR code → friend scans it → ID fills into their call box → tap Call → other person taps Accept. Typing or copying an ID also works.
