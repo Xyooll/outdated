@@ -187,7 +187,7 @@ public final class CallReachabilityService extends Service {
         bootstrap=null;
         WebSocketClient old=socket;socket=null;registered=false;
         if(old!=null)old.close();
-        if(globalMesh!=null)globalMesh.disconnected();
+        if(globalMesh!=null)globalMesh.rendezvousOffline();
         openSocket();
     }
     private void sendType(String type){
@@ -248,7 +248,7 @@ public final class CallReachabilityService extends Service {
         boolean wasRegistered=registered;
         socket=null;registered=false;
         if(incoming!=null&&!incomingLocal)clearIncoming();
-        if(globalMesh!=null)globalMesh.disconnected();
+        if(globalMesh!=null)globalMesh.rendezvousOffline();
         if(bootstrap!=null)bootstrap.failover();
         if(wasRegistered || listener!=null)packetEnded();
         notifyConnection(false,"Xyool signaling disconnected; reconnecting…");
@@ -419,10 +419,11 @@ public final class CallReachabilityService extends Service {
         Notification n=new Notification.Builder(this,CHANNEL_STATUS)
             .setSmallIcon(android.R.drawable.ic_menu_call)
             .setContentTitle("Xyool Connect • reachability enabled")
-            .setContentText(registered?
-                ("Xyool network node • "+globalPeerCount()+" direct mesh peers"):
+            .setContentText(globalPeerCount()>0?
+                ("P2P mesh online • "+globalPeerCount()+" direct nodes"):
+                (registered?"Xyool rendezvous registered":
                 (!cloudAllowed()?"Direct-only local node mode":
-                (localNode!=null?"Phone node active; internet reconnecting":"Connecting to Xyool Network…")))
+                (localNode!=null?"Local node active; bootstrap reconnecting":"Connecting to Xyool Network…"))))
             .setOngoing(true).setCategory(Notification.CATEGORY_SERVICE)
             .setContentIntent(launch(ACTION_VIEW,1931)).build();
         if(Build.VERSION.SDK_INT>=34)
