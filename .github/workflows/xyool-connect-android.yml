@@ -36,6 +36,9 @@ jobs:
       - name: Build Android APK
         working-directory: xyool-connect-android
         run: gradle :app:assembleDebug --no-daemon --stacktrace
+      - name: Verify installable release variant can compile (unsigned until key is initialized)
+        working-directory: xyool-connect-android
+        run: gradle :app:assembleRelease --no-daemon
       - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v4
