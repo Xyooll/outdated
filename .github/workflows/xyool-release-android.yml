@@ -89,7 +89,7 @@ jobs:
           VERIFY_OUTPUT=$("$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK")
           echo "$VERIFY_OUTPUT"
           EXPECTED=$(sed -n 's/^SHA256: //p' xyool-connect-android/signing/CERTIFICATE_FINGERPRINT.txt | tr -d ':' | tr '[:upper:]' '[:lower:]')
-          ACTUAL=$(printf '%s\\n' "$VERIFY_OUTPUT" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -1 | tr '[:upper:]' '[:lower:]')
+          ACTUAL=$(printf '%s\n' "$VERIFY_OUTPUT" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -1 | tr '[:upper:]' '[:lower:]')
           if [ -z "$EXPECTED" ] || [ "$EXPECTED" != "$ACTUAL" ]; then
             echo "::error::Signing certificate does not match permanent Xyool certificate; refusing update-incompatible APK."
             exit 1
