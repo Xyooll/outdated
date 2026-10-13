@@ -1,0 +1,36 @@
+name: Xyool TURN signaling integration
+on:
+  push:
+    paths:
+      - 'xyool-connect-android/signaling/**'
+      - '.github/workflows/xyool-turn-signaling.yml'
+  pull_request:
+    paths:
+      - 'xyool-connect-android/signaling/**'
+      - '.github/workflows/xyool-turn-signaling.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-turn-signaling:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked signaling dependencies
+        working-directory: xyool-connect-android/signaling
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Test credential generation, registered-only delivery and throttling
+        working-directory: xyool-connect-android/signaling
+        run: node --test test/turn-lease.test.mjs test/turn-registered.test.mjs
+      - name: Regression test existing Xyool signaling and network protocols
+        working-directory: xyool-connect-android/signaling
+        run: npm test
+      - name: Check signaling server syntax
+        working-directory: xyool-connect-android/signaling
+        run: |
+          node --check server-id.mjs
+          node --check turn-lease.mjs

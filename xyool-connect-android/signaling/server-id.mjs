@@ -5,6 +5,7 @@ import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
 import {enableProof,signalProof,verifiedPublicKey} from './overlay-auth.mjs';
 import {chooseMeshPeers} from './peer-sampler.mjs';
+import {makeTurnIssuer} from './turn-lease.mjs';
 
 const ID = /^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/;
 const HEX = /^[0-9a-f]{64}$/;
@@ -21,7 +22,8 @@ const deliver=(socket,obj)=>{
 };
 
 export function createIdServer({ host='127.0.0.1',port=8788,
-  registryPath=process.env.XYOOL_ID_REGISTRY || './xyool-id-registry.json'}={}){
+  registryPath=process.env.XYOOL_ID_REGISTRY || './xyool-id-registry.json',
+  turnIssuer=makeTurnIssuer()}={}){
   // Fail closed rather than silently issuing non-persistent IDs.
   // On Railway, attach a persistent volume before booting this service.
   const storageDir=path.dirname(path.resolve(registryPath));
@@ -56,6 +58,28 @@ export function createIdServer({ host='127.0.0.1',port=8788,
   }
   const online=new Map();
   const sessions=new Map();
+  // Credential issue rates are bounded independently of signaling traffic.
+  // Even valid registered IDs cannot obtain unbounded relay credentials.
+  let turnsInWindow=0,turnWindowAt=Date.now();
+  // Socket reconnects must not reset the per-registered-identity lease cooldown.
+  const lastTurnIssueById=new Map();
+  function grantTurnLease(socket){
+    if(!turnIssuer||!socket.xyid||socket.readyState!==WebSocket.OPEN)return;
+    const now=Date.now();
+    if(now-turnWindowAt>=60_000){turnWindowAt=now;turnsInWindow=0;}
+    if(turnsInWindow>=20)return;
+    const previous=lastTurnIssueById.get(socket.xyid);
+    if(previous!==undefined&&now-previous<300_000)return;
+    turnsInWindow++;
+    lastTurnIssueById.set(socket.xyid,now);
+    Promise.resolve().then(()=>turnIssuer()).then(lease=>{
+      if(socket.xyid&&online.get(socket.xyid)===socket)
+        deliver(socket,lease);
+    }).catch(()=>{
+      if(socket.xyid&&online.get(socket.xyid)===socket)
+        deliver(socket,{type:'turn-unavailable'});
+    });
+  }
   const meshEnabled=new Set(); // opt-in signaling bootstrap participants, never open TCP proxies
   function validMeshSignal(m) {
     if(!ID.test(m.to||'')||!['offer','answer','candidate','close'].includes(m.kind))
@@ -141,9 +165,14 @@ export function createIdServer({ host='127.0.0.1',port=8788,
         socket.xyid=msg.id;
         online.set(socket.xyid,socket);
         deliver(socket,{type:'registered',id:socket.xyid});
+        grantTurnLease(socket);
         return;
       }
       if(!socket.xyid){socket.close(1008,'Register first');return;}
+      if(msg.type==='turn-refresh'){
+        // No TURN shared secret or provider token is ever sent to the client.
+        grantTurnLease(socket);return;
+      }
       if(msg.type==='mesh-enable'){
         const ts=msg.authTs;
         if(!Number.isSafeInteger(ts)||Math.abs(now-ts)>30000)return;
@@ -247,6 +276,9 @@ export function createIdServer({ host='127.0.0.1',port=8788,
   });
   const ticker=setInterval(()=>{
     const now=Date.now();
+    // Keep stale identity cooldown entries from accumulating indefinitely.
+    for(const [id,issuedAt] of lastTurnIssueById)
+      if(now-issuedAt>=300_000)lastTurnIssueById.delete(id);
     for(const session of sessions.values()) {
       if(now-session.created>60*60*1000)stopCall(session,null,'timeout');
       else if(session.phase==='ringing'&&now-session.created>45_000)
