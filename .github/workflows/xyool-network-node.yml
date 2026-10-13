@@ -1,0 +1,35 @@
+name: Test Xyool Peer Network
+
+on:
+  push:
+    paths:
+      - 'xyool-connect-android/signaling/**'
+      - '.github/workflows/xyool-network-node.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  node-federation-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout Xyool Network
+        uses: actions/checkout@v4
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install WebSocket dependency
+        working-directory: xyool-connect-android/signaling
+        run: npm install --no-audit --no-fund
+      - name: Check node syntax
+        working-directory: xyool-connect-android/signaling
+        run: node --check network-node.mjs
+      - name: Prove peer federation: 2 nodes, 3 nodes, and invalid mesh authentication
+        working-directory: xyool-connect-android/signaling
+        run: npm run test:network
+      - name: Preserve existing ID signaling protocol behavior
+        working-directory: xyool-connect-android/signaling
+        run: npm test
