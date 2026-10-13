@@ -26,6 +26,9 @@ jobs:
       - name: Test credential generation, registered-only delivery and throttling
         working-directory: xyool-connect-android/signaling
         run: node --test test/turn-lease.test.mjs test/turn-registered.test.mjs
+      - name: Regression test existing Xyool signaling and network protocols
+        working-directory: xyool-connect-android/signaling
+        run: npm test
       - name: Check signaling server syntax
         working-directory: xyool-connect-android/signaling
         run: |
