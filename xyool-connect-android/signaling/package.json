@@ -10,7 +10,9 @@
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test test/*.test.mjs",
-    "start:id": "node server-id.mjs"
+    "start:id": "node server-id.mjs",
+    "start:network": "node network-node.mjs",
+    "test:network": "node --test test/network-node.test.mjs"
   },
   "dependencies": {
     "ws": "8.18.3"
