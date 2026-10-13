@@ -12,6 +12,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.net.Uri;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -62,7 +66,8 @@ public final class CallReachabilityService extends Service {
     private LocalPeerNode localNode;
     private boolean incomingLocal=false;
     private RendezvousPool bootstrap;
-    private URI connectedUri;
+    private ConnectivityManager networkManager;
+    private ConnectivityManager.NetworkCallback networkCallback;
 
     private Listener listener;
     private JSONObject incoming;
@@ -82,7 +87,10 @@ public final class CallReachabilityService extends Service {
         prefs=getSharedPreferences("xyool_private",MODE_PRIVATE);
         notices=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         installChannels();
-        if(prefs.getBoolean(PREF_ENABLED,false))startLocalNode();
+        if(prefs.getBoolean(PREF_ENABLED,false)){
+            watchWifi();
+            startLocalNode();
+        }
         openSocket();
     }
     @Override public IBinder onBind(Intent intent){return binder;}
@@ -98,12 +106,14 @@ public final class CallReachabilityService extends Service {
             stopForeground(STOP_FOREGROUND_REMOVE);
             if(incoming!=null){sendType("reject");clearIncoming();}
             stopLocalNode();
+            unwatchWifi();
             stopSelf();
             return START_NOT_STICKY;
         }
         if(prefs.getBoolean(PREF_ENABLED,false)){
             foreground=true;
             showForeground();
+            watchWifi();
             startLocalNode();
             if(cloudAllowed())openSocket();
             return START_STICKY;
@@ -142,6 +152,7 @@ public final class CallReachabilityService extends Service {
         if(cloudAllowed())reconnectNow();
         else{
             main.removeCallbacks(retry);
+            bootstrap=null;
             WebSocketClient old=socket;socket=null;registered=false;
             if(old!=null)old.close();
             notifyConnection(false,"Direct-only local node mode.");
@@ -188,7 +199,6 @@ public final class CallReachabilityService extends Service {
                 prefs.getString(RendezvousPool.PREF_NODES,""));
             uri=bootstrap.current();
         }catch(Exception invalid){notifyConnection(false,"Invalid Xyool bootstrap settings.");return;}
-        connectedUri=uri;
         final String ownId=id,ownToken=token;
         WebSocketClient candidate=new WebSocketClient(uri){
             @Override public void onOpen(ServerHandshake handshake){
@@ -241,6 +251,35 @@ public final class CallReachabilityService extends Service {
                 ended.put("reason","network-disconnected");listener.onPacket(ended);
             }catch(Exception ignored){}
         }
+    }
+    private void watchWifi(){
+        if(networkCallback!=null)return;
+        networkManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(networkManager==null)return;
+        networkCallback=new ConnectivityManager.NetworkCallback(){
+            @Override public void onAvailable(Network network){
+                main.post(()->{
+                    if(prefs.getBoolean(PREF_ENABLED,false))startLocalNode();
+                });
+            }
+            @Override public void onLost(Network network){
+                main.post(()->{
+                    if(!LocalPeerNode.onWifi(CallReachabilityService.this))stopLocalNode();
+                });
+            }
+        };
+        try{
+            NetworkRequest request=new NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build();
+            networkManager.registerNetworkCallback(request,networkCallback);
+        }catch(RuntimeException ex){networkCallback=null;}
+    }
+    private void unwatchWifi(){
+        if(networkManager!=null&&networkCallback!=null){
+            try{networkManager.unregisterNetworkCallback(networkCallback);}
+            catch(RuntimeException ignored){}
+        }
+        networkCallback=null;
     }
     private void startLocalNode(){
         if(localNode!=null||!LocalPeerNode.onWifi(this))return;
@@ -330,8 +369,9 @@ public final class CallReachabilityService extends Service {
         Notification n=new Notification.Builder(this,CHANNEL_STATUS)
             .setSmallIcon(android.R.drawable.ic_menu_call)
             .setContentTitle("Xyool Connect • reachability enabled")
-            .setContentText(registered?"Local node + internet rendezvous online":
-                (localNode!=null?"Local node active; internet reconnecting":"Connecting to Xyool Network…"))
+            .setContentText(registered?"Phone node + internet rendezvous online":
+                (!cloudAllowed()?"Direct-only local node mode":
+                (localNode!=null?"Phone node active; internet reconnecting":"Connecting to Xyool Network…")))
             .setOngoing(true).setCategory(Notification.CATEGORY_SERVICE)
             .setContentIntent(launch(ACTION_VIEW,1931)).build();
         if(Build.VERSION.SDK_INT>=34)
@@ -388,6 +428,7 @@ public final class CallReachabilityService extends Service {
         destroyed=true;foreground=false;listener=null;
         main.removeCallbacks(retry);main.removeCallbacks(ringTimeout);
         clearIncoming();
+        unwatchWifi();
         stopLocalNode();
         WebSocketClient old=socket;socket=null;
         if(old!=null)old.close();
