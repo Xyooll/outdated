@@ -5,6 +5,10 @@ on:
     paths:
       - 'xyool-connect-android/signaling/**'
       - '.github/workflows/xyool-network-node.yml'
+  pull_request:
+    paths:
+      - 'xyool-connect-android/signaling/**'
+      - '.github/workflows/xyool-network-node.yml'
   workflow_dispatch:
 
 permissions:
