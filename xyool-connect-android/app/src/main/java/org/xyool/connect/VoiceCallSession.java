@@ -51,6 +51,9 @@ public final class VoiceCallSession {
     private IcePathInspector inspector=new IcePathInspector();
     private int iceRestartAttempts;
     private Runnable pendingIceRecovery;
+    private Runnable pendingCheckingTimeout;
+    private Runnable pendingRestartOutcome;
+    private String lastIceState="NEW";
     private String lastIceReport="No previous call diagnostics.";
     private String iceRecoveryDecision="No recovery requested.";
 
@@ -71,7 +74,9 @@ public final class VoiceCallSession {
             "\nRemote answer applied: "+remoteReady+
             "\nAutomatic ICE restarts: "+iceRestartAttempts+"/"+
                 IceRecoveryPolicy.MAX_AUTOMATIC_RESTARTS+
-            "\nRecovery: "+iceRecoveryDecision;
+            "\nRecovery: "+iceRecoveryDecision+
+            "\nICE checking watchdog: "+(pendingCheckingTimeout!=null?"armed":"idle")+
+            "\nRestart outcome watchdog: "+(pendingRestartOutcome!=null?"armed":"idle");
     }
 
     public boolean dial(String target,boolean localRoute){
@@ -209,6 +214,7 @@ public final class VoiceCallSession {
             }
             diag.setTurnConfigured(!turn.isEmpty());
             iceRestartAttempts=0;
+            lastIceState="NEW";
             iceRecoveryDecision="No recovery requested.";
             PeerConnection.RTCConfiguration configuration=new PeerConnection.RTCConfiguration(servers);
             peer=factory.createPeerConnection(configuration,new PeerConnection.Observer(){
@@ -217,14 +223,18 @@ public final class VoiceCallSession {
                     main.post(()->{
                         if(inspector!=diag||peer==null||remoteId==null)return;
                         diag.setState(state.name());
+                        lastIceState=state.name();
                         if(state==PeerConnection.IceConnectionState.CHECKING){
+                            // ICE may never emit FAILED on restrictive Wi-Fi.
+                            // A watchdog prevents an indefinite spinner.
+                            armCheckingTimeout(diag);
                             VoiceCallSession.this.state("Connecting audio across networks…");
                         }else if(state==PeerConnection.IceConnectionState.CONNECTED||
                             state==PeerConnection.IceConnectionState.COMPLETED){
                             connected=true;
                             cancelIceRecovery();
-                            // A completed ICE state overrides any stale
-                            // "offer being negotiated" recovery diagnostic.
+                            cancelCheckingTimeout();
+                            cancelRestartOutcomeTimeout();
                             iceRecoveryDecision=IceRecoveryPolicy.connectedOutcome(
                                 iceRestartAttempts);
                             VoiceCallSession.this.state(iceRestartAttempts>0?
@@ -232,14 +242,24 @@ public final class VoiceCallSession {
                                 "Encrypted voice connected.");
                         }else if(state==PeerConnection.IceConnectionState.FAILED){
                             connected=false;
-                            scheduleIceRecovery(diag,1200L);
-                            if(pendingIceRecovery!=null)
-                                VoiceCallSession.this.state("ICE path failed. Preparing one recovery attempt…");
-                            else
-                                VoiceCallSession.this.state("Voice ICE failed: "+diag.interpretation());
+                            cancelCheckingTimeout();
+                            if(iceRestartAttempts>=IceRecoveryPolicy.MAX_AUTOMATIC_RESTARTS){
+                                cancelRestartOutcomeTimeout();
+                                iceRecoveryDecision="ICE failed after one automatic retry; no confirmed media path";
+                                VoiceCallSession.this.state(
+                                    "Voice ICE failed after recovery; TURN relay may be needed.");
+                            }else{
+                                scheduleIceRecovery(diag,1200L);
+                                if(pendingIceRecovery!=null)
+                                    VoiceCallSession.this.state("ICE failed. Preparing recovery…");
+                                else
+                                    VoiceCallSession.this.state("Voice ICE failed: "+diag.interpretation());
+                            }
                         }else if(state==PeerConnection.IceConnectionState.DISCONNECTED){
                             connected=false;
-                            scheduleIceRecovery(diag,10000L);
+                            cancelCheckingTimeout();
+                            if(iceRestartAttempts==0)
+                                scheduleIceRecovery(diag,10000L);
                             VoiceCallSession.this.state("Voice disconnected; checking network…");
                         }
                     });
@@ -286,6 +306,60 @@ public final class VoiceCallSession {
             return false;
         }
     }
+    /** Time out an ICE CHECKING state that never emits FAILED. */
+    private void armCheckingTimeout(IcePathInspector diag){
+        if(pendingCheckingTimeout!=null||pendingRestartOutcome!=null)return;
+        final PeerConnection expected=peer;
+        Runnable timeout=()->{
+            pendingCheckingTimeout=null;
+            if(peer!=expected||inspector!=diag||
+                !IceRecoveryPolicy.shouldWatchChecking(lastIceState,hasSession(),connected))
+                return;
+            if(iceRestartAttempts>=IceRecoveryPolicy.MAX_AUTOMATIC_RESTARTS){
+                iceRecoveryDecision="ICE still checking after restart; no working media path";
+                state("ICE still checking after retry. TURN relay may be needed.");
+                return;
+            }
+            if(!outgoing){
+                iceRecoveryDecision="Receiver cannot initiate ICE restart on current signaling server";
+                state("ICE checking timed out. Caller must retry; TURN relay may be needed.");
+                return;
+            }
+            scheduleIceRecovery(diag,0L);
+            if(pendingIceRecovery!=null){
+                state("ICE checking timed out; attempting one automatic restart…");
+            }else{
+                state("ICE checking timed out: "+iceRecoveryDecision+".");
+            }
+        };
+        pendingCheckingTimeout=timeout;
+        main.postDelayed(timeout,IceRecoveryPolicy.CHECKING_TIMEOUT_MS);
+    }
+    private void cancelCheckingTimeout(){
+        if(pendingCheckingTimeout!=null){
+            main.removeCallbacks(pendingCheckingTimeout);
+            pendingCheckingTimeout=null;
+        }
+    }
+    /** Prevent the restarted offer from leaving the screen stuck forever. */
+    private void armRestartOutcomeTimeout(IcePathInspector diag){
+        cancelRestartOutcomeTimeout();
+        final PeerConnection expected=peer;
+        Runnable timeout=()->{
+            pendingRestartOutcome=null;
+            if(peer!=expected||inspector!=diag||remoteId==null||connected)return;
+            iceRecoveryDecision="No connected ICE pair within 30 seconds of automatic restart";
+            state("Audio restart timed out. Direct paths failed; TURN relay may be needed.");
+        };
+        pendingRestartOutcome=timeout;
+        main.postDelayed(timeout,IceRecoveryPolicy.RESTART_OUTCOME_TIMEOUT_MS);
+    }
+    private void cancelRestartOutcomeTimeout(){
+        if(pendingRestartOutcome!=null){
+            main.removeCallbacks(pendingRestartOutcome);
+            pendingRestartOutcome=null;
+        }
+    }
     /** Only the original caller may send an SDP offer through current server. */
     private void scheduleIceRecovery(IcePathInspector diag,long delayMs){
         boolean stable=peer!=null&&
@@ -316,6 +390,8 @@ public final class VoiceCallSession {
                 return;
             }
             iceRestartAttempts++;
+            cancelCheckingTimeout();
+            armRestartOutcomeTimeout(diag);
             iceRecoveryDecision="ICE restart offer being negotiated";
             remoteReady=false;
             pendingCandidates.clear();
@@ -411,6 +487,8 @@ public final class VoiceCallSession {
     }
     private void releaseMedia(){
         cancelIceRecovery();
+        cancelCheckingTimeout();
+        cancelRestartOutcomeTimeout();
         inspector=new IcePathInspector();
         pendingCandidates.clear();
         if(peer!=null){peer.close();peer.dispose();peer=null;}
