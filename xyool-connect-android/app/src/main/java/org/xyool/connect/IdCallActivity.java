@@ -658,6 +658,10 @@ public final class IdCallActivity extends Activity {
         }
     }
     private void disableReachability(){
+        if(waitingId!=null||peerActive){
+            packet("hangup");
+            endMedia();
+        }
         prefs.edit().putBoolean(CallReachabilityService.PREF_ENABLED,false).apply();
         startService(new Intent(this,CallReachabilityService.class)
             .setAction(CallReachabilityService.ACTION_DISABLE));
