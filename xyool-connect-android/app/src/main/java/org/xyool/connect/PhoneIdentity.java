@@ -102,13 +102,24 @@ public final class PhoneIdentity {
         if(remoteId==null||!remoteId.matches("^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$")||
            fingerprint==null||!fingerprint.matches("^[a-f0-9]{64}$"))
             throw new IllegalArgumentException("Invalid identity fingerprint");
+        // Keep QR provenance separate from first-contact/TOFU pins. Older
+        // stored fingerprints are NOT automatically treated as QR verified.
         context.getSharedPreferences(STORE,Context.MODE_PRIVATE).edit()
-            .putString(PIN_PREFIX+remoteId,fingerprint).apply();
+            .putString(PIN_PREFIX+remoteId,fingerprint)
+            .putString("xyool_qr_verified_"+remoteId,fingerprint).apply();
     }
     public static String pinnedFingerprint(Context context,String id){
         if(id==null)return null;
         return context.getSharedPreferences(STORE,Context.MODE_PRIVATE)
             .getString(PIN_PREFIX+id,null);
+    }
+    /** Only a key explicitly scanned from QR qualifies as identity-verified. */
+    public static String qrVerifiedFingerprint(Context context,String id){
+        String pin=pinnedFingerprint(context,id);
+        if(pin==null)return null;
+        String verified=context.getSharedPreferences(STORE,Context.MODE_PRIVATE)
+            .getString("xyool_qr_verified_"+id,null);
+        return pin.equals(verified)?pin:null;
     }
     public static String meshEnableProof(String id,long when){
         return "xyool-peer-enable-v1|"+canonicalFields(id,Long.toString(when));
