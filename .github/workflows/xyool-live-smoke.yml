@@ -1,0 +1,29 @@
+name: Xyool Live Internet Calling Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'xyool-connect-android/signaling/test/live-wss-smoke.mjs'
+      - '.github/workflows/xyool-live-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-wss-call:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install signaling test dependency
+        working-directory: xyool-connect-android/signaling
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Test both phones can ring and accept from GitHub-hosted internet
+        working-directory: xyool-connect-android/signaling
+        env:
+          XYOOL_LIVE_WSS: wss://xyool-id-signaling-production.up.railway.app/v1/id
+        run: node test/live-wss-smoke.mjs
