@@ -31,6 +31,7 @@ public final class VoiceCallSession {
         boolean send(JSONObject message,boolean local);
         boolean dialLocal(String id);
         void closeLocal();
+        java.util.List<PeerConnection.IceServer> currentTurnServers();
         void status(String message);
         void sessionChanged();
     }
@@ -39,7 +40,7 @@ public final class VoiceCallSession {
     private final Handler main;
     private final Host host;
     private String remoteId, lastStatus="Ready for Xyool calls.";
-    private boolean local,outgoing,authorized,remoteReady,muted,connected;
+    private boolean local,outgoing,authorized,remoteReady,muted,connected,relayOnlyTest;
     private PeerConnectionFactory factory;
     private PeerConnection peer;
     private AudioSource audioSource;
@@ -70,6 +71,7 @@ public final class VoiceCallSession {
     public String diagnostics(){
         return peer==null?lastIceReport:
             inspector.summary()+
+            "\nForce relay-only test: "+relayOnlyTest+
             "\nCall role: "+(outgoing?"caller":"receiver")+
             "\nRemote answer applied: "+remoteReady+
             "\nAutomatic ICE restarts: "+iceRestartAttempts+"/"+
@@ -80,7 +82,13 @@ public final class VoiceCallSession {
     }
 
     public boolean dial(String target,boolean localRoute){
-        if(hasSession()||!SavedContacts.validId(target))return false;
+        return dial(target,localRoute,false);
+    }
+    /** Explicit diagnostic call: force WebRTC to gather only relay paths. */
+    public boolean dial(String target,boolean localRoute,boolean forceRelay){
+        if(hasSession()||!SavedContacts.validId(target)||
+            (localRoute&&forceRelay))return false;
+        relayOnlyTest=forceRelay;
         remoteId=target;outgoing=true;local=localRoute;
         if(!startMedia()){clear(false);return false;}
         if(localRoute){
@@ -202,7 +210,7 @@ public final class VoiceCallSession {
                 servers.add(PeerConnection.IceServer.builder(stun).createIceServer());
             }
             String turn=config.getString("xyool_turn","").trim();
-            if(!turn.isEmpty()){
+            if(!local&&!turn.isEmpty()){
                 if(!turn.matches("^turns?:[A-Za-z0-9._-]+:[0-9]{2,5}(\\?transport=(udp|tcp))?$"))
                     throw new IllegalArgumentException("Stored TURN server invalid");
                 String username=config.getString("xyool_turn_user","");
@@ -212,11 +220,21 @@ public final class VoiceCallSession {
                 servers.add(PeerConnection.IceServer.builder(turn)
                     .setUsername(username).setPassword(password).createIceServer());
             }
-            diag.setTurnConfigured(!turn.isEmpty());
+            // Short-lived credentials from the registered signaling service
+            // are preferred over optional legacy manual TURN settings.
+            java.util.List<PeerConnection.IceServer> ephemeral=
+                local?java.util.Collections.emptyList():host.currentTurnServers();
+            if(ephemeral!=null&&!ephemeral.isEmpty())servers.addAll(ephemeral);
+            boolean turnReady=!local&&(!turn.isEmpty()||
+                (ephemeral!=null&&!ephemeral.isEmpty()));
+            if(relayOnlyTest&&!turnReady)
+                throw new IllegalStateException("TURN credentials unavailable for relay test");
+            diag.setTurnConfigured(turnReady);
             iceRestartAttempts=0;
             lastIceState="NEW";
             iceRecoveryDecision="No recovery requested.";
             PeerConnection.RTCConfiguration configuration=new PeerConnection.RTCConfiguration(servers);
+            if(relayOnlyTest)configuration.iceTransportsType=PeerConnection.IceTransportsType.RELAY;
             peer=factory.createPeerConnection(configuration,new PeerConnection.Observer(){
                 @Override public void onSignalingChange(PeerConnection.SignalingState state){}
                 @Override public void onIceConnectionChange(PeerConnection.IceConnectionState state){
@@ -480,7 +498,7 @@ public final class VoiceCallSession {
         lastIceReport=diagnostics();
         boolean wasLocal=local;
         remoteId=null;outgoing=false;authorized=false;remoteReady=false;
-        local=false;connected=false;
+        local=false;connected=false;relayOnlyTest=false;
         releaseMedia();
         if(wasLocal)host.closeLocal();
         host.sessionChanged();

@@ -270,6 +270,8 @@ public final class IdCallActivity extends Activity {
         button(dial,"Save entered ID",false,v->saveEnteredContact());
         space(dial,11);
         button(dial,"Call",true,v->call());
+        space(dial,5);
+        button(dial,"Test TURN relay-only call",false,v->callRelayOnly());
         space(dial,6);
         button(dial,"Hang up",false,v->hangup());
         space(dial,6);
@@ -552,6 +554,23 @@ public final class IdCallActivity extends Activity {
             return;
         }
         enableReachability();
+    }
+    private void callRelayOnly(){
+        if(cloud==null){
+            status("Xyool Network is not ready.");return;
+        }
+        if(cloud.hasVoiceSession()){
+            status("Hang up before starting another test.");return;
+        }
+        String dest=normalize(targetInput.getText().toString());
+        if(dest==null||dest.equals(id)){
+            status("Enter another phone's valid Xyool ID.");return;
+        }
+        requestMicrophone(()->{
+            if(cloud==null||!cloud.dialRelayTest(dest)){
+                status("TURN test unavailable. Check server-issued TURN lease in diagnostics.");
+            }
+        });
     }
     private void call(){
         if(!hasReachability()){status("Turn on Xyool Network before calling by ID.");return;}

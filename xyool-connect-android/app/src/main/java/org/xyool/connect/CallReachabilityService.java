@@ -28,6 +28,9 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
 import java.net.URI;
+import java.util.List;
+import java.util.Collections;
+import org.webrtc.PeerConnection;
 
 /**
  * Opt-in, user-visible persistent rendezvous connection for incoming Xyool ID calls.
@@ -70,6 +73,7 @@ public final class CallReachabilityService extends Service {
     private WebSocketClient socket;
     private LocalPeerNode localNode;
     private VoiceCallSession voice;
+    private TurnLease currentTurnLease;
     private GlobalPhoneMesh globalMesh;
     private boolean incomingLocal=false;
     private RendezvousPool bootstrap;
@@ -82,6 +86,13 @@ public final class CallReachabilityService extends Service {
     private boolean registered=false,foreground=false,destroyed=false;
     private int reconnectDelayMs=2000;
     private final Runnable retry=()->openSocket();
+    private final Runnable renewTurn=new Runnable(){
+        @Override public void run(){
+            if(!registered||socket==null||!socket.isOpen())return;
+            sendType("turn-refresh");
+            main.postDelayed(this,60L*60L*1000L);
+        }
+    };
     private final Runnable ringTimeout=()->{
         if(incoming!=null){
             sendType("reject");
@@ -108,6 +119,10 @@ public final class CallReachabilityService extends Service {
             }
             @Override public boolean dialLocal(String target){return localCall(target);}
             @Override public void closeLocal(){localClose();}
+            @Override public List<PeerConnection.IceServer> currentTurnServers(){
+                return currentTurnLease==null?Collections.emptyList():
+                    currentTurnLease.servers(System.currentTimeMillis());
+            }
             @Override public void status(String message){
                 main.post(()->{
                     if(listener!=null)listener.onVoiceStatus(message);
@@ -137,6 +152,8 @@ public final class CallReachabilityService extends Service {
             return foreground?START_STICKY:START_NOT_STICKY;
         }
         if(ACTION_DISABLE.equals(action)){
+            currentTurnLease=null;
+            main.removeCallbacks(renewTurn);
             prefs.edit().putBoolean(PREF_ENABLED,false).apply();
             foreground=false;
             stopForeground(STOP_FOREGROUND_REMOVE);
@@ -195,9 +212,20 @@ public final class CallReachabilityService extends Service {
     public boolean hasIncomingVoice(){return voice!=null&&voice.isIncoming();}
     public String voicePeerId(){return voice==null?null:voice.peerId();}
     public String voiceState(){return voice==null?"":voice.state();}
-    public String voiceDiagnostics(){return voice==null?"No call diagnostics.":voice.diagnostics();}
+    public String voiceDiagnostics(){
+        String base=voice==null?"No call diagnostics.":voice.diagnostics();
+        return base+"\nServer-issued TURN lease usable: "+
+            (currentTurnLease!=null&&currentTurnLease.validAt(System.currentTimeMillis())?
+                "yes":"no");
+    }
     public boolean dialVoice(String target,boolean local){
         return foreground&&voice!=null&&voice.dial(target,local);
+    }
+    public boolean dialRelayTest(String target){
+        return foreground&&registered&&voice!=null&&
+            currentTurnLease!=null&&
+            currentTurnLease.validAt(System.currentTimeMillis())&&
+            voice.dial(target,false,true);
     }
     public boolean acceptVoice(){return voice!=null&&voice.accept();}
     public void declineVoice(){if(voice!=null)voice.reject();clearIncoming();}
@@ -240,6 +268,8 @@ public final class CallReachabilityService extends Service {
         }catch(RuntimeException ignored){return false;}
     }
     public void reconnectNow(){
+        currentTurnLease=null;
+        main.removeCallbacks(renewTurn);
         main.removeCallbacks(retry);
         bootstrap=null;
         WebSocketClient old=socket;socket=null;registered=false;
@@ -302,6 +332,8 @@ public final class CallReachabilityService extends Service {
     }
     private void lost(WebSocketClient failed){
         if(socket!=failed||destroyed)return;
+        currentTurnLease=null;
+        main.removeCallbacks(renewTurn);
         boolean wasRegistered=registered;
         socket=null;registered=false;
         if(incoming!=null&&!incomingLocal)clearIncoming();
@@ -429,8 +461,22 @@ public final class CallReachabilityService extends Service {
         }
         if("registered".equals(type)){
             registered=true;reconnectDelayMs=2000;
+            main.removeCallbacks(renewTurn);
+            main.postDelayed(renewTurn,60L*60L*1000L);
             if(globalMesh!=null)globalMesh.connected();
             notifyConnection(true,"Internet calling online.");
+        }
+        if("turn-credentials".equals(type)){
+            TurnLease lease=TurnLease.fromMessage(message,System.currentTimeMillis());
+            if(lease!=null){
+                currentTurnLease=lease;
+                notifyConnection(registered,"Xyool TURN fallback ready for new calls.");
+            }
+            return; // TURN credentials never reach the Activity or diagnostics.
+        }
+        if("turn-unavailable".equals(type)){
+            currentTurnLease=null;
+            return;
         }
         if("incoming".equals(type)){
             if(incoming!=null||(voice!=null&&voice.hasSession())){
@@ -550,6 +596,8 @@ public final class CallReachabilityService extends Service {
     }
     @Override public void onDestroy(){
         destroyed=true;foreground=false;listener=null;
+        currentTurnLease=null;
+        main.removeCallbacks(renewTurn);
         main.removeCallbacks(retry);main.removeCallbacks(ringTimeout);
         clearIncoming();
         if(voice!=null)voice.destroy();
