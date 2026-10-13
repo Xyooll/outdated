@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'xyool-connect-android/app/**'
+      - 'xyool-connect-android/tools/**'
       - 'xyool-connect-android/signing/xyool-test-debug.p12.b64'
       - 'xyool-connect-android/signing/xyool-test-debug.sha256'
       - 'xyool-connect-android/build.gradle'
@@ -38,6 +39,16 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Test bridge policy and privacy-safe ICE diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/xyool-bridge-tests"
+          javac -d "$RUNNER_TEMP/xyool-bridge-tests" \
+            xyool-connect-android/app/src/main/java/org/xyool/connect/BridgePolicy.java \
+            xyool-connect-android/app/src/main/java/org/xyool/connect/IcePathInspector.java \
+            xyool-connect-android/tools/BridgeSelfTest.java
+          java -cp "$RUNNER_TEMP/xyool-bridge-tests" org.xyool.connect.BridgeSelfTest
       - name: Restore ONE permanent test APK signing key
         shell: bash
         run: |
