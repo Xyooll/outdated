@@ -172,8 +172,26 @@ public final class VoiceCallSession {
             factory=PeerConnectionFactory.builder().createPeerConnectionFactory();
             if(factory==null)throw new IllegalStateException("WebRTC unavailable");
             List<PeerConnection.IceServer> servers=new ArrayList<>();
-            if(!local){
-                servers.add(PeerConnection.IceServer.builder(DEFAULT_STUN).createIceServer());
+            android.content.SharedPreferences config=context.getSharedPreferences(
+                "xyool_private",Context.MODE_PRIVATE);
+            String stun=config.getString("xyool_stun","").trim();
+            if(!local&&stun.isEmpty())stun=DEFAULT_STUN;
+            if("off".equalsIgnoreCase(stun))stun="";
+            if(!stun.isEmpty()){
+                if(!stun.matches("^stuns?:[A-Za-z0-9._-]+:[0-9]{2,5}$"))
+                    throw new IllegalArgumentException("Stored STUN server invalid");
+                servers.add(PeerConnection.IceServer.builder(stun).createIceServer());
+            }
+            String turn=config.getString("xyool_turn","").trim();
+            if(!turn.isEmpty()){
+                if(!turn.matches("^turns?:[A-Za-z0-9._-]+:[0-9]{2,5}(\\?transport=(udp|tcp))?$"))
+                    throw new IllegalArgumentException("Stored TURN server invalid");
+                String username=config.getString("xyool_turn_user","");
+                String password=config.getString("xyool_turn_pass","");
+                if(username.isEmpty()||password.isEmpty())
+                    throw new IllegalArgumentException("Stored TURN credentials missing");
+                servers.add(PeerConnection.IceServer.builder(turn)
+                    .setUsername(username).setPassword(password).createIceServer());
             }
             PeerConnection.RTCConfiguration configuration=new PeerConnection.RTCConfiguration(servers);
             peer=factory.createPeerConnection(configuration,new PeerConnection.Observer(){
