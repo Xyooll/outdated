@@ -515,10 +515,7 @@ public final class IdCallActivity extends Activity {
         }
     }
     private void disableReachability(){
-        if(waitingId!=null||peerActive){
-            packet("hangup");
-            endMedia();
-        }
+        if(cloud!=null)cloud.hangupVoice();
         prefs.edit().putBoolean(CallReachabilityService.PREF_ENABLED,false).apply();
         startService(new Intent(this,CallReachabilityService.class)
             .setAction(CallReachabilityService.ACTION_DISABLE));
@@ -544,120 +541,42 @@ public final class IdCallActivity extends Activity {
         }
         enableReachability();
     }
-    private void send(JSONObject obj){
-        if(usingLocal){
-            if(cloud!=null&&hasReachability())cloud.localSend(obj);
-            else if(nearby!=null)nearby.send(obj);
-            return;
-        }
-        sendCloud(obj);
-    }
-    private void sendCloud(JSONObject obj){
-        if(cloud!=null&&!cloud.send(obj))status("Internet signaling is not connected.");
-    }
-    private void packet(String type){
-        try{JSONObject obj=new JSONObject();obj.put("type",type);send(obj);}
-        catch(Exception ex){status("Could not send call command.");}
-    }
     private void call(){
         if(!hasReachability()){status("Turn on Xyool Network before calling by ID.");return;}
-        if(peerActive||waitingId!=null){status("Finish your current call first.");return;}
+        if(cloud==null){status("Connecting to Xyool Network. Try again.");return;}
+        if(cloud.hasVoiceSession()){status("Finish the current call first.");return;}
         String dest=normalize(targetInput.getText().toString());
         if(dest==null){status("Enter a valid Xyool ID, like XY-ABCD-EFGH-JKLM.");return;}
         if(dest.equals(id)){status("You cannot call your own ID.");return;}
-        boolean localAvailable=LocalPeerNode.onWifi(this)&&
-            (cloud!=null&&hasReachability()?cloud.hasLocalPeer(dest):
-                nearby!=null&&nearby.hasPeer(dest));
+        boolean localAvailable=LocalPeerNode.onWifi(this)&&cloud.hasLocalPeer(dest);
         BridgePolicy.Route route=BridgePolicy.choose(bridgeMode(),localAvailable,registered);
         if(route==BridgePolicy.Route.MANUAL_DIRECT_REQUIRED){
-            status("No nearby route to this ID. Try Hybrid for other networks.");
-            return;
+            status("No network route to that ID yet.");return;
         }
         requestMicrophone(()->{
-            usingLocal=route==BridgePolicy.Route.LOCAL_DIRECT;
-            if(!initPeer()){usingLocal=false;return;}
-            outgoing=true;
-            waitingId=dest;
-            try{
-                if(localAvailable){
-                    boolean started=cloud!=null&&hasReachability()?cloud.localCall(dest):
-                        nearby!=null&&nearby.call(dest);
-                    if(!started){
-                        endMedia();
-                        status("Couldn't reach the nearby phone. Try again.");
-                        return;
-                    }
-                    status("Calling nearby Xyool phone directly…");
-                }else{
-                    JSONObject obj=new JSONObject();
-                    obj.put("type","call");
-                    obj.put("to",dest);
-                    sendCloud(obj);
-                    status("Calling "+dest+" over the internet…");
-                }
-            }catch(Exception ex){endMedia();status("Could not request call.");}
+            if(cloud==null || !cloud.dialVoice(dest,route==BridgePolicy.Route.LOCAL_DIRECT))
+                status("Unable to start the call. Check network and microphone permissions.");
         });
     }
-    private void received(JSONObject msg,boolean fromLocal){
-        String type=msg.optString("type","");
+    private void received(JSONObject message,boolean fromLocal){
+        String type=message.optString("type","");
         if("incoming".equals(type)){
-            if(peerActive||waitingId!=null){
-                try{
-                    JSONObject reject=new JSONObject();reject.put("type","reject");
-                    if(fromLocal && cloud!=null&&hasReachability())cloud.localSend(reject);
-                    else if(fromLocal && nearby!=null)nearby.send(reject);
-                    else sendCloud(reject);
-                    if(fromLocal && cloud!=null&&hasReachability())cloud.localClose();
-                    else if(fromLocal && nearby!=null)nearby.closeSession();
-                }catch(Exception ignored){}
-                return;
-            }
-            usingLocal=fromLocal;
-            waitingId=msg.optString("from");
-            outgoing=false;
+            if(cloud==null||!cloud.hasIncomingVoice())return;
             if(autoAnswerRequested){
                 autoAnswerRequested=false;
                 acceptIncomingCall();
-            }else incomingDialog(waitingId);
+            }else if(incomingAlert==null){
+                incomingDialog(cloud.voicePeerId());
+            }
             return;
         }
-        // Never allow a LAN session to consume signaling from a parallel
-        // Railway session or vice versa.
-        if((waitingId!=null||peerActive)&&fromLocal!=usingLocal)return;
-        switch(type){
-            case "registered":
-                registered=true;
-                connectionStatus();
-                break;
-            case "ringing":
-                status(fromLocal?"Ringing nearby phone…":"Ringing… waiting for the other person.");
-                break;
-            case "accepted":
-                callAuthorized=true;
-                status("Call accepted. Connecting voice…");
-                if(outgoing)createOffer();
-                break;
-            case "signal":
-                signal(msg);
-                break;
-            case "ended":
-                endMedia();
-                status("Call ended: "+msg.optString("reason","disconnected"));
-                break;
-            case "busy":
-                endMedia();
-                status("That Xyool ID is on another call.");
-                break;
-            case "unavailable":
-                endMedia();
-                status("That ID is currently unreachable. They may be offline or background listening is blocked.");
-                break;
-            case "error":
-                String detail=msg.optString("message","The calling network reported an error");
-                if(waitingId!=null)endMedia();
-                status(detail);
-                break;
-            default:break;
+        if("ended".equals(type)||"busy".equals(type)||
+            "unavailable".equals(type)||"error".equals(type)){
+            stopIncomingRing();
+            if(incomingAlert!=null){
+                AlertDialog shown=incomingAlert;incomingAlert=null;shown.dismiss();
+            }
+            if(cloud!=null)status(cloud.voiceState());
         }
     }
     // The ringtone is deliberately tied to the visible, user-accepted call
@@ -692,7 +611,8 @@ public final class IdCallActivity extends Activity {
             .setCancelable(false)
             .setNegativeButton("Decline",(d,w)->{
                 stopIncomingRing();
-                packet("reject");endMedia();status("Call declined.");
+                if(cloud!=null)cloud.declineVoice();
+                status("Call declined.");
             })
             .setPositiveButton("Accept",(d,w)->acceptIncomingCall())
             .create();
@@ -705,16 +625,14 @@ public final class IdCallActivity extends Activity {
     private void acceptIncomingCall(){
         stopIncomingRing();
         if(incomingAlert!=null){
-            AlertDialog current=incomingAlert;incomingAlert=null;current.dismiss();
+            AlertDialog dialog=incomingAlert;incomingAlert=null;dialog.dismiss();
         }
-        if(waitingId==null||outgoing||peerActive)return;
+        if(cloud==null||!cloud.hasIncomingVoice()){
+            status("Incoming call is no longer available.");return;
+        }
         requestMicrophone(()->{
-            if(waitingId==null)return;
-            if(!initPeer()){packet("reject");return;}
-            outgoing=false;
-            if(usingLocal)callAuthorized=true;
-            packet("accept");
-            status("Accepted. Negotiating audio connection…");
+            if(cloud==null||!cloud.acceptVoice())
+                status("Could not accept call or start foreground microphone.");
         });
     }
     private void requestMicrophone(Runnable next){
@@ -735,191 +653,25 @@ public final class IdCallActivity extends Activity {
         if(request!=MIC_REQUEST)return;
         Runnable next=pendingMicrophone;pendingMicrophone=null;
         if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED&&next!=null)next.run();
-        else{packet("reject");endMedia();status("Microphone permission is required for Xyool voice.");}
-    }
-    private boolean initPeer(){
-        try{
-            final IcePathInspector diag=new IcePathInspector();
-            diag.setDiscovery(usingLocal?"Local Wi-Fi signaling":"Web2 ID signaling (Railway)");
-            iceDiagnostics=diag;
-            PeerConnectionFactory.initialize(PeerConnectionFactory.InitializationOptions.builder(
-                getApplicationContext()).createInitializationOptions());
-            factory=PeerConnectionFactory.builder().createPeerConnectionFactory();
-            if(factory==null)throw new IllegalStateException("WebRTC unavailable");
-            List<PeerConnection.IceServer> ice=new ArrayList<>();
-            String s=prefs.getString("xyool_stun","").trim();
-            if(!usingLocal && s.isEmpty())s=DEFAULT_STUN;
-            if("off".equalsIgnoreCase(s))s="";
-            String t=prefs.getString("xyool_turn","").trim();
-            if(!s.isEmpty()){
-                if(!s.matches("^stuns?:[A-Za-z0-9._-]+:[0-9]{2,5}$"))
-                    throw new IllegalArgumentException("STUN address invalid");
-                ice.add(PeerConnection.IceServer.builder(s).createIceServer());
-            }
-            if(!t.isEmpty()){
-                if(!t.matches("^turns?:[A-Za-z0-9._-]+:[0-9]{2,5}(\\?transport=(udp|tcp))?$"))
-                    throw new IllegalArgumentException("TURN address invalid");
-                String username=prefs.getString("xyool_turn_user","");
-                String password=prefs.getString("xyool_turn_pass","");
-                if(username.isEmpty()||password.isEmpty())
-                    throw new IllegalArgumentException("TURN credentials missing");
-                ice.add(PeerConnection.IceServer.builder(t).setUsername(username)
-                    .setPassword(password).createIceServer());
-            }
-            PeerConnection.RTCConfiguration iceConfig=new PeerConnection.RTCConfiguration(ice);
-            // Keep direct host routes first; ICE will also try a public STUN path.
-            peer=factory.createPeerConnection(iceConfig,
-                new PeerConnection.Observer(){
-                    @Override public void onSignalingChange(PeerConnection.SignalingState state){}
-                    @Override public void onIceConnectionChange(PeerConnection.IceConnectionState state){
-                        diag.setState(state.name());
-                        if(iceDiagnostics!=diag)return;
-                        if(state==PeerConnection.IceConnectionState.CHECKING){
-                            status("ICE is checking direct audio paths across networks…");
-                        }else if(state==PeerConnection.IceConnectionState.CONNECTED||
-                            state==PeerConnection.IceConnectionState.COMPLETED){
-                            status("Encrypted WebRTC connected. Copy report to examine ICE discovery.");
-                        }else if(state==PeerConnection.IceConnectionState.FAILED){
-                            status("Direct audio ICE failed. "+diag.interpretation()+
-                                " Copy network report for diagnosis.");
-                        }else if(state==PeerConnection.IceConnectionState.DISCONNECTED){
-                            status("WebRTC disconnected. Check both networks.");
-                        }
-                    }
-                    @Override public void onIceConnectionReceivingChange(boolean value){}
-                    @Override public void onIceGatheringChange(PeerConnection.IceGatheringState state){
-                        if(state==PeerConnection.IceGatheringState.COMPLETE && iceDiagnostics==diag
-                            && waitingId!=null && !peerActive){
-                            status("Network candidate gathering finished. Waiting for ICE connection.");
-                        }
-                    }
-                    @Override public void onIceCandidate(IceCandidate c){
-                        diag.record(c.sdp);
-                        try{
-                            JSONObject payload=new JSONObject();payload.put("type","signal");
-                            payload.put("kind","candidate");payload.put("candidate",c.sdp);
-                            payload.put("mid",c.sdpMid==null?"":c.sdpMid);
-                            payload.put("index",c.sdpMLineIndex);send(payload);
-                        }catch(Exception ex){status("Couldn't transmit network candidate.");}
-                    }
-                    @Override public void onIceCandidatesRemoved(IceCandidate[] list){}
-                    @Override public void onAddStream(MediaStream stream){}
-                    @Override public void onRemoveStream(MediaStream stream){}
-                    @Override public void onDataChannel(DataChannel channel){}
-                    @Override public void onRenegotiationNeeded(){}
-                    @Override public void onAddTrack(RtpReceiver receiver,MediaStream[] streams){}
-                });
-            if(peer==null)throw new IllegalStateException("WebRTC connection unavailable");
-            audioSource=factory.createAudioSource(new MediaConstraints());
-            microphone=factory.createAudioTrack("xyool-microphone",audioSource);
-            microphone.setEnabled(true);
-            if(peer.addTrack(microphone,java.util.Collections.singletonList("xyool-media"))==null)
-                throw new IllegalStateException("Microphone track unavailable");
-            audioManager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
-            if(audioManager!=null){
-                oldMode=audioManager.getMode();oldSpeaker=audioManager.isSpeakerphoneOn();
-                audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-                audioManager.setSpeakerphoneOn(true);
-            }
-            peerActive=true;remoteReady=false;muted=false;pendingCandidates.clear();
-            return true;
-        }catch(Exception e){
-            status("Audio initialization failed: "+e.getMessage());
-            endMedia();
-            return false;
+        else{
+            if(cloud!=null&&cloud.hasIncomingVoice())cloud.declineVoice();
+            status("Microphone permission is required for Xyool voice.");
         }
-    }
-    private void createOffer(){
-        if(peer==null)return;
-        peer.createOffer(new SdpCallbacks(){
-            @Override public void onCreateSuccess(SessionDescription desc){setLocalAndSend(desc);}
-        },new MediaConstraints());
-    }
-    private void setLocalAndSend(SessionDescription desc){
-        if(peer==null)return;
-        peer.setLocalDescription(new SdpCallbacks(){
-            @Override public void onSetSuccess(){
-                try{
-                    JSONObject data=new JSONObject();data.put("type","signal");
-                    data.put("kind",desc.type.canonicalForm());data.put("sdp",desc.description);
-                    send(data);
-                }catch(Exception e){status("Call setup failed.");}
-            }
-        },desc);
-    }
-    private void signal(JSONObject msg){
-        if(peer==null||!callAuthorized)return;
-        String kind=msg.optString("kind","");
-        if("candidate".equals(kind)){
-            String mid=msg.optString("mid",""),sdp=msg.optString("candidate","");
-            int index=msg.optInt("index",-1);
-            if(sdp.length()>4000||index<0||index>50||mid.length()>50)return;
-            IceCandidate c=new IceCandidate(mid,index,sdp);
-            if(remoteReady)peer.addIceCandidate(c);
-            else pendingCandidates.add(c);
-            return;
-        }
-        if(!(kind.equals("offer")||kind.equals("answer")))return;
-        String sdp=msg.optString("sdp","");
-        if(!sdp.startsWith("v=0")||sdp.length()<80||sdp.length()>32000)return;
-        if(outgoing&&!kind.equals("answer"))return;
-        if(!outgoing&&!kind.equals("offer"))return;
-        SessionDescription desc=new SessionDescription(kind.equals("offer")?
-            SessionDescription.Type.OFFER:SessionDescription.Type.ANSWER,sdp);
-        peer.setRemoteDescription(new SdpCallbacks(){
-            @Override public void onSetSuccess(){
-                remoteReady=true;
-                for(IceCandidate c:pendingCandidates)if(peer!=null)peer.addIceCandidate(c);
-                pendingCandidates.clear();
-                if(!outgoing&&peer!=null)peer.createAnswer(new SdpCallbacks(){
-                    @Override public void onCreateSuccess(SessionDescription local){setLocalAndSend(local);}
-                },new MediaConstraints());
-            }
-        },desc);
-    }
-    private abstract class SdpCallbacks implements SdpObserver{
-        @Override public void onCreateSuccess(SessionDescription desc){}
-        @Override public void onSetSuccess(){}
-        @Override public void onCreateFailure(String err){status("Call setup error: "+err);}
-        @Override public void onSetFailure(String err){status("Call setup error: "+err);}
     }
     private void toggleMute(){
-        if(microphone==null){status("There is no active microphone call.");return;}
-        muted=!muted;microphone.setEnabled(!muted);
-        status(muted?"Microphone muted":"Microphone unmuted");
+        if(cloud==null)status("Xyool Network service unavailable.");
+        else cloud.muteVoice();
     }
     private void hangup(){
-        packet("hangup");
-        endMedia();
-        status("Call ended.");
-    }
-    private void endMedia(){
         stopIncomingRing();
-        if(incomingAlert!=null){
-            AlertDialog dialog=incomingAlert;
-            incomingAlert=null;
-            dialog.dismiss();
-        }
-        if(usingLocal&&nearby!=null)nearby.closeSession();
-        usingLocal=false;
-        pendingCandidates.clear();
-        waitingId=null;
-        peerActive=false;remoteReady=false;callAuthorized=false;outgoing=false;
-        if(peer!=null){peer.close();peer.dispose();peer=null;}
-        if(microphone!=null){microphone.dispose();microphone=null;}
-        if(audioSource!=null){audioSource.dispose();audioSource=null;}
-        if(factory!=null){factory.dispose();factory=null;}
-        if(audioManager!=null){
-            audioManager.setSpeakerphoneOn(oldSpeaker);
-            audioManager.setMode(oldMode);
-            audioManager=null;
-        }
+        if(cloud!=null)cloud.hangupVoice();
+        else status("No active call.");
     }
     @Override protected void onDestroy(){
         disposed=true;
-        if(waitingId!=null)packet("hangup");
-        disconnect();endMedia();
-        if(nearby!=null){nearby.stop();nearby=null;}
+        stopIncomingRing();
+        // Never hang up or dispose service-owned media when Activity exits.
+        disconnect();
         super.onDestroy();
     }
 }
