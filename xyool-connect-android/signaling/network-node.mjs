@@ -349,20 +349,29 @@ export function createXyoolNetworkNode({
           send(ws,{op:'presence',eid:randomUUID(),ttl:MESH_TTL,id,online:true,
             proof:registry.get(id),origin:nodeId});
         }
+        for(const phone of meshEnabled)if(phone.xyid)
+          send(ws,{op:'mesh-presence',eid:randomUUID(),ttl:MESH_TTL,
+            id:phone.xyid,online:true,fingerprint:knownMeshKeys.get(phone.xyid),
+            origin:nodeId});
         return;
       }
       if(m.op==='presence'&&Number.isInteger(m.ttl)&&m.ttl>0&&m.ttl<=MESH_TTL&&
         ID.test(m.id||'')&&typeof m.origin==='string'&&NODE.test(m.origin)){
         gossip(m,ws);
+      }else if(m.op==='mesh-presence'&&Number.isInteger(m.ttl)&&
+        m.ttl>0&&m.ttl<=MESH_TTL&&NODE.test(m.origin||'')){
+        acceptMeshPresence(m,ws);
       }else if(m.op==='route'&&typeof m.callId==='string'&&
         /^[0-9a-f-]{36}$/.test(m.callId)&&
-        ['call','ringing','accepted','signal','busy','unavailable','ended'].includes(m.kind)){
+        ['call','ringing','accepted','signal','busy','unavailable','ended','mesh-signal'].includes(m.kind)){
         route(m,ws);
       }
     });
     ws.on('close',()=>{
       neighbors.delete(ws);
       for(const [id,r] of routes)if(r.via===ws)routes.delete(id);
+      for(const [id,r] of meshRoutes)if(r.via===ws)meshRoutes.delete(id);
+      advertiseMeshPeers();
     });
     ws.on('error',()=>{});
   }
@@ -383,6 +392,8 @@ export function createXyoolNetworkNode({
     for(const [eid,expiry] of seen)if(expiry<now)seen.delete(eid);
     for(const [nonce,expiry] of nonces)if(expiry<now)nonces.delete(nonce);
     for(const [id,r] of routes)if(r.expires<now||!neighbors.has(r.via))routes.delete(id);
+    for(const [id,r] of meshRoutes)if(r.expires<now||!neighbors.has(r.via))meshRoutes.delete(id);
+    advertiseMeshPeers();
     for(const [id,c] of calls){
       if(now-c.at>(c.phase==='ringing'?45000:7200000)){
         closeCall(id,'timeout',true);
@@ -391,6 +402,7 @@ export function createXyoolNetworkNode({
     }
     // Fresh presence is necessary for sleeping or newly joined mesh nodes.
     for(const id of local.keys())announce(id);
+    for(const phone of meshEnabled)if(phone.xyid)announceMesh(phone.xyid);
     for(const url of peerUrls)connectMesh(url);
   },10000).unref());
   async function close(){
@@ -403,7 +415,8 @@ export function createXyoolNetworkNode({
     await new Promise(resolve=>app.close(resolve));
   }
   return {listen:()=>new Promise(resolve=>app.listen(port,host,()=>{for(const url of peerUrls)connectMesh(url);resolve();})),
-    address:()=>app.address(),close,stats:()=>({phones:local.size,neighbors:neighbors.size,remote:routes.size})};
+    address:()=>app.address(),close,stats:()=>({phones:local.size,neighbors:neighbors.size,remote:routes.size,
+      localMesh:meshEnabled.size,remoteMesh:meshRoutes.size})};
 }
 if(process.argv[1] && import.meta.url===new URL('file://'+process.argv[1]).href){
   const peerUrls=(process.env.XYOOL_MESH_PEERS||'').split(',').map(v=>v.trim()).filter(Boolean);
