@@ -62,6 +62,9 @@ public final class LocalPeerNode {
     private WebSocket incoming;
     private WebSocketClient outgoing;
     private boolean started;
+    private String inboundPeerId,inboundPeerKey,inboundNonce;
+    private String outboundPeerId,outboundPeerKey,outboundNonce;
+    private int inboundSent,inboundSeen,outboundSent,outboundSeen;
 
     public LocalPeerNode(Context context,String id,Listener listener) {
         this.context=context.getApplicationContext();
@@ -111,9 +114,17 @@ public final class LocalPeerNode {
                         JSONObject msg=new JSONObject(raw);
                         String type=msg.optString("type","");
                         if(incoming!=conn){
+                            String caller=msg.optString("from","");
+                            long ts=msg.optLong("authTs",-1L);
+                            String nonce=msg.optString("authNonce","");
+                            String key=msg.optString("authKey","");
                             if(!"call".equals(type)||!msg.optString("to","").equals(myId)
-                                ||!msg.optString("from","").matches(ID_RE)){
-                                conn.close(1008,"Invalid call");return;
+                                ||!caller.matches(ID_RE)||Math.abs(System.currentTimeMillis()-ts)>30000L
+                                ||!nonce.matches("^[a-f0-9]{32}$")
+                                ||!PhoneIdentity.verify(key,msg.optString("authSig",""),
+                                    PhoneIdentity.callProof(caller,myId,ts,nonce))
+                                ||!PhoneIdentity.pinOrVerify(context,caller,key)){
+                                conn.close(1008,"Unauthenticated caller");return;
                             }
                             synchronized(LocalPeerNode.this){
                                 if(incoming!=null||outgoing!=null){
@@ -121,15 +132,20 @@ public final class LocalPeerNode {
                                     conn.close(1000);return;
                                 }
                                 incoming=conn;
+                                inboundPeerId=caller;inboundPeerKey=key;inboundNonce=nonce;
+                                inboundSent=0;inboundSeen=0;
                             }
                             JSONObject event=new JSONObject();
-                            event.put("type","incoming");
-                            event.put("from",msg.getString("from"));
+                            event.put("type","incoming");event.put("from",caller);
                             listener.onPacket(event);
-                            conn.send("{\"type\":\"ringing\"}");
+                            JSONObject ringing=new JSONObject();
+                            ringing.put("type","ringing");
+                            conn.send(authenticated(ringing,true).toString());
                             return;
                         }
-                        if(!validPacket(msg)) {conn.close(1008,"Invalid packet");return;}
+                        if(!validPacket(msg)||!verifyIncoming(msg,true)){
+                            conn.close(1008,"Unauthenticated packet");return;
+                        }
                         if("hangup".equals(type)||"reject".equals(type)){
                             JSONObject ended=new JSONObject();
                             ended.put("type","ended");
@@ -145,7 +161,10 @@ public final class LocalPeerNode {
                         wasActive=incoming==conn;
                         if(wasActive)incoming=null;
                     }
-                    if(wasActive)notifyEnded();
+                    if(wasActive){
+                        inboundPeerId=null;inboundPeerKey=null;inboundNonce=null;
+                        notifyEnded();
+                    }
                 }
                 @Override public void onError(WebSocket conn,Exception ex){
                     listener.onNodeStatus("Nearby listener error; use the internet connection.");
