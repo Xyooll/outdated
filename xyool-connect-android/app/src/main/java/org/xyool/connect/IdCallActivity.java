@@ -37,7 +37,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import java.net.URI;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,18 +76,16 @@ public final class IdCallActivity extends Activity {
     private SharedPreferences prefs;
     private String id, token;
     private TextView stateLabel;
-    private EditText targetInput,serverInput,stunInput,turnInput,turnUser,turnPass,nodesInput;
-    private LinearLayout body, advancedPanel;
+    private EditText targetInput;
+    private LinearLayout body;
     private CallReachabilityService cloud;
     private boolean cloudBound;
     private boolean autoAnswerRequested;
-    private Button reachabilityButton,meshRelayButton,peerHintButton;
+    private Button reachabilityButton;
     private final ServiceConnection cloudLink=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){
             cloud=((CallReachabilityService.LocalBinder)binder).service();
             if(hasReachability()&&nearby!=null)nearby.stop();
-            updateMeshRelayButton();
-            updatePeerHintButton();
             cloud.setListener(new CallReachabilityService.Listener(){
                 @Override public void onPacket(JSONObject message){received(message,false);}
                 @Override public void onLocalPacket(JSONObject message){received(message,true);}
@@ -132,38 +129,6 @@ public final class IdCallActivity extends Activity {
     private String bridgeMode(){
         return BridgePolicy.sanitize(prefs.getString(BridgePolicy.PREF_MODE,BridgePolicy.HYBRID));
     }
-    private void selectBridgeMode(String next){
-        String mode=BridgePolicy.sanitize(next);
-        if(waitingId!=null || peerActive){
-            status("Finish your current call before changing network mode.");
-            return;
-        }
-        prefs.edit().putString(BridgePolicy.PREF_MODE,mode).apply();
-        if(cloud!=null)cloud.reloadNetworkPolicy();
-        else{
-            disconnect();
-            if(hasReachability())connect();
-        }
-        connectionStatus();
-        status(BridgePolicy.description(mode));
-    }
-    private void copyNetworkReport(){
-        String report="Xyool Connect network report (no IDs/IP addresses)\n" +
-            "Mode: "+bridgeMode()+
-            "\nLocal Wi-Fi available: "+LocalPeerNode.onWifi(this)+
-            "\nNearby peers: "+(cloud!=null&&hasReachability()?cloud.localPeerCount():(nearby==null?0:nearby.peerCount()))+
-            "\nCloud registered: "+(BridgePolicy.allowsCloud(bridgeMode())&&registered)+
-            "\nGlobal data-channel peers: "+(cloud==null?0:cloud.globalPeerCount())+
-            "\nGlobal forwarding opt-in: "+(cloud!=null&&cloud.meshRelayEnabled())+
-            "\n"+iceDiagnostics.summary()+
-            "\n"+iceDiagnostics.interpretation();
-        ClipboardManager cb=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
-        if(cb!=null){
-            cb.setPrimaryClip(ClipData.newPlainText("Xyool network report",report));
-            status("Sanitized network report copied. No IDs, SDP or IP addresses included.");
-        }
-    }
-
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         prefs=getSharedPreferences("xyool_private",MODE_PRIVATE);
@@ -304,7 +269,7 @@ public final class IdCallActivity extends Activity {
         reachabilityButton=button(net,"Xyool Network: OFF",true,v->toggleReachability());
         updateReachabilityButton();
         space(net,7);
-        net.addView(text("ON keeps your Xyool ID available for incoming calls while the app is closed, using a visible Android foreground-service notification. Android may still stop or restrict the connection.",12,MUTED,false));
+        net.addView(text("Turn ON to receive calls by ID, including while this screen is closed. Internet registration uses a signaling service; Android may interrupt background access.",12,MUTED,false));
 
         LinearLayout self=panel();
         self.addView(text("YOUR ID",12,MUTED,true));
@@ -343,125 +308,8 @@ public final class IdCallActivity extends Activity {
         space(dial,6);
         button(dial,"Mute / Unmute",false,v->toggleMute());
 
-        LinearLayout settings=panel();
-        settings.addView(text("CALL SETTINGS",12,MUTED,true));
-        space(settings,7);
-        settings.addView(text("The main Xyool Network switch also controls background reachability and incoming call alerts.",12,MUTED,false));
-        space(settings,6);
-        button(settings,"Advanced network settings ▾",false,v->
-            advancedPanel.setVisibility(advancedPanel.getVisibility()==View.GONE?
-                View.VISIBLE:View.GONE));
-        space(settings,4);
-        advancedPanel=column();
-        advancedPanel.setVisibility(View.GONE);
-        settings.addView(advancedPanel);
-        advancedPanel.addView(text("Direct-only uses nearby Wi-Fi discovery; Hybrid tries nearby first and uses rendezvous nodes when needed. Internet media prefers direct WebRTC; TURN is optional fallback.",12,MUTED,false));
-        space(advancedPanel,8);
-        button(advancedPanel,"Direct-only • Local calls",false,
-            v->selectBridgeMode(BridgePolicy.DIRECT_ONLY));
-        space(advancedPanel,5);
-        button(advancedPanel,"Hybrid • Across networks",false,
-            v->selectBridgeMode(BridgePolicy.HYBRID));
-        space(advancedPanel,8);
-        meshRelayButton=button(advancedPanel,"Mesh forwarding: OFF",false,
-            v->toggleMeshRelay());
-        updateMeshRelayButton();
-        space(advancedPanel,6);
-        peerHintButton=button(advancedPanel,"Receive peer introductions: OFF",false,
-            v->togglePeerHints());
-        updatePeerHintButton();
-        space(advancedPanel,6);
-        button(advancedPanel,"Introduce entered ID to verified connected peers",false,v->{
-            String candidate=normalize(targetInput.getText().toString());
-            if(candidate==null||candidate.equals(id)){
-                status("Enter a different Xyool ID first.");return;
-            }
-            if(cloud==null||!hasReachability()){
-                status("Enable the background phone node first.");return;
-            }
-            if(PhoneIdentity.qrVerifiedFingerprint(this,candidate)==null){
-                status("Scan this contact's identity QR before sharing their ID.");return;
-            }
-            new AlertDialog.Builder(this)
-                .setTitle("Share a contact introduction?")
-                .setMessage("Share the entered Xyool ID and its public-key fingerprint with up to three directly connected, QR-verified peers? No IP, contact book or wallet data will be shared. It will not add or connect contacts automatically.")
-                .setNegativeButton("Cancel",(dialog,which)->{})
-                .setPositiveButton("Share",(dialog,which)->{
-                    int count=cloud==null?0:cloud.introduceVerifiedContact(candidate,true);
-                    status(count>0?"Shared one untrusted introduction with "+count+
-                        " connected peer(s).":"No eligible verified peer data channels connected.");
-                }).show();
-        });
-        space(advancedPanel,6);
-        advancedPanel.addView(text("Peer introductions are OFF for receiving until you enable them. Introduced IDs are untrusted hints: independently scan a QR to verify a new contact. Introductions do not dial, store new keys or seed files.",12,MUTED,false));
-        space(advancedPanel,6);
-        button(advancedPanel,"Probe entered Xyool ID through peer mesh",false,v->{
-            String dest=normalize(targetInput.getText().toString());
-            if(dest==null||dest.equals(id)){
-                status("Enter another Xyool ID to test a peer route.");return;
-            }
-            if(cloud==null||!cloud.probeGlobalRoute(dest))
-                status("No direct peer data channel ready. Enable background node and join an overlay.");
-            else status("Signed network probe sent; awaiting a pong over peer nodes.");
-        });
-        space(advancedPanel,8);
-        advancedPanel.addView(text("Peer mesh uses WebRTC data channels. Forwarding is OFF by default, carries only signed reachability probes, limits hops and bandwidth, and does NOT forward calls or other people's Internet traffic.",12,MUTED,false));
-        space(advancedPanel,8);
-        button(advancedPanel,"Refresh network",false,v->{
-            if(cloud!=null&&hasReachability())cloud.refreshLocal();
-            else if(nearby!=null)nearby.start();
-            if(cloud!=null)cloud.reloadNetworkPolicy();
-            else if(BridgePolicy.allowsCloud(bridgeMode())){disconnect();connect();}
-            else connectionStatus();
-        });
-        space(advancedPanel,6);
-        button(advancedPanel,"Copy connection report",false,v->copyNetworkReport());
-        space(advancedPanel,9);
-        serverInput=input(advancedPanel,"Signaling WSS address",prefs.getString("xyool_id_server",DEFAULT_SERVER));
-        space(advancedPanel,7);
-        advancedPanel.addView(text("Only add nodes run by operators you trust. These nodes receive your current Xyool registration credential; this is not a public trustless DHT.",12,MUTED,false));
-        space(advancedPanel,6);
-        nodesInput=input(advancedPanel,"Trusted additional WSS nodes (comma separated)",
-            prefs.getString(RendezvousPool.PREF_NODES,""));
-        space(advancedPanel,7);
-        stunInput=input(advancedPanel,"STUN (blank=automatic, off=disabled)",prefs.getString("xyool_stun",""));
-        space(advancedPanel,7);
-        turnInput=input(advancedPanel,"TURN (optional)",prefs.getString("xyool_turn",""));
-        space(advancedPanel,7);
-        turnUser=input(advancedPanel,"TURN username",prefs.getString("xyool_turn_user",""));
-        space(advancedPanel,7);
-        turnPass=input(advancedPanel,"TURN password",prefs.getString("xyool_turn_pass",""));
-        turnPass.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        space(advancedPanel,9);
-        button(advancedPanel,"Save network settings",true,v->{
-            String url=serverInput.getText().toString().trim();
-            try{
-                URI uri=URI.create(url);
-                if(!"wss".equalsIgnoreCase(uri.getScheme())||uri.getHost()==null||
-                    !"/v1/id".equals(uri.getPath())||
-                    uri.getUserInfo()!=null||uri.getQuery()!=null||uri.getFragment()!=null)
-                    throw new IllegalArgumentException();
-            }catch(Exception ex){
-                status("Signaling address must be wss://.../v1/id.");
-                return;
-            }
-            try{new RendezvousPool(url,nodesInput.getText().toString());}
-            catch(IllegalArgumentException invalid){
-                status("Each additional node must be a valid wss:// address ending /v1/id (maximum 5).");
-                return;
-            }
-            prefs.edit().putString("xyool_id_server",url)
-                .putString(RendezvousPool.PREF_NODES,nodesInput.getText().toString().trim())
-                .putString("xyool_stun",stunInput.getText().toString().trim())
-                .putString("xyool_turn",turnInput.getText().toString().trim())
-                .putString("xyool_turn_user",turnUser.getText().toString())
-                .putString("xyool_turn_pass",turnPass.getText().toString()).apply();
-            if(cloud!=null)cloud.reloadNetworkPolicy();
-            else {disconnect();connect();}
-            advancedPanel.setVisibility(View.GONE);
-        });
         space(body,7);
-        body.addView(text("Early test build. Network OFF prevents listening and calls. Network ON persists across app closure and attempts reboot recovery; Android battery limits, force-stop and offline networks may interrupt reachability. Not for emergency calls.",12,MUTED,false));
+        body.addView(text("Test build • Network reachability depends on Android and connectivity. Not for emergency calls.",12,MUTED,false));
     }
 
     private void showMyQr(){
@@ -605,32 +453,6 @@ public final class IdCallActivity extends Activity {
         }
     }
     private boolean hasReachability(){return prefs.getBoolean(CallReachabilityService.PREF_ENABLED,false);}
-    private void updateMeshRelayButton(){
-        if(meshRelayButton!=null)meshRelayButton.setText(
-            cloud!=null&&cloud.meshRelayEnabled()?"Mesh forwarding: ON • Tap to stop":
-            "Mesh forwarding: OFF • Tap to enable");
-    }
-    private void updatePeerHintButton(){
-        if(peerHintButton!=null)peerHintButton.setText(
-            cloud!=null&&cloud.peerHintReceiving()?
-            "Receive peer introductions: ON • Tap to stop":
-            "Receive peer introductions: OFF • Tap to enable");
-    }
-    private void togglePeerHints(){
-        if(!hasReachability()||cloud==null){
-            status("Enable background call alerts first to receive introductions.");return;
-        }
-        cloud.setPeerHintReceiving(!cloud.peerHintReceiving());
-        updatePeerHintButton();
-    }
-    private void toggleMeshRelay(){
-        if(!hasReachability()||cloud==null){
-            status("Enable background call alerts first to run a persistent phone node.");return;
-        }
-        boolean next=!cloud.meshRelayEnabled();
-        cloud.setMeshRelayEnabled(next);
-        updateMeshRelayButton();
-    }
     private void updateReachabilityButton(){
         if(reachabilityButton!=null)reachabilityButton.setText(
             hasReachability()?"Xyool Network: ON • Tap to stop":
@@ -668,12 +490,25 @@ public final class IdCallActivity extends Activity {
         if(nearby!=null)nearby.stop();
         disconnect();
         updateReachabilityButton();
-        updateMeshRelayButton();
         status("Xyool Network OFF. ID registration, local discovery, and incoming listening stopped.");
     }
     private void toggleReachability(){
-        if(hasReachability())disableReachability();
-        else enableReachability();
+        if(hasReachability()){disableReachability();return;}
+        // Legacy Direct-only settings are a privacy preference. Do not
+        // silently turn them into internet registration when removing
+        // the developer routing controls.
+        if(!BridgePolicy.allowsCloud(bridgeMode())){
+            new AlertDialog.Builder(this)
+                .setTitle("Enable internet reachability?")
+                .setMessage("This replaces your previous local-only mode. Xyool will use a signaling server to register your ID across networks. The operator can see registration metadata such as your ID and IP address.")
+                .setNegativeButton("Cancel",null)
+                .setPositiveButton("Enable network",(dialog,which)->{
+                    prefs.edit().putString(BridgePolicy.PREF_MODE,BridgePolicy.HYBRID).apply();
+                    enableReachability();
+                }).show();
+            return;
+        }
+        enableReachability();
     }
     private void send(JSONObject obj){
         if(usingLocal){
