@@ -1,18 +1,45 @@
 plugins {
     id 'com.android.application'
 }
+
+// Release signing deliberately comes from GitHub Actions Secrets. No private
+// signing key, key-store password, or encrypted-key decryption password is
+// checked into the public repository.
+def xyoolReleaseKeystore = System.getenv('XYOOL_SIGNING_STORE_FILE')
+def xyoolReleasePassword = System.getenv('XYOOL_SIGNING_PASSPHRASE')
+
 android {
     namespace 'org.xyool.connect'
     compileSdk 35
     defaultConfig {
+        // PERMANENT beta applicationId. Never change it again for updates.
+        // This matches Xyool Connect v0.7's package identity.
         applicationId 'org.xyool.connect.crossnetworkalpha'
         minSdk 26
         targetSdk 34
-        versionCode 8
-        versionName '0.7.0'
+        // Must increase for each installed update.
+        versionCode 9
+        versionName '0.8.0'
+    }
+    signingConfigs {
+        xyoolStable {
+            if (xyoolReleaseKeystore && xyoolReleasePassword) {
+                storeFile file(xyoolReleaseKeystore)
+                storeType 'PKCS12'
+                storePassword xyoolReleasePassword
+                keyAlias 'xyool-stable'
+                keyPassword xyoolReleasePassword
+            }
+        }
     }
     buildTypes {
-        release { minifyEnabled false }
+        debug { }
+        release {
+            minifyEnabled false
+            if (xyoolReleaseKeystore && xyoolReleasePassword) {
+                signingConfig signingConfigs.xyoolStable
+            }
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
