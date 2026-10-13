@@ -24,6 +24,7 @@ jobs:
           distribution: temurin
           java-version: '17'
       - name: Generate private signing certificate only once
+        id: init
         env:
           XYOOL_SIGNING_PASSPHRASE: ${{ secrets.XYOOL_SIGNING_PASSPHRASE }}
         shell: bash
@@ -35,6 +36,7 @@ jobs:
           fi
           if [ -e xyool-connect-android/signing/xyool-stable.p12.enc.b64 ]; then
             echo "::notice::Existing signing identity detected. Refusing to rotate the certificate."
+            echo "created=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           mkdir -p xyool-connect-android/signing
@@ -66,14 +68,12 @@ jobs:
                   xyool-connect-android/signing/CERTIFICATE_FINGERPRINT.txt
           git commit -m "Initialize encrypted stable Android release signing certificate"
           git push origin HEAD:main
+          echo "created=true" >> "$GITHUB_OUTPUT"
       - name: Start first stable Android release
+        if: steps.init.outputs.created == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          if [ -f xyool-connect-android/signing/xyool-stable.p12.enc.b64 ]; then
-            echo "Signing key already existed; run release workflow manually if necessary."
-          else
-            # GitHub GITHUB_TOKEN pushes intentionally do not trigger 'on: push'.
-            gh workflow run xyool-release-android.yml --ref main
-          fi
+          # GITHUB_TOKEN pushes do not trigger other workflows automatically.
+          gh workflow run xyool-release-android.yml --ref main
