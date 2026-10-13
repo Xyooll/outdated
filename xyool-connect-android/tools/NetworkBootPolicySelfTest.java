@@ -14,7 +14,7 @@ public final class NetworkBootPolicySelfTest {
         expect(NetworkBootPolicy.canRestore(false,ID,TOKEN),false,"disabled stays off");
         expect(NetworkBootPolicy.canRestore(true,null,TOKEN),false,"missing id");
         expect(NetworkBootPolicy.canRestore(true,"",TOKEN),false,"empty id");
-        expect(NetworkBootPolicy.canRestore(true,"XY-XXXX-XXXX-XXXX",TOKEN),false,"invalid alphabet");
+        expect(NetworkBootPolicy.canRestore(true,"XY-IIII-IIII-IIII",TOKEN),false,"invalid alphabet");
         expect(NetworkBootPolicy.canRestore(true,"not-an-id",TOKEN),false,"invalid id");
         expect(NetworkBootPolicy.canRestore(true,ID,null),false,"missing token");
         expect(NetworkBootPolicy.canRestore(true,ID,""),false,"empty token");
