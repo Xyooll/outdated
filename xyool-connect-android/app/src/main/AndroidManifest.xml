@@ -26,14 +26,11 @@
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="user_opt_in_voip_identity_call_reachability_over_websocket"/>
         </service>
-        <activity android:name=".DirectCallActivity" android:exported="false"/>
-        <activity android:name=".QrScannerActivity" android:exported="false" android:screenOrientation="portrait"/>
-        <activity android:name=".IdCallActivity" android:exported="false"/>
-        <activity android:name=".NativeVoiceActivity" android:exported="false"/>
-        <activity android:name=".CallServicesActivity" android:exported="false"/>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+        <activity android:name=".QrScannerActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".IdCallActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
