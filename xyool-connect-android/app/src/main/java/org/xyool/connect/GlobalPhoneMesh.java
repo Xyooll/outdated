@@ -498,6 +498,9 @@ public final class GlobalPhoneMesh {
                     }
                 }
             }else if(forwarding && ttl>1 && !self.equals(from)){
+                // A peer may edit unsigned TTL, but peer introductions must
+                // NEVER be rebroadcast, regardless of their declared TTL.
+                if("peer-hint".equals(new JSONObject(payload).optString("kind","")))return;
                 packet.put("ttl",ttl-1);
                 broadcast(packet,via.id);
             }
