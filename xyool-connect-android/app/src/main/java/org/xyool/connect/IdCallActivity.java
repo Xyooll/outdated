@@ -262,70 +262,45 @@ public final class IdCallActivity extends Activity {
         parent.addView(e,new LinearLayout.LayoutParams(-1,-2));
         return e;
     }
+    // Calling-first single-screen UI. Debug and relay controls remain in Settings.
     private void render(){
         LinearLayout root=column();
         root.setBackgroundColor(BG);
         ScrollView scroll=new ScrollView(this);
+        scroll.setFillViewport(false);
         body=column();
-        body.setPadding(dp(15),dp(15),dp(15),dp(20));
+        body.setPadding(dp(16),dp(18),dp(16),dp(28));
         scroll.addView(body);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1f));
-        button(root,"← Xyool Connect",false,v->finish());
         setContentView(root);
 
-        body.addView(text("XYOOL CONNECT",12,ACCENT,true));
-        space(body,5);
-        body.addView(text("Call by ID",28,FG,true));
-        space(body,8);
+        body.addView(text("XYOOL CONNECT",14,ACCENT,true));
+        space(body,3);
+        body.addView(text("Call by Xyool ID",26,FG,true));
+        space(body,10);
 
-        LinearLayout connection=panel();
-        connection.addView(text("CALLING NETWORK",12,MUTED,true));
-        space(connection,6);
-        stateLabel=text(callStatus,14,MUTED,false);
-        connection.addView(stateLabel);
-        space(connection,9);
-        button(connection,"Check connection",false,v->{
-            if(nearby!=null)nearby.start();
-            if(registered || !BridgePolicy.allowsCloud(bridgeMode()))connectionStatus();
-            else {disconnect();connect();}
-        });
-        space(connection,8);
-        connection.addView(text("NETWORK BRIDGE POLICY",12,MUTED,true));
-        space(connection,5);
-        connection.addView(text("Direct calls first. Optional Web2 signaling helps " +
-            "find remote IDs, but does not carry audio. Peer-operated Web3 discovery isn't integrated yet.",12,MUTED,false));
-        space(connection,7);
-        button(connection,"Direct-only · No Railway",false,
-            v->selectBridgeMode(BridgePolicy.DIRECT_ONLY));
-        space(connection,5);
-        button(connection,"Hybrid · Direct first, Web2 discovery fallback",false,
-            v->selectBridgeMode(BridgePolicy.HYBRID));
-        space(connection,5);
-        button(connection,"Copy network diagnostic report",false,v->copyNetworkReport());
-        space(connection,7);
-        reachabilityButton=button(connection,"Background call alerts: OFF",false,
-            v->toggleReachability());
-        updateReachabilityButton();
-        connection.addView(text("Opt-in: Android shows a persistent network notification while Xyool listens in the background. Notifications and battery settings can still prevent delivery.",12,MUTED,false));
+        LinearLayout net=panel();
+        net.addView(text("NETWORK",12,MUTED,true));
+        space(net,4);
+        stateLabel=text(callStatus,14,FG,false);
+        net.addView(stateLabel);
 
         LinearLayout self=panel();
-        self.addView(text("YOUR XYOOL ID",12,MUTED,true));
-        space(self,6);
-        TextView address=text(id,23,ACCENT,true);
+        self.addView(text("YOUR ID",12,MUTED,true));
+        space(self,7);
+        TextView address=text(id,21,ACCENT,true);
         address.setTextIsSelectable(true);
         address.setGravity(Gravity.CENTER_HORIZONTAL);
         self.addView(address);
-        space(self,5);
-        self.addView(text("Save this ID or share it with a friend. Don't share your private account key.",12,MUTED,false));
-        space(self,12);
-        button(self,"Copy my ID",true,v->{
+        space(self,8);
+        button(self,"Copy my ID",false,v->{
             ClipboardManager clip=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
             if(clip!=null)clip.setPrimaryClip(ClipData.newPlainText("Xyool ID",id));
-            status("Your ID was copied.");
+            status("ID copied.");
         });
-        space(self,8);
+        space(self,6);
         button(self,"Show my QR code",false,v->showMyQr());
-        space(self,8);
+        space(self,6);
         button(self,"Share my ID",false,v->{
             Intent send=new Intent(Intent.ACTION_SEND);
             send.setType("text/plain");
@@ -334,60 +309,62 @@ public final class IdCallActivity extends Activity {
             catch(ActivityNotFoundException ex){status("No sharing app found.");}
         });
 
-        LinearLayout dialing=panel();
-        dialing.addView(text("CALL SOMEONE",12,MUTED,true));
-        space(dialing,8);
-        targetInput=input(dialing,"Type their Xyool ID",null);
-        space(dialing,11);
-        button(dialing,"Scan someone's QR code",false,v->scanIdQr());
-        space(dialing,9);
-        button(dialing,"Call",true,v->call());
-        space(dialing,5);
-        dialing.addView(text("The other person needs Xyool Connect open and online to answer.",12,MUTED,false));
-        space(dialing,12);
-        button(dialing,"Hang up",false,v->hangup());
-        space(dialing,8);
-        button(dialing,"Mute / Unmute",false,v->toggleMute());
+        LinearLayout dial=panel();
+        dial.addView(text("CALL SOMEONE",12,MUTED,true));
+        space(dial,7);
+        targetInput=input(dial,"Xyool ID",null);
+        space(dial,7);
+        button(dial,"Scan their QR code",false,v->scanIdQr());
+        space(dial,11);
+        button(dial,"Call",true,v->call());
+        space(dial,6);
+        button(dial,"Hang up",false,v->hangup());
+        space(dial,6);
+        button(dial,"Mute / Unmute",false,v->toggleMute());
 
-        LinearLayout p2p=panel();
-        p2p.addView(text("SERVER-FREE CALLING TEST",15,ACCENT,true));
-        space(p2p,6);
-        p2p.addView(text("Test direct WebRTC between two different Wi-Fi networks. Each phone exchanges one offer and one answer through a trusted channel; Xyool's Railway server is not contacted by the direct-call screen.",12,MUTED,false));
-        space(p2p,8);
-        button(p2p,"Direct call lab · No Xyool server",true,
-            v->{
-                // Suspend the existing Railway WSS registration as soon as
-                // the user deliberately enters the server-free experiment.
-                disconnect();
-                startActivity(new Intent(this,DirectCallActivity.class));
-            });
-
-        LinearLayout help=panel();
-        help.addView(text("How calling works",17,FG,true));
-        space(help,5);
-        help.addView(text("For nearby calls, put both phones on the same trusted Wi-Fi and leave this screen open. Other calls use Xyool’s online connection service automatically. No setup needed.",13,MUTED,false));
-        space(help,10);
-        button(help,"Developer setup (optional)",false,v->{
-            advancedPanel.setVisibility(advancedPanel.getVisibility()==View.GONE?View.VISIBLE:View.GONE);
-        });
-        space(help,9);
+        LinearLayout settings=panel();
+        settings.addView(text("CALL SETTINGS",12,MUTED,true));
+        space(settings,7);
+        reachabilityButton=button(settings,"Background call alerts: OFF",false,
+            v->toggleReachability());
+        updateReachabilityButton();
+        space(settings,6);
+        button(settings,"Advanced network settings ▾",false,v->
+            advancedPanel.setVisibility(advancedPanel.getVisibility()==View.GONE?
+                View.VISIBLE:View.GONE));
+        space(settings,4);
         advancedPanel=column();
         advancedPanel.setVisibility(View.GONE);
-        help.addView(advancedPanel);
-        advancedPanel.addView(text("Advanced testing only. Internet calls use Cloudflare's public STUN server unless disabled, which reveals your public IP to Cloudflare. Encrypted audio is sent peer-to-peer when possible. A private TURN relay is not configured yet.",12,MUTED,false));
-        space(advancedPanel,10);
-        serverInput=input(advancedPanel,"Secure server address",prefs.getString("xyool_id_server",DEFAULT_SERVER));
+        settings.addView(advancedPanel);
+        advancedPanel.addView(text("Direct-only uses nearby Wi-Fi discovery; Hybrid tries nearby first and uses rendezvous nodes when needed. Internet media prefers direct WebRTC; TURN is optional fallback.",12,MUTED,false));
+        space(advancedPanel,8);
+        button(advancedPanel,"Direct-only • Local calls",false,
+            v->selectBridgeMode(BridgePolicy.DIRECT_ONLY));
+        space(advancedPanel,5);
+        button(advancedPanel,"Hybrid • Across networks",false,
+            v->selectBridgeMode(BridgePolicy.HYBRID));
+        space(advancedPanel,8);
+        button(advancedPanel,"Refresh network",false,v->{
+            if(nearby!=null)nearby.start();
+            if(cloud!=null)cloud.reconnectNow();
+            else if(BridgePolicy.allowsCloud(bridgeMode())){disconnect();connect();}
+            else connectionStatus();
+        });
+        space(advancedPanel,6);
+        button(advancedPanel,"Copy connection report",false,v->copyNetworkReport());
+        space(advancedPanel,9);
+        serverInput=input(advancedPanel,"Signaling WSS address",prefs.getString("xyool_id_server",DEFAULT_SERVER));
         space(advancedPanel,7);
-        stunInput=input(advancedPanel,"STUN address (blank = automatic; off = disabled)",prefs.getString("xyool_stun",""));
+        stunInput=input(advancedPanel,"STUN (blank=automatic, off=disabled)",prefs.getString("xyool_stun",""));
         space(advancedPanel,7);
-        turnInput=input(advancedPanel,"TURN relay (optional)",prefs.getString("xyool_turn",""));
+        turnInput=input(advancedPanel,"TURN (optional)",prefs.getString("xyool_turn",""));
         space(advancedPanel,7);
-        turnUser=input(advancedPanel,"TURN username (optional)",prefs.getString("xyool_turn_user",""));
+        turnUser=input(advancedPanel,"TURN username",prefs.getString("xyool_turn_user",""));
         space(advancedPanel,7);
-        turnPass=input(advancedPanel,"TURN password (optional)",prefs.getString("xyool_turn_pass",""));
+        turnPass=input(advancedPanel,"TURN password",prefs.getString("xyool_turn_pass",""));
         turnPass.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        space(advancedPanel,10);
-        button(advancedPanel,"Save and connect",true,v->{
+        space(advancedPanel,9);
+        button(advancedPanel,"Save network settings",true,v->{
             String url=serverInput.getText().toString().trim();
             try{
                 URI uri=URI.create(url);
@@ -396,7 +373,7 @@ public final class IdCallActivity extends Activity {
                     uri.getUserInfo()!=null||uri.getQuery()!=null||uri.getFragment()!=null)
                     throw new IllegalArgumentException();
             }catch(Exception ex){
-                status("Developer server address must start with wss:// and end in /v1/id.");
+                status("Signaling address must be wss://.../v1/id.");
                 return;
             }
             prefs.edit().putString("xyool_id_server",url)
@@ -408,11 +385,9 @@ public final class IdCallActivity extends Activity {
             else {disconnect();connect();}
             advancedPanel.setVisibility(View.GONE);
         });
-
-        space(body,5);
-        body.addView(text("Background alerts require opt-in and aren't guaranteed after force-stop, device restart, or strict battery restrictions. Not an emergency calling service; use your regular phone app for 911.",12,MUTED,false));
+        space(body,7);
+        body.addView(text("Early test build. Background alerts require permission and aren't guaranteed after a force-stop. Not for emergency calls.",12,MUTED,false));
     }
-
 
     private void showMyQr(){
         try{
@@ -598,7 +573,7 @@ public final class IdCallActivity extends Activity {
         boolean localAvailable=nearby!=null&&nearby.hasPeer(dest)&&LocalPeerNode.onWifi(this);
         BridgePolicy.Route route=BridgePolicy.choose(bridgeMode(),localAvailable,registered);
         if(route==BridgePolicy.Route.MANUAL_DIRECT_REQUIRED){
-            status("No automatic route to this ID. Use Direct call lab to share a P2P code.");
+            status("No route to this ID in Direct-only mode. Switch to Hybrid for calls across networks.");
             return;
         }
         requestMicrophone(()->{
