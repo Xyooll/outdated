@@ -89,6 +89,37 @@ public final class IdCallActivity extends Activity {
     private Runnable pendingMicrophone;
     private String callStatus="Checking Xyool calling service…";
     private boolean muted;
+    private IcePathInspector iceDiagnostics=new IcePathInspector();
+
+    private String bridgeMode(){
+        return BridgePolicy.sanitize(prefs.getString(BridgePolicy.PREF_MODE,BridgePolicy.HYBRID));
+    }
+    private void selectBridgeMode(String next){
+        String mode=BridgePolicy.sanitize(next);
+        if(waitingId!=null || peerActive){
+            status("Finish your current call before changing network mode.");
+            return;
+        }
+        prefs.edit().putString(BridgePolicy.PREF_MODE,mode).apply();
+        disconnect();
+        if(BridgePolicy.allowsCloud(mode))connect();
+        else connectionStatus();
+        status(BridgePolicy.description(mode));
+    }
+    private void copyNetworkReport(){
+        String report="Xyool Connect network report (no IDs/IP addresses)\n" +
+            "Mode: "+bridgeMode()+
+            "\nLocal Wi-Fi available: "+LocalPeerNode.onWifi(this)+
+            "\nNearby peers: "+(nearby==null?0:nearby.peerCount())+
+            "\nCloud registered: "+(BridgePolicy.allowsCloud(bridgeMode())&&registered)+
+            "\n"+iceDiagnostics.summary()+
+            "\n"+iceDiagnostics.interpretation();
+        ClipboardManager cb=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+        if(cb!=null){
+            cb.setPrimaryClip(ClipData.newPlainText("Xyool network report",report));
+            status("Sanitized network report copied. No IDs, SDP or IP addresses included.");
+        }
+    }
 
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
@@ -125,7 +156,7 @@ public final class IdCallActivity extends Activity {
         if(nearby!=null)nearby.start();
         // The direct-call lab closes the cloud socket before opening. Restore
         // it only when returning to ordinary internet-ID calling.
-        if(prefs!=null && ws==null && !prefs.getBoolean("xyool_direct_only",false))
+        if(prefs!=null && ws==null && BridgePolicy.allowsCloud(bridgeMode()))
             connect();
     }
     @Override protected void onStop(){
@@ -203,9 +234,22 @@ public final class IdCallActivity extends Activity {
         space(connection,9);
         button(connection,"Check connection",false,v->{
             if(nearby!=null)nearby.start();
-            if(registered)connectionStatus();
+            if(registered || !BridgePolicy.allowsCloud(bridgeMode()))connectionStatus();
             else {disconnect();connect();}
         });
+        space(connection,8);
+        connection.addView(text("NETWORK BRIDGE POLICY",12,MUTED,true));
+        space(connection,5);
+        connection.addView(text("Direct calls first. Optional Web2 signaling helps " +
+            "find remote IDs, but does not carry audio. Peer-operated Web3 discovery isn't integrated yet.",12,MUTED,false));
+        space(connection,7);
+        button(connection,"Direct-only · No Railway",false,
+            v->selectBridgeMode(BridgePolicy.DIRECT_ONLY));
+        space(connection,5);
+        button(connection,"Hybrid · Direct first, Web2 discovery fallback",false,
+            v->selectBridgeMode(BridgePolicy.HYBRID));
+        space(connection,5);
+        button(connection,"Copy network diagnostic report",false,v->copyNetworkReport());
 
         LinearLayout self=panel();
         self.addView(text("YOUR XYOOL ID",12,MUTED,true));
@@ -392,6 +436,11 @@ public final class IdCallActivity extends Activity {
 
     private void connectionStatus(){
         int n=nearby==null?0:nearby.peerCount();
+        if(!BridgePolicy.allowsCloud(bridgeMode())){
+            status(n>0?"Direct-only · "+n+" local peers · Railway disconnected.":
+                "Direct-only · Local or manual direct calls · No Railway.");
+            return;
+        }
         if(registered){
             status(n>0?"Nearby phones: "+n+" · Internet calling online.":"Internet calling online · Nearby Wi-Fi discovery on.");
         }else if(n>0){
@@ -415,6 +464,11 @@ public final class IdCallActivity extends Activity {
         return "XY-"+clean.substring(0,4)+"-"+clean.substring(4,8)+"-"+clean.substring(8);
     }
     private void connect(){
+        if(!BridgePolicy.allowsCloud(bridgeMode())){
+            registered=false;
+            connectionStatus();
+            return;
+        }
         String raw=prefs.getString("xyool_id_server",DEFAULT_SERVER).trim();
         if(raw.isEmpty()){registered=false;connectionStatus();return;}
         URI uri;
@@ -478,15 +532,16 @@ public final class IdCallActivity extends Activity {
         if(dest==null){status("Enter a valid Xyool ID, like XY-ABCD-EFGH-JKLM.");return;}
         if(dest.equals(id)){status("You cannot call your own ID.");return;}
         boolean localAvailable=nearby!=null&&nearby.hasPeer(dest)&&LocalPeerNode.onWifi(this);
-        if(!localAvailable&&!registered){
-            status("That ID isn't nearby. Internet calling is offline. Both phones must be online.");
+        BridgePolicy.Route route=BridgePolicy.choose(bridgeMode(),localAvailable,registered);
+        if(route==BridgePolicy.Route.MANUAL_DIRECT_REQUIRED){
+            status("No automatic route to this ID. Use Direct call lab to share a P2P code.");
             return;
         }
         requestMicrophone(()->{
-            if(!initPeer())return;
+            usingLocal=route==BridgePolicy.Route.LOCAL_DIRECT;
+            if(!initPeer()){usingLocal=false;return;}
             outgoing=true;
             waitingId=dest;
-            usingLocal=localAvailable;
             try{
                 if(localAvailable){
                     if(!nearby.call(dest)){
@@ -593,6 +648,9 @@ public final class IdCallActivity extends Activity {
     }
     private boolean initPeer(){
         try{
+            final IcePathInspector diag=new IcePathInspector();
+            diag.setDiscovery(usingLocal?"Local Wi-Fi signaling":"Web2 ID signaling (Railway)");
+            iceDiagnostics=diag;
             PeerConnectionFactory.initialize(PeerConnectionFactory.InitializationOptions.builder(
                 getApplicationContext()).createInitializationOptions());
             factory=PeerConnectionFactory.builder().createPeerConnectionFactory();
@@ -623,20 +681,29 @@ public final class IdCallActivity extends Activity {
                 new PeerConnection.Observer(){
                     @Override public void onSignalingChange(PeerConnection.SignalingState state){}
                     @Override public void onIceConnectionChange(PeerConnection.IceConnectionState state){
+                        diag.setState(state.name());
+                        if(iceDiagnostics!=diag)return;
                         if(state==PeerConnection.IceConnectionState.CHECKING){
-                            status("Trying direct encrypted audio across networks…");
+                            status("ICE is checking direct audio paths across networks…");
                         }else if(state==PeerConnection.IceConnectionState.CONNECTED||
                             state==PeerConnection.IceConnectionState.COMPLETED){
-                            status("Connected · Encrypted voice call");
+                            status("Encrypted WebRTC connected. Copy report to examine ICE discovery.");
                         }else if(state==PeerConnection.IceConnectionState.FAILED){
-                            status("Audio path blocked across networks. Xyool needs a TURN relay for this connection.");
+                            status("Direct audio ICE failed. "+diag.interpretation()+
+                                " Copy network report for diagnosis.");
                         }else if(state==PeerConnection.IceConnectionState.DISCONNECTED){
-                            status("Audio disconnected. Check internet.");
+                            status("WebRTC disconnected. Check both networks.");
                         }
                     }
                     @Override public void onIceConnectionReceivingChange(boolean value){}
-                    @Override public void onIceGatheringChange(PeerConnection.IceGatheringState state){}
+                    @Override public void onIceGatheringChange(PeerConnection.IceGatheringState state){
+                        if(state==PeerConnection.IceGatheringState.COMPLETE && iceDiagnostics==diag
+                            && waitingId!=null && !peerActive){
+                            status("Network candidate gathering finished. Waiting for ICE connection.");
+                        }
+                    }
                     @Override public void onIceCandidate(IceCandidate c){
+                        diag.record(c.sdp);
                         try{
                             JSONObject payload=new JSONObject();payload.put("type","signal");
                             payload.put("kind","candidate");payload.put("candidate",c.sdp);
