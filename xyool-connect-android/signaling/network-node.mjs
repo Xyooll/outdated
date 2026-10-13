@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {createHash,createHmac,randomBytes,randomUUID,timingSafeEqual} from 'node:crypto';
 import {WebSocket,WebSocketServer} from 'ws';
+import {enableProof,signalProof,verifiedPublicKey} from './overlay-auth.mjs';
 
 const ID=/^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/;
 const HEX=/^[a-f0-9]{64}$/;
@@ -46,9 +47,21 @@ export function createXyoolNetworkNode({
     fs.renameSync(tmp,registryPath);
   }
 
+  const meshKeyPath=registryPath+'.mesh-keys.json';
+  const knownMeshKeys=new Map();
+  if(fs.existsSync(meshKeyPath))
+    for(const [id,fp] of Object.entries(JSON.parse(fs.readFileSync(meshKeyPath,'utf8'))))
+      if(ID.test(id)&&/^[a-f0-9]{64}$/.test(fp))knownMeshKeys.set(id,fp);
+  function persistMeshKeys(){
+    const tmp=meshKeyPath+'.tmp';
+    fs.writeFileSync(tmp,JSON.stringify(Object.fromEntries(knownMeshKeys)),{mode:0o600});
+    fs.renameSync(tmp,meshKeyPath);
+  }
   const local=new Map();     // Xyool ID -> client WebSocket
   const calls=new Map();     // local Xyool ID -> one active call record
   const routes=new Map();    // remote Xyool ID -> {via, proof, expires}
+  const meshEnabled=new Set(); // opt-in local phones
+  const meshRoutes=new Map();  // remote mesh-enabled phone IDs -> {via,fingerprint,expires}
   const neighbors=new Set(); // authenticated mesh websockets
   const seen=new Map();      // de-duplicate gossip and delivered messages
   const nonces=new Map();    // reject replayed mesh handshake
@@ -88,6 +101,56 @@ export function createXyoolNetworkNode({
     }else return;
     if(packet.ttl>1)for(const ws of neighbors)
       if(ws!==source)send(ws,{...packet,ttl:packet.ttl-1});
+  }
+  function advertiseMeshPeers(){
+    const known=[];
+    for(const client of meshEnabled)if(client.xyid&&client.readyState===WebSocket.OPEN)
+      known.push({id:client.xyid,fp:knownMeshKeys.get(client.xyid)});
+    for(const [id,record] of meshRoutes)
+      if(record.expires>Date.now()&&neighbors.has(record.via))
+        known.push({id,fp:record.fingerprint});
+    for(const client of meshEnabled){
+      if(!client.xyid)continue;
+      const peers=known.filter(x=>x.id!==client.xyid&&x.fp)
+        .sort((a,b)=>a.id.localeCompare(b.id)).slice(0,16);
+      const pins={};for(const p of peers)pins[p.id]=p.fp;
+      send(client,{type:'mesh-peers',ids:peers.map(p=>p.id),pins});
+    }
+  }
+  function announceMesh(id,online=true){
+    const fingerprint=knownMeshKeys.get(id);
+    if(online&&!fingerprint)return;
+    const msg={op:'mesh-presence',eid:randomUUID(),ttl:MESH_TTL,
+      id,online,fingerprint:fingerprint||'',origin:nodeId};
+    remember(msg.eid);
+    for(const peer of neighbors)send(peer,msg);
+    advertiseMeshPeers();
+  }
+  function acceptMeshPresence(msg,source){
+    if(!ID.test(msg.id||'')||!remember(msg.eid))return;
+    if(msg.online){
+      if(!/^[a-f0-9]{64}$/.test(msg.fingerprint||''))return;
+      if(!local.has(msg.id))
+        meshRoutes.set(msg.id,{via:source,fingerprint:msg.fingerprint,
+          expires:Date.now()+55000});
+    }else if(meshRoutes.get(msg.id)?.via===source){
+      meshRoutes.delete(msg.id);
+    }
+    if(msg.ttl>1)for(const peer of neighbors)
+      if(peer!==source)send(peer,{...msg,ttl:msg.ttl-1});
+    advertiseMeshPeers();
+  }
+  function validOverlay(msg){
+    if(!ID.test(msg.to||'')||
+      !['offer','answer','candidate','close'].includes(msg.kind))return false;
+    if(['offer','answer'].includes(msg.kind))
+      return typeof msg.sdp==='string'&&msg.sdp.length>=80&&
+        msg.sdp.length<=32000&&msg.sdp.startsWith('v=0');
+    if(msg.kind==='candidate')
+      return typeof msg.candidate==='string'&&msg.candidate.length<=4000&&
+        typeof msg.mid==='string'&&msg.mid.length<=50&&
+        Number.isInteger(msg.index)&&msg.index>=0&&msg.index<=50;
+    return true;
   }
   function announce(id,online=true){
     const packet={op:'presence',eid:randomUUID(),ttl:MESH_TTL,id,online,
