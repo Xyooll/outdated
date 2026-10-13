@@ -22,14 +22,21 @@ test('only registered clients get a bounded TURN lease; no credential in /health
     await server.listen();
     const {port}=server.address();
     const messages=[];
+    // Deliberate anonymous request must CLOSE the socket; a registered
+    // user must establish a NEW socket, not reuse one the server rejected.
+    const anonymous=new WebSocket('ws://127.0.0.1:'+port+'/v1/id');
+    await new Promise((resolve,reject)=>{
+      anonymous.once('open',resolve);anonymous.once('error',reject);
+    });
+    const anonymousClosed=new Promise(resolve=>anonymous.once('close',resolve));
+    anonymous.send(JSON.stringify({type:'turn-refresh'}));
+    await anonymousClosed;
+    assert.equal(issued,0);
     ws=new WebSocket('ws://127.0.0.1:'+port+'/v1/id');
     await new Promise((resolve,reject)=>{
       ws.once('open',resolve);ws.once('error',reject);
     });
     ws.on('message',raw=>messages.push(JSON.parse(String(raw))));
-    ws.send(JSON.stringify({type:'turn-refresh'})); // anonymous never gets TURN
-    await new Promise(resolve=>setTimeout(resolve,50));
-    assert.equal(issued,0);
     const id='XY-ABCD-EFGH-JKLM',token='a'.repeat(64);
     ws.send(JSON.stringify({type:'register',id,token}));
     await new Promise((resolve,reject)=>{
