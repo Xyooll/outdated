@@ -29,11 +29,12 @@ import org.json.JSONObject;
  * call setup directly between phones. No Railway, Google, public IP or
  * cloud account needed on the same LAN.
  *
- * SECURITY LIMIT: mDNS IDs and ws:// LAN signaling are unauthenticated.
- * Another device on the Wi-Fi may impersonate an ID or modify SDP, so
- * WebRTC's DTLS-SRTP is NOT verified end-to-end identity security here.
- * Never use on an untrusted/hotspot/shared public Wi-Fi until device-key
- * authentication and SDP fingerprint pinning are implemented.
+ * mDNS advertisement is not authenticated, but LAN signaling frames are
+ * signed by an AndroidKeyStore device key and WebRTC SDP is covered by the
+ * signature. ID-to-device binding is TOFU on first contact unless an XYOOl2
+ * identity QR with a key fingerprint was scanned from a trusted device.
+ * Signatures provide integrity, NOT confidentiality of ws:// LAN metadata.
+ * Never run this listener on untrusted public Wi-Fi networks.
  *
  * Lifecycle: starts only while the calling Activity is in foreground
  * on a Wi-Fi network and closes on screen exit/network loss.
@@ -53,6 +54,7 @@ public final class LocalPeerNode {
     private final Listener listener;
     private final NsdManager nsd;
     private final ConcurrentHashMap<String, InetSocketAddress> discovered=new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String,Long> recentInvites=new ConcurrentHashMap<>();
     private final ArrayDeque<NsdServiceInfo> resolveQueue=new ArrayDeque<>();
     private boolean resolving;
     private WebSocketServer server;
@@ -119,7 +121,8 @@ public final class LocalPeerNode {
                             String nonce=msg.optString("authNonce","");
                             String key=msg.optString("authKey","");
                             if(!"call".equals(type)||!msg.optString("to","").equals(myId)
-                                ||!caller.matches(ID_RE)||Math.abs(System.currentTimeMillis()-ts)>30000L
+                                ||!caller.matches(ID_RE)||ts<System.currentTimeMillis()-30000L
+                                ||ts>System.currentTimeMillis()+30000L
                                 ||!nonce.matches("^[a-f0-9]{32}$")
                                 ||!PhoneIdentity.verify(key,msg.optString("authSig",""),
                                     PhoneIdentity.callProof(caller,myId,ts,nonce))
@@ -127,6 +130,14 @@ public final class LocalPeerNode {
                                 conn.close(1008,"Unauthenticated caller");return;
                             }
                             synchronized(LocalPeerNode.this){
+                                long now=System.currentTimeMillis();
+                                if(recentInvites.size()>256)recentInvites.entrySet().removeIf(
+                                    e->e.getValue()<now);
+                                String challengeKey=caller+"|"+nonce;
+                                if(recentInvites.size()>512 ||
+                                    recentInvites.putIfAbsent(challengeKey,now+60000L)!=null){
+                                    conn.close(1008,"Repeated call invitation");return;
+                                }
                                 if(incoming!=null||outgoing!=null){
                                     conn.send("{\"type\":\"busy\"}");
                                     conn.close(1000);return;
@@ -431,6 +442,7 @@ public final class LocalPeerNode {
         started=false;
         closeSession();
         discovered.clear();
+        recentInvites.clear();
         resolveQueue.clear();
         if(discovery!=null){
             try{nsd.stopServiceDiscovery(discovery);}catch(Exception ignored){}
