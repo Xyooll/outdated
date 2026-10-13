@@ -75,6 +75,24 @@ public final class DirectCallActivity extends Activity {
     private Runnable pendingMic;
     private final Object candidatesLock=new Object();
     private JSONArray localCandidates=new JSONArray();
+    private IcePathInspector inspector=new IcePathInspector();
+
+    private void copyDiagnostic(){
+        String report="Xyool DIRECT WebRTC experiment\n" +
+            "Cloud signaling: disabled\n" +
+            "Media TURN: disabled\n" +
+            "External STUN: "+("off".equalsIgnoreCase(prefs.getString("xyool_stun",""))?
+                "disabled":"enabled (user configurable)")+
+            "\nOffer/answer active: "+(peer!=null)+
+            "\nRemote SDP applied: "+remoteReady+
+            "\n"+inspector.summary()+
+            "\n"+inspector.interpretation();
+        ClipboardManager board=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+        if(board!=null){
+            board.setPrimaryClip(ClipData.newPlainText("Xyool direct diagnostic",report));
+            status("Sanitized connection report copied (no private keys/IPs).");
+        }
+    }
     private final List<IceCandidate> remoteCandidates=new ArrayList<>();
 
     private int dp(int v){return (int)(v*getResources().getDisplayMetrics().density+0.5f);}
@@ -138,6 +156,7 @@ public final class DirectCallActivity extends Activity {
         button(body,"2. Paste received offer or answer",v->pasteCode());
         button(body,"Copy current code",v->copyCode());
         button(body,"Share current code",v->shareCode());
+        button(body,"Copy direct connectivity diagnostic",v->copyDiagnostic());
         button(body,"Mute / Unmute",v->toggleMute());
         button(body,"Hang up",v->{hangup();status("Direct call ended.");});
         TextView notice=label("Test-only: codes can expose IP addresses and are NOT identity-authenticated. Cloudflare STUN is used by default for NAT traversal; set STUN to 'off' in the Calling screen's Developer setup to disable it. Some routers require a relay, so these calls may fail.",12,MUTED);
@@ -169,6 +188,8 @@ public final class DirectCallActivity extends Activity {
         outgoing=isOutgoing;remoteId=other;sessionId=callId;
         ended=false;remoteReady=false;localReady=false;iceComplete=false;codeEmitted=false;
         lastCode=null;
+        inspector=new IcePathInspector();
+        inspector.setDiscovery("Manual out-of-band P2P code");
         localCandidates=new JSONArray();remoteCandidates.clear();
     }
     private String randomCallId(){
@@ -212,13 +233,15 @@ public final class DirectCallActivity extends Activity {
                 new PeerConnection.Observer(){
                     @Override public void onSignalingChange(PeerConnection.SignalingState s){}
                     @Override public void onIceConnectionChange(PeerConnection.IceConnectionState s){
+                        inspector.setState(s.name());
                         if(s==PeerConnection.IceConnectionState.CHECKING)
-                            status("Direct ICE checks in progress…");
+                            status("Testing reachable direct ICE paths. Copy diagnostics if needed.");
                         if(s==PeerConnection.IceConnectionState.CONNECTED||
                             s==PeerConnection.IceConnectionState.COMPLETED)
-                            status("DIRECT encrypted audio connected. No Xyool media relay.");
+                            status("DIRECT encrypted WebRTC voice connected. No audio relay.");
                         if(s==PeerConnection.IceConnectionState.FAILED)
-                            status("Direct connection blocked. These networks may need IPv6, hole punching or a voluntary peer bridge.");
+                            status("Direct ICE failed. "+inspector.interpretation()+
+                                " Copy the diagnostics to identify network limitations.");
                         if(s==PeerConnection.IceConnectionState.DISCONNECTED)
                             status("Direct audio disconnected.");
                     }
@@ -229,6 +252,7 @@ public final class DirectCallActivity extends Activity {
                         }
                     }
                     @Override public void onIceCandidate(IceCandidate c){
+                        inspector.record(c.sdp);
                         try{
                             JSONObject obj=new JSONObject();
                             obj.put("candidate",c.sdp);
