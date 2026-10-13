@@ -1,0 +1,107 @@
+name: Build Xyool Stable Android Updates
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'xyool-connect-android/app/**'
+      - 'xyool-connect-android/build.gradle'
+      - 'xyool-connect-android/gradle.properties'
+      - 'xyool-connect-android/settings.gradle'
+      - 'xyool-connect-android/signing/xyool-stable.p12.enc.b64'
+      - '.github/workflows/xyool-release-android.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  release-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check that permanent signing is initialized
+        id: ready
+        env:
+          XYOOL_SIGNING_PASSPHRASE: ${{ secrets.XYOOL_SIGNING_PASSPHRASE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${XYOOL_SIGNING_PASSPHRASE}" ] || \
+             [ ! -f xyool-connect-android/signing/xyool-stable.p12.enc.b64 ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Stable signing not initialized yet. Add the repository secret, then run Initialize Xyool Stable Signing Key."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-java@v4
+        if: steps.ready.outputs.ready == 'true'
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android build tools
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' | sort -V | tail -1)"
+          test -n "$SDKMANAGER"
+          "$SDKMANAGER" --install 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.ready.outputs.ready == 'true'
+        with:
+          gradle-version: '8.9'
+      - name: Decrypt the stable signing certificate privately
+        if: steps.ready.outputs.ready == 'true'
+        env:
+          XYOOL_SIGNING_PASSPHRASE: ${{ secrets.XYOOL_SIGNING_PASSPHRASE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          base64 --decode xyool-connect-android/signing/xyool-stable.p12.enc.b64 \
+            > "${RUNNER_TEMP}/xyool-stable.p12.enc"
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 300000 -salt \
+            -pass env:XYOOL_SIGNING_PASSPHRASE \
+            -in "${RUNNER_TEMP}/xyool-stable.p12.enc" \
+            -out "${RUNNER_TEMP}/xyool-stable.p12"
+          keytool -list -keystore "${RUNNER_TEMP}/xyool-stable.p12" \
+            -storetype PKCS12 -alias xyool-stable \
+            -storepass:env XYOOL_SIGNING_PASSPHRASE > /dev/null
+          rm -f "${RUNNER_TEMP}/xyool-stable.p12.enc"
+      - name: Build in-place updatable, signed Android release
+        if: steps.ready.outputs.ready == 'true'
+        working-directory: xyool-connect-android
+        env:
+          XYOOL_SIGNING_PASSPHRASE: ${{ secrets.XYOOL_SIGNING_PASSPHRASE }}
+          XYOOL_SIGNING_STORE_FILE: ${{ runner.temp }}/xyool-stable.p12
+        shell: bash
+        run: |
+          set -euo pipefail
+          gradle :app:assembleRelease --no-daemon
+      - name: Check APK has verified stable signing certificate
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=xyool-connect-android/app/build/outputs/apk/release/app-release.apk
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK"
+          if grep -q 'applicationId .org.xyool.connect.crossnetworkalpha.' xyool-connect-android/app/build.gradle; then
+            echo "Stable package ID verified"
+          else
+            echo "::error::Package identity changed. This would break APK updates."
+            exit 1
+          fi
+      - name: Upload installable signed APK
+        if: steps.ready.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: xyool-stable-signed-release-apk
+          path: xyool-connect-android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove signing key from runner
+        if: always()
+        shell: bash
+        run: rm -f "${RUNNER_TEMP}/xyool-stable.p12" "${RUNNER_TEMP}/xyool-stable.p12.enc"
