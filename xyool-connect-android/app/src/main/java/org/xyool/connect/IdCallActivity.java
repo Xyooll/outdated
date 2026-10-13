@@ -123,6 +123,10 @@ public final class IdCallActivity extends Activity {
     @Override protected void onResume(){
         super.onResume();
         if(nearby!=null)nearby.start();
+        // The direct-call lab closes the cloud socket before opening. Restore
+        // it only when returning to ordinary internet-ID calling.
+        if(prefs!=null && ws==null && !prefs.getBoolean("xyool_direct_only",false))
+            connect();
     }
     @Override protected void onStop(){
         if(nearby!=null)nearby.stop();
@@ -250,7 +254,12 @@ public final class IdCallActivity extends Activity {
         p2p.addView(text("Test direct WebRTC between two different Wi-Fi networks. Each phone exchanges one offer and one answer through a trusted channel; Xyool's Railway server is not contacted by the direct-call screen.",12,MUTED,false));
         space(p2p,8);
         button(p2p,"Direct call lab · No Xyool server",true,
-            v->startActivity(new Intent(this,DirectCallActivity.class)));
+            v->{
+                // Suspend the existing Railway WSS registration as soon as
+                // the user deliberately enters the server-free experiment.
+                disconnect();
+                startActivity(new Intent(this,DirectCallActivity.class));
+            });
 
         LinearLayout help=panel();
         help.addView(text("How calling works",17,FG,true));
