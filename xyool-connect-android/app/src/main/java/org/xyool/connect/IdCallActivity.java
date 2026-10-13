@@ -82,11 +82,12 @@ public final class IdCallActivity extends Activity {
     private CallReachabilityService cloud;
     private boolean cloudBound;
     private boolean autoAnswerRequested;
-    private Button reachabilityButton;
+    private Button reachabilityButton,meshRelayButton;
     private final ServiceConnection cloudLink=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){
             cloud=((CallReachabilityService.LocalBinder)binder).service();
             if(hasReachability()&&nearby!=null)nearby.stop();
+            updateMeshRelayButton();
             cloud.setListener(new CallReachabilityService.Listener(){
                 @Override public void onPacket(JSONObject message){received(message,false);}
                 @Override public void onLocalPacket(JSONObject message){received(message,true);}
@@ -151,6 +152,8 @@ public final class IdCallActivity extends Activity {
             "\nLocal Wi-Fi available: "+LocalPeerNode.onWifi(this)+
             "\nNearby peers: "+(cloud!=null&&hasReachability()?cloud.localPeerCount():(nearby==null?0:nearby.peerCount()))+
             "\nCloud registered: "+(BridgePolicy.allowsCloud(bridgeMode())&&registered)+
+            "\nGlobal data-channel peers: "+(cloud==null?0:cloud.globalPeerCount())+
+            "\nGlobal forwarding opt-in: "+(cloud!=null&&cloud.meshRelayEnabled())+
             "\n"+iceDiagnostics.summary()+
             "\n"+iceDiagnostics.interpretation();
         ClipboardManager cb=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
@@ -346,6 +349,22 @@ public final class IdCallActivity extends Activity {
         button(advancedPanel,"Hybrid • Across networks",false,
             v->selectBridgeMode(BridgePolicy.HYBRID));
         space(advancedPanel,8);
+        meshRelayButton=button(advancedPanel,"Mesh forwarding: OFF",false,
+            v->toggleMeshRelay());
+        updateMeshRelayButton();
+        space(advancedPanel,6);
+        button(advancedPanel,"Probe entered Xyool ID through peer mesh",false,v->{
+            String dest=normalize(targetInput.getText().toString());
+            if(dest==null||dest.equals(id)){
+                status("Enter another Xyool ID to test a peer route.");return;
+            }
+            if(cloud==null||!cloud.probeGlobalRoute(dest))
+                status("No direct peer data channel ready. Enable background node and join an overlay.");
+            else status("Signed network probe sent; awaiting a pong over peer nodes.");
+        });
+        space(advancedPanel,8);
+        advancedPanel.addView(text("Peer mesh uses WebRTC data channels. Forwarding is OFF by default, carries only signed reachability probes, limits hops and bandwidth, and does NOT forward calls or other people's Internet traffic.",12,MUTED,false));
+        space(advancedPanel,8);
         button(advancedPanel,"Refresh network",false,v->{
             if(cloud!=null&&hasReachability())cloud.refreshLocal();
             else if(nearby!=null)nearby.start();
@@ -540,6 +559,19 @@ public final class IdCallActivity extends Activity {
         }
     }
     private boolean hasReachability(){return prefs.getBoolean(CallReachabilityService.PREF_ENABLED,false);}
+    private void updateMeshRelayButton(){
+        if(meshRelayButton!=null)meshRelayButton.setText(
+            cloud!=null&&cloud.meshRelayEnabled()?"Mesh forwarding: ON • Tap to stop":
+            "Mesh forwarding: OFF • Tap to enable");
+    }
+    private void toggleMeshRelay(){
+        if(!hasReachability()||cloud==null){
+            status("Enable background call alerts first to run a persistent phone node.");return;
+        }
+        boolean next=!cloud.meshRelayEnabled();
+        cloud.setMeshRelayEnabled(next);
+        updateMeshRelayButton();
+    }
     private void updateReachabilityButton(){
         if(reachabilityButton!=null)reachabilityButton.setText(
             hasReachability()?"Background call alerts: ON • Tap to disable":
@@ -572,6 +604,7 @@ public final class IdCallActivity extends Activity {
             .setAction(CallReachabilityService.ACTION_DISABLE));
         if(nearby!=null)nearby.start();
         updateReachabilityButton();
+        updateMeshRelayButton();
         status("Background call alerts disabled; calls work while the screen is open.");
     }
     private void toggleReachability(){
