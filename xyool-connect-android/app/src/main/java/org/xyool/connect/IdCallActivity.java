@@ -7,6 +7,8 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,6 +27,8 @@ import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.os.Bundle;
+import android.os.Build;
+import android.os.IBinder;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
@@ -75,7 +79,33 @@ public final class IdCallActivity extends Activity {
     private TextView stateLabel;
     private EditText targetInput,serverInput,stunInput,turnInput,turnUser,turnPass;
     private LinearLayout body, advancedPanel;
-    private WebSocketClient ws;
+    private CallReachabilityService cloud;
+    private boolean cloudBound;
+    private boolean autoAnswerRequested;
+    private Button reachabilityButton;
+    private final ServiceConnection cloudLink=new ServiceConnection(){
+        @Override public void onServiceConnected(ComponentName name,IBinder binder){
+            cloud=((CallReachabilityService.LocalBinder)binder).service();
+            cloud.setListener(new CallReachabilityService.Listener(){
+                @Override public void onPacket(JSONObject message){received(message,false);}
+                @Override public void onConnection(boolean online,String explanation){
+                    registered=online;
+                    if(!disposed && waitingId==null)connectionStatus();
+                }
+            });
+            if(autoAnswerRequested){
+                // A previously expired notification must not auto-answer the next call.
+                if(!cloud.hasIncoming()){
+                    autoAnswerRequested=false;
+                    status("That incoming call is no longer available.");
+                }
+            }
+        }
+        @Override public void onServiceDisconnected(ComponentName name){
+            cloud=null;registered=false;
+            if(!disposed)connectionStatus();
+        }
+    };
     private LocalPeerNode nearby;
     private boolean usingLocal;
     private boolean registered, outgoing, peerActive, remoteReady, callAuthorized, disposed;
@@ -106,6 +136,7 @@ public final class IdCallActivity extends Activity {
         }
         prefs.edit().putString(BridgePolicy.PREF_MODE,mode).apply();
         disconnect();
+        if(!BridgePolicy.allowsCloud(mode)&&hasReachability())disableReachability();
         if(BridgePolicy.allowsCloud(mode))connect();
         else connectionStatus();
         status(BridgePolicy.description(mode));
@@ -128,6 +159,7 @@ public final class IdCallActivity extends Activity {
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         prefs=getSharedPreferences("xyool_private",MODE_PRIVATE);
+        autoAnswerRequested=CallReachabilityService.ACTION_ANSWER.equals(getIntent().getAction());
         id=prefs.getString("xyool_id","");
         token=prefs.getString("xyool_auth","");
         if(!id.matches("^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$")||
@@ -155,16 +187,28 @@ public final class IdCallActivity extends Activity {
         render();
         connect();
     }
+    @Override protected void onNewIntent(Intent intent){
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if(CallReachabilityService.ACTION_ANSWER.equals(intent.getAction())){
+            autoAnswerRequested=true;
+            if(waitingId!=null && !outgoing && !peerActive){
+                autoAnswerRequested=false;
+                acceptIncomingCall();
+            }
+        }
+    }
     @Override protected void onResume(){
         super.onResume();
         if(nearby!=null)nearby.start();
         // The direct-call lab closes the cloud socket before opening. Restore
         // it only when returning to ordinary internet-ID calling.
-        if(prefs!=null && ws==null && BridgePolicy.allowsCloud(bridgeMode()))
+        if(prefs!=null && !cloudBound && BridgePolicy.allowsCloud(bridgeMode()))
             connect();
     }
     @Override protected void onStop(){
         stopIncomingRing();
+        disconnect();
         if(nearby!=null)nearby.stop();
         if(usingLocal&&waitingId!=null){
             endMedia();
@@ -255,6 +299,11 @@ public final class IdCallActivity extends Activity {
             v->selectBridgeMode(BridgePolicy.HYBRID));
         space(connection,5);
         button(connection,"Copy network diagnostic report",false,v->copyNetworkReport());
+        space(connection,7);
+        reachabilityButton=button(connection,"Background call alerts: OFF",false,
+            v->toggleReachability());
+        updateReachabilityButton();
+        connection.addView(text("Opt-in: Android shows a persistent network notification while Xyool listens in the background. Notifications and battery settings can still prevent delivery.",12,MUTED,false));
 
         LinearLayout self=panel();
         self.addView(text("YOUR XYOOL ID",12,MUTED,true));
@@ -352,13 +401,13 @@ public final class IdCallActivity extends Activity {
                 .putString("xyool_turn",turnInput.getText().toString().trim())
                 .putString("xyool_turn_user",turnUser.getText().toString())
                 .putString("xyool_turn_pass",turnPass.getText().toString()).apply();
-            disconnect();
-            connect();
+            if(cloud!=null)cloud.reconnectNow();
+            else {disconnect();connect();}
             advancedPanel.setVisibility(View.GONE);
         });
 
         space(body,5);
-        body.addView(text("This alpha cannot ring while closed and isn't for emergency calls. Use the regular Android phone app for 911.",12,MUTED,false));
+        body.addView(text("Background alerts require opt-in and aren't guaranteed after force-stop, device restart, or strict battery restrictions. Not an emergency calling service; use your regular phone app for 911.",12,MUTED,false));
     }
 
 
@@ -470,52 +519,59 @@ public final class IdCallActivity extends Activity {
     }
     private void connect(){
         if(!BridgePolicy.allowsCloud(bridgeMode())){
-            registered=false;
-            connectionStatus();
-            return;
+            registered=false;connectionStatus();return;
         }
-        String raw=prefs.getString("xyool_id_server",DEFAULT_SERVER).trim();
-        if(raw.isEmpty()){registered=false;connectionStatus();return;}
-        URI uri;
-        try{
-            uri=URI.create(raw);
-            if(!"wss".equalsIgnoreCase(uri.getScheme())||uri.getHost()==null||
-                !"/v1/id".equals(uri.getPath())||uri.getUserInfo()!=null||
-                uri.getQuery()!=null||uri.getFragment()!=null)throw new IllegalArgumentException();
-        }catch(Exception ex){status("Invalid server configuration.");return;}
-        final String ownId=id,ownToken=token;
-        registered=false;
-        status("Connecting to Xyool...");
-        ws=new WebSocketClient(uri){
-            @Override public void onOpen(ServerHandshake handshake){
-                try{
-                    JSONObject msg=new JSONObject();msg.put("type","register");
-                    msg.put("id",ownId);msg.put("token",ownToken);send(msg.toString());
-                }catch(Exception ex){status("ID registration failed.");}
-            }
-            @Override public void onMessage(String raw){
-                try{
-                    if(raw.length()>50000)return;
-                    JSONObject message=new JSONObject(raw);
-                    runOnUiThread(()->received(message,false));
-                }catch(Exception ex){status("Unrecognized server response.");}
-            }
-            @Override public void onClose(int code,String reason,boolean remote){
-                runOnUiThread(()->{
-                    registered=false;
-                    if(!disposed)connectionStatus();
-                });
-            }
-            @Override public void onError(Exception ex){
-                connectionStatus();
-            }
-        };
-        ws.setConnectionLostTimeout(30);
-        ws.connect();
+        if(cloudBound)return;
+        cloudBound=bindService(new Intent(this,CallReachabilityService.class),
+            cloudLink,Context.BIND_AUTO_CREATE);
+        if(!cloudBound)status("Xyool calling service couldn't start.");
     }
     private void disconnect(){
         registered=false;
-        if(ws!=null){ws.close();ws=null;}
+        if(cloud!=null){cloud.setListener(null);cloud=null;}
+        if(cloudBound){
+            unbindService(cloudLink);
+            cloudBound=false;
+        }
+    }
+    private boolean hasReachability(){return prefs.getBoolean(CallReachabilityService.PREF_ENABLED,false);}
+    private void updateReachabilityButton(){
+        if(reachabilityButton!=null)reachabilityButton.setText(
+            hasReachability()?"Background call alerts: ON • Tap to disable":
+                "Background call alerts: OFF • Tap to enable");
+    }
+    private void enableReachability(){
+        if(!BridgePolicy.allowsCloud(bridgeMode())){
+            status("Use Hybrid mode to enable background internet calls.");return;
+        }
+        if(Build.VERSION.SDK_INT>=33 &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},482);
+            return;
+        }
+        prefs.edit().putBoolean(CallReachabilityService.PREF_ENABLED,true).apply();
+        try{
+            Intent start=new Intent(this,CallReachabilityService.class)
+                .setAction(CallReachabilityService.ACTION_ENABLE);
+            startForegroundService(start);
+            updateReachabilityButton();
+            status("Background alerts enabled while Android permits the service to run.");
+        }catch(RuntimeException ex){
+            prefs.edit().putBoolean(CallReachabilityService.PREF_ENABLED,false).apply();
+            updateReachabilityButton();
+            status("Android couldn't start persistent call listening.");
+        }
+    }
+    private void disableReachability(){
+        prefs.edit().putBoolean(CallReachabilityService.PREF_ENABLED,false).apply();
+        startService(new Intent(this,CallReachabilityService.class)
+            .setAction(CallReachabilityService.ACTION_DISABLE));
+        updateReachabilityButton();
+        status("Background call alerts disabled; calls work while the screen is open.");
+    }
+    private void toggleReachability(){
+        if(hasReachability())disableReachability();
+        else enableReachability();
     }
     private void send(JSONObject obj){
         if(usingLocal && nearby!=null){
@@ -525,7 +581,7 @@ public final class IdCallActivity extends Activity {
         sendCloud(obj);
     }
     private void sendCloud(JSONObject obj){
-        if(ws!=null&&ws.isOpen())ws.send(obj.toString());
+        if(cloud!=null&&!cloud.send(obj))status("Internet signaling is not connected.");
     }
     private void packet(String type){
         try{JSONObject obj=new JSONObject();obj.put("type",type);send(obj);}
@@ -580,7 +636,10 @@ public final class IdCallActivity extends Activity {
             usingLocal=fromLocal;
             waitingId=msg.optString("from");
             outgoing=false;
-            incomingDialog(waitingId);
+            if(autoAnswerRequested&&!fromLocal){
+                autoAnswerRequested=false;
+                acceptIncomingCall();
+            }else incomingDialog(waitingId);
             return;
         }
         // Never allow a LAN session to consume signaling from a parallel
@@ -656,22 +715,28 @@ public final class IdCallActivity extends Activity {
                 stopIncomingRing();
                 packet("reject");endMedia();status("Call declined.");
             })
-            .setPositiveButton("Accept",(d,w)->{
-                stopIncomingRing();
-                requestMicrophone(()->{
-                    if(!initPeer()){packet("reject");return;}
-                    outgoing=false;
-                    if(usingLocal)callAuthorized=true;
-                    packet("accept");
-                    status("Accepted. Negotiating audio connection…");
-                });
-            })
+            .setPositiveButton("Accept",(d,w)->acceptIncomingCall())
             .create();
         incomingAlert.setOnDismissListener(d->{
             stopIncomingRing();
             if(incomingAlert==d)incomingAlert=null;
         });
         incomingAlert.show();
+    }
+    private void acceptIncomingCall(){
+        stopIncomingRing();
+        if(incomingAlert!=null){
+            AlertDialog current=incomingAlert;incomingAlert=null;current.dismiss();
+        }
+        if(waitingId==null||outgoing||peerActive)return;
+        requestMicrophone(()->{
+            if(waitingId==null)return;
+            if(!initPeer()){packet("reject");return;}
+            outgoing=false;
+            if(usingLocal)callAuthorized=true;
+            packet("accept");
+            status("Accepted. Negotiating audio connection…");
+        });
     }
     private void requestMicrophone(Runnable next){
         if(checkSelfPermission(Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)next.run();
@@ -682,6 +747,12 @@ public final class IdCallActivity extends Activity {
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){
         super.onRequestPermissionsResult(request,permissions,grants);
+        if(request==482){
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)
+                enableReachability();
+            else status("Notification permission is needed for background call alerts.");
+            return;
+        }
         if(request!=MIC_REQUEST)return;
         Runnable next=pendingMicrophone;pendingMicrophone=null;
         if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED&&next!=null)next.run();
