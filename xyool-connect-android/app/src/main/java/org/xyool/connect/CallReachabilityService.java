@@ -331,7 +331,13 @@ public final class CallReachabilityService extends Service {
             notifyConnection(true,"Internet calling online.");
         }
         if("incoming".equals(type)){
-            if(incoming!=null){sendType("reject");return;}
+            if(incoming!=null){
+                // Reject this new internet invitation without accidentally rejecting
+                // an already-ringing nearby call or clearing its notification.
+                if(socket!=null&&socket.isOpen())socket.send("{\\"type\\":\\"reject\\"}");
+                return;
+            }
+            incomingLocal=false;
             incoming=message;
             main.removeCallbacks(ringTimeout);
             main.postDelayed(ringTimeout,RING_LIMIT_MS);
