@@ -1,74 +1,92 @@
-# Operation DNA
+# Xyool
 
-A domain-independent adaptive operating system for research, business creation, product development, operations, finance, marketing and trading.
+Xyool is a general-purpose autonomous AI application built around the OpenAI Agents SDK.
 
-## Architecture
+## Target architecture
 
 ```text
-PERCEIVE → UNDERSTAND → HYPOTHESIZE → TEST → ACT → OBSERVE → LEARN → EVOLVE
+                    ┌──────────────────┐
+                    │      USER        │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │   YOUR APP/API   │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                ┌─────────────────────────┐
+                │     OPENAI AGENT        │
+                │                         │
+                │  Instructions           │
+                │  Reasoning              │
+                │  Context / memory       │
+                │  Tool selection         │
+                └───────────┬─────────────┘
+                            │
+              ┌─────────────┼─────────────┐
+              ▼             ▼             ▼
+         ┌─────────┐   ┌──────────┐  ┌──────────┐
+         │ Database│   │ Your APIs│  │ Web/File │
+         │         │   │          │  │  tools   │
+         └─────────┘   └──────────┘  └──────────┘
 ```
 
-### Mind
-AI provides interpretation, reasoning, hypotheses, planning and strategy proposals.
+The model is the intelligence and orchestrator. Xyool is the application layer that supplies instructions, persistent context, skills, tools, data, and optional MCP connections.
 
-### Subconscious
-Deterministic software handles ingestion, normalization, calculation, validation, monitoring and execution.
+## Three primitives
 
-### Memory
-SQLite-backed entities, relationships, events and experiences provide persistent operational memory.
+### Instructions
 
-### Intelligence
-Evidence, entity resolution, relationship candidates and a validated world graph turn observations into structured knowledge.
+`agent_behavior.md` contains Xyool's stable behavioral DNA: understand objectives, reason, inspect, act, observe, evaluate, learn, adapt, preserve evidence, and continue until the objective is verified complete.
 
-### Economic engine
-Business, investment and trading candidates use a shared opportunity model, evidence gate, capital-efficiency ranking, experiment framework and outcome loop.
+### Skills
 
-### Research/data adapters
-Read-only adapters now support SEC company facts, Alpaca market data and CoinGecko crypto market data. A canonical event model converts provider-specific payloads into the common research pipeline.
+`skills/` contains reusable instructions. Skills are not separate agents or hard-coded workflows. The agent decides when a skill is useful and loads it through the generic skill tool.
 
-### Safety
-Hard gates, authorization, risk limits, reversibility, auditability and protected invariants constrain action.
+### Tools
 
-### Evolution
-Candidates are isolated, tested against baselines, stress-tested, shadowed where applicable, and promoted only when evidence and safety gates pass.
+Tools are the means by which the agent interacts with reality. Xyool currently exposes project inspection, persistent memory, testing, web search, optional OpenAI file search, and optional MCP servers. More tools can be added without creating a new intelligence or router.
 
-### Applications
-Trading, business, research, product, marketing, finance and operations are interchangeable application organs built on the same core.
+## OpenAI Agents SDK
 
-### Geographic cloning
-The DNA is portable. Nodes can be recreated in multiple regions from versioned source and schema plus node-local configuration. Secrets and privileged permissions are provisioned independently.
+The runtime uses the OpenAI Agents SDK rather than a custom reasoning/orchestration loop. The SDK manages agent turns, tool calls, and sessions. Xyool uses a persistent SQLite session for conversation continuity.
 
-## Current implementation
+The runtime also supports MCP servers through the SDK. Configure them with `XYOOL_MCP_SERVERS` as a JSON array. Supported transports are `streamable_http` and `stdio`.
 
-The repository contains working primitives for:
+Example:
 
-- RSS/Atom ingestion
-- event normalization and deduplication
-- SQLite memory
-- entity/relationship storage
-- entity resolution
-- evidence scoring
-- world-graph queries
-- conflict-aware knowledge updates
-- safety policy evaluation
-- application lifecycle orchestration
-- append-only audit logging
-- learning candidate evaluation
-- node manifests and replication rules
-- business/investment/trading opportunity scanners
-- deterministic backtesting foundation
-- SEC company-facts ingestion
-- Alpaca stock/crypto market-data ingestion
-- CoinGecko crypto-market ingestion
-- canonical research-event normalization
-- research pipeline tests
+```json
+[
+  {
+    "name": "example",
+    "transport": "streamable_http",
+    "url": "https://example.com/mcp"
+  }
+]
+```
 
-## Data providers
+Credentials should be supplied through environment variables or another secret mechanism, not committed to the repository.
 
-Provider credentials are never stored in the DNA. Environment variables or a secrets manager supply credentials at runtime.
+## Memory
 
-The current adapters are intentionally read-only. They feed research and backtesting; they do not place trades or spend funds.
+The Agents SDK session provides persistent conversation memory. Xyool's existing evidence-oriented memory library remains available as a tool for durable knowledge, experiences, provenance, indexing, and aggregation.
 
-## Deliberate boundary
+This separation keeps conversation continuity simple while preserving a library for information that should survive beyond a single conversation.
 
-Live external execution, credentials, autonomous privileged deployment, and production trading are adapters—not implicit powers of the AI. They must be explicitly provisioned behind the safety layer.
+## Direction
+
+The previous custom orchestrator, resource router, custom model protocol, custom web client, and software-agent loop are being retired from the primary runtime. Existing modules remain in the repository temporarily so they can be migrated, tested, and removed safely rather than becoming hidden dependencies.
+
+The goal is a much smaller system:
+
+```text
+Xyool
+ ├── Instructions
+ ├── Skills
+ ├── Tools
+ ├── Memory / data
+ └── OpenAI Agent
+```
+
+The architecture should remain domain-independent. Research, software development, finance, trading, document analysis, and other activities are things the same agent can perform using appropriate skills and tools—not separate agents.

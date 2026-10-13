@@ -1,0 +1,4 @@
+{
+  "objective": "Develop Xyool into a general-purpose autonomous agent that can understand objectives, inspect its environment, choose and combine available means, research or create new means when necessary, execute actions, observe results, evaluate progress, learn, adapt, and continue until the objective is accomplished, subject to authorization and safety guardrails.",
+  "status": "active"
+}
