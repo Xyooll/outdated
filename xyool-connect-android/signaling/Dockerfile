@@ -6,9 +6,11 @@ ENV HOST=0.0.0.0
 ENV XYOOL_ID_REGISTRY=/data/registry.json
 WORKDIR /app
 
-COPY xyool-connect-android/signaling/package.json ./
+COPY package.json ./
 RUN npm install --omit=dev --ignore-scripts --no-audit --no-fund
-COPY xyool-connect-android/signaling/server-id.mjs ./
+# Copy the module tree as a unit to keep ESM imports available.
+COPY ./ ./
+RUN node -e "import('./server-id.mjs').then(()=>console.log('Signaling modules import successfully'))"
 
 # A persistent service volume MUST be mounted on /data.
 # Railway-provided volumes are mounted as root; keep this small isolated

@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <uses-feature android:name="android.hardware.microphone" android:required="false"/>
@@ -17,14 +20,17 @@
         android:usesCleartextTraffic="false"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
-        <activity android:name=".DirectCallActivity" android:exported="false"/>
-        <activity android:name=".QrScannerActivity" android:exported="false" android:screenOrientation="portrait"/>
-        <activity android:name=".IdCallActivity" android:exported="false"/>
-        <activity android:name=".NativeVoiceActivity" android:exported="false"/>
-        <activity android:name=".CallServicesActivity" android:exported="false"/>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+        <service android:name=".CallReachabilityService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="user_opt_in_voip_identity_call_reachability_over_websocket"/>
+        </service>
+        <activity android:name=".QrScannerActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".IdCallActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

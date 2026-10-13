@@ -10,6 +10,7 @@ def xyoolBuildNumber = (System.getenv('XYOOL_DEBUG_BUILD_NUMBER') ?: '10').toInt
 // existing users whose older APK had a different signing certificate.
 // Once installed, this ID and its test signing key MUST remain unchanged.
 def xyoolSideBySide = 'true'.equalsIgnoreCase(System.getenv('XYOOL_SIDE_BY_SIDE') ?: 'false')
+def xyoolTargetAbi = (System.getenv('XYOOL_TARGET_ABI') ?: '').trim()
 
 android {
     namespace 'org.xyool.connect'
@@ -19,7 +20,10 @@ android {
         applicationId xyoolSideBySide ?
             'org.xyool.connect.next' : 'org.xyool.connect.crossnetworkalpha'
         manifestPlaceholders = [xyoolAppLabel: xyoolSideBySide ?
-            'Xyool Connect Next' : 'Xyool QR Fix']
+            'Xyool Connect Next' : 'Xyool Connect']
+        if (xyoolTargetAbi) {
+            ndk { abiFilters xyoolTargetAbi }
+        }
         minSdk 26
         targetSdk 34
         // CI run number strictly increases so later APKs upgrade earlier ones.

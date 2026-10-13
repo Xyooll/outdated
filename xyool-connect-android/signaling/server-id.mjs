@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
+import {enableProof,signalProof,verifiedPublicKey} from './overlay-auth.mjs';
+import {chooseMeshPeers} from './peer-sampler.mjs';
 
 const ID = /^XY-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/;
 const HEX = /^[0-9a-f]{64}$/;
@@ -38,8 +40,45 @@ export function createIdServer({ host='127.0.0.1',port=8788,
       if(ID.test(id)&&typeof value==='string'&&HEX.test(value)) registry.set(id,value);
     }
   }
+  // Key binding is stored separately from the legacy token-hash registry.
+  // An ID cannot silently change its mesh identity on a different login.
+  const meshKeyPath=registryPath+'.mesh-keys.json';
+  const knownMeshKeys=new Map();
+  if(fs.existsSync(meshKeyPath)){
+    for(const [id,fp] of Object.entries(JSON.parse(fs.readFileSync(meshKeyPath,'utf8')))){
+      if(ID.test(id)&&/^[a-f0-9]{64}$/.test(fp))knownMeshKeys.set(id,fp);
+    }
+  }
+  function persistMeshKeys(){
+    const tmp=meshKeyPath+'.tmp';
+    fs.writeFileSync(tmp,JSON.stringify(Object.fromEntries(knownMeshKeys)),{mode:0o600});
+    fs.renameSync(tmp,meshKeyPath);
+  }
   const online=new Map();
   const sessions=new Map();
+  const meshEnabled=new Set(); // opt-in signaling bootstrap participants, never open TCP proxies
+  function validMeshSignal(m) {
+    if(!ID.test(m.to||'')||!['offer','answer','candidate','close'].includes(m.kind))
+      return false;
+    if(m.kind==='offer'||m.kind==='answer')
+      return typeof m.sdp==='string'&&m.sdp.length>=80&&m.sdp.length<=32000&&m.sdp.startsWith('v=0');
+    if(m.kind==='candidate')
+      return typeof m.candidate==='string'&&m.candidate.length<=4000&&
+        typeof m.mid==='string'&&m.mid.length<=50&&
+        Number.isInteger(m.index)&&m.index>=0&&m.index<=50;
+    return m.kind==='close';
+  }
+  function advertisePeers() {
+    // A bounded, soft-state list of online IDs: never publish IP addresses or tokens.
+    for(const socket of meshEnabled){
+      if(!socket.xyid||socket.readyState!==WebSocket.OPEN)continue;
+      const available=chooseMeshPeers(socket.xyid,
+        [...meshEnabled].filter(x=>x!==socket&&x.xyid&&x.readyState===WebSocket.OPEN)
+          .map(x=>({id:x.xyid,fp:knownMeshKeys.get(x.xyid)})),16);
+      const pins={};for(const p of available)pins[p.id]=p.fp;
+      deliver(socket,{type:'mesh-peers',ids:available.map(p=>p.id),pins});
+    }
+  }
   const callFor=socket=>socket.session&&sessions.get(socket.session);
   function persist() {
     const data=Object.fromEntries(registry);
@@ -69,6 +108,7 @@ export function createIdServer({ host='127.0.0.1',port=8788,
     socket.windowAt=Date.now();
     socket.messages=0;
     socket.alive=true;
+    socket.meshEnabled=false;
     socket.on('pong',()=>{socket.alive=true;});
     socket.on('message',(raw,binary)=>{
       if(binary){socket.close(1008,'Text only');return;}
@@ -104,6 +144,53 @@ export function createIdServer({ host='127.0.0.1',port=8788,
         return;
       }
       if(!socket.xyid){socket.close(1008,'Register first');return;}
+      if(msg.type==='mesh-enable'){
+        const ts=msg.authTs;
+        if(!Number.isSafeInteger(ts)||Math.abs(now-ts)>30000)return;
+        const proof=verifiedPublicKey(msg.authKey,msg.authSig,
+          enableProof(socket.xyid,ts));
+        if(!proof)return;
+        const pinned=knownMeshKeys.get(socket.xyid);
+        if(pinned&&pinned!==proof.fingerprint){
+          deliver(socket,{type:'error',message:'Device key changed; mesh pairing refused'});
+          return;
+        }
+        if(!pinned){
+          knownMeshKeys.set(socket.xyid,proof.fingerprint);
+          try{persistMeshKeys();}catch{
+            knownMeshKeys.delete(socket.xyid);
+            deliver(socket,{type:'error',message:'Device key registry unavailable'});
+            return;
+          }
+        }
+        socket.meshKey=proof.fingerprint;
+        if(!socket.meshEnabled){
+          socket.meshEnabled=true;meshEnabled.add(socket);
+        }
+        advertisePeers();return;
+      }
+      if(msg.type==='mesh-disable'){
+        socket.meshEnabled=false;meshEnabled.delete(socket);
+        advertisePeers();return;
+      }
+      if(msg.type==='mesh-signal'){
+        if(!socket.meshEnabled||!validMeshSignal(msg)||msg.to===socket.xyid)return;
+        const receiver=online.get(msg.to);
+        if(!receiver?.meshEnabled)return;
+        const ts=msg.authTs;
+        if(!Number.isSafeInteger(ts)||Math.abs(now-ts)>30000)return;
+        const proof=verifiedPublicKey(msg.authKey,msg.authSig,
+          signalProof(socket.xyid,msg.to,msg.kind,ts,msg.sdp||'',
+            msg.candidate||'',msg.mid||'',msg.index??-1));
+        if(!proof||!socket.meshKey||proof.fingerprint!==socket.meshKey)return;
+        const out={type:'mesh-signal',from:socket.xyid,kind:msg.kind,
+          authKey:msg.authKey,authSig:msg.authSig,authTs:ts};
+        if(msg.sdp)out.sdp=msg.sdp;
+        if(msg.candidate)out.candidate=msg.candidate;
+        if(msg.mid!==undefined)out.mid=msg.mid;
+        if(msg.index!==undefined)out.index=msg.index;
+        deliver(receiver,out);return;
+      }
       if(msg.type==='call'){
         if(socket.session){deliver(socket,{type:'error',message:'Already in call'});return;}
         if(!ID.test(msg.to||'')||msg.to===socket.xyid){
@@ -153,6 +240,7 @@ export function createIdServer({ host='127.0.0.1',port=8788,
     });
     socket.on('close',()=>{
       if(socket.xyid&&online.get(socket.xyid)===socket)online.delete(socket.xyid);
+      if(meshEnabled.delete(socket))advertisePeers();
       stopCall(callFor(socket),socket,'peer-offline');
     });
     socket.on('error',()=>{});
