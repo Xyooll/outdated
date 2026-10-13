@@ -1,0 +1,310 @@
+package org.xyool.connect;
+
+import android.content.Context;
+import android.media.AudioManager;
+import android.os.Handler;
+import org.json.JSONObject;
+import org.webrtc.AudioSource;
+import org.webrtc.AudioTrack;
+import org.webrtc.DataChannel;
+import org.webrtc.IceCandidate;
+import org.webrtc.MediaConstraints;
+import org.webrtc.MediaStream;
+import org.webrtc.PeerConnection;
+import org.webrtc.PeerConnectionFactory;
+import org.webrtc.RtpReceiver;
+import org.webrtc.SdpObserver;
+import org.webrtc.SessionDescription;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Media belongs to the persistent foreground phone service, never to an Activity.
+ * A new/recreated calling screen may attach/detach without dropping the call.
+ * Android force-stop, revoked microphone permission, or service termination
+ * will still end audio; this is not an indefinite background process guarantee.
+ */
+public final class VoiceCallSession {
+    public interface Host {
+        boolean enableMicrophoneForeground();
+        boolean send(JSONObject message,boolean local);
+        boolean dialLocal(String id);
+        void closeLocal();
+        void status(String message);
+        void sessionChanged();
+    }
+    private static final String DEFAULT_STUN="stun:stun.cloudflare.com:3478";
+    private final Context context;
+    private final Handler main;
+    private final Host host;
+    private String remoteId, lastStatus="Ready for Xyool calls.";
+    private boolean local,outgoing,authorized,remoteReady,muted,connected;
+    private PeerConnectionFactory factory;
+    private PeerConnection peer;
+    private AudioSource audioSource;
+    private AudioTrack microphone;
+    private AudioManager audioManager;
+    private int oldMode=AudioManager.MODE_NORMAL;
+    private boolean oldSpeaker=false;
+    private final List<IceCandidate> pendingCandidates=new ArrayList<>();
+    private IcePathInspector inspector=new IcePathInspector();
+
+    public VoiceCallSession(Context context,Handler main,Host host){
+        this.context=context.getApplicationContext();
+        this.main=main;this.host=host;
+    }
+    public boolean hasSession(){return remoteId!=null;}
+    public boolean isIncoming(){return remoteId!=null&&!outgoing&&peer==null;}
+    public boolean hasAudio(){return peer!=null;}
+    public String peerId(){return remoteId;}
+    public String state(){return lastStatus;}
+
+    public boolean dial(String target,boolean localRoute){
+        if(hasSession()||!SavedContacts.validId(target))return false;
+        remoteId=target;outgoing=true;local=localRoute;
+        if(!startMedia()){clear(false);return false;}
+        if(localRoute){
+            if(!host.dialLocal(target)){clear(false);state("Nearby phone could not be reached.");return false;}
+            state("Calling nearby "+target+"…");
+        }else{
+            try{
+                JSONObject call=new JSONObject().put("type","call").put("to",target);
+                if(!host.send(call,false)){clear(false);state("Signaling offline; could not call.");return false;}
+                state("Calling "+target+" across networks…");
+            }catch(Exception ignored){clear(false);return false;}
+        }
+        host.sessionChanged();
+        return true;
+    }
+    public boolean accept(){
+        if(!isIncoming())return false;
+        if(!startMedia()){reject();return false;}
+        // Local data-channel call invitations are signed at LocalPeerNode.
+        if(local)authorized=true;
+        try{
+            if(!host.send(new JSONObject().put("type","accept"),local)){
+                clear(false);state("Unable to accept call.");return false;
+            }
+        }catch(Exception ignored){clear(false);return false;}
+        state("Call accepted. Connecting voice…");
+        host.sessionChanged();
+        return true;
+    }
+    public void reject(){
+        if(!isIncoming())return;
+        try{host.send(new JSONObject().put("type","reject"),local);}catch(Exception ignored){}
+        clear(false);state("Call declined.");
+    }
+    public void hangup(){
+        if(!hasSession())return;
+        try{host.send(new JSONObject().put("type","hangup"),local);}catch(Exception ignored){}
+        clear(false);state("Call ended.");
+    }
+    public void toggleMute(){
+        if(microphone==null){state("No active voice call.");return;}
+        muted=!muted;microphone.setEnabled(!muted);
+        state(muted?"Microphone muted.":"Microphone unmuted.");
+    }
+    public void toggleSpeaker(){
+        if(audioManager==null){state("No active voice call.");return;}
+        boolean speaker=!audioManager.isSpeakerphoneOn();
+        audioManager.setSpeakerphoneOn(speaker);
+        state(speaker?"Speaker ON.":"Earpiece ON.");
+    }
+
+    /** Called by CallReachabilityService, whether or not the UI is attached. */
+    public void onPacket(JSONObject msg,boolean localPacket){
+        String type=msg.optString("type","");
+        if("incoming".equals(type)){
+            if(hasSession())return;
+            String caller=msg.optString("from","");
+            if(!SavedContacts.validId(caller))return;
+            remoteId=caller;local=localPacket;outgoing=false;
+            state("Incoming call from "+caller);
+            host.sessionChanged();
+            return;
+        }
+        if(!hasSession()||localPacket!=local)return;
+        switch(type){
+            case "ringing":
+                state("Ringing "+remoteId+"…");break;
+            case "accepted":
+                if(!outgoing||peer==null)return;
+                authorized=true;state("Call accepted. Connecting voice…");createOffer();break;
+            case "signal":
+                signal(msg);break;
+            case "ended":
+                clear(false);state("Call ended: "+msg.optString("reason","disconnected"));break;
+            case "busy":
+                clear(false);state("That Xyool ID is already on a call.");break;
+            case "unavailable":
+                clear(false);state("That Xyool ID is currently unavailable.");break;
+            case "error":
+                clear(false);state("Signaling error: "+msg.optString("message","network error"));break;
+            default: break;
+        }
+    }
+    /** Rejected/expired incoming invitation while UI was away. */
+    public void expired(){
+        if(isIncoming()){clear(false);state("Missed Xyool call.");}
+    }
+    private void state(String message){
+        lastStatus=message;
+        main.post(()->host.status(message));
+    }
+    private boolean startMedia(){
+        if(!host.enableMicrophoneForeground()){
+            state("Microphone permission or Android foreground audio service unavailable.");
+            return false;
+        }
+        try{
+            final IcePathInspector diag=new IcePathInspector();
+            diag.setDiscovery(local?"Verified local Wi-Fi signaling":"Xyool internet ID signaling");
+            inspector=diag;
+            PeerConnectionFactory.initialize(PeerConnectionFactory.InitializationOptions
+                .builder(context).createInitializationOptions());
+            factory=PeerConnectionFactory.builder().createPeerConnectionFactory();
+            if(factory==null)throw new IllegalStateException("WebRTC unavailable");
+            List<PeerConnection.IceServer> servers=new ArrayList<>();
+            if(!local){
+                servers.add(PeerConnection.IceServer.builder(DEFAULT_STUN).createIceServer());
+            }
+            PeerConnection.RTCConfiguration configuration=new PeerConnection.RTCConfiguration(servers);
+            peer=factory.createPeerConnection(configuration,new PeerConnection.Observer(){
+                @Override public void onSignalingChange(PeerConnection.SignalingState state){}
+                @Override public void onIceConnectionChange(PeerConnection.IceConnectionState state){
+                    diag.setState(state.name());
+                    if(inspector!=diag)return;
+                    if(state==PeerConnection.IceConnectionState.CHECKING){
+                        VoiceCallSession.this.state("Connecting audio across networks…");
+                    }else if(state==PeerConnection.IceConnectionState.CONNECTED||
+                        state==PeerConnection.IceConnectionState.COMPLETED){
+                        connected=true;VoiceCallSession.this.state("Encrypted voice connected.");
+                    }else if(state==PeerConnection.IceConnectionState.FAILED){
+                        VoiceCallSession.this.state("Voice ICE failed: "+diag.interpretation());
+                    }else if(state==PeerConnection.IceConnectionState.DISCONNECTED){
+                        VoiceCallSession.this.state("Voice path disconnected.");
+                    }
+                }
+                @Override public void onIceConnectionReceivingChange(boolean receiving){}
+                @Override public void onIceGatheringChange(PeerConnection.IceGatheringState state){}
+                @Override public void onIceCandidate(IceCandidate candidate){
+                    if(inspector!=diag)return;
+                    diag.record(candidate.sdp);
+                    try{
+                        JSONObject frame=new JSONObject().put("type","signal")
+                            .put("kind","candidate").put("candidate",candidate.sdp)
+                            .put("mid",candidate.sdpMid==null?"":candidate.sdpMid)
+                            .put("index",candidate.sdpMLineIndex);
+                        host.send(frame,local);
+                    }catch(Exception ignored){}
+                }
+                @Override public void onIceCandidatesRemoved(IceCandidate[] candidates){}
+                @Override public void onAddStream(MediaStream stream){}
+                @Override public void onRemoveStream(MediaStream stream){}
+                @Override public void onDataChannel(DataChannel channel){}
+                @Override public void onRenegotiationNeeded(){}
+                @Override public void onAddTrack(RtpReceiver receiver,MediaStream[] streams){}
+            });
+            if(peer==null)throw new IllegalStateException("WebRTC peer unavailable");
+            audioSource=factory.createAudioSource(new MediaConstraints());
+            microphone=factory.createAudioTrack("xyool-microphone",audioSource);
+            microphone.setEnabled(true);
+            if(peer.addTrack(microphone,Collections.singletonList("xyool-media"))==null)
+                throw new IllegalStateException("Unable to attach microphone");
+            audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+            if(audioManager!=null){
+                oldMode=audioManager.getMode();oldSpeaker=audioManager.isSpeakerphoneOn();
+                audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+                // Earpiece default avoids piercing feedback when phones are close.
+                audioManager.setSpeakerphoneOn(false);
+            }
+            muted=false;connected=false;remoteReady=false;pendingCandidates.clear();
+            return true;
+        }catch(Exception e){
+            state("Audio failed: "+e.getClass().getSimpleName());
+            releaseMedia();
+            return false;
+        }
+    }
+    private void createOffer(){
+        if(peer==null)return;
+        peer.createOffer(new SdpCallbacks(){
+            @Override public void onCreateSuccess(SessionDescription desc){setLocalAndSend(desc);}
+        },new MediaConstraints());
+    }
+    private void setLocalAndSend(SessionDescription desc){
+        if(peer==null)return;
+        peer.setLocalDescription(new SdpCallbacks(){
+            @Override public void onSetSuccess(){
+                try{host.send(new JSONObject().put("type","signal")
+                    .put("kind",desc.type.canonicalForm())
+                    .put("sdp",desc.description),local);
+                }catch(Exception ignored){state("Unable to signal audio setup.");}
+            }
+        },desc);
+    }
+    private void signal(JSONObject message){
+        if(peer==null||!authorized)return;
+        String kind=message.optString("kind","");
+        if("candidate".equals(kind)){
+            String mid=message.optString("mid",""),sdp=message.optString("candidate","");
+            int index=message.optInt("index",-1);
+            if(sdp.length()>4000||index<0||index>50||mid.length()>50)return;
+            IceCandidate candidate=new IceCandidate(mid,index,sdp);
+            if(remoteReady)peer.addIceCandidate(candidate);
+            else pendingCandidates.add(candidate);
+            return;
+        }
+        if(!("offer".equals(kind)||"answer".equals(kind)))return;
+        if(outgoing&&!kind.equals("answer"))return;
+        if(!outgoing&&!kind.equals("offer"))return;
+        String sdp=message.optString("sdp","");
+        if(!sdp.startsWith("v=0")||sdp.length()<80||sdp.length()>32000)return;
+        SessionDescription desc=new SessionDescription("offer".equals(kind)?
+            SessionDescription.Type.OFFER:SessionDescription.Type.ANSWER,sdp);
+        peer.setRemoteDescription(new SdpCallbacks(){
+            @Override public void onSetSuccess(){
+                remoteReady=true;
+                for(IceCandidate candidate:pendingCandidates)
+                    if(peer!=null)peer.addIceCandidate(candidate);
+                pendingCandidates.clear();
+                if(!outgoing&&peer!=null)
+                    peer.createAnswer(new SdpCallbacks(){
+                        @Override public void onCreateSuccess(SessionDescription localDesc){
+                            setLocalAndSend(localDesc);
+                        }
+                    },new MediaConstraints());
+            }
+        },desc);
+    }
+    private abstract class SdpCallbacks implements SdpObserver{
+        @Override public void onCreateSuccess(SessionDescription desc){}
+        @Override public void onSetSuccess(){}
+        @Override public void onCreateFailure(String why){state("Audio offer failed.");}
+        @Override public void onSetFailure(String why){state("Audio negotiation failed.");}
+    }
+    private void clear(boolean unused){
+        boolean wasLocal=local;
+        remoteId=null;outgoing=false;authorized=false;remoteReady=false;
+        local=false;connected=false;
+        releaseMedia();
+        if(wasLocal)host.closeLocal();
+        host.sessionChanged();
+    }
+    private void releaseMedia(){
+        inspector=new IcePathInspector();
+        pendingCandidates.clear();
+        if(peer!=null){peer.close();peer.dispose();peer=null;}
+        if(microphone!=null){microphone.dispose();microphone=null;}
+        if(audioSource!=null){audioSource.dispose();audioSource=null;}
+        if(factory!=null){factory.dispose();factory=null;}
+        if(audioManager!=null){
+            audioManager.setSpeakerphoneOn(oldSpeaker);
+            audioManager.setMode(oldMode);
+            audioManager=null;
+        }
+    }
+    public void destroy(){clear(false);}
+}
