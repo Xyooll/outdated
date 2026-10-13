@@ -22,6 +22,8 @@ import com.google.zxing.common.BitMatrix;
 import java.util.EnumMap;
 import java.util.Map;
 import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
@@ -83,6 +85,8 @@ public final class IdCallActivity extends Activity {
     private AudioSource audioSource;
     private AudioTrack microphone;
     private AudioManager audioManager;
+    private AlertDialog incomingAlert;
+    private Ringtone incomingRingtone;
     private int oldMode=AudioManager.MODE_NORMAL;
     private boolean oldSpeaker;
     private final List<IceCandidate> pendingCandidates=new ArrayList<>();
@@ -160,6 +164,7 @@ public final class IdCallActivity extends Activity {
             connect();
     }
     @Override protected void onStop(){
+        stopIncomingRing();
         if(nearby!=null)nearby.stop();
         if(usingLocal&&waitingId!=null){
             endMedia();
@@ -617,20 +622,56 @@ public final class IdCallActivity extends Activity {
             default:break;
         }
     }
+    // The ringtone is deliberately tied to the visible, user-accepted call
+    // invitation. This alpha does not claim background or push call delivery.
+    private void startIncomingRing(){
+        stopIncomingRing();
+        try{
+            android.net.Uri sound=RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            if(sound==null)sound=RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            if(sound==null)return;
+            incomingRingtone=RingtoneManager.getRingtone(getApplicationContext(),sound);
+            if(incomingRingtone!=null){
+                incomingRingtone.setAudioAttributes(new android.media.AudioAttributes.Builder()
+                    .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build());
+                incomingRingtone.play();
+            }
+        }catch(RuntimeException ignored){incomingRingtone=null;}
+    }
+    private void stopIncomingRing(){
+        if(incomingRingtone==null)return;
+        try{incomingRingtone.stop();}catch(RuntimeException ignored){}
+        incomingRingtone=null;
+    }
     private void incomingDialog(String from){
         status("Incoming call from "+from);
-        new AlertDialog.Builder(this)
+        startIncomingRing();
+        incomingAlert=new AlertDialog.Builder(this)
             .setTitle("Incoming Xyool call")
             .setMessage(from+" wants to talk.")
             .setCancelable(false)
-            .setNegativeButton("Decline",(d,w)->{packet("reject");endMedia();status("Call declined.");})
-            .setPositiveButton("Accept",(d,w)->requestMicrophone(()->{
-                if(!initPeer()){packet("reject");return;}
-                outgoing=false;
-                if(usingLocal)callAuthorized=true;
-                packet("accept");
-                status("Accepted. Negotiating audio connection…");
-            })).show();
+            .setNegativeButton("Decline",(d,w)->{
+                stopIncomingRing();
+                packet("reject");endMedia();status("Call declined.");
+            })
+            .setPositiveButton("Accept",(d,w)->{
+                stopIncomingRing();
+                requestMicrophone(()->{
+                    if(!initPeer()){packet("reject");return;}
+                    outgoing=false;
+                    if(usingLocal)callAuthorized=true;
+                    packet("accept");
+                    status("Accepted. Negotiating audio connection…");
+                });
+            })
+            .create();
+        incomingAlert.setOnDismissListener(d->{
+            stopIncomingRing();
+            if(incomingAlert==d)incomingAlert=null;
+        });
+        incomingAlert.show();
     }
     private void requestMicrophone(Runnable next){
         if(checkSelfPermission(Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)next.run();
@@ -803,6 +844,12 @@ public final class IdCallActivity extends Activity {
         status("Call ended.");
     }
     private void endMedia(){
+        stopIncomingRing();
+        if(incomingAlert!=null){
+            AlertDialog dialog=incomingAlert;
+            incomingAlert=null;
+            dialog.dismiss();
+        }
         if(usingLocal&&nearby!=null)nearby.closeSession();
         usingLocal=false;
         pendingCandidates.clear();
