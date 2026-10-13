@@ -4,7 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Ringtone;
+import android.media.Ringtone;
 import android.app.RingtoneManager;
 import android.app.Service;
 import android.content.Context;
@@ -116,6 +116,7 @@ public final class CallReachabilityService extends Service {
         }
     }
     public boolean isRegistered(){return registered;}
+    public boolean hasIncoming(){return incoming!=null;}
     public boolean send(JSONObject message){
         if(socket==null||!socket.isOpen())return false;
         try{
@@ -185,8 +186,10 @@ public final class CallReachabilityService extends Service {
     }
     private void lost(WebSocketClient failed){
         if(socket!=failed||destroyed)return;
+        boolean wasRegistered=registered;
         socket=null;registered=false;
-        if(incoming!=null){clearIncoming();packetEnded();}
+        if(incoming!=null)clearIncoming();
+        if(wasRegistered || listener!=null)packetEnded();
         notifyConnection(false,"Xyool signaling disconnected; reconnecting…");
         if(listener!=null||foreground){
             main.removeCallbacks(retry);
