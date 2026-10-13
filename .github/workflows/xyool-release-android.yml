@@ -1,15 +1,9 @@
 name: Build Xyool Stable Android Updates
 
+# For a future production launch ONLY. Ordinary test builds use
+# xyool-connect-android.yml and DO NOT need any repository secrets.
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'xyool-connect-android/app/**'
-      - 'xyool-connect-android/build.gradle'
-      - 'xyool-connect-android/gradle.properties'
-      - 'xyool-connect-android/settings.gradle'
-      - 'xyool-connect-android/signing/xyool-stable.p12.enc.b64'
-      - '.github/workflows/xyool-release-android.yml'
 
 permissions:
   contents: read
