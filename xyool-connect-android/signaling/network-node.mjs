@@ -189,6 +189,10 @@ export function createXyoolNetworkNode({
   function receiveOnPhone(m){
     const ws=local.get(m.to);
     if(!ws)return;
+    if(m.kind==='mesh-signal'){
+      if(meshEnabled.has(ws))send(ws,{type:'mesh-signal',from:m.from,...m.payload});
+      return;
+    }
     const existing=calls.get(m.to);
     if(m.kind==='call'){
       if(existing){dispatch(m.to,m.from,'busy',m.callId);return;}
@@ -248,6 +252,43 @@ export function createXyoolNetworkNode({
     }
     if(!ws.xyid)return;
     const me=ws.xyid,c=calls.get(me);
+    if(m.type==='mesh-enable'){
+      const ts=m.authTs;
+      if(!Number.isSafeInteger(ts)||Math.abs(Date.now()-ts)>30000)return;
+      const proof=verifiedPublicKey(m.authKey,m.authSig,enableProof(me,ts));
+      if(!proof)return;
+      const pinned=knownMeshKeys.get(me);
+      if(pinned&&pinned!==proof.fingerprint){
+        send(ws,{type:'error',message:'Mesh identity key changed'});return;
+      }
+      if(!pinned){
+        knownMeshKeys.set(me,proof.fingerprint);
+        try{persistMeshKeys();}catch{
+          knownMeshKeys.delete(me);send(ws,{type:'error',message:'Mesh registry unavailable'});return;
+        }
+      }
+      ws.meshKey=proof.fingerprint;meshEnabled.add(ws);announceMesh(me);return;
+    }
+    if(m.type==='mesh-disable'){
+      if(meshEnabled.delete(ws))announceMesh(me,false);
+      return;
+    }
+    if(m.type==='mesh-signal'){
+      if(!meshEnabled.has(ws)||!validOverlay(m)||m.to===me)return;
+      const ts=m.authTs;
+      if(!Number.isSafeInteger(ts)||Math.abs(Date.now()-ts)>30000)return;
+      const proof=verifiedPublicKey(m.authKey,m.authSig,signalProof(
+        me,m.to,m.kind,ts,m.sdp||'',m.candidate||'',m.mid||'',m.index??-1));
+      if(!proof||proof.fingerprint!==ws.meshKey)return;
+      const remote=meshRoutes.get(m.to),localTarget=local.get(m.to);
+      if((localTarget&&!meshEnabled.has(localTarget))||
+          (!localTarget&&(!remote||remote.expires<Date.now())))return;
+      const payload={kind:m.kind,authKey:m.authKey,authSig:m.authSig,authTs:ts};
+      for(const field of ['sdp','candidate','mid','index'])
+        if(m[field]!==undefined)payload[field]=m[field];
+      dispatch(me,m.to,'mesh-signal',randomUUID(),payload);
+      return;
+    }
     if(m.type==='call'){
       if(c){send(ws,{type:'busy'});return;}
       if(!ID.test(m.to||'')||m.to===me){send(ws,{type:'error',message:'Invalid Xyool ID'});return;}
@@ -276,6 +317,7 @@ export function createXyoolNetworkNode({
     ws.on('message',(raw,binary)=>{if(binary){ws.close(1008);return;}messageFromPhone(ws,raw);});
     ws.on('close',()=>{
       if(ws.xyid&&local.get(ws.xyid)===ws){
+        if(meshEnabled.delete(ws))announceMesh(ws.xyid,false);
         closeCall(ws.xyid,'peer-offline',true);
         local.delete(ws.xyid);announce(ws.xyid,false);
       }
