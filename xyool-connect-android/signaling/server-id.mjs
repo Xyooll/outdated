@@ -61,14 +61,17 @@ export function createIdServer({ host='127.0.0.1',port=8788,
   // Credential issue rates are bounded independently of signaling traffic.
   // Even valid registered IDs cannot obtain unbounded relay credentials.
   let turnsInWindow=0,turnWindowAt=Date.now();
+  // Socket reconnects must not reset the per-registered-identity lease cooldown.
+  const lastTurnIssueById=new Map();
   function grantTurnLease(socket){
     if(!turnIssuer||!socket.xyid||socket.readyState!==WebSocket.OPEN)return;
     const now=Date.now();
     if(now-turnWindowAt>=60_000){turnWindowAt=now;turnsInWindow=0;}
     if(turnsInWindow>=20)return;
-    if(socket.lastTurnIssue&&now-socket.lastTurnIssue<300_000)return;
+    const previous=lastTurnIssueById.get(socket.xyid);
+    if(previous!==undefined&&now-previous<300_000)return;
     turnsInWindow++;
-    socket.lastTurnIssue=now;
+    lastTurnIssueById.set(socket.xyid,now);
     Promise.resolve().then(()=>turnIssuer()).then(lease=>{
       if(socket.xyid&&online.get(socket.xyid)===socket)
         deliver(socket,lease);
@@ -130,7 +133,6 @@ export function createIdServer({ host='127.0.0.1',port=8788,
     socket.messages=0;
     socket.alive=true;
     socket.meshEnabled=false;
-    socket.lastTurnIssue=0;
     socket.on('pong',()=>{socket.alive=true;});
     socket.on('message',(raw,binary)=>{
       if(binary){socket.close(1008,'Text only');return;}
@@ -274,6 +276,9 @@ export function createIdServer({ host='127.0.0.1',port=8788,
   });
   const ticker=setInterval(()=>{
     const now=Date.now();
+    // Keep stale identity cooldown entries from accumulating indefinitely.
+    for(const [id,issuedAt] of lastTurnIssueById)
+      if(now-issuedAt>=300_000)lastTurnIssueById.delete(id);
     for(const session of sessions.values()) {
       if(now-session.created>60*60*1000)stopCall(session,null,'timeout');
       else if(session.phase==='ringing'&&now-session.created>45_000)
