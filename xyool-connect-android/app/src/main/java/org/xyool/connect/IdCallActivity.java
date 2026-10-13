@@ -358,7 +358,9 @@ public final class IdCallActivity extends Activity {
         space(advancedPanel,9);
         serverInput=input(advancedPanel,"Signaling WSS address",prefs.getString("xyool_id_server",DEFAULT_SERVER));
         space(advancedPanel,7);
-        nodesInput=input(advancedPanel,"Additional WSS network nodes (comma separated)",
+        advancedPanel.addView(text("Only add nodes run by operators you trust. These nodes receive your current Xyool registration credential; this is not a public trustless DHT.",12,MUTED,false));
+        space(advancedPanel,6);
+        nodesInput=input(advancedPanel,"Trusted additional WSS nodes (comma separated)",
             prefs.getString(RendezvousPool.PREF_NODES,""));
         space(advancedPanel,7);
         stunInput=input(advancedPanel,"STUN (blank=automatic, off=disabled)",prefs.getString("xyool_stun",""));
@@ -479,7 +481,8 @@ public final class IdCallActivity extends Activity {
     }
 
     private void connectionStatus(){
-        int n=nearby==null?0:nearby.peerCount();
+        int n=cloud!=null&&hasReachability()?cloud.localPeerCount():
+            (nearby==null?0:nearby.peerCount());
         if(!BridgePolicy.allowsCloud(bridgeMode())){
             status(n>0?"Direct-only · "+n+" local peers · Railway disconnected.":
                 "Direct-only · Local or manual direct calls · No Railway.");
@@ -540,8 +543,8 @@ public final class IdCallActivity extends Activity {
         try{
             Intent start=new Intent(this,CallReachabilityService.class)
                 .setAction(CallReachabilityService.ACTION_ENABLE);
-            startForegroundService(start);
             if(nearby!=null)nearby.stop();
+            startForegroundService(start);
             if(!cloudBound)connect();
             updateReachabilityButton();
             status("Background alerts enabled while Android permits the service to run.");
@@ -588,7 +591,7 @@ public final class IdCallActivity extends Activity {
                 nearby!=null&&nearby.hasPeer(dest));
         BridgePolicy.Route route=BridgePolicy.choose(bridgeMode(),localAvailable,registered);
         if(route==BridgePolicy.Route.MANUAL_DIRECT_REQUIRED){
-            status("No route to this ID in Direct-only mode. Switch to Hybrid for calls across networks.");
+            status("No nearby route to this ID. Try Hybrid for other networks.");
             return;
         }
         requestMicrophone(()->{
@@ -668,7 +671,7 @@ public final class IdCallActivity extends Activity {
                 break;
             case "unavailable":
                 endMedia();
-                status("That ID isn't online. The other person's app needs to be open.");
+                status("That ID is currently unreachable. They may be offline or background listening is blocked.");
                 break;
             case "error":
                 String detail=msg.optString("message","The calling network reported an error");
