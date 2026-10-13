@@ -7,7 +7,15 @@ package org.xyool.connect;
  */
 public final class IceRecoveryPolicy {
     public static final int MAX_AUTOMATIC_RESTARTS=1;
+    public static final long CHECKING_TIMEOUT_MS=30000L;
+    public static final long RESTART_OUTCOME_TIMEOUT_MS=30000L;
     private IceRecoveryPolicy(){}
+
+    /** A real CHECKING state may stall without firing FAILED/DISCONNECTED. */
+    public static boolean shouldWatchChecking(String iceState,boolean sessionLive,
+        boolean connected){
+        return "CHECKING".equals(iceState)&&sessionLive&&!connected;
+    }
 
     /** An ICE connection event supersedes any pending negotiation status. */
     public static String connectedOutcome(int restartAttempts){
