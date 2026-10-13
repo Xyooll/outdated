@@ -2,43 +2,39 @@ plugins {
     id 'com.android.application'
 }
 
-// Release signing deliberately comes from GitHub Actions Secrets. No private
-// signing key, key-store password, or encrypted-key decryption password is
-// checked into the public repository.
-def xyoolReleaseKeystore = System.getenv('XYOOL_SIGNING_STORE_FILE')
-def xyoolReleasePassword = System.getenv('XYOOL_SIGNING_PASSPHRASE')
+// Simple TEST build workflow: the test signing key is publicly recoverable
+// from signing/xyool-test-debug.p12.b64. This is NOT production security.
+// The GitHub Actions workflow decodes the same file for every run.
+def xyoolBuildNumber = (System.getenv('XYOOL_DEBUG_BUILD_NUMBER') ?: '10').toInteger()
 
 android {
     namespace 'org.xyool.connect'
     compileSdk 35
     defaultConfig {
-        // PERMANENT beta applicationId. Never change it again for updates.
-        // This matches Xyool Connect v0.7's package identity.
+        // Keep this unchanged: Android considers a different ID another app.
         applicationId 'org.xyool.connect.crossnetworkalpha'
         minSdk 26
         targetSdk 34
-        // Must increase for each installed update.
-        versionCode 9
-        versionName '0.8.0'
+        // CI run number strictly increases so later APKs upgrade earlier ones.
+        versionCode 1000 + xyoolBuildNumber
+        versionName "0.8.test.${xyoolBuildNumber}"
     }
     signingConfigs {
-        xyoolStable {
-            if (xyoolReleaseKeystore && xyoolReleasePassword) {
-                storeFile file(xyoolReleaseKeystore)
-                storeType 'PKCS12'
-                storePassword xyoolReleasePassword
-                keyAlias 'xyool-stable'
-                keyPassword xyoolReleasePassword
-            }
+        xyoolTest {
+            storeFile rootProject.file('signing/xyool-test-debug.p12')
+            storeType 'PKCS12'
+            storePassword 'xyool-test-only'
+            keyAlias 'xyool-test-debug'
+            keyPassword 'xyool-test-only'
         }
     }
     buildTypes {
-        debug { }
+        debug {
+            signingConfig signingConfigs.xyoolTest
+        }
         release {
+            // Future production releases need a different secure key.
             minifyEnabled false
-            if (xyoolReleaseKeystore && xyoolReleasePassword) {
-                signingConfig signingConfigs.xyoolStable
-            }
         }
     }
     compileOptions {
