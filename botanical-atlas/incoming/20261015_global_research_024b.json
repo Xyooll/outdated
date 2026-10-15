@@ -1,0 +1,174 @@
+{
+  "batch_id": "20261015_global_research_024b",
+  "research_date": "2026-10-15",
+  "research_reference_url": "https://pubmed.ncbi.nlm.nih.gov/32054468/",
+  "summary": "Salvadora persica identity and oral-hygiene human trials; historical use distinguished from clinical evidence.",
+  "sources": [
+    {
+      "id": "SRC-015-SAL-2020",
+      "title": "Miswak versus fluoridated toothpaste in 94 children: randomized trial",
+      "organization": "Sabbagh et al., King Abdulaziz University, Saudi Arabia",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32054468/",
+      "published": "2020",
+      "region": "Saudi Arabia",
+      "type": "primary_human_trial",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-015-SAL-2021",
+      "title": "Miswak added to toothbrushing: crossover randomized trial",
+      "organization": "Rifaey et al., Kuwait University",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33258168/",
+      "published": "2021",
+      "region": "Kuwait",
+      "type": "primary_human_trial",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-015-SAL-2021REV",
+      "title": "Salvadora persica evidence-based review of phytochemistry and uses",
+      "organization": "Saudi Pharmaceutical Journal review authors",
+      "url": "https://link.springer.com/article/10.1016/j.jsps.2021.05.007",
+      "published": "2021",
+      "region": "Arabian Peninsula",
+      "type": "review",
+      "checked_on": "2026-10-15"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-salvadora-persica",
+      "scientific_name": "Salvadora persica",
+      "common_name": "Miswak; siwak; arak tree",
+      "kingdom": "Plantae",
+      "family": "Salvadoraceae",
+      "geographic_context": "Arabian Peninsula, East Africa, South Asia; Islamic and regional oral hygiene traditions",
+      "part_and_preparation_note": "Twigs or roots used mechanically as chewing sticks; extracts, toothpaste and purified chemicals differ",
+      "evidence_summary": "A Saudi randomized trial in 94 children reported plaque reductions with miswak and fluoride toothpaste groups over approximately three months. A Kuwait 20-person crossover study found an added gingival-bleeding benefit when miswak supplemented toothbrushing. Neither establishes that one isolated molecule explains the mechanical oral-hygiene effect.",
+      "safety_summary": "Mechanical abrasion and tissue irritation possible with improper use; product hygiene and preparation matter.",
+      "quality_tier": "source_attributed_research",
+      "version": "2026-10-15.1",
+      "source_ids": [
+        "SRC-015-SAL-2020",
+        "SRC-015-SAL-2021",
+        "SRC-015-SAL-2021REV"
+      ],
+      "compound_links": [
+        "CMP-benzyl-isothiocyanate",
+        "CMP-n-benzyl-2-phenylacetamide"
+      ],
+      "cross_links": [
+        {
+          "target_species_hint": "BOT-murraya-koenigii",
+          "compound_id": "CMP-benzyl-isothiocyanate",
+          "evidence_tier": "hypothesis",
+          "note": "Both plants contain small bioactive molecules, but oral-care and AChE studies are not evidence of a beneficial combination."
+        }
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "id": "CMP-benzyl-isothiocyanate",
+      "display_name": "Benzyl isothiocyanate",
+      "entity_type": "single_molecule",
+      "chemical_family": "isothiocyanate",
+      "chemical_identity_status": "structure_pending_independent_verification",
+      "mechanism_summary": "Electrophilic compound associated with miswak root antimicrobial activity in laboratory assays; not established clinical oral benefit alone.",
+      "structure_lookup_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Benzyl%20isothiocyanate"
+    },
+    {
+      "id": "CMP-n-benzyl-2-phenylacetamide",
+      "display_name": "N-benzyl-2-phenylacetamide",
+      "entity_type": "single_molecule",
+      "chemical_family": "amide",
+      "chemical_identity_status": "structure_pending_independent_verification",
+      "mechanism_summary": "Reported in miswak extracts with laboratory antimicrobial effects; concentration and human exposure vary.",
+      "structure_lookup_url": "https://pubchem.ncbi.nlm.nih.gov/#query=N-benzyl-2-phenylacetamide"
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-015b-BOT-salvadora-persica-CMP-benzyl-isothiocyanate",
+      "organism_id": "BOT-salvadora-persica",
+      "compound_id": "CMP-benzyl-isothiocyanate",
+      "source_id": "SRC-015-SAL-2021REV",
+      "verification": "secondary_review_of_chemical_occurrence; isolated molecule evidence not equivalent to clinical effects",
+      "part_context": "Twigs or roots used mechanically as chewing sticks; extracts, toothpaste and purified chemicals differ",
+      "note": "Occurrence in source-specific material; not proof of exposure or human efficacy."
+    },
+    {
+      "id": "OCC-015b-BOT-salvadora-persica-CMP-n-benzyl-2-phenylacetamide",
+      "organism_id": "BOT-salvadora-persica",
+      "compound_id": "CMP-n-benzyl-2-phenylacetamide",
+      "source_id": "SRC-015-SAL-2021REV",
+      "verification": "secondary_review_of_chemical_occurrence; isolated molecule evidence not equivalent to clinical effects",
+      "part_context": "Twigs or roots used mechanically as chewing sticks; extracts, toothpaste and purified chemicals differ",
+      "note": "Occurrence in source-specific material; not proof of exposure or human efficacy."
+    }
+  ],
+  "domain_notes": [
+    {
+      "organism_id": "BOT-salvadora-persica",
+      "domain": "B",
+      "text": "Metabolic effects: Only preliminary or no established human metabolic effect.",
+      "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    },
+    {
+      "organism_id": "BOT-salvadora-persica",
+      "domain": "P",
+      "text": "Physiological effects: Human plaque and gingival measurements support mechanical use.",
+      "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    },
+    {
+      "organism_id": "BOT-salvadora-persica",
+      "domain": "C",
+      "text": "Cognitive: no established human cognitive benefit; cellular signaling does not prove clinical improvement.",
+      "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    },
+    {
+      "organism_id": "BOT-salvadora-persica",
+      "domain": "A",
+      "text": "Affective: no established human mood or stress benefit.",
+      "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-salvadora-persica",
+      "alert": "Mechanical abrasion and tissue irritation possible with improper use; product hygiene and preparation matter.",
+      "quality": "safety_uncertainty; source-attributed preparation-specific caveats"
+    }
+  ],
+  "cultural_uses": [
+    {
+      "id": "CUL-015b-BOT-salvadora-persica",
+      "organism_id": "BOT-salvadora-persica",
+      "region": "Arabian Peninsula / South Asia",
+      "tradition": "Public Islamic and regional oral-hygiene traditions",
+      "original_term": "miswak / siwak / arak (Arabic); peelu (Urdu)",
+      "part": "twigs or roots",
+      "preparation": "Mechanical tooth-cleaning sticks",
+      "reported_use": "Oral hygiene, distinct from chemical extract therapy",
+      "claim_kind": "public_traditional_or_food_use",
+      "source_id": "SRC-015-SAL-2021REV",
+      "verification": "public_source; species-specific historical attribution where noted remains provisional",
+      "clinical_efficacy_established": false,
+      "limitations": "No restricted cultural instructions. Tradition is not human clinical proof; source is not necessarily a primary ethnographic field record."
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-benzyl-isothiocyanate",
+      "status": "structure_pending_verification",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Benzyl%20isothiocyanate",
+      "review_status": "No SMILES/InChIKey/CID asserted until authoritative identity match; for family/mixture no unique small-molecule drawing."
+    },
+    {
+      "compound_id": "CMP-n-benzyl-2-phenylacetamide",
+      "status": "structure_pending_verification",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/#query=N-benzyl-2-phenylacetamide",
+      "review_status": "No SMILES/InChIKey/CID asserted until authoritative identity match; for family/mixture no unique small-molecule drawing."
+    }
+  ]
+}
