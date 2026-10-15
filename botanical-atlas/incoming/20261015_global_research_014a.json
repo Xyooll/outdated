@@ -1,0 +1,254 @@
+{
+  "batch_id": "20261015_global_research_014a",
+  "research_date": "2026-10-15",
+  "research_reference_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7672115/",
+  "summary": "Two independently sourced identities from Thailand and Mexico. No human efficacy extrapolated from cellular antiviral assays or nutritional composition.",
+  "research_method": "Primary Thai cell-based study; Mexican food-composition and public biocultural research; chemistry cross-referenced to IMPPAT and PubChem.",
+  "sources": [
+    {
+      "id": "SRC-014a-THAI-2020",
+      "title": "High-content screening of Thai medicinal plants reveals Boesenbergia rotunda extract and panduratin A as anti-SARS-CoV-2 agents",
+      "organization": "Mahidol University and collaborators, Thailand",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7672115/",
+      "published": "2020",
+      "region": "Thailand",
+      "type": "primary_preclinical"
+    },
+    {
+      "id": "SRC-014a-IMPPAT-PAND",
+      "title": "Panduratin A verified structure and chemical identifiers",
+      "organization": "IMPPAT, Institute of Mathematical Sciences, India",
+      "url": "https://cb.imsc.res.in/imppat/phytochemical-detailedpage/IMPHY007107",
+      "region": "India",
+      "type": "chemical_database"
+    },
+    {
+      "id": "SRC-014a-MEX-2023",
+      "title": "Huitlacoche (Ustilago maydis), an iconic Mexican fungal resource",
+      "organization": "Universidad de Guadalajara and Mexican research institutions",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37298890/",
+      "published": "2023",
+      "region": "Mexico",
+      "type": "ethnomycological_review"
+    },
+    {
+      "id": "SRC-014a-MEX-2016",
+      "title": "Phenolic compounds, antioxidant activity and lipid profile of huitlacoche from Mexican maize genotypes",
+      "organization": "Mexican and Chilean agricultural scientists",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27605221/",
+      "published": "2016",
+      "region": "Mexico",
+      "type": "primary_analytical"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-boesenbergia-rotunda",
+      "scientific_name": "Boesenbergia rotunda",
+      "common_name": "Fingerroot (krachai)",
+      "kingdom": "Plantae",
+      "family": "Zingiberaceae",
+      "geographic_context": "Thailand and mainland Southeast Asia; culinary and regional herbal traditions",
+      "part_and_preparation_note": "Rhizome; food preparations differ chemically from laboratory solvent extracts and isolated panduratin A",
+      "quality_tier": "source_curated",
+      "identity_version": "2026-10-15.1",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": true,
+        "chemical_identity": true,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": true
+      }
+    },
+    {
+      "id": "FUN-ustilago-maydis",
+      "scientific_name": "Ustilago maydis",
+      "common_name": "Huitlacoche / cuitlacoche (maize smut)",
+      "kingdom": "Fungi",
+      "family": "Ustilaginaceae",
+      "geographic_context": "Mexico, especially maize-growing regions; public food traditions",
+      "part_and_preparation_note": "Immature maize galls used as food; stage, maize cultivar and cooking alter composition",
+      "quality_tier": "source_curated",
+      "identity_version": "2026-10-15.1",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": true,
+        "chemical_identity": true,
+        "human_effects": false,
+        "safety": true,
+        "international_ethnobotany": true
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "id": "CMP-panduratin-a",
+      "display_name": "Panduratin A",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "stereochemistry_cross_referenced_IMPPAT",
+      "verified_external_ids": {
+        "pubchem_cid": "6483648",
+        "inchi_key": "LYDZCXVWCFJAKQ-ZFGGDYGUSA-N",
+        "chebi": "66725"
+      }
+    },
+    {
+      "id": "CMP-ustilago-phenolic-fraction",
+      "display_name": "Ustilago maydis phenolic fraction (variable mixture)",
+      "entity_type": "fraction_or_mixture",
+      "chemical_identity_status": "no_single_molecule_structure",
+      "verified_external_ids": {}
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-014a-BOT-PAND",
+      "organism_id": "BOT-boesenbergia-rotunda",
+      "compound_id": "CMP-panduratin-a",
+      "source_id": "SRC-014a-THAI-2020",
+      "verification": "primary_research_compound_isolated",
+      "note": "Cyclohexenyl chalcone derivative; purified panduratin A inhibited SARS-CoV-2 infection in Vero E6 cells (post-entry IC50 0.81 µM), not clinical evidence; specific direct viral target unproven."
+    },
+    {
+      "id": "OCC-014a-FUN-ERG",
+      "organism_id": "FUN-ustilago-maydis",
+      "compound_id": "CMP-ergosterol",
+      "source_id": "SRC-014a-MEX-2016",
+      "verification": "primary_analytical_report",
+      "note": "Fungal sterol measured in huitlacoche; not evidence of a therapeutic effect."
+    },
+    {
+      "id": "OCC-014a-FUN-PHEN",
+      "organism_id": "FUN-ustilago-maydis",
+      "compound_id": "CMP-ustilago-phenolic-fraction",
+      "source_id": "SRC-014a-MEX-2016",
+      "verification": "primary_analytical_group",
+      "note": "Phenolic abundance varies with maize genotype and developmental stage; not a single chemical entity."
+    }
+  ],
+  "domain_notes": [
+    {
+      "organism_id": "BOT-boesenbergia-rotunda",
+      "domain": "B",
+      "text": "No established human metabolic effect from fingerroot; experimental metabolic signaling reports are not clinical evidence.",
+      "quality": "insufficient_human_evidence"
+    },
+    {
+      "organism_id": "BOT-boesenbergia-rotunda",
+      "domain": "P",
+      "text": "Thai study: purified panduratin A suppressed viral replication in Vero E6 and Calu-3 cell cultures; no human treatment efficacy established.",
+      "quality": "primary_in_vitro"
+    },
+    {
+      "organism_id": "BOT-boesenbergia-rotunda",
+      "domain": "C",
+      "text": "No verified human cognitive effect.",
+      "quality": "insufficient_evidence"
+    },
+    {
+      "organism_id": "BOT-boesenbergia-rotunda",
+      "domain": "A",
+      "text": "No verified human mood effect.",
+      "quality": "insufficient_evidence"
+    },
+    {
+      "organism_id": "FUN-ustilago-maydis",
+      "domain": "B",
+      "text": "Contains macronutrients and sterols as food; no demonstrated specific human metabolic treatment outcome.",
+      "quality": "food_composition_not_clinical"
+    },
+    {
+      "organism_id": "FUN-ustilago-maydis",
+      "domain": "P",
+      "text": "Mexican studies quantified phenolics, fatty acids and ergosterol; laboratory antioxidant assays do not prove disease prevention.",
+      "quality": "primary_analytical"
+    },
+    {
+      "organism_id": "FUN-ustilago-maydis",
+      "domain": "C",
+      "text": "No demonstrated direct human cognitive effect.",
+      "quality": "insufficient_evidence"
+    },
+    {
+      "organism_id": "FUN-ustilago-maydis",
+      "domain": "A",
+      "text": "No demonstrated direct human mood effect.",
+      "quality": "insufficient_evidence"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-boesenbergia-rotunda",
+      "alert": "Culinary rhizome use is not equivalent to concentrated panduratin A; no validated human antiviral dose or treatment safety. Cell cytotoxicity measured in the Thai study.",
+      "quality": "preclinical_safety_uncertainty",
+      "source_refs": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7672115/"
+      ]
+    },
+    {
+      "organism_id": "FUN-ustilago-maydis",
+      "alert": "Food use involves identified, appropriately handled edible galls; laboratory or agricultural smut cultures are not automatically food-safe. Composition depends on maize and harvest stage.",
+      "quality": "food_safety_context",
+      "source_refs": [
+        "https://pubmed.ncbi.nlm.nih.gov/37298890/"
+      ]
+    }
+  ],
+  "cultural_uses": [
+    {
+      "id": "CUL-014a-THAI",
+      "organism_id": "BOT-boesenbergia-rotunda",
+      "region": "Thailand and Southeast Asia",
+      "tradition": "Thai culinary and publicly documented herbal uses",
+      "original_term": "krachai",
+      "part": "Rhizome",
+      "preparation": "Culinary ingredient, distinct from purified chemical",
+      "reported_use": "Fingerroot is used as a regional culinary aromatic; pharmacological study discusses established culinary use.",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-014a-THAI-2020",
+      "verification": "published_public_context",
+      "clinical_efficacy_established": false,
+      "limitations": "The paper documents broad culinary context, not a specific community practice or antiviral clinical benefit."
+    },
+    {
+      "id": "CUL-014a-MEX",
+      "organism_id": "FUN-ustilago-maydis",
+      "region": "Mexico",
+      "tradition": "Mexican maize-based food culture",
+      "original_term": "huitlacoche / cuitlacoche",
+      "part": "Young maize galls",
+      "preparation": "Cooked edible food",
+      "reported_use": "Traditionally valued as a food and condiment in Mexican gastronomy.",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-014a-MEX-2023",
+      "verification": "published_Mexican_research",
+      "clinical_efficacy_established": false,
+      "limitations": "Public culinary record only; no medicinal efficacy claim or restricted knowledge."
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-panduratin-a",
+      "status": "verified_external_structure_link",
+      "review_status": "IMPPAT_CID_InChIKey_stereo_cross_referenced",
+      "formula": "C26H30O4",
+      "molecular_weight_g_mol": 406.51,
+      "smiles": "COc1cc(O)c(c(c1)O)C(=O)[C@@H]1[C@H](CC=C(C)C)C(=CC[C@H]1c1ccccc1)C",
+      "inchi_key": "LYDZCXVWCFJAKQ-ZFGGDYGUSA-N",
+      "pubchem_cid": "6483648",
+      "source_url": "https://cb.imsc.res.in/imppat/phytochemical-detailedpage/IMPHY007107",
+      "structure_url": "https://pubchem.ncbi.nlm.nih.gov/compound/6483648",
+      "functional_groups": [
+        "phenol",
+        "methoxy ether",
+        "ketone",
+        "alkene"
+      ],
+      "hbond_donors": 2,
+      "hbond_acceptors": 4,
+      "scope": "specific stereochemically defined small molecule; 2D via authoritative CID",
+      "binding_warning": "Structure and cell inhibition do not prove direct binding, human antiviral efficacy, or safe exposure."
+    }
+  ]
+}
