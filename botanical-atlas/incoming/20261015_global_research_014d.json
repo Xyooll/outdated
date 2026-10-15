@@ -1,0 +1,140 @@
+{
+  "batch_id": "20261015_global_research_014d",
+  "research_date": "2026-10-15",
+  "research_reference_url": "https://pubmed.ncbi.nlm.nih.gov/37298890/",
+  "summary": "Taiwanese Tremella mesenterica research with polysaccharide chemistry and rat-model effects; no clinical claims.",
+  "research_method": "Primary clinical, preclinical, chemistry and publicly attributed regional research; evidence tiers kept separate. No restricted cultural instructions or unsafe extraction procedures.",
+  "sources": [
+    {
+      "id": "SRC-013-tr_gly",
+      "title": "Tremella mesenterica polysaccharides in diabetic rat models (2006)",
+      "organization": "Taiwanese research team",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/16289235/",
+      "published": "2006",
+      "region": "Taiwan",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-013-tr_struct",
+      "title": "Glucuronoxylomannan structural study, Tremella mesenterica (2004)",
+      "organization": "Carbohydrate Research investigators",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15178391/",
+      "published": "2004",
+      "region": "International",
+      "checked_on": "2026-10-15"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "FUN-tremella-mesenterica",
+      "scientific_name": "Tremella mesenterica",
+      "common_name": "Yellow brain fungus; witches’ butter",
+      "kingdom": "Fungi",
+      "family": "Tremellaceae",
+      "geographic_context": "Temperate regions globally; important Taiwanese experimental research",
+      "local_names": "yellow brain fungus (English)",
+      "part_and_preparation_note": "Fruiting body, cultured biomass and purified acidic glucuronoxylomannan are distinct materials",
+      "quality_tier": "source_attributed_research",
+      "version": "2026-10-15.1",
+      "source_ids": [
+        "SRC-013-tr_gly",
+        "SRC-013-tr_struct"
+      ],
+      "compound_links": [
+        "CMP-tremella-mesenterica-glucuronoxylomannan"
+      ],
+      "safety_summary": "Wild identification and contamination concerns; no standardized long-term clinical safety data for isolated polysaccharide fractions.",
+      "evidence_summary": "A 2006 Taiwan rat study found preparation-dependent glucose responses in diabetic models. A 2004 structural study characterized an O-acetylated glucuronoxylomannan repeating architecture. Neither is evidence of human diabetes treatment.",
+      "cross_links": [
+        {
+          "target_species_hint": "FUN-tremella-fuciformis",
+          "compound_id": "CMP-tremella-mesenterica-glucuronoxylomannan",
+          "evidence_tier": "hypothesis",
+          "note": "Compare repeat-unit acetylation and glycosylation; no demonstrated clinical interchangeability."
+        }
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "id": "CMP-tremella-mesenterica-glucuronoxylomannan",
+      "display_name": "Tremella mesenterica glucuronoxylomannan",
+      "entity_type": "heterogeneous_biopolymer",
+      "chemical_identity_status": "no_unique_molecular_structure",
+      "mechanism_summary": "O-acetylated heteropolysaccharide; repeat-unit models exist but no unique molecular formula or SMILES for variable polymers.",
+      "source_refs": [
+        "SRC-013-tr_struct"
+      ]
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-013-FUN-tremella-mesenterica-1",
+      "organism_id": "FUN-tremella-mesenterica",
+      "compound_id": "CMP-tremella-mesenterica-glucuronoxylomannan",
+      "source_id": "SRC-013-tr_gly",
+      "verification": "source_attributed; concentration and tissue distribution may be unquantified",
+      "note": "O-acetylated heteropolysaccharide; repeat-unit models exist but no unique molecular formula or SMILES for variable polymers.",
+      "part_context": "Fruiting body, cultured biomass and purified acidic glucuronoxylomannan are distinct materials"
+    }
+  ],
+  "domain_notes": [
+    {
+      "organism_id": "FUN-tremella-mesenterica",
+      "domain": "B",
+      "text": "B: Rat glucose outcomes only.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "FUN-tremella-mesenterica",
+      "domain": "P",
+      "text": "P: Polysaccharide structural and animal physiology research.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "FUN-tremella-mesenterica",
+      "domain": "C",
+      "text": "C: No established cognition benefit.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "FUN-tremella-mesenterica",
+      "domain": "A",
+      "text": "A: No established affective benefit.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "FUN-tremella-mesenterica",
+      "alert": "Wild identification and contamination concerns; no standardized long-term clinical safety data for isolated polysaccharide fractions.",
+      "quality": "safety_warning; evidence and exposure vary"
+    }
+  ],
+  "cultural_uses": [
+    {
+      "id": "CUL-013-FUN-tremella-mesenterica",
+      "organism_id": "FUN-tremella-mesenterica",
+      "region": "Taiwan and international mycological literature",
+      "tradition": "Public culinary-medicinal mushroom research",
+      "part": "Fruiting bodies",
+      "preparation": "Reported edible jelly fungus; preparation claims vary by region",
+      "reported_use": "Research describes use as an edible jelly mushroom; specific Indigenous or historical community use not verified.",
+      "claim_kind": "public_cultural_context",
+      "source_id": "SRC-013-tr_gly",
+      "verification": "publicly published source; some historical attributions need primary ethnographic corroboration",
+      "clinical_efficacy_established": false,
+      "limitations": "Public context only; original community attribution may be incomplete; not clinical proof or restricted knowledge."
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-tremella-mesenterica-glucuronoxylomannan",
+      "status": "no_unique_molecular_structure",
+      "source_url": "https://pubmed.ncbi.nlm.nih.gov/15178391/",
+      "structure_file": null,
+      "review_status": "Polymer or fraction: multiple chain lengths and compositions"
+    }
+  ],
+  "binding": []
+}
