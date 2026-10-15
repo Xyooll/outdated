@@ -1,11 +1,11 @@
 {
   "meta": {
-    "version": "MVP-1.1.0",
+    "version": "MVP-1.2.0",
     "release_date": "2026-10-14",
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
     "status": "baseline imported into repository; source verification incomplete",
-    "catalog_revision": 10,
+    "catalog_revision": 11,
     "sync_mode": "repository-published; phone copy remains offline snapshot",
     "missing_legacy_source_ids": [
       "S001",
@@ -15,7 +15,13 @@
       "S006",
       "S012"
     ],
-    "last_ingestion_utc": "2026-10-15T13:08:27.353006+00:00"
+    "last_ingestion_utc": "2026-10-15T13:08:27.353006+00:00",
+    "last_enrichment_date": "2026-10-15",
+    "layer_status": "Medical-system lenses and folklore added; dosage guidance preparation- and source-specific; most catalog records await enrichment.",
+    "claim_system_policy": "Biomedicine, Ayurveda, TCM, Unani, regional herbalisms and ritual folklore are first-class systems; keep evidentiary methods and culturally specific categories distinct.",
+    "pending_term_research": [
+      "five treasures: ambiguous label; do not fabricate universal standard correspondence"
+    ]
   },
   "organisms": [
     {
@@ -963,6 +969,23 @@
           "note": "Endocrine-related overlap is speculative; interaction and safety studies needed."
         }
       ]
+    },
+    {
+      "id": "BOT-lonicera-japonica",
+      "common_name": "Japanese honeysuckle / Jin Yin Hua",
+      "scientific_name": "Lonicera japonica Thunb.",
+      "kingdom": "Plantae",
+      "geographic_context": "East Asia; studied in traditional Chinese medicine. Other Lonicera species are not interchangeable.",
+      "part_and_preparation_note": "Dried unopened flower buds in Chinese pharmacopoeial context; not equivalent to berries or ornamental honeysuckle products.",
+      "quality_tier": "pharmacopoeial_traditional_source_only",
+      "completeness": {
+        "taxonomy": false,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": true
+      }
     }
   ],
   "compounds": [
@@ -6019,6 +6042,14 @@
       "organism_id": "BOT-eurycoma-longifolia",
       "alert": "Important EFSA genotoxicity concern for a studied root extract; avoid presenting commercial products as proven safe. Pregnancy and hormone-sensitive conditions warrant caution.",
       "quality": "safety_warning; evidence and exposure vary"
+    },
+    {
+      "organism_id": "BOT-lonicera-japonica",
+      "alert": "Do not substitute unidentified honeysuckle species, leaves, or berries for a specifically authenticated flower-bud medicinal material; product-specific contraindications, interactions and safety remain incompletely evaluated.",
+      "quality": "traditional_pharmacopoeia_identity_caution",
+      "source_refs": [
+        "SRC-LENS-CHINA-JINYINHUA"
+      ]
     }
   ],
   "cultural_uses": [
@@ -6689,6 +6720,22 @@
       "verification": "public_source; species-specific historical attribution where noted remains provisional",
       "clinical_efficacy_established": false,
       "limitations": "No restricted cultural instructions. Tradition is not human clinical proof; source is not necessarily a primary ethnographic field record."
+    },
+    {
+      "id": "CUL-TCM-JINYINHUA",
+      "organism_id": "BOT-lonicera-japonica",
+      "region": "China",
+      "tradition": "Traditional Chinese Medicine / Chinese Pharmacopoeia",
+      "original_term": "金银花 (jin yin hua)",
+      "part": "dried unopened flower buds",
+      "preparation": "Chinese materia medica herbal formulation (contextual description)",
+      "reported_use": "Traditionally classified as cold and sweet, with indications described under wind-heat and heat-toxin patterns.",
+      "use_case": "Traditional wind-heat pattern framework",
+      "claim_kind": "traditional_use",
+      "source_id": "SRC-LENS-CHINA-JINYINHUA",
+      "verification": "published_chinese_pharmacopoeia_reference",
+      "clinical_efficacy_established": false,
+      "limitations": "Pattern descriptors are not Western medical diagnoses or proven therapeutic outcomes."
     }
   ],
   "sources": [
@@ -7453,6 +7500,78 @@
       "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2021.6937",
       "published": "2021",
       "region": "European Union",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-EMA-GINGER",
+      "organization": "European Medicines Agency",
+      "title": "European Union herbal monograph on Zingiber officinale Roscoe, rhizoma (2024)",
+      "url": "https://www.ema.europa.eu/system/files/documents/herbal-monograph/zingiberis-rhizoma-mo-en.pdf",
+      "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-NCCIH-MINT",
+      "organization": "NIH National Center for Complementary and Integrative Health",
+      "title": "Peppermint Oil: Usefulness and Safety",
+      "url": "https://www.nccih.nih.gov/health/peppermint-oil",
+      "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-NCCIH-ASHWA",
+      "organization": "NIH National Center for Complementary and Integrative Health",
+      "title": "Ashwagandha: Usefulness and Safety",
+      "url": "https://www.nccih.nih.gov/health/ashwagandha",
+      "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-MET-ROSEMARY",
+      "organization": "Metropolitan Museum of Art / Deirdre Larkin",
+      "title": "The Virtues of Rosemary: Medieval Garden Enclosed",
+      "url": "https://blog.metmuseum.org/cloistersgardens/2012/02/10/the-virtues-of-rosemary/",
+      "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-SCHISANDRA",
+      "organization": "Journal of Ethnopharmacology / PubMed",
+      "title": "Comparative review of Schisandra chinensis and S. sphenanthera",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34678416/",
+      "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-CHINA-JINYINHUA",
+      "organization": "Chinese Pharmacopoeia 2015 / Westlake University NMM",
+      "title": "Lonicera japonica Flower-bud (Jin Yin Hua)",
+      "url": "https://shennongalpha.westlake.edu.cn/en/knowledge/nmm-01ae",
+      "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-WHO-2025",
+      "organization": "World Health Organization",
+      "title": "Global traditional medicine strategy 2025–2034",
+      "url": "https://www.who.int/teams/integrated-health-services/traditional-complementary-and-integrative-medicine/global-strategies",
+      "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-EMA-MINT",
+      "organization": "European Medicines Agency",
+      "title": "Peppermint leaf EU herbal monograph reference",
+      "url": "https://www.ema.europa.eu/en/medicines/herbal/menthae-piperitae-folium",
+      "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LENS-SCHIS-QI",
+      "organization": "PubMed / Leung et al.",
+      "title": "Biochemical basis of Qi-invigorating action of Schisandra berry",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/16552829/",
+      "type": "original_authoritative_or_review",
       "checked_on": "2026-10-15"
     }
   ],
@@ -10270,6 +10389,289 @@
       "region": "Global",
       "type": "research_agenda",
       "checked_on": "2026-10-14"
+    }
+  ],
+  "practice_claims": [
+    {
+      "id": "PC-EMA-GINGER-MOTION",
+      "organism_id": "BOT-007",
+      "system": "European herbal regulatory medicine",
+      "tradition": "European Medicines Agency / HMPC",
+      "region": "European Union",
+      "framework": [
+        "well-established herbal medicinal use"
+      ],
+      "original_term": "Zingiberis rhizoma",
+      "condition_or_goal": "Prevention of nausea and vomiting in motion sickness",
+      "claim_type": "well_established_monograph",
+      "plant_part": "dried rhizome",
+      "preparation": "powdered herbal substance (not isolated gingerol or ginger essential oil)",
+      "route": "oral",
+      "evidence_tier": "regulatory_assessment",
+      "source_id": "SRC-LENS-EMA-GINGER",
+      "limitations": "Only the exact adult preparation/indication assessed by the monograph; not proof for all forms or causes of nausea."
+    },
+    {
+      "id": "PC-NCCIH-MINT-IBS",
+      "organism_id": "BOT-004",
+      "system": "Modern biomedical research",
+      "tradition": "Evidence-based clinical medicine",
+      "region": "International / US evidence summary",
+      "framework": [
+        "gastrointestinal symptom research"
+      ],
+      "condition_or_goal": "Short-term IBS symptom relief",
+      "claim_type": "clinical_evidence",
+      "plant_part": "leaf-derived volatile oil",
+      "preparation": "enteric-coated peppermint oil capsules",
+      "route": "oral",
+      "evidence_tier": "systematic_review_and_guideline_low_quality",
+      "source_id": "SRC-LENS-NCCIH-MINT",
+      "limitations": "Modest and inconsistent results; this finding cannot be transferred to peppermint tea, raw leaves or undiluted essential oil."
+    },
+    {
+      "id": "PC-NCCIH-ASHWA-SLEEP",
+      "organism_id": "BOT-014",
+      "system": "Modern biomedical research",
+      "tradition": "Clinical trials summarized by NIH",
+      "region": "International",
+      "framework": [
+        "sleep",
+        "stress"
+      ],
+      "condition_or_goal": "Stress and insomnia outcomes",
+      "claim_type": "clinical_evidence",
+      "plant_part": "root or root-and-leaf depending on product",
+      "preparation": "different standardized extract products, not interchangeable",
+      "route": "oral",
+      "evidence_tier": "small_heterogeneous_human_trials",
+      "source_id": "SRC-LENS-NCCIH-ASHWA",
+      "limitations": "Some formulations may help stress or sleep but there is no proof of a universal effect; long-term safety uncertain and rare liver injury reported."
+    },
+    {
+      "id": "PC-AYU-ASHWA",
+      "organism_id": "BOT-014",
+      "system": "Ayurveda",
+      "tradition": "South Asian Ayurvedic historical practice",
+      "region": "India and South Asia",
+      "framework": [
+        "rasayana context (general classical classification; formulation varies)"
+      ],
+      "condition_or_goal": "Traditional tonic and restorative use",
+      "claim_type": "traditional_report",
+      "plant_part": "usually root; parts vary by historical formula",
+      "preparation": "multi-preparation traditional herbal use (details vary)",
+      "route": "varies by formulation",
+      "evidence_tier": "public_secondary_traditional_summary",
+      "source_id": "SRC-LENS-NCCIH-ASHWA",
+      "limitations": "NIH documents historical Ayurveda use; it does not validate dosha-specific prescribing. Dosha/virya assignments require dedicated original-language materia medica sources."
+    },
+    {
+      "id": "PC-TCM-SCHISANDRA",
+      "organism_id": "BOT-schisandra-chinensis",
+      "system": "Traditional Chinese Medicine",
+      "tradition": "Chinese materia medica",
+      "region": "China",
+      "framework": [
+        "five tastes",
+        "organ systems in TCM",
+        "Qi (traditional theoretical concept)"
+      ],
+      "original_term": "北五味子 (bei-wuweizi)",
+      "condition_or_goal": "Historical uses for cough, palpitations and difficulty sleeping",
+      "claim_type": "traditional_report",
+      "plant_part": "ripe dried fruit",
+      "preparation": "traditional herbal preparations; no self-treatment instructions",
+      "route": "oral tradition",
+      "evidence_tier": "ethnopharmacological_review",
+      "source_id": "SRC-LENS-SCHISANDRA",
+      "limitations": "Five tastes/five organs belong to the TCM framework, not proof of matching biomedical organ effects; distinguish S. chinensis from S. sphenanthera."
+    },
+    {
+      "id": "PC-TCM-HONEYSUCKLE",
+      "organism_id": "BOT-lonicera-japonica",
+      "system": "Traditional Chinese Medicine",
+      "tradition": "Chinese Pharmacopoeia 2015",
+      "region": "China",
+      "framework": [
+        "wind-heat",
+        "cold nature",
+        "sweet taste",
+        "Lung/Heart/Stomach meridians"
+      ],
+      "original_term": "金银花 (jin yin hua)",
+      "condition_or_goal": "Traditional wind-heat and heat-toxin patterns, including throat/fever symptom descriptions",
+      "claim_type": "traditional_pharmacopoeia",
+      "plant_part": "dried flower buds",
+      "preparation": "materia medica flower-bud entry (formula and processing depend on practitioner)",
+      "route": "traditional oral use",
+      "evidence_tier": "national_traditional_pharmacopoeia",
+      "source_id": "SRC-LENS-CHINA-JINYINHUA",
+      "limitations": "Wind-heat is a TCM diagnostic pattern, not a biomedical diagnosis. The same plant name is not a license to consume honeysuckle berries or unspecified species."
+    },
+    {
+      "id": "PC-EU-MINT-LEAF",
+      "organism_id": "BOT-004",
+      "system": "European herbal regulatory medicine",
+      "tradition": "European Medicines Agency / HMPC",
+      "region": "European Union",
+      "framework": [
+        "herbal monograph",
+        "gastrointestinal tradition"
+      ],
+      "condition_or_goal": "Gastrointestinal symptom contexts assessed for peppermint leaves",
+      "claim_type": "regulatory_monograph",
+      "plant_part": "peppermint leaf",
+      "preparation": "leaf herbal preparations (separate from essential oil)",
+      "route": "oral",
+      "evidence_tier": "regulatory_monograph",
+      "source_id": "SRC-LENS-EMA-MINT",
+      "limitations": "A leaf monograph is not clinical proof of IBS efficacy for the tea; do not conflate leaf preparations with enteric-coated oil."
+    },
+    {
+      "id": "PC-EU-ROSEMARY",
+      "organism_id": "BOT-003",
+      "system": "Historical European herbalism",
+      "tradition": "Medieval European herbals",
+      "region": "England / western Europe",
+      "framework": [
+        "remembrance",
+        "historical memory remedies"
+      ],
+      "condition_or_goal": "Rosemary described historically as warming the brain or strengthening memory",
+      "claim_type": "historical_medicinal_report",
+      "plant_part": "rosemary herb",
+      "preparation": "variable historical formulations",
+      "route": "varied",
+      "evidence_tier": "museum_historical_commentary",
+      "source_id": "SRC-LENS-MET-ROSEMARY",
+      "limitations": "Historical medical belief only; the Met article does not establish a modern clinical cognitive treatment."
+    }
+  ],
+  "dose_guidance": [
+    {
+      "id": "DG-EMA-GINGER-MOTION",
+      "organism_id": "BOT-007",
+      "tradition": "EMA / EU monograph",
+      "source_id": "SRC-LENS-EMA-GINGER",
+      "part": "dried rhizome",
+      "preparation": "powdered herbal substance",
+      "route": "oral",
+      "population": "adults and elderly",
+      "intended_use": "motion-sickness nausea prevention",
+      "amount_text": "1–2 g",
+      "frequency_text": "single administration about 1 hour before travel",
+      "evidence_status": "monograph_indication_specific",
+      "upper_limit_status": "NOT a generally safe daily upper limit",
+      "contraindications": "Specific drug interactions, pregnancy, medical conditions and other warnings require current monograph review.",
+      "risks": "Adult indication-specific posology, not an individualized dose or evidence of safety for other ginger products."
+    },
+    {
+      "id": "DG-NCCIH-PEPP-MINT",
+      "organism_id": "BOT-004",
+      "tradition": "Modern biomedical evidence summary",
+      "source_id": "SRC-LENS-NCCIH-MINT",
+      "part": "peppermint leaves or leaf oil",
+      "preparation": "tea versus enteric-coated capsules are distinct",
+      "route": "oral",
+      "population": "general readers; not personalized",
+      "intended_use": "digestive symptoms / research context",
+      "amount_text": "No universally safe or effective dose established across preparations",
+      "frequency_text": "Not established",
+      "evidence_status": "not_established_across_products",
+      "upper_limit_status": "not established",
+      "contraindications": "Concentrated oils may worsen reflux; avoid menthol to faces of infants and young children.",
+      "risks": "Undiluted essential oil is not peppermint tea. Trial exposures are not general-purpose safe doses."
+    },
+    {
+      "id": "DG-NCCIH-ASHWA",
+      "organism_id": "BOT-014",
+      "tradition": "Modern biomedical evidence summary",
+      "source_id": "SRC-LENS-NCCIH-ASHWA",
+      "part": "root and/or leaves depending on extract",
+      "preparation": "noninterchangeable extracts",
+      "route": "oral",
+      "population": "adults; avoid during pregnancy/breastfeeding",
+      "intended_use": "stress/sleep trials",
+      "amount_text": "No single clinically established safe dosage across preparations",
+      "frequency_text": "Long-term use unestablished",
+      "evidence_status": "not_established_across_products",
+      "upper_limit_status": "not established",
+      "contraindications": "Pregnancy/breastfeeding, thyroid/autoimmune disorders, upcoming surgery, and potentially interacting medicines.",
+      "risks": "Rare liver injury reports; some short-term data (up to about 3 months) do not establish long-term safety."
+    },
+    {
+      "id": "DG-TCM-JINYINHUA",
+      "organism_id": "BOT-lonicera-japonica",
+      "tradition": "Chinese Pharmacopoeia 2015 historical/practice reference",
+      "source_id": "SRC-LENS-CHINA-JINYINHUA",
+      "part": "Lonicera japonica flower buds",
+      "preparation": "specific traditional materia medica, not berries",
+      "route": "traditional oral use",
+      "population": "not generalized; practitioner context",
+      "intended_use": "TCM wind-heat classification",
+      "amount_text": "6–15 g as listed in the cited Chinese materia medica",
+      "frequency_text": "Dose frequency and decoction specifics not generalized",
+      "evidence_status": "traditional_pharmacopoeia_not_universal_safety",
+      "upper_limit_status": "NOT a proven safe upper limit",
+      "contraindications": "Individual pattern, species and product identity, toxicity, pregnancy, disease and medicine interactions require qualified assessment.",
+      "risks": "Historical/formulary amount is NOT modern proof of efficacy or a self-prescribing safe dose."
+    }
+  ],
+  "folklore": [
+    {
+      "id": "FL-ROSEMARY-REMEMBRANCE",
+      "organism_id": "BOT-003",
+      "tradition": "European folklore and material culture",
+      "region": "England, late medieval and early modern periods",
+      "theme": "Memory, remembrance, weddings and funerals",
+      "description": "Rosemary served as a symbol of remembrance and appeared at weddings and funerals; historical authors also described medical virtues.",
+      "claim_type": "documented_folklore",
+      "source_id": "SRC-LENS-MET-ROSEMARY",
+      "evidence_tier": "museum_interpretation_of_historical_texts",
+      "public_knowledge": true,
+      "clinical_claim": false,
+      "limitations": "Documented cultural associations; no evidence of literal metaphysical protection or memory-enhancing powers."
+    },
+    {
+      "id": "FL-SCHISANDRA-FIVE-TASTES",
+      "organism_id": "BOT-schisandra-chinensis",
+      "tradition": "Traditional Chinese materia medica",
+      "region": "China",
+      "theme": "Five flavors and five organ correspondence",
+      "description": "The fruit's traditional name means five-flavor berry. Some traditional interpretive systems associate five tastes with classical organ correspondences and Qi.",
+      "claim_type": "traditional_cosmological_interpretation",
+      "source_id": "SRC-LENS-SCHIS-QI",
+      "evidence_tier": "published_historical_framework_discussion",
+      "public_knowledge": true,
+      "clinical_claim": false,
+      "limitations": "Correspondences are a philosophical/medical framework and not demonstrated physical or mystical action."
+    }
+  ],
+  "regulatory_status": [
+    {
+      "id": "REG-EMA-GINGER",
+      "organism_id": "BOT-007",
+      "jurisdiction": "European Union",
+      "regulator": "European Medicines Agency / HMPC",
+      "category": "herbal_medicine_monograph",
+      "preparation_scope": "Zingiber officinale rhizome; exact specified formulations",
+      "status_text": "EU monograph distinguishes well-established motion-sickness use from traditional indications.",
+      "date_checked": "2026-10-15",
+      "source_id": "SRC-LENS-EMA-GINGER",
+      "limitations": "The existence of a monograph does not imply every retail ginger product is an approved medicine."
+    },
+    {
+      "id": "REG-EMA-MINT-LEAF",
+      "organism_id": "BOT-004",
+      "jurisdiction": "European Union",
+      "regulator": "European Medicines Agency / HMPC",
+      "category": "herbal_medicine_monograph",
+      "preparation_scope": "Mentha × piperita leaves only",
+      "status_text": "Peppermint leaf has a published EU herbal monograph; leaf and essential oil have separate product profiles.",
+      "date_checked": "2026-10-15",
+      "source_id": "SRC-LENS-EMA-MINT",
+      "limitations": "Regulatory categories, allowable claims and product authorization vary by national implementation."
     }
   ]
 }

@@ -5,9 +5,9 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[1]
-COLLS=('organisms','compounds','occurrences','domain_notes','safety','cultural_uses','sources','structures','binding')
-IDS={'organisms':'id','compounds':'id','occurrences':'id','cultural_uses':'id','sources':'id','structures':'compound_id','binding':'id'}
-IDENTITY={'organisms':('scientific_name',),'compounds':('display_name',),'sources':('url',),'occurrences':('organism_id','compound_id'),'cultural_uses':('organism_id',),'structures':('compound_id',),'binding':('compound_id',)}
+COLLS=('organisms','compounds','occurrences','domain_notes','safety','cultural_uses','sources','structures','binding','practice_claims','dose_guidance','folklore','regulatory_status')
+IDS={'organisms':'id','compounds':'id','occurrences':'id','cultural_uses':'id','sources':'id','structures':'compound_id','binding':'id','practice_claims':'id','dose_guidance':'id','folklore':'id','regulatory_status':'id'}
+IDENTITY={'organisms':('scientific_name',),'compounds':('display_name',),'sources':('url',),'occurrences':('organism_id','compound_id'),'cultural_uses':('organism_id',),'structures':('compound_id',),'binding':('compound_id',),'practice_claims':('organism_id',),'dose_guidance':('organism_id',),'folklore':('organism_id',),'regulatory_status':('organism_id',)}
 def die(message): raise ValueError(message)
 def get(path):
     obj=json.loads(path.read_text('utf-8'))
@@ -32,7 +32,7 @@ def check(data):
         if not row.get('scientific_name') or not row.get('common_name'):die('Incomplete taxon')
     for row in data['compounds']:
         if not row.get('display_name') or not row.get('entity_type'):die('Incomplete chemical identity')
-    for key in ('occurrences','domain_notes','safety','cultural_uses'):
+    for key in ('occurrences','domain_notes','safety','cultural_uses','practice_claims','dose_guidance','folklore','regulatory_status'):
         for row in data[key]:
             if row.get('organism_id') not in org:die('Unknown organism in '+key)
     for row in data['occurrences']+data['structures']+data['binding']:
@@ -42,6 +42,23 @@ def check(data):
     for row in data['cultural_uses']:
         if not all(row.get(k) for k in ('region','tradition','part','preparation','reported_use','claim_kind','source_id','limitations')):die('Unattributed cultural claim')
         if row.get('clinical_efficacy_established') is True and row.get('claim_kind')!='clinical_evidence':die('Traditional claim mislabeled clinical')
+    # Each independently sourced medical/cultural lens must belong to a real organism and existing source.
+    for key in ('practice_claims','dose_guidance','folklore','regulatory_status'):
+        for row in data[key]:
+            if row.get('source_id') not in sources:die('Unknown evidence source in '+key)
+            if not row.get('id'):die('Missing ID in '+key)
+    for row in data['practice_claims']:
+        if not all(row.get(k) for k in ('system','tradition','region','condition_or_goal','plant_part','preparation','evidence_tier','claim_type','limitations')):die('Incomplete practice claim')
+        if row.get('clinical_efficacy_established') is True and row.get('claim_type') not in ('clinical_evidence','well_established_monograph'):die('Nonclinical practice falsely declared proven')
+    for row in data['dose_guidance']:
+        if not all(row.get(k) for k in ('part','preparation','route','population','amount_text','intended_use','evidence_status','upper_limit_status','risks','contraindications')):die('Incomplete dosage context')
+        if row.get('guaranteed_safe') is True:die('Universal guaranteed safety is not a supported dosage claim')
+        if row.get('evidence_status')=='not_established_across_products' and any(ch.isdigit() for ch in row['amount_text']):die('Speculative numeric dose')
+    for row in data['folklore']:
+        if not all(row.get(k) for k in ('tradition','region','theme','description','claim_type','evidence_tier','limitations')):die('Incomplete folklore context')
+        if row.get('clinical_claim') is True or row.get('public_knowledge') is not True:die('Folklore must be public and nonclinical')
+    for row in data['regulatory_status']:
+        if not all(row.get(k) for k in ('jurisdiction','regulator','category','preparation_scope','status_text','date_checked','limitations')):die('Incomplete regulatory status')
     return True
 def verify(batch):
     ident=batch.get('batch_id','')
@@ -66,6 +83,15 @@ def verify(batch):
         if not row.get('evidence_tier') or not row.get('method') or not row.get('source_refs') or not all(goodurl(x) for x in row['source_refs']):die('Unattributed target binding')
     for key in ('domain_notes','safety'):
         if any(not row.get('quality') for row in batch.get(key,[])):die('Ungraded '+key)
+    for key in ('practice_claims','dose_guidance','folklore','regulatory_status'):
+        for row in batch.get(key,[]):
+            if not row.get('source_id'):die('Uncited '+key)
+    for row in batch.get('practice_claims',[]):
+        if not row.get('evidence_tier') or not row.get('limitations'):die('Ungraded medical-system claim')
+    for row in batch.get('dose_guidance',[]):
+        if not row.get('evidence_status') or not row.get('population') or not row.get('preparation') or row.get('guaranteed_safe') is True:die('Unsafe or incomplete dose claim')
+    for row in batch.get('folklore',[]):
+        if row.get('public_knowledge') is not True or row.get('clinical_claim') is True:die('Restricted or medicalized folklore')
 def merge(data,batch):
     result=copy.deepcopy(data)
     for coll in COLLS:

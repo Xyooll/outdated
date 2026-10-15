@@ -1,4 +1,4 @@
-# Botanical & Fungal Identity Atlas (MVP)
+# Botanical & Fungal Identity Atlas (MVP 1.2 · plural medical systems)
 
 A growing source-attributed catalog of plants, fungi, individual bioactive compounds, structural chemistry, cultural/ethnobotanical uses, and four-domain effects (bioenergetic/metabolic, physiological, cognitive, affective).
 
@@ -38,3 +38,9 @@ Seven source-to-publish batches have been incorporated through revision 7. The c
 Local testing: `cd botanical-atlas && python -m unittest discover -s tests -v && python tools/atlas_pipeline.py validate && python tools/atlas_pipeline.py build`.
 
 **Research only:** no self-medication, diagnostic, extraction, foraging or chemical synthesis guidance implied by a catalog entry.
+
+## v1.2 — Medical perspectives, dosage, folklore, regulation
+
+The interactive app now offers a **Medicine & meaning** library. Every organism includes dedicated sections for source-attributed medicinal claims in their own tradition (including biomedicine), preparation/population-specific dosing and risk context, publicly documented folklore/metaphysical interpretation, and country/jurisdiction-specific regulation. Absence of researched records is displayed honestly. Initial examples cover TCM five tastes and wind-heat, modern clinical peppermint and ashwagandha research, an EU ginger monograph, and historical rosemary remembrance. These samples are not comprehensive for all organisms. Additional cultural systems can be added with their native terminology and clear provenance. Do not collapse metaphysical associations into biomedical facts or treat historical doses as universally safe.
+
+All source-backed updates are automatically published through the same GitHub Actions pathway; no human draft queue. The file `data/atlas.json` remains the canonical master and its live count takes precedence over the older snapshot table above.

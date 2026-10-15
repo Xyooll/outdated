@@ -28,6 +28,25 @@ class AtlasTests(unittest.TestCase):
         self.assertTrue(p.check(d))
         self.assertEqual(p.merge(d,b),d)
         self.assertEqual(len(self.data['organisms']),initial_count)
+    def test_multisystem_lenses(self):
+        self.assertIn('practice_claims',self.data)
+        self.assertIn('dose_guidance',self.data)
+        self.assertIn('folklore',self.data)
+        self.assertIn('regulatory_status',self.data)
+        self.assertTrue(p.check(self.data))
+        self.assertGreaterEqual(len(self.data['practice_claims']),8)
+    def test_broken_medicinal_reference(self):
+        d=copy.deepcopy(self.data)
+        d['practice_claims'][0]['source_id']='NO-SUCH-SOURCE'
+        with self.assertRaises(ValueError):p.check(d)
+    def test_reject_universal_safe_dose(self):
+        d=copy.deepcopy(self.data)
+        d['dose_guidance'][0]['guaranteed_safe']=True
+        with self.assertRaises(ValueError):p.check(d)
+    def test_reject_restricted_folklore(self):
+        d=copy.deepcopy(self.data)
+        d['folklore'][0]['public_knowledge']=False
+        with self.assertRaises(ValueError):p.check(d)
     def test_identity_conflict(self):
         with self.assertRaises(ValueError):p.merge(self.data,{'organisms':[{'id':'BOT-001','scientific_name':'Wrong identity'}]})
 if __name__=='__main__':unittest.main()
