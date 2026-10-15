@@ -1,0 +1,227 @@
+{
+  "batch_id": "20261015_global_research_019a",
+  "research_date": "2026-10-15",
+  "research_reference_url": "https://pubmed.ncbi.nlm.nih.gov/40974553/",
+  "summary": "Two source-attributed research profiles; no human therapeutic claims.",
+  "sources": [
+    {
+      "id": "SRC-019-PIP-BR-2004",
+      "title": "Quantification of 4-nerolidylcatechol from Pothomorphe umbellata in rat plasma (2004)",
+      "organization": "Universidade de São Paulo",
+      "url": "https://revistas.usp.br/rbcf/en/article/view/43988"
+    },
+    {
+      "id": "SRC-019-PIP-BR-2020",
+      "title": "Piper umbellatum pariparoba public Brazilian ethnobotanical compilation",
+      "organization": "Universidade Federal de Santa Catarina",
+      "url": "https://hortodidatico.ufsc.br/pariparoba/"
+    },
+    {
+      "id": "SRC-019-PIP-PUBCHEM",
+      "title": "4-Nerolidylcatechol CID 5352089",
+      "organization": "PubChem NCBI",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5352089"
+    },
+    {
+      "id": "SRC-019-LAC-MX-2025",
+      "title": "Phenolics and enzyme assays of Lactarius indigo from Puebla Mexico",
+      "organization": "Pacheco-Hernández and colleagues",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40974553/"
+    },
+    {
+      "id": "SRC-019-LAC-PUBCHEM",
+      "title": "Protocatechuic acid CID 72",
+      "organization": "PubChem NCBI",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/72"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-piper-umbellatum",
+      "scientific_name": "Piper umbellatum",
+      "common_name": "Pariparoba / caapeba",
+      "kingdom": "Plantae",
+      "geographic_context": "Atlantic Forest, Brazil",
+      "part_and_preparation_note": "Leaves, stems, roots; folk preparations and research extracts are distinct",
+      "quality_tier": "source_attributed_research",
+      "identity_version": "2026-10-15.1",
+      "evidence_summary": "4-nerolidylcatechol analytically characterized and studied in rats; no proven human efficacy",
+      "safety_summary": "Species substitution and extract safety concerns"
+    },
+    {
+      "id": "FUN-lactarius-indigo",
+      "scientific_name": "Lactarius indigo",
+      "common_name": "Indigo milk cap",
+      "kingdom": "Fungi",
+      "geographic_context": "Northeastern Puebla, Mexico",
+      "part_and_preparation_note": "Fruiting body food use; research used hydroethanolic extract",
+      "quality_tier": "source_attributed_research",
+      "identity_version": "2026-10-15.1",
+      "evidence_summary": "2025 Mexican chemical study found protocatechuic acid 52.9 mg/100g dry weight and in-vitro enzyme inhibition; no human treatment proof",
+      "safety_summary": "Wild mushroom identification and allergy concerns"
+    }
+  ],
+  "compounds": [
+    {
+      "id": "CMP-4-nerolidylcatechol",
+      "display_name": "4-Nerolidylcatechol",
+      "entity_type": "single_molecule",
+      "chemical_family": "sesquiterpenyl catechol",
+      "chemical_identity_status": "stereochemistry_sensitive_identifier_verified",
+      "verified_external_ids": {
+        "pubchem_cid": "5352089",
+        "inchi_key": "ZBZZDHDWRSFLAY-GZTJUZNOSA-N"
+      }
+    },
+    {
+      "id": "CMP-protocatechuic-acid",
+      "display_name": "Protocatechuic acid",
+      "entity_type": "single_molecule",
+      "chemical_family": "dihydroxybenzoic acid",
+      "chemical_identity_status": "identifier_verified",
+      "verified_external_ids": {
+        "pubchem_cid": "72",
+        "inchi_key": "YQUVCSBJEUQKSH-UHFFFAOYSA-N"
+      }
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-019-001",
+      "organism_id": "BOT-piper-umbellatum",
+      "compound_id": "CMP-4-nerolidylcatechol",
+      "source_id": "SRC-019-PIP-BR-2004",
+      "verification": "primary_analytical_rat_model"
+    },
+    {
+      "id": "OCC-019-009",
+      "organism_id": "FUN-lactarius-indigo",
+      "compound_id": "CMP-protocatechuic-acid",
+      "source_id": "SRC-019-LAC-MX-2025",
+      "verification": "primary_HPLC_DAD_MS"
+    }
+  ],
+  "domain_notes": [
+    {
+      "organism_id": "BOT-piper-umbellatum",
+      "domain": "B",
+      "text": "Preclinical antioxidant chemistry only.",
+      "quality": "evidence_limited_and_source_attributed"
+    },
+    {
+      "organism_id": "BOT-piper-umbellatum",
+      "domain": "P",
+      "text": "Traditional topical use; no proven human treatment.",
+      "quality": "evidence_limited_and_source_attributed"
+    },
+    {
+      "organism_id": "BOT-piper-umbellatum",
+      "domain": "C",
+      "text": "No established cognition effect.",
+      "quality": "evidence_limited_and_source_attributed"
+    },
+    {
+      "organism_id": "BOT-piper-umbellatum",
+      "domain": "A",
+      "text": "No established affective effect.",
+      "quality": "evidence_limited_and_source_attributed"
+    },
+    {
+      "organism_id": "FUN-lactarius-indigo",
+      "domain": "B",
+      "text": "In-vitro HMG-CoA reductase inhibition, not human lipid lowering.",
+      "quality": "evidence_limited_and_source_attributed"
+    },
+    {
+      "organism_id": "FUN-lactarius-indigo",
+      "domain": "P",
+      "text": "Food composition and animal model findings.",
+      "quality": "evidence_limited_and_source_attributed"
+    },
+    {
+      "organism_id": "FUN-lactarius-indigo",
+      "domain": "C",
+      "text": "No established cognitive effect.",
+      "quality": "evidence_limited_and_source_attributed"
+    },
+    {
+      "organism_id": "FUN-lactarius-indigo",
+      "domain": "A",
+      "text": "No established affective effect.",
+      "quality": "evidence_limited_and_source_attributed"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-piper-umbellatum",
+      "alert": "Species substitution and extract safety concerns",
+      "quality": "risk_note_evidence_limited"
+    },
+    {
+      "organism_id": "FUN-lactarius-indigo",
+      "alert": "Wild mushroom identification and allergy concerns",
+      "quality": "risk_note_evidence_limited"
+    }
+  ],
+  "cultural_uses": [
+    {
+      "id": "CUL-019-BOT-piper-umbellatum",
+      "organism_id": "BOT-piper-umbellatum",
+      "region": "Atlantic Forest Brazil",
+      "tradition": "Public pariparoba ethnobotanical record",
+      "part": "Leaves and roots",
+      "preparation": "Publicly reported infusion and topical uses, without protocols",
+      "reported_use": "Folk reports of inflammatory and wound care applications",
+      "claim_kind": "public_traditional_record",
+      "source_id": "SRC-019-PIP-BR-2020",
+      "verification": "public_university_compilation",
+      "limitations": "Not independently verified community testimony or human clinical efficacy"
+    },
+    {
+      "id": "CUL-019-FUN-lactarius-indigo",
+      "organism_id": "FUN-lactarius-indigo",
+      "region": "Puebla Mexico",
+      "tradition": "Publicly documented regional edible mushroom use",
+      "part": "Fruiting body",
+      "preparation": "Food use, without detailed recipes",
+      "reported_use": "Regional food mushroom",
+      "claim_kind": "public_culinary_record",
+      "source_id": "SRC-019-LAC-MX-2025",
+      "verification": "peer_reviewed_food_chemistry_paper",
+      "limitations": "No attribution to specific restricted Indigenous knowledge or clinical benefit"
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-4-nerolidylcatechol",
+      "status": "inchi_key_verified",
+      "smiles": "CC(=CCC/C(=C/CCC(C)(C=C)C1=CC(=C(C=C1)O)O)/C)C",
+      "inchi_key": "ZBZZDHDWRSFLAY-GZTJUZNOSA-N",
+      "formula": "C21H30O2",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/5352089",
+      "structure_url": "https://pubchem.ncbi.nlm.nih.gov/compound/5352089#section=2D-Structure"
+    },
+    {
+      "compound_id": "CMP-protocatechuic-acid",
+      "status": "inchi_key_verified",
+      "smiles": "C1=CC(=C(C=C1C(=O)O)O)O",
+      "inchi_key": "YQUVCSBJEUQKSH-UHFFFAOYSA-N",
+      "formula": "C7H6O4",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/72",
+      "structure_url": "https://pubchem.ncbi.nlm.nih.gov/compound/72#section=2D-Structure"
+    }
+  ],
+  "binding": [
+    {
+      "id": "BND-019-protocatechuic-hmgcr",
+      "compound_id": "CMP-protocatechuic-acid",
+      "target": "HMG-CoA reductase",
+      "method": "In-vitro biochemical enzyme inhibition",
+      "effect": "IC50 71.9 micrograms/mL in purified compound assay",
+      "evidence_tier": "biochemical_not_human_efficacy",
+      "source_refs": [
+        "https://pubmed.ncbi.nlm.nih.gov/40974553/"
+      ]
+    }
+  ]
+}
