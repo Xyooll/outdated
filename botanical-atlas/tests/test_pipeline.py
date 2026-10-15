@@ -47,6 +47,20 @@ class AtlasTests(unittest.TestCase):
         d=copy.deepcopy(self.data)
         d['folklore'][0]['public_knowledge']=False
         with self.assertRaises(ValueError):p.check(d)
+    def test_browser_javascript_syntax(self):
+        # Catch parse failures that Python/schema tests cannot detect.
+        import shutil, subprocess
+        template=(ROOT/'app/template.html').read_text('utf-8')
+        self.assertIn('data-mode="perspectives"',template)
+        self.assertIn('function perspectivePanel(',template)
+        js=template.rsplit('<script>',1)[1].split('</script>',1)[0]
+        if shutil.which('node'):
+            result=subprocess.run(['node','--check','-'],input=js,text=True,capture_output=True)
+            self.assertEqual(result.returncode,0,result.stderr)
+    def test_generated_browser_has_multisystem_content(self):
+        html=p.render(self.data).decode('utf-8')
+        for expected in ('nav-perspectives','PC-TCM-SCHISANDRA','DG-EMA-GINGER-MOTION','FL-ROSEMARY-REMEMBRANCE'):
+            self.assertIn(expected,html)
     def test_identity_conflict(self):
         with self.assertRaises(ValueError):p.merge(self.data,{'organisms':[{'id':'BOT-001','scientific_name':'Wrong identity'}]})
 if __name__=='__main__':unittest.main()
