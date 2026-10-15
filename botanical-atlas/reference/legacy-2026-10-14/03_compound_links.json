@@ -1,0 +1,162 @@
+[
+  {
+    "from_id": "BOT-001",
+    "to_id": "BOT-012",
+    "compound_or_topic": "eugenol",
+    "relationship": "shared molecular identity",
+    "evidence": "chemically documented",
+    "interpretation": "Same name, different plant matrices/concentrations; not proven synergy"
+  },
+  {
+    "from_id": "BOT-001",
+    "to_id": "BOT-005",
+    "compound_or_topic": "eugenol",
+    "relationship": "shared molecule chiefly in cinnamon leaf",
+    "evidence": "chemically documented",
+    "interpretation": "Cinnamon bark is not cinnamon leaf oil"
+  },
+  {
+    "from_id": "BOT-002",
+    "to_id": "BOT-003",
+    "compound_or_topic": "rosmarinic acid",
+    "relationship": "shared constituent",
+    "evidence": "chemically documented",
+    "interpretation": "Extraction yields differ"
+  },
+  {
+    "from_id": "BOT-003",
+    "to_id": "BOT-004",
+    "compound_or_topic": "rosmarinic acid",
+    "relationship": "shared constituent of leaves",
+    "evidence": "chemically documented",
+    "interpretation": "Peppermint steam-distilled oil contains little nonvolatile rosmarinic acid"
+  },
+  {
+    "from_id": "BOT-003",
+    "to_id": "BOT-018",
+    "compound_or_topic": "rosmarinic acid",
+    "relationship": "shared constituent",
+    "evidence": "chemically documented",
+    "interpretation": "A possible catalog cluster, not a clinical formula"
+  },
+  {
+    "from_id": "BOT-006",
+    "to_id": "BOT-010",
+    "compound_or_topic": "curcumin and piperine",
+    "relationship": "absorption/metabolism interaction",
+    "evidence": "pharmacokinetic, with mechanistic lab evidence",
+    "interpretation": "Potentially raises drug exposure; no blanket benefit claim"
+  },
+  {
+    "from_id": "BOT-009",
+    "to_id": "BOT-024",
+    "compound_or_topic": "caffeine",
+    "relationship": "same molecule",
+    "evidence": "established human physiology",
+    "interpretation": "Summed caffeine increases alertness and potential anxiety/insomnia"
+  },
+  {
+    "from_id": "BOT-009",
+    "to_id": "BOT-009",
+    "compound_or_topic": "caffeine plus L-theanine",
+    "relationship": "within-species combination",
+    "evidence": "human attention studies",
+    "interpretation": "Mixture may influence attention and subjective tension; effect context-dependent"
+  },
+  {
+    "from_id": "BOT-015",
+    "to_id": "BOT-016",
+    "compound_or_topic": "brahmi common-name confusion",
+    "relationship": "identity collision",
+    "evidence": "documented nomenclature issue",
+    "interpretation": "Distinct species; do not merge compound identities"
+  },
+  {
+    "from_id": "BOT-018",
+    "to_id": "BOT-019",
+    "compound_or_topic": "polyphenols and sedating extracts",
+    "relationship": "possible additive sedation",
+    "evidence": "hypothesis",
+    "interpretation": "Not validated as a combined therapeutic formula"
+  },
+  {
+    "from_id": "BOT-006",
+    "to_id": "BOT-021",
+    "compound_or_topic": "inflammatory signaling targets",
+    "relationship": "pathway overlap",
+    "evidence": "preclinical/hypothesis",
+    "interpretation": "Target overlap does not establish synergy or dosing"
+  },
+  {
+    "from_id": "BOT-020",
+    "to_id": "BOT-008",
+    "compound_or_topic": "opposing potential BP effects",
+    "relationship": "physiological interaction",
+    "evidence": "risk reasoning; not a tested pair",
+    "interpretation": "Do not combine to try to cancel adverse effects"
+  },
+  {
+    "from_id": "FUN-026",
+    "to_id": "FUN-027",
+    "compound_or_topic": "beta-glucan family",
+    "relationship": "immune pathway overlap",
+    "evidence": "mechanistic, not product-equivalence",
+    "interpretation": "PSK, reishi polysaccharides not interchangeable"
+  },
+  {
+    "from_id": "FUN-027",
+    "to_id": "FUN-028",
+    "compound_or_topic": "fungal polysaccharides",
+    "relationship": "class overlap",
+    "evidence": "mechanistic",
+    "interpretation": "Different branching/structural properties affect recognition"
+  },
+  {
+    "from_id": "FUN-029",
+    "to_id": "FUN-031",
+    "compound_or_topic": "beta-glucans",
+    "relationship": "class overlap",
+    "evidence": "chemical/molecular",
+    "interpretation": "Specific glucan structure and quantity matter"
+  },
+  {
+    "from_id": "BOT-013",
+    "to_id": "FUN-030",
+    "compound_or_topic": "fatigue-related marketing claims",
+    "relationship": "possible complementary pathways",
+    "evidence": "hypothesis",
+    "interpretation": "No validated combo effectiveness for energy"
+  },
+  {
+    "from_id": "BOT-023",
+    "to_id": "BOT-010",
+    "compound_or_topic": "drug metabolic pathways",
+    "relationship": "potential pharmacokinetic risk",
+    "evidence": "hypothesis/known general mechanism",
+    "interpretation": "Do not self-formulate antimalarial combinations"
+  },
+  {
+    "from_id": "BOT-011",
+    "to_id": "BOT-022",
+    "compound_or_topic": "glycemic signaling",
+    "relationship": "target overlap",
+    "evidence": "preclinical/hypothesis",
+    "interpretation": "No established combined effect"
+  },
+  {
+    "from_id": "FUN-025",
+    "to_id": "FUN-031",
+    "compound_or_topic": "ergothioneine and beta glucans",
+    "relationship": "shared nutrient/class",
+    "evidence": "chemically documented",
+    "interpretation": "No evidence of combined neuro-regeneration"
+  },
+  {
+    "from_id": "FUN-032",
+    "to_id": "FUN-026",
+    "compound_or_topic": "lanostane-type triterpenes",
+    "relationship": "class overlap",
+    "evidence": "structural",
+    "interpretation": "Chaga oxalate hazard prevents safety extrapolation"
+  }
+]
