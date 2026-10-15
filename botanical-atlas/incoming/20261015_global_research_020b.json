@@ -1,0 +1,145 @@
+{
+  "batch_id": "20261015_global_research_020b",
+  "research_date": "2026-10-15",
+  "research_reference_url": "https://www.ajol.info/index.php/gmj/article/view/68849",
+  "summary": "Ghanaian cryptolepis identity, human and laboratory evidence and genotoxicity warning; source-backed.",
+  "sources": [
+    {
+      "id": "SRC-020b-kew",
+      "title": "Cryptolepis sanguinolenta accepted species",
+      "organization": "Royal Botanic Gardens Kew",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:95951-1",
+      "published": "2026",
+      "region": "West Africa"
+    },
+    {
+      "id": "SRC-020b-ghana",
+      "title": "Clinical efficacy of a tea-bag formulation of Cryptolepis sanguinolenta root in falciparum malaria",
+      "organization": "Ghana Medical Journal",
+      "url": "https://www.ajol.info/index.php/gmj/article/view/68849",
+      "published": "2010",
+      "region": "Ghana"
+    },
+    {
+      "id": "SRC-020b-toxic",
+      "title": "In vitro genotoxicity of Cryptolepis sanguinolenta and cryptolepine",
+      "organization": "Toxicology",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15664441/",
+      "published": "2005",
+      "region": "Ghana / United Kingdom"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-cryptolepis-sanguinolenta",
+      "scientific_name": "Cryptolepis sanguinolenta",
+      "common_name": "Ghanaian cryptolepis",
+      "kingdom": "Plantae",
+      "family": "Apocynaceae",
+      "geographic_context": "Ghana and wider West/Central Africa",
+      "part_and_preparation_note": "Root aqueous preparations in Ghanaian research, not equivalent to isolated alkaloid",
+      "local_names": "Ghana local-language name not independently validated",
+      "safety_summary": "Genotoxicity signals in mammalian cell assays; do not substitute for proven malaria treatment",
+      "evidence_summary": "Small human clinical report and in vitro toxicology; no proof of safe antimalarial substitution",
+      "version": "2026-10-15.1"
+    }
+  ],
+  "compounds": [
+    {
+      "id": "CMP-cryptolepine",
+      "display_name": "Cryptolepine",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "pubchem_inchikey_verified",
+      "verified_external_ids": {
+        "pubchem_cid": "82143",
+        "inchi_key": "KURWKDDWCJELSV-UHFFFAOYSA-N"
+      }
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-020b-crypt",
+      "organism_id": "BOT-cryptolepis-sanguinolenta",
+      "compound_id": "CMP-cryptolepine",
+      "source_id": "SRC-020b-toxic",
+      "verification": "published alkaloid occurrence; dose unquantified",
+      "part_context": "Root"
+    }
+  ],
+  "domain_notes": [
+    {
+      "organism_id": "BOT-cryptolepis-sanguinolenta",
+      "domain": "B",
+      "text": "Parasite metabolism affected in vitro",
+      "quality": "evidence_tier_limited"
+    },
+    {
+      "organism_id": "BOT-cryptolepis-sanguinolenta",
+      "domain": "P",
+      "text": "Genotoxicity signal in mammalian cells",
+      "quality": "evidence_tier_limited"
+    },
+    {
+      "organism_id": "BOT-cryptolepis-sanguinolenta",
+      "domain": "C",
+      "text": "No established human effect in this domain",
+      "quality": "evidence_tier_limited"
+    },
+    {
+      "organism_id": "BOT-cryptolepis-sanguinolenta",
+      "domain": "A",
+      "text": "No established human effect in this domain",
+      "quality": "evidence_tier_limited"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-cryptolepis-sanguinolenta",
+      "alert": "In vitro genotoxicity and cell toxicity; human safety not established",
+      "quality": "cell_assay_warning",
+      "source_refs": [
+        "SRC-020b-toxic"
+      ]
+    }
+  ],
+  "cultural_uses": [
+    {
+      "id": "CUL-020b-ghana",
+      "organism_id": "BOT-cryptolepis-sanguinolenta",
+      "region": "Ghana",
+      "tradition": "Public Ghanaian antimalarial herbal practice",
+      "part": "Root",
+      "preparation": "Aqueous root tea reported; no instructions",
+      "reported_use": "Historical/contemporary use for malaria symptoms",
+      "claim_kind": "public_traditional_report",
+      "source_id": "SRC-020b-ghana",
+      "verification": "published_public_source",
+      "clinical_efficacy_established": false,
+      "limitations": "Not proof of efficacy or safety; not a replacement for recommended malaria treatment"
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-cryptolepine",
+      "status": "pubchem_formula_and_inchikey_verified",
+      "smiles": "CN1C2=CC=CC=C2C=C3C1=C4C=CC=CC4=N3",
+      "inchi_key": "KURWKDDWCJELSV-UHFFFAOYSA-N",
+      "formula": "C16H12N2",
+      "pubchem_cid": "82143",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/82143",
+      "structure_file": null
+    }
+  ],
+  "binding": [
+    {
+      "id": "BIND-020b-dna",
+      "compound_id": "CMP-cryptolepine",
+      "target": "DNA intercalation and topoisomerase II cleavage complex",
+      "method": "DNA binding spectroscopy and biochemical topoisomerase II assay",
+      "evidence_tier": "direct_biochemical_not_human_efficacy",
+      "source_refs": [
+        "https://pubs.acs.org/doi/10.1021/bi990094t"
+      ]
+    }
+  ]
+}
