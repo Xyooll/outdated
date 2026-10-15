@@ -1,0 +1,121 @@
+{
+  "batch_id": "20261015_global_research_024f",
+  "research_date": "2026-10-15",
+  "research_reference_url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2021.6937",
+  "summary": "Southeast Asian Eurycoma root identity with randomized human trial and EFSA 2021 genotoxicity safety concern; efficacy and safety are preparation-specific.",
+  "sources": [
+    {
+      "id": "SRC-013-eu_human",
+      "title": "Eurycoma longifolia standardized root extract randomized trial (2021)",
+      "organization": "Malaysia/India clinical investigators",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34262417/",
+      "published": "2021",
+      "region": "Malaysia; India",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-013-eu_safety",
+      "title": "EFSA scientific opinion on Eurycoma root extract genotoxicity (2021)",
+      "organization": "European Food Safety Authority",
+      "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2021.6937",
+      "published": "2021",
+      "region": "European Union",
+      "checked_on": "2026-10-15"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-eurycoma-longifolia",
+      "scientific_name": "Eurycoma longifolia",
+      "common_name": "Tongkat ali; pasak bumi",
+      "kingdom": "Plantae",
+      "family": "Simaroubaceae",
+      "geographic_context": "Malaysia, Indonesia and wider Southeast Asia",
+      "local_names": "tongkat ali (Malay); pasak bumi (Indonesian)",
+      "part_and_preparation_note": "Root; standardized aqueous root extracts and other extracts differ in quassinoid composition",
+      "quality_tier": "source_attributed_research",
+      "version": "2026-10-15.1",
+      "source_ids": [
+        "SRC-013-eu_human",
+        "SRC-013-eu_safety"
+      ],
+      "compound_links": [
+        "CMP-eurycomanone"
+      ],
+      "safety_summary": "Important EFSA genotoxicity concern for a studied root extract; avoid presenting commercial products as proven safe. Pregnancy and hormone-sensitive conditions warrant caution.",
+      "evidence_summary": "A 2021 randomized trial investigated standardized root extract and testosterone-related outcomes in aging men; results were formulation-specific and included manufacturer employees. A 2021 EFSA assessment found potential DNA damage from a tested root extract and concluded safety had not been established.",
+      "cross_links": [
+        {
+          "target_species_hint": "BOT-glycyrrhiza-glabra",
+          "compound_id": "CMP-eurycomanone",
+          "evidence_tier": "hypothesis",
+          "note": "Endocrine-related overlap is speculative; interaction and safety studies needed."
+        }
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "id": "CMP-eurycomanone",
+      "display_name": "Eurycomanone",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "structure_pending_verification",
+      "mechanism_summary": "Quassinoid in Eurycoma roots; molecular target attribution in humans is unestablished.",
+      "source_refs": [
+        "SRC-013-eu_safety"
+      ]
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-013-BOT-eurycoma-longifolia-1",
+      "organism_id": "BOT-eurycoma-longifolia",
+      "compound_id": "CMP-eurycomanone",
+      "source_id": "SRC-013-eu_safety",
+      "verification": "source_attributed; concentration and tissue distribution may be unquantified",
+      "note": "Quassinoid in Eurycoma roots; molecular target attribution in humans is unestablished.",
+      "part_context": "Root; standardized aqueous root extracts and other extracts differ in quassinoid composition"
+    }
+  ],
+  "domain_notes": [
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "domain": "B",
+      "text": "B: No confirmed general energy enhancement; fatigue endpoints were exploratory.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "domain": "P",
+      "text": "P: Limited human testosterone and quality-of-life trials; EFSA raised genotoxicity concerns.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "domain": "C",
+      "text": "C: No established cognitive enhancement.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "domain": "A",
+      "text": "A: Fatigue and quality-of-life scores studied; no established psychiatric efficacy.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "alert": "Important EFSA genotoxicity concern for a studied root extract; avoid presenting commercial products as proven safe. Pregnancy and hormone-sensitive conditions warrant caution.",
+      "quality": "safety_warning; evidence and exposure vary"
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-eurycomanone",
+      "status": "structure_pending_verification",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/13936691",
+      "review_status": "Stereochemistry and exact structure not independently validated"
+    }
+  ]
+}
