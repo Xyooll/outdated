@@ -5,7 +5,7 @@
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
     "status": "baseline imported into repository; source verification incomplete",
-    "catalog_revision": 8,
+    "catalog_revision": 9,
     "sync_mode": "repository-published; phone copy remains offline snapshot",
     "missing_legacy_source_ids": [
       "S001",
@@ -15,7 +15,7 @@
       "S006",
       "S012"
     ],
-    "last_ingestion_utc": "2026-10-15T13:05:31.072458+00:00"
+    "last_ingestion_utc": "2026-10-15T13:06:35.415270+00:00"
   },
   "organisms": [
     {
@@ -903,6 +903,35 @@
           "compound_id": "CMP-benzyl-isothiocyanate",
           "evidence_tier": "hypothesis",
           "note": "Both plants contain small bioactive molecules, but oral-care and AChE studies are not evidence of a beneficial combination."
+        }
+      ]
+    },
+    {
+      "id": "FUN-hericium-coralloides",
+      "scientific_name": "Hericium coralloides",
+      "common_name": "Coral tooth fungus",
+      "kingdom": "Fungi",
+      "family": "Hericiaceae",
+      "geographic_context": "Europe and other temperate regions; German primary chemistry research",
+      "part_and_preparation_note": "Fruiting-body fungal extracts and isolated corallocins; chemical profile depends on culture and material",
+      "evidence_summary": "German researchers isolated corallocins A-C and observed increased NGF and/or BDNF expression in cultured human astrocyte-line cells. This is not a human cognition trial or verified direct neurotrophin-receptor binding.",
+      "safety_summary": "Wild identification, allergies, contamination, and long-term extract safety not clinically established.",
+      "quality_tier": "source_attributed_research",
+      "version": "2026-10-15.1",
+      "source_ids": [
+        "SRC-015-HER-2016"
+      ],
+      "compound_links": [
+        "CMP-corallocin-a",
+        "CMP-corallocin-b",
+        "CMP-corallocin-c"
+      ],
+      "cross_links": [
+        {
+          "target_species_hint": "FUN-hericium-erinaceus",
+          "compound_id": "CMP-corallocin-a",
+          "evidence_tier": "hypothesis",
+          "note": "Compare distinct neurotrophic-factor cell assays across Hericium species; chemical similarity not proof of equivalent effects."
         }
       ]
     }
@@ -2347,6 +2376,33 @@
       "chemical_identity_status": "structure_pending_independent_verification",
       "mechanism_summary": "Reported in miswak extracts with laboratory antimicrobial effects; concentration and human exposure vary.",
       "structure_lookup_url": "https://pubchem.ncbi.nlm.nih.gov/#query=N-benzyl-2-phenylacetamide"
+    },
+    {
+      "id": "CMP-corallocin-a",
+      "display_name": "Corallocin A",
+      "entity_type": "single_molecule_structure_pending",
+      "chemical_family": "benzofuranone or isoindolinone natural product",
+      "chemical_identity_status": "structure_pending_independent_verification",
+      "mechanism_summary": "2016 chemical isolation; induced neurotrophic-factor expression in a cell-line model. Cell expression is not direct NGF/BDNF receptor binding.",
+      "structure_lookup_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Corallocin%20A"
+    },
+    {
+      "id": "CMP-corallocin-b",
+      "display_name": "Corallocin B",
+      "entity_type": "single_molecule_structure_pending",
+      "chemical_family": "benzofuranone or isoindolinone natural product",
+      "chemical_identity_status": "structure_pending_independent_verification",
+      "mechanism_summary": "Cell-line neurotrophic expression; antiproliferative cell assays, not clinical antitumor benefit. Cell expression is not direct NGF/BDNF receptor binding.",
+      "structure_lookup_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Corallocin%20B"
+    },
+    {
+      "id": "CMP-corallocin-c",
+      "display_name": "Corallocin C",
+      "entity_type": "single_molecule_structure_pending",
+      "chemical_family": "benzofuranone or isoindolinone natural product",
+      "chemical_identity_status": "structure_pending_independent_verification",
+      "mechanism_summary": "Cell-line neurotrophic expression; specific clinical relevance unknown. Cell expression is not direct NGF/BDNF receptor binding.",
+      "structure_lookup_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Corallocin%20C"
     }
   ],
   "occurrences": [
@@ -4230,6 +4286,33 @@
       "verification": "secondary_review_of_chemical_occurrence; isolated molecule evidence not equivalent to clinical effects",
       "part_context": "Twigs or roots used mechanically as chewing sticks; extracts, toothpaste and purified chemicals differ",
       "note": "Occurrence in source-specific material; not proof of exposure or human efficacy."
+    },
+    {
+      "id": "OCC-015b-FUN-hericium-coralloides-CMP-corallocin-a",
+      "organism_id": "FUN-hericium-coralloides",
+      "compound_id": "CMP-corallocin-a",
+      "source_id": "SRC-015-HER-2016",
+      "verification": "primary_chemistry_report; structure or quantity may be unresolved",
+      "part_context": "Fruiting-body fungal extracts and isolated corallocins; chemical profile depends on culture and material",
+      "note": "Occurrence in source-specific material; not proof of exposure or human efficacy."
+    },
+    {
+      "id": "OCC-015b-FUN-hericium-coralloides-CMP-corallocin-b",
+      "organism_id": "FUN-hericium-coralloides",
+      "compound_id": "CMP-corallocin-b",
+      "source_id": "SRC-015-HER-2016",
+      "verification": "primary_chemistry_report; structure or quantity may be unresolved",
+      "part_context": "Fruiting-body fungal extracts and isolated corallocins; chemical profile depends on culture and material",
+      "note": "Occurrence in source-specific material; not proof of exposure or human efficacy."
+    },
+    {
+      "id": "OCC-015b-FUN-hericium-coralloides-CMP-corallocin-c",
+      "organism_id": "FUN-hericium-coralloides",
+      "compound_id": "CMP-corallocin-c",
+      "source_id": "SRC-015-HER-2016",
+      "verification": "primary_chemistry_report; structure or quantity may be unresolved",
+      "part_context": "Fruiting-body fungal extracts and isolated corallocins; chemical profile depends on culture and material",
+      "note": "Occurrence in source-specific material; not proof of exposure or human efficacy."
     }
   ],
   "domain_notes": [
@@ -5480,6 +5563,30 @@
       "domain": "A",
       "text": "Affective: no established human mood or stress benefit.",
       "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    },
+    {
+      "organism_id": "FUN-hericium-coralloides",
+      "domain": "B",
+      "text": "Metabolic effects: Only preliminary or no established human metabolic effect.",
+      "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    },
+    {
+      "organism_id": "FUN-hericium-coralloides",
+      "domain": "P",
+      "text": "Physiological effects: Mechanisms or outcomes are preparation-specific; clinical efficacy generally unestablished.",
+      "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    },
+    {
+      "organism_id": "FUN-hericium-coralloides",
+      "domain": "C",
+      "text": "Cognitive: no established human cognitive benefit; cellular signaling does not prove clinical improvement.",
+      "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    },
+    {
+      "organism_id": "FUN-hericium-coralloides",
+      "domain": "A",
+      "text": "Affective: no established human mood or stress benefit.",
+      "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
     }
   ],
   "safety": [
@@ -5829,6 +5936,11 @@
     {
       "organism_id": "BOT-salvadora-persica",
       "alert": "Mechanical abrasion and tissue irritation possible with improper use; product hygiene and preparation matter.",
+      "quality": "safety_uncertainty; source-attributed preparation-specific caveats"
+    },
+    {
+      "organism_id": "FUN-hericium-coralloides",
+      "alert": "Wild identification, allergies, contamination, and long-term extract safety not clinically established.",
       "quality": "safety_uncertainty; source-attributed preparation-specific caveats"
     }
   ],
@@ -7236,6 +7348,16 @@
       "published": "2021",
       "region": "Arabian Peninsula",
       "type": "review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-015-HER-2016",
+      "title": "Corallocins A-C induce neurotrophic-factor expression in cultured astrocytes",
+      "organization": "Wittstein et al., Helmholtz Centre Braunschweig; J Nat Prod",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27588730/",
+      "published": "2016",
+      "region": "Germany",
+      "type": "primary_chemical_and_cell",
       "checked_on": "2026-10-15"
     }
   ],
@@ -9921,6 +10043,24 @@
       "compound_id": "CMP-n-benzyl-2-phenylacetamide",
       "status": "structure_pending_verification",
       "source_url": "https://pubchem.ncbi.nlm.nih.gov/#query=N-benzyl-2-phenylacetamide",
+      "review_status": "No SMILES/InChIKey/CID asserted until authoritative identity match; for family/mixture no unique small-molecule drawing."
+    },
+    {
+      "compound_id": "CMP-corallocin-a",
+      "status": "structure_pending_verification",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Corallocin%20A",
+      "review_status": "No SMILES/InChIKey/CID asserted until authoritative identity match; for family/mixture no unique small-molecule drawing."
+    },
+    {
+      "compound_id": "CMP-corallocin-b",
+      "status": "structure_pending_verification",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Corallocin%20B",
+      "review_status": "No SMILES/InChIKey/CID asserted until authoritative identity match; for family/mixture no unique small-molecule drawing."
+    },
+    {
+      "compound_id": "CMP-corallocin-c",
+      "status": "structure_pending_verification",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Corallocin%20C",
       "review_status": "No SMILES/InChIKey/CID asserted until authoritative identity match; for family/mixture no unique small-molecule drawing."
     }
   ],
