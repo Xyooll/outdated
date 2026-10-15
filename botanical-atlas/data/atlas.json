@@ -5,7 +5,7 @@
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
     "status": "baseline imported into repository; source verification incomplete",
-    "catalog_revision": 9,
+    "catalog_revision": 10,
     "sync_mode": "repository-published; phone copy remains offline snapshot",
     "missing_legacy_source_ids": [
       "S001",
@@ -15,7 +15,7 @@
       "S006",
       "S012"
     ],
-    "last_ingestion_utc": "2026-10-15T13:06:35.415270+00:00"
+    "last_ingestion_utc": "2026-10-15T13:08:27.353006+00:00"
   },
   "organisms": [
     {
@@ -932,6 +932,35 @@
           "compound_id": "CMP-corallocin-a",
           "evidence_tier": "hypothesis",
           "note": "Compare distinct neurotrophic-factor cell assays across Hericium species; chemical similarity not proof of equivalent effects."
+        }
+      ]
+    },
+    {
+      "id": "BOT-eurycoma-longifolia",
+      "scientific_name": "Eurycoma longifolia",
+      "common_name": "Tongkat ali; pasak bumi",
+      "kingdom": "Plantae",
+      "family": "Simaroubaceae",
+      "geographic_context": "Malaysia, Indonesia and wider Southeast Asia",
+      "local_names": "tongkat ali (Malay); pasak bumi (Indonesian)",
+      "part_and_preparation_note": "Root; standardized aqueous root extracts and other extracts differ in quassinoid composition",
+      "quality_tier": "source_attributed_research",
+      "version": "2026-10-15.1",
+      "source_ids": [
+        "SRC-013-eu_human",
+        "SRC-013-eu_safety"
+      ],
+      "compound_links": [
+        "CMP-eurycomanone"
+      ],
+      "safety_summary": "Important EFSA genotoxicity concern for a studied root extract; avoid presenting commercial products as proven safe. Pregnancy and hormone-sensitive conditions warrant caution.",
+      "evidence_summary": "A 2021 randomized trial investigated standardized root extract and testosterone-related outcomes in aging men; results were formulation-specific and included manufacturer employees. A 2021 EFSA assessment found potential DNA damage from a tested root extract and concluded safety had not been established.",
+      "cross_links": [
+        {
+          "target_species_hint": "BOT-glycyrrhiza-glabra",
+          "compound_id": "CMP-eurycomanone",
+          "evidence_tier": "hypothesis",
+          "note": "Endocrine-related overlap is speculative; interaction and safety studies needed."
         }
       ]
     }
@@ -2403,6 +2432,16 @@
       "chemical_identity_status": "structure_pending_independent_verification",
       "mechanism_summary": "Cell-line neurotrophic expression; specific clinical relevance unknown. Cell expression is not direct NGF/BDNF receptor binding.",
       "structure_lookup_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Corallocin%20C"
+    },
+    {
+      "id": "CMP-eurycomanone",
+      "display_name": "Eurycomanone",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "structure_pending_verification",
+      "mechanism_summary": "Quassinoid in Eurycoma roots; molecular target attribution in humans is unestablished.",
+      "source_refs": [
+        "SRC-013-eu_safety"
+      ]
     }
   ],
   "occurrences": [
@@ -4313,6 +4352,15 @@
       "verification": "primary_chemistry_report; structure or quantity may be unresolved",
       "part_context": "Fruiting-body fungal extracts and isolated corallocins; chemical profile depends on culture and material",
       "note": "Occurrence in source-specific material; not proof of exposure or human efficacy."
+    },
+    {
+      "id": "OCC-013-BOT-eurycoma-longifolia-1",
+      "organism_id": "BOT-eurycoma-longifolia",
+      "compound_id": "CMP-eurycomanone",
+      "source_id": "SRC-013-eu_safety",
+      "verification": "source_attributed; concentration and tissue distribution may be unquantified",
+      "note": "Quassinoid in Eurycoma roots; molecular target attribution in humans is unestablished.",
+      "part_context": "Root; standardized aqueous root extracts and other extracts differ in quassinoid composition"
     }
   ],
   "domain_notes": [
@@ -5587,6 +5635,30 @@
       "domain": "A",
       "text": "Affective: no established human mood or stress benefit.",
       "quality": "graded: human trial where explicitly identified; otherwise preclinical/unknown"
+    },
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "domain": "B",
+      "text": "B: No confirmed general energy enhancement; fatigue endpoints were exploratory.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "domain": "P",
+      "text": "P: Limited human testosterone and quality-of-life trials; EFSA raised genotoxicity concerns.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "domain": "C",
+      "text": "C: No established cognitive enhancement.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "domain": "A",
+      "text": "A: Fatigue and quality-of-life scores studied; no established psychiatric efficacy.",
+      "quality": "source_attributed; explicitly limited by evidence tier"
     }
   ],
   "safety": [
@@ -5942,6 +6014,11 @@
       "organism_id": "FUN-hericium-coralloides",
       "alert": "Wild identification, allergies, contamination, and long-term extract safety not clinically established.",
       "quality": "safety_uncertainty; source-attributed preparation-specific caveats"
+    },
+    {
+      "organism_id": "BOT-eurycoma-longifolia",
+      "alert": "Important EFSA genotoxicity concern for a studied root extract; avoid presenting commercial products as proven safe. Pregnancy and hormone-sensitive conditions warrant caution.",
+      "quality": "safety_warning; evidence and exposure vary"
     }
   ],
   "cultural_uses": [
@@ -7358,6 +7435,24 @@
       "published": "2016",
       "region": "Germany",
       "type": "primary_chemical_and_cell",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-013-eu_human",
+      "title": "Eurycoma longifolia standardized root extract randomized trial (2021)",
+      "organization": "Malaysia/India clinical investigators",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34262417/",
+      "published": "2021",
+      "region": "Malaysia; India",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-013-eu_safety",
+      "title": "EFSA scientific opinion on Eurycoma root extract genotoxicity (2021)",
+      "organization": "European Food Safety Authority",
+      "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2021.6937",
+      "published": "2021",
+      "region": "European Union",
       "checked_on": "2026-10-15"
     }
   ],
@@ -10062,6 +10157,12 @@
       "status": "structure_pending_verification",
       "source_url": "https://pubchem.ncbi.nlm.nih.gov/#query=Corallocin%20C",
       "review_status": "No SMILES/InChIKey/CID asserted until authoritative identity match; for family/mixture no unique small-molecule drawing."
+    },
+    {
+      "compound_id": "CMP-eurycomanone",
+      "status": "structure_pending_verification",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/13936691",
+      "review_status": "Stereochemistry and exact structure not independently validated"
     }
   ],
   "binding": [
