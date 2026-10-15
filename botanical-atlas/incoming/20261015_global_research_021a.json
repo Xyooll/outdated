@@ -1,0 +1,617 @@
+{
+  "batch_id": "20261015_global_research_021a",
+  "research_date": "2026-10-15",
+  "research_reference_url": "https://www.ema.europa.eu/en/medicines/herbal/rhodiolae-roseae-rhizoma-et-radix",
+  "summary": "Five internationally sourced identities (3 plants, 2 fungi) with explicitly graded chemistry, traditional and culinary context, molecular structures and safety. No clinical extrapolation.",
+  "sources": [
+    {
+      "id": "SRC-021-rh_ema",
+      "organization": "European Medicines Agency",
+      "title": "Rhodiola rosea herbal monograph, revision 1",
+      "url": "https://www.ema.europa.eu/en/medicines/herbal/rhodiolae-roseae-rhizoma-et-radix",
+      "published": "2024",
+      "region": "Europe",
+      "type": "regulatory monograph",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-rh_quality",
+      "organization": "Li et al.",
+      "title": "Quality Evaluation of Randomized Controlled Trials of Rhodiola Species",
+      "url": "https://doi.org/10.1155/2021/9989546",
+      "published": "2021",
+      "region": "Macau/China; global trials",
+      "type": "systematic review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-rh_auth",
+      "organization": "Analytical phytochemistry investigators",
+      "title": "Authenticity and quality evaluation of Rhodiola species and commercial products",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32311178/",
+      "published": "2020",
+      "region": "Europe/Asia",
+      "type": "original analytical study",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-rh_salid",
+      "organization": "NIH PubChem",
+      "title": "Salidroside chemical identity CID 159278",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159278",
+      "published": "2026",
+      "region": "Global",
+      "type": "chemical registry",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-rh_rosavin",
+      "organization": "NIH PubChem",
+      "title": "Rosavin chemical identity CID 9823887",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/9823887",
+      "published": "2026",
+      "region": "Global",
+      "type": "chemical registry",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lob_jmc",
+      "organization": "Flammia et al.",
+      "title": "Lobeline structure-affinity investigation of nicotinic receptor binding",
+      "url": "https://doi.org/10.1021/jm990286m",
+      "published": "1999",
+      "region": "United States",
+      "type": "original biochemical binding study",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lob_msk",
+      "organization": "Memorial Sloan Kettering Cancer Center",
+      "title": "Lobelia: evidence, risks and drug interactions",
+      "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/lobelia",
+      "published": "2026",
+      "region": "United States",
+      "type": "clinical evidence review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lob_cid",
+      "organization": "NIH PubChem",
+      "title": "Lobeline CID 101616 chemical identity",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/101616",
+      "published": "2026",
+      "region": "Global",
+      "type": "chemical registry",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-tet_1986",
+      "organization": "Van Puyvelde et al.",
+      "title": "Active principles of Tetradenia riparia I: antimicrobial activity of diterpene diol",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3807389/",
+      "published": "1986",
+      "region": "Rwanda",
+      "type": "original phytochemical bioassay",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-tet_1987",
+      "organization": "Van Puyvelde et al.",
+      "title": "Active principles of Tetradenia riparia II: antispasmodic activity",
+      "url": "https://uwcscholar.uwc.ac.za/items/07ffdd88-452d-41cd-b9d9-18ca96d8a0d7",
+      "published": "1987",
+      "region": "Rwanda/Belgium",
+      "type": "original ex vivo bioassay",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-tet_review",
+      "organization": "Ethnopharmacology research authors",
+      "title": "Ethnomedicinal phytochemical and pharmacological investigations of Tetradenia riparia",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9201335/",
+      "published": "2022",
+      "region": "Rwanda and southern Africa",
+      "type": "public ethnobotanical review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lac_isol",
+      "organization": "Tian et al.",
+      "title": "Two new guaiane sesquiterpenes from Lactarius deliciosus",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31793831/",
+      "published": "2019",
+      "region": "China",
+      "type": "original isolation and spectroscopy",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lac_tox",
+      "organization": "Anke Bergendorff Sterner",
+      "title": "Biological activity assays of guaiane sesquiterpenoids from edible Lactarius species",
+      "url": "https://hero.epa.gov/reference/4943798/",
+      "published": "1989",
+      "region": "Europe",
+      "type": "original in vitro assays",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lac_culture",
+      "organization": "Aranzadi Science Society",
+      "title": "Lactarius deliciosus mycological identity and public vernacular names",
+      "url": "https://www.aranzadi.eus/buscador-micologico/ficha/1-1-004.01.02.04.04.00",
+      "published": "2026",
+      "region": "Basque Country, Spain",
+      "type": "public mycological cultural reference",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lar_iso",
+      "organization": "Hwang et al.",
+      "title": "Chlorinated coumarins from Fomitopsis officinalis and activity against Mycobacterium tuberculosis",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24087924/",
+      "published": "2013",
+      "region": "United States; Eurasian fungus",
+      "type": "original chemical isolation and MIC study",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lar_hist",
+      "organization": "Stamets",
+      "title": "Medicinal polypores of forests of North America: screening for antiviral activity",
+      "url": "https://doi.org/10.1615/intjmedmushrooms.v7.i3.210",
+      "published": "2005",
+      "region": "Europe and North America",
+      "type": "historical secondary account / in vitro screen",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-021-lar_iucn",
+      "organization": "IUCN Red List",
+      "title": "Fomitopsis officinalis global endangered assessment",
+      "url": "https://doi.org/10.2305/IUCN.UK.2019-3.RLTS.T75104087A75104095.en",
+      "published": "2019",
+      "region": "Eurasia and North America",
+      "type": "conservation assessment",
+      "checked_on": "2026-10-15"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-rhodiola-rosea",
+      "scientific_name": "Rhodiola rosea L.",
+      "common_name": "Roseroot / Arctic root",
+      "kingdom": "Plantae",
+      "geographic_context": "Northern Eurasia, mountain and subarctic regions; European regulatory monograph",
+      "local_names": [
+        "roseroot",
+        "golden root"
+      ],
+      "part_and_preparation_note": "Rhizome and root; standardized extracts studied; preparations not interchangeable",
+      "quality_tier": "source_reviewed_2026-10-15"
+    },
+    {
+      "id": "BOT-lobelia-inflata",
+      "scientific_name": "Lobelia inflata L.",
+      "common_name": "Indian tobacco / lobelia",
+      "kingdom": "Plantae",
+      "geographic_context": "Eastern North America",
+      "local_names": [
+        "lobelia",
+        "Indian tobacco (historical English name)"
+      ],
+      "part_and_preparation_note": "Above-ground herb in historical herbalism; no ingestion instructions; concentrated alkaloids can be toxic",
+      "quality_tier": "source_reviewed_2026-10-15"
+    },
+    {
+      "id": "BOT-tetradenia-riparia",
+      "scientific_name": "Tetradenia riparia (Hochst.) Codd",
+      "common_name": "Ginger bush / umuaravumba",
+      "kingdom": "Plantae",
+      "geographic_context": "Rwanda and eastern/southern Africa",
+      "local_names": [
+        "umuaravumba (Rwanda)",
+        "iboza"
+      ],
+      "part_and_preparation_note": "Leaves and flower buds; public reports of leaf infusions, decoctions and aromatic inhalation; oils differ chemically",
+      "quality_tier": "source_reviewed_2026-10-15"
+    },
+    {
+      "id": "FUN-lactarius-deliciosus",
+      "scientific_name": "Lactarius deliciosus (L.) Gray",
+      "common_name": "Saffron milk cap",
+      "kingdom": "Fungi",
+      "geographic_context": "Europe and Asia; ectomycorrhizal with pines",
+      "local_names": [
+        "níscalo (Spanish)",
+        "rovelló (Catalan)",
+        "esnegorria (Basque)"
+      ],
+      "part_and_preparation_note": "Identified fruiting bodies cooked as food; species-level mushroom identification essential",
+      "quality_tier": "source_reviewed_2026-10-15"
+    },
+    {
+      "id": "FUN-laricifomes-officinalis",
+      "scientific_name": "Laricifomes officinalis (Vill.) Kotl. & Pouzar",
+      "common_name": "Agarikon / quinine conk",
+      "kingdom": "Fungi",
+      "geographic_context": "Old-growth conifer forests in Eurasia and North America; globally endangered",
+      "local_names": [
+        "agarikon"
+      ],
+      "part_and_preparation_note": "Historical conk preparations; no clinical efficacy established; avoid wild collection because of conservation status",
+      "quality_tier": "source_reviewed_2026-10-15"
+    }
+  ],
+  "compounds": [
+    {
+      "id": "CMP-salidroside",
+      "display_name": "Salidroside",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "pubchem_cid_inchikey_formula_cross_checked",
+      "verified_external_ids": {
+        "pubchem_cid": "159278",
+        "inchi_key": "ILRCGYURZSFMEG-RKQHYHRCSA-N"
+      }
+    },
+    {
+      "id": "CMP-rosavin",
+      "display_name": "Rosavin",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "pubchem_cid_inchikey_formula_cross_checked",
+      "verified_external_ids": {
+        "pubchem_cid": "9823887",
+        "inchi_key": "RINHYCZCUGCZAJ-IPXOVKFZSA-N"
+      }
+    },
+    {
+      "id": "CMP-lobeline",
+      "display_name": "(-)-Lobeline",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "pubchem_cid_inchikey_formula_cross_checked",
+      "verified_external_ids": {
+        "pubchem_cid": "101616",
+        "inchi_key": "MXYUKLILVYORSK-HBMCJLEFSA-N"
+      }
+    },
+    {
+      "id": "CMP-tetradenia-sandaracopimaradienediol",
+      "display_name": "8(14),15-sandaracopimaradiene-7alpha,18-diol",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "isolation_supported_structure_identifiers_pending"
+    },
+    {
+      "id": "CMP-lactaroviolin",
+      "display_name": "Lactaroviolin",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "isolation_supported_structure_identifiers_pending"
+    },
+    {
+      "id": "CMP-agarikon-chlorocoumarin-6",
+      "display_name": "6-chloro-4-phenyl-2H-chromen-2-one",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "isolated_and_spectroscopically_confirmed_structure_registry_pending"
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-021-rh1",
+      "organism_id": "BOT-rhodiola-rosea",
+      "compound_id": "CMP-salidroside",
+      "source_id": "SRC-021-rh_auth",
+      "verification": "primary_analytical_or_bioassay_report_not_human_efficacy",
+      "note": "chromatographic marker in R. rosea samples; amount varies by product"
+    },
+    {
+      "id": "OCC-021-rh2",
+      "organism_id": "BOT-rhodiola-rosea",
+      "compound_id": "CMP-rosavin",
+      "source_id": "SRC-021-rh_auth",
+      "verification": "primary_analytical_or_bioassay_report_not_human_efficacy",
+      "note": "chromatographic marker; adulteration and label mismatch observed"
+    },
+    {
+      "id": "OCC-021-lob1",
+      "organism_id": "BOT-lobelia-inflata",
+      "compound_id": "CMP-lobeline",
+      "source_id": "SRC-021-lob_jmc",
+      "verification": "primary_analytical_or_bioassay_report_not_human_efficacy",
+      "note": "plant alkaloid; purified lobeline receptor affinity is not whole-herb efficacy"
+    },
+    {
+      "id": "OCC-021-tet1",
+      "organism_id": "BOT-tetradenia-riparia",
+      "compound_id": "CMP-tetradenia-sandaracopimaradienediol",
+      "source_id": "SRC-021-tet_1986",
+      "verification": "primary_analytical_or_bioassay_report_not_human_efficacy",
+      "note": "isolated from leaves; tested against microorganisms in vitro"
+    },
+    {
+      "id": "OCC-021-lac1",
+      "organism_id": "FUN-lactarius-deliciosus",
+      "compound_id": "CMP-lactaroviolin",
+      "source_id": "SRC-021-lac_tox",
+      "verification": "primary_analytical_or_bioassay_report_not_human_efficacy",
+      "note": "guaiane sesquiterpenoid tested from edible Lactarius species including L. deliciosus; weak Ames signal"
+    },
+    {
+      "id": "OCC-021-lar1",
+      "organism_id": "FUN-laricifomes-officinalis",
+      "compound_id": "CMP-agarikon-chlorocoumarin-6",
+      "source_id": "SRC-021-lar_iso",
+      "verification": "primary_analytical_or_bioassay_report_not_human_efficacy",
+      "note": "ethanol-extract isolate identified by spectroscopy and chemical synthesis; in vitro mycobacterial assay"
+    }
+  ],
+  "domain_notes": [
+    {
+      "organism_id": "BOT-rhodiola-rosea",
+      "domain": "B",
+      "text": "Clinical fatigue outcomes studied; findings inconsistent and extract-specific.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-rhodiola-rosea",
+      "domain": "P",
+      "text": "Exercise-performance evidence heterogeneous; no general enhancement established.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-rhodiola-rosea",
+      "domain": "C",
+      "text": "Mental performance examined in small trials; uncertain replicability.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-rhodiola-rosea",
+      "domain": "A",
+      "text": "Stress-related symptom relief classified as traditional use by EMA, not established clinical efficacy.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-lobelia-inflata",
+      "domain": "B",
+      "text": "No demonstrated beneficial metabolic effect in humans.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-lobelia-inflata",
+      "domain": "P",
+      "text": "Can cause nausea, vomiting and cardiovascular adverse effects; not a proven asthma treatment.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-lobelia-inflata",
+      "domain": "C",
+      "text": "Purified lobeline binds nicotinic receptors in vitro; cognitive benefit not demonstrated.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-lobelia-inflata",
+      "domain": "A",
+      "text": "Psychophysiological effects of nicotinic ligands are not proof of mood benefit.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-tetradenia-riparia",
+      "domain": "B",
+      "text": "No human metabolic benefit established.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-tetradenia-riparia",
+      "domain": "P",
+      "text": "Leaf diterpene inhibited microorganisms in vitro; ex vivo antispasmodic activity is not clinical efficacy.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-tetradenia-riparia",
+      "domain": "C",
+      "text": "No reliable human cognitive outcome evidence.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-tetradenia-riparia",
+      "domain": "A",
+      "text": "Traditional headache use is historical report, not evidence of affective benefit.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "FUN-lactarius-deliciosus",
+      "domain": "B",
+      "text": "Nutritional food; no demonstrated human metabolic drug-like effects.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "FUN-lactarius-deliciosus",
+      "domain": "P",
+      "text": "Ames and cytotoxicity results for isolated sesquiterpenes do not determine safety of normal cooked food.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "FUN-lactarius-deliciosus",
+      "domain": "C",
+      "text": "No human cognitive benefit established.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "FUN-lactarius-deliciosus",
+      "domain": "A",
+      "text": "Cultural food value, not clinical mood efficacy.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "FUN-laricifomes-officinalis",
+      "domain": "B",
+      "text": "No validated human bioenergetic effect.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "FUN-laricifomes-officinalis",
+      "domain": "P",
+      "text": "Isolated chlorinated coumarins had in vitro mycobacterial activity, not clinical tuberculosis efficacy.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "FUN-laricifomes-officinalis",
+      "domain": "C",
+      "text": "No reliable human cognitive evidence.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "FUN-laricifomes-officinalis",
+      "domain": "A",
+      "text": "No clinical affective benefit demonstrated.",
+      "quality": "evidence_tier_explicit_2026-10-15"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-rhodiola-rosea",
+      "alert": "Extract quality/adulteration varies; limited pregnancy/lactation and interaction data; avoid extrapolating across Rhodiola species.",
+      "quality": "source_attributed_safety_precaution",
+      "source_refs": [
+        "SRC-021-rh_auth"
+      ]
+    },
+    {
+      "organism_id": "BOT-lobelia-inflata",
+      "alert": "Potentially toxic alkaloids; nausea/vomiting, dizziness, possible cardiovascular effects; nicotine co-use may increase toxicity; avoid self-treatment.",
+      "quality": "source_attributed_safety_precaution",
+      "source_refs": [
+        "SRC-021-lob_msk"
+      ]
+    },
+    {
+      "organism_id": "BOT-tetradenia-riparia",
+      "alert": "Essential oil concentrations and seasonal chemistry vary; preclinical effects do not establish safety of concentrated oil or oral extracts.",
+      "quality": "source_attributed_safety_precaution",
+      "source_refs": [
+        "SRC-021-tet_review"
+      ]
+    },
+    {
+      "organism_id": "FUN-lactarius-deliciosus",
+      "alert": "Confusion with look-alike Lactarius species; isolated guaiane sesquiterpenes showed weak mutagenicity in Ames tests; cooking and identification matter.",
+      "quality": "source_attributed_safety_precaution",
+      "source_refs": [
+        "SRC-021-lac_tox"
+      ]
+    },
+    {
+      "organism_id": "FUN-laricifomes-officinalis",
+      "alert": "Globally Endangered on IUCN assessment; do not collect wild specimens; human safety and efficacy of extracts unestablished.",
+      "quality": "source_attributed_safety_precaution",
+      "source_refs": [
+        "SRC-021-lar_iucn"
+      ]
+    }
+  ],
+  "cultural_uses": [
+    {
+      "id": "CUL-021-rh",
+      "organism_id": "BOT-rhodiola-rosea",
+      "region": "Europe and northern Eurasia",
+      "tradition": "European traditional herbal medicine",
+      "original_term": "roseroot / Arctic root",
+      "part": "rhizome and root",
+      "preparation": "traditional oral herbal extracts; no dosing instructions",
+      "reported_use": "Historically reported for temporary stress-related fatigue and weakness",
+      "claim_kind": "traditional_use",
+      "source_id": "SRC-021-rh_ema",
+      "verification": "regulatory_traditional_use_monograph_2024",
+      "clinical_efficacy_established": false,
+      "limitations": "EMA traditional-use registration does not establish well-proven efficacy; preparation specific"
+    },
+    {
+      "id": "CUL-021-tet",
+      "organism_id": "BOT-tetradenia-riparia",
+      "region": "Rwanda",
+      "tradition": "Publicly documented Rwandan household and traditional herbal practices",
+      "original_term": "umuaravumba",
+      "part": "leaves",
+      "preparation": "publicly reported leaf infusion/decoction and grain-storage leaf use; no formulation instructions",
+      "reported_use": "Historical reports of respiratory and digestive complaints and insect deterrence during grain storage",
+      "claim_kind": "historical_use",
+      "source_id": "SRC-021-tet_review",
+      "verification": "published_public_secondary_ethnobotanical_account",
+      "clinical_efficacy_established": false,
+      "limitations": "No inference of safe or effective human treatment; do not reproduce restricted knowledge"
+    },
+    {
+      "id": "CUL-021-lac",
+      "organism_id": "FUN-lactarius-deliciosus",
+      "region": "Basque Country and Catalonia, Spain",
+      "tradition": "Public mushroom-foraging and food culture",
+      "original_term": "esnegorria / rovelló / níscalo",
+      "part": "fruiting body",
+      "preparation": "cooked food; no medicinal formulation",
+      "reported_use": "Collected and cooked as a seasonal edible mushroom",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-021-lac_culture",
+      "verification": "public_regional_mycological_reference",
+      "clinical_efficacy_established": false,
+      "limitations": "Confusable mushrooms and taxonomy require expert identification; food use does not establish medicinal efficacy"
+    },
+    {
+      "id": "CUL-021-lar",
+      "organism_id": "FUN-laricifomes-officinalis",
+      "region": "Mediterranean Europe, classical antiquity",
+      "tradition": "Greco-Roman written medical history, later secondary account",
+      "original_term": "agarikon",
+      "part": "fungal conk",
+      "preparation": "historical dried conk preparations; details omitted",
+      "reported_use": "Later accounts attribute use for respiratory illness to Dioscorides",
+      "claim_kind": "historical_use",
+      "source_id": "SRC-021-lar_hist",
+      "verification": "secondary_historical_account_original_text_not_verified",
+      "clinical_efficacy_established": false,
+      "limitations": "Not proof of efficacy; critically endangered fungus should not be wild-harvested"
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-salidroside",
+      "status": "pubchem_2d_reference",
+      "formula": "C14H20O7",
+      "smiles": "C1=CC(=CC=C1CCO[C@H]2[C@@H]([C@H]([C@@H]([C@H](O2)CO)O)O)O)O",
+      "inchi_key": "ILRCGYURZSFMEG-RKQHYHRCSA-N",
+      "pubchem_cid": "159278",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/159278",
+      "review_status": "identifier_and_stereochemistry_cross_checked_pubchem_lite"
+    },
+    {
+      "compound_id": "CMP-rosavin",
+      "status": "pubchem_2d_reference",
+      "formula": "C20H28O10",
+      "smiles": "C1[C@@H]([C@@H]([C@H]([C@@H](O1)OC[C@@H]2[C@H]([C@@H]([C@H]([C@@H](O2)OC/C=C/C3=CC=CC=C3)O)O)O)O)O)O",
+      "inchi_key": "RINHYCZCUGCZAJ-IPXOVKFZSA-N",
+      "pubchem_cid": "9823887",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/9823887",
+      "review_status": "pubchem_source_identity_recorded"
+    },
+    {
+      "compound_id": "CMP-lobeline",
+      "status": "pubchem_2d_reference",
+      "formula": "C22H27NO2",
+      "smiles": "CN1[C@@H](CCC[C@@H]1CC(=O)C2=CC=CC=C2)C[C@@H](C3=CC=CC=C3)O",
+      "inchi_key": "MXYUKLILVYORSK-HBMCJLEFSA-N",
+      "pubchem_cid": "101616",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/101616",
+      "review_status": "pubchem_lite_and_imppat_inchikey_cross_checked"
+    }
+  ],
+  "binding": [
+    {
+      "id": "TGT-021-lob-nachr",
+      "compound_id": "CMP-lobeline",
+      "target": "neuronal nicotinic acetylcholine receptors (predominantly alpha4beta2 subtype)",
+      "effect_on_target": "direct radioligand receptor affinity reported Ki ~4 nM for (-)-lobeline in studied assay",
+      "evidence_tier": "direct_in_vitro_receptor_binding_not_human_outcome",
+      "method": "radioligand binding and structure-affinity analog study",
+      "source_refs": [
+        "https://doi.org/10.1021/jm990286m"
+      ],
+      "limitations": "Affinity does not prove clinical benefit; assay subtype and conditions matter."
+    }
+  ]
+}
