@@ -5,7 +5,7 @@
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
     "status": "baseline imported into repository; source verification incomplete",
-    "catalog_revision": 6,
+    "catalog_revision": 7,
     "sync_mode": "repository-published; phone copy remains offline snapshot",
     "missing_legacy_source_ids": [
       "S001",
@@ -15,7 +15,7 @@
       "S006",
       "S012"
     ],
-    "last_ingestion_utc": "2026-10-15T11:27:34.468706+00:00"
+    "last_ingestion_utc": "2026-10-15T12:03:47.329522+00:00"
   },
   "organisms": [
     {
@@ -830,6 +830,51 @@
       ],
       "part_and_preparation_note": "Historical conk preparations; no clinical efficacy established; avoid wild collection because of conservation status",
       "quality_tier": "source_reviewed_2026-10-15"
+    },
+    {
+      "id": "BOT-hibiscus-sabdariffa",
+      "scientific_name": "Hibiscus sabdariffa L.",
+      "common_name": "Roselle / hibiscus",
+      "kingdom": "Plantae",
+      "geographic_context": "Cultivated widely across West Africa, Northeast Africa, Caribbean and South and Southeast Asia; origin debated",
+      "local_names": [
+        "zobo (Nigeria)",
+        "bissap (Senegal and parts of West Africa)",
+        "sorrel (Caribbean)",
+        "flor de Jamaica (Mexico)"
+      ],
+      "part_and_preparation_note": "Edible calyces for beverages; the referenced analytical study also examines flowers. Calyx teas, standardized extracts and isolated anthocyanins are not interchangeable.",
+      "evidence_summary": "Some human trials investigate blood pressure with varying preparations and limitations; phytochemical identity supported by chromatography and NMR.",
+      "quality_tier": "primary_chemistry_plus_clinical_review_and_public_food_culture"
+    },
+    {
+      "id": "BOT-schisandra-chinensis",
+      "scientific_name": "Schisandra chinensis (Turcz.) Baill.",
+      "common_name": "Schisandra / five-flavor berry",
+      "kingdom": "Plantae",
+      "geographic_context": "Northeastern China, Russian Far East and Korean Peninsula; related S. sphenanthera must not be conflated",
+      "local_names": [
+        "bei-wuweizi (Chinese)",
+        "omija (Korean)",
+        "gomishi (Japanese)"
+      ],
+      "part_and_preparation_note": "Dried ripe fruit is the traditional medicinal material. Berry preparations and isolated lignans differ; confirm species before transferring chemical results.",
+      "evidence_summary": "Lignan chemistry well studied; many biological effects based on animal and cellular work; interactions with CYP3A/P-glycoprotein possible.",
+      "quality_tier": "international_review_and_registry_verified_structure"
+    },
+    {
+      "id": "BOT-terminalia-chebula",
+      "scientific_name": "Terminalia chebula Retz.",
+      "common_name": "Haritaki / chebulic myrobalan",
+      "kingdom": "Plantae",
+      "geographic_context": "Indian subcontinent and South/Southeast Asia; traditional use reported in Ayurveda, Unani, Siddha and Tibetan contexts",
+      "local_names": [
+        "haritaki",
+        "harad"
+      ],
+      "part_and_preparation_note": "Dried fruit used in documented traditions; primary chemical assay cited here isolated phenolics from galls rather than the same fruit preparation.",
+      "evidence_summary": "Hydrolyzable tannins characterized; much therapeutic mechanistic research is preclinical, not proof of broad clinical efficacy.",
+      "quality_tier": "primary_phytochemistry_and_transnational_historical_review"
     }
   ],
   "compounds": [
@@ -2207,6 +2252,53 @@
       "display_name": "6-chloro-4-phenyl-2H-chromen-2-one",
       "entity_type": "single_molecule",
       "chemical_identity_status": "isolated_and_spectroscopically_confirmed_structure_registry_pending"
+    },
+    {
+      "id": "CMP-delphinidin-3-sambubioside",
+      "display_name": "Delphinidin 3-O-sambubioside",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "pubchem_verified_further_biological_validation_needed",
+      "verified_external_ids": {
+        "pubchem_cid": "10196837",
+        "inchi_key": "TWYYVOVDSNRIJM-AFAGGVQESA-O"
+      },
+      "chemical_family": "anthocyanin glycoside",
+      "evidence_summary": "Major pigment isolated from Hibiscus sabdariffa floral material; chemical pigment identity does not establish human treatment efficacy."
+    },
+    {
+      "id": "CMP-schisandrin-b",
+      "display_name": "Schisandrin B",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "pubchem_2d_identity_stereochemical_scope_limited",
+      "verified_external_ids": {
+        "pubchem_cid": "108130",
+        "inchi_key": "RTZKSTLPRTWFEV-UHFFFAOYSA-N"
+      },
+      "chemical_family": "dibenzocyclooctadiene lignan",
+      "evidence_summary": "Schisandra lignan; CYP/drug-interaction and cellular signaling research must not be mistaken for demonstrated clinical effects."
+    },
+    {
+      "id": "CMP-chebulagic-acid",
+      "display_name": "Chebulagic acid",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "pubchem_cid_formula_and_inchikey_verified",
+      "verified_external_ids": {
+        "pubchem_cid": "442674",
+        "inchi_key": "HGJXAVROWQLCTP-YABCKIEDSA-N"
+      },
+      "chemical_family": "hydrolyzable tannin",
+      "evidence_summary": "Phenolic isolated from Terminalia chebula galls; antioxidant assays do not demonstrate human antioxidant treatment outcomes."
+    },
+    {
+      "id": "CMP-chebulinic-acid",
+      "display_name": "Chebulinic acid",
+      "entity_type": "single_molecule",
+      "chemical_identity_status": "pubchem_cid_formula_verified",
+      "verified_external_ids": {
+        "pubchem_cid": "99937814"
+      },
+      "chemical_family": "hydrolyzable tannin",
+      "evidence_summary": "Phenolic from Terminalia chebula; direct studies needed for human efficacy and safety."
     }
   ],
   "occurrences": [
@@ -4032,6 +4124,46 @@
       "source_id": "SRC-021-lar_iso",
       "verification": "primary_analytical_or_bioassay_report_not_human_efficacy",
       "note": "ethanol-extract isolate identified by spectroscopy and chemical synthesis; in vitro mycobacterial assay"
+    },
+    {
+      "id": "OCC-LIVE-hib-ds",
+      "organism_id": "BOT-hibiscus-sabdariffa",
+      "compound_id": "CMP-delphinidin-3-sambubioside",
+      "source_id": "SRC-LIVE-hib-chem",
+      "verification": "nmr_and_lc_ms_primary_phytochemical_study",
+      "part": "flowers (study); calyx composition must be considered by preparation"
+    },
+    {
+      "id": "OCC-LIVE-schi-b",
+      "organism_id": "BOT-schisandra-chinensis",
+      "compound_id": "CMP-schisandrin-b",
+      "source_id": "SRC-LIVE-schi-phytochemistry",
+      "verification": "analytical_lignan_review",
+      "part": "fruit"
+    },
+    {
+      "id": "OCC-LIVE-term-cg",
+      "organism_id": "BOT-terminalia-chebula",
+      "compound_id": "CMP-chebulagic-acid",
+      "source_id": "SRC-LIVE-term-chem",
+      "verification": "isolated_by_fractionation_and_identified_primary_report",
+      "part": "galls"
+    },
+    {
+      "id": "OCC-LIVE-term-ci",
+      "organism_id": "BOT-terminalia-chebula",
+      "compound_id": "CMP-chebulinic-acid",
+      "source_id": "SRC-LIVE-term-chem",
+      "verification": "isolated_by_fractionation_and_identified_primary_report",
+      "part": "galls"
+    },
+    {
+      "id": "OCC-LIVE-term-gallic",
+      "organism_id": "BOT-terminalia-chebula",
+      "compound_id": "CMP-gallic-acid",
+      "source_id": "SRC-LIVE-term-chem",
+      "verification": "identified_primary_isolation",
+      "part": "galls"
     }
   ],
   "domain_notes": [
@@ -5186,6 +5318,78 @@
       "domain": "A",
       "text": "No clinical affective benefit demonstrated.",
       "quality": "evidence_tier_explicit_2026-10-15"
+    },
+    {
+      "organism_id": "BOT-hibiscus-sabdariffa",
+      "domain": "B",
+      "text": "Anthocyanins undergo metabolism, but no proven energy or ATP benefit from consuming hibiscus.",
+      "quality": "mechanistic_only"
+    },
+    {
+      "organism_id": "BOT-hibiscus-sabdariffa",
+      "domain": "P",
+      "text": "Some human trials report blood-pressure effects of hibiscus preparations; clinical heterogeneity and medication interactions limit interpretation.",
+      "quality": "human_studies_heterogeneous"
+    },
+    {
+      "organism_id": "BOT-hibiscus-sabdariffa",
+      "domain": "C",
+      "text": "No well-established benefit for cognition; antioxidant laboratory activity cannot be translated directly to improved memory.",
+      "quality": "evidence_insufficient"
+    },
+    {
+      "organism_id": "BOT-hibiscus-sabdariffa",
+      "domain": "A",
+      "text": "Enjoyment and cultural significance of beverage are distinct from evidence for antidepressant or anxiolytic effects.",
+      "quality": "cultural_not_clinical"
+    },
+    {
+      "organism_id": "BOT-schisandra-chinensis",
+      "domain": "B",
+      "text": "Lignan metabolic signaling explored experimentally; human energy or longevity improvements not established.",
+      "quality": "preclinical"
+    },
+    {
+      "organism_id": "BOT-schisandra-chinensis",
+      "domain": "P",
+      "text": "Lignan effects on CYP3A/P-glycoprotein raise medication interaction concerns; protective effects remain preparation- and evidence-specific.",
+      "quality": "reviewed_interaction_evidence"
+    },
+    {
+      "organism_id": "BOT-schisandra-chinensis",
+      "domain": "C",
+      "text": "Preclinical neural signaling findings exist, but no broadly established human cognitive improvement.",
+      "quality": "preclinical"
+    },
+    {
+      "organism_id": "BOT-schisandra-chinensis",
+      "domain": "A",
+      "text": "Traditional sleep-related uses are historically reported but clinical antidepressant or sleep efficacy is not established.",
+      "quality": "traditional_use_only"
+    },
+    {
+      "organism_id": "BOT-terminalia-chebula",
+      "domain": "B",
+      "text": "Phenolic anti-oxidative assay activity does not prove cellular energy benefits in people.",
+      "quality": "preclinical_only"
+    },
+    {
+      "organism_id": "BOT-terminalia-chebula",
+      "domain": "P",
+      "text": "Extracts and isolated tannins show in vitro bioactivity; historical digestive use does not establish a treatment outcome.",
+      "quality": "preclinical_and_traditional"
+    },
+    {
+      "organism_id": "BOT-terminalia-chebula",
+      "domain": "C",
+      "text": "No high-confidence evidence of human cognitive improvement.",
+      "quality": "evidence_insufficient"
+    },
+    {
+      "organism_id": "BOT-terminalia-chebula",
+      "domain": "A",
+      "text": "No validated clinical mood effects.",
+      "quality": "evidence_insufficient"
     }
   ],
   "safety": [
@@ -5506,6 +5710,30 @@
       "quality": "source_attributed_safety_precaution",
       "source_refs": [
         "SRC-021-lar_iucn"
+      ]
+    },
+    {
+      "organism_id": "BOT-hibiscus-sabdariffa",
+      "alert": "Possible additional blood-pressure lowering with antihypertensive drugs; concentrated preparations differ from beverages. Pregnancy and long-term concentrated-extract safety not established.",
+      "quality": "review_based_caution",
+      "source_refs": [
+        "SRC-LIVE-hib-bp"
+      ]
+    },
+    {
+      "organism_id": "BOT-schisandra-chinensis",
+      "alert": "Potential CYP3A and P-glycoprotein interactions with medications; similar Schisandra species should not be assumed interchangeable. Human dose and safety of isolated lignans remain uncertain.",
+      "quality": "ethnopharmacology_review_explicit_interaction_risk",
+      "source_refs": [
+        "SRC-LIVE-schi-traditional"
+      ]
+    },
+    {
+      "organism_id": "BOT-terminalia-chebula",
+      "alert": "Polyphenol and tannin content is variable; gastrointestinal effects and drug interactions are incompletely studied. Laboratory antimicrobial assays are not evidence that ingestion treats infections.",
+      "quality": "review_based_uncertainty",
+      "source_refs": [
+        "SRC-LIVE-term-history"
       ]
     }
   ],
@@ -6102,6 +6330,66 @@
       "verification": "secondary_historical_account_original_text_not_verified",
       "clinical_efficacy_established": false,
       "limitations": "Not proof of efficacy; critically endangered fungus should not be wild-harvested"
+    },
+    {
+      "id": "CUL-LIVE-hib-nigeria",
+      "organism_id": "BOT-hibiscus-sabdariffa",
+      "region": "Nigeria",
+      "tradition": "Contemporary documented Nigerian food culture",
+      "original_term": "zobo",
+      "part": "dried calyces",
+      "preparation": "water-based beverage with regional flavoring variations, described rather than instructed",
+      "reported_use": "Widely consumed as tart, colored beverage; this record is culinary heritage, not a claim of hypertension cure.",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-LIVE-hib-food",
+      "verification": "published_regional_food_science_context",
+      "clinical_efficacy_established": false,
+      "limitations": "Names and practices vary among regions and households."
+    },
+    {
+      "id": "CUL-LIVE-hib-diaspora",
+      "organism_id": "BOT-hibiscus-sabdariffa",
+      "region": "West African diaspora and Caribbean",
+      "tradition": "Publicly shared culinary heritage",
+      "original_term": "bissap / sorrel",
+      "part": "dried calyces",
+      "preparation": "tart drink, often spiced; no prescriptive medicinal directions",
+      "reported_use": "Beverage traditions sustained through African diasporic communities and Caribbean festivals.",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-LIVE-hib-culture",
+      "verification": "published_cultural_food_history",
+      "clinical_efficacy_established": false,
+      "limitations": "A historical article is not a clinical efficacy or all-community ethnography source."
+    },
+    {
+      "id": "CUL-LIVE-schi-wuweizi",
+      "organism_id": "BOT-schisandra-chinensis",
+      "region": "China, including historical references to Korean Peninsula",
+      "tradition": "Traditional Chinese materia medica; publicly reported use",
+      "original_term": "北五味子 (bei wuweizi)",
+      "part": "dried ripe berries",
+      "preparation": "traditionally dried-fruit herbal preparations; no formulation instructions",
+      "reported_use": "Traditional sources report use in cough, palpitations and sleep complaints; medicinal claims are historical, not validated clinical treatment outcomes.",
+      "claim_kind": "historical_use",
+      "source_id": "SRC-LIVE-schi-traditional",
+      "verification": "peer_reviewed_historical_and_ethnopharmacology_review",
+      "clinical_efficacy_established": false,
+      "limitations": "Similar S. sphenanthera has different chemical composition; label by species."
+    },
+    {
+      "id": "CUL-LIVE-term-haritaki",
+      "organism_id": "BOT-terminalia-chebula",
+      "region": "India and South Asia",
+      "tradition": "Ayurveda, Siddha and related documented traditions",
+      "original_term": "haritaki",
+      "part": "dried fruit",
+      "preparation": "traditional fruit-based herbal preparation; descriptive only",
+      "reported_use": "Traditionally described in digestive and general tonic contexts, sometimes within multi-herb systems.",
+      "claim_kind": "historical_use",
+      "source_id": "SRC-LIVE-term-history",
+      "verification": "published_secondary_ethnopharmacology_review",
+      "clinical_efficacy_established": false,
+      "limitations": "Historical use does not prove safety or efficacy; chemical assay cited elsewhere used galls rather than fruits."
     }
   ],
   "sources": [
@@ -6700,6 +6988,114 @@
       "published": "2019",
       "region": "Eurasia and North America",
       "type": "conservation assessment",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-hib-chem",
+      "organization": "Pires et al. / PubMed",
+      "title": "Isolation and characterization of anthocyanins from Hibiscus sabdariffa flowers",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27312226/",
+      "type": "primary chemical analysis",
+      "region": "Portugal",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-hib-bp",
+      "organization": "Ellis et al.",
+      "title": "Systematic review and meta-analysis of Hibiscus sabdariffa and blood pressure",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9086798/",
+      "type": "human evidence systematic review",
+      "region": "international",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-hib-food",
+      "organization": "Idowu-Adebayo et al.",
+      "title": "Nigerian zobo beverage and hibiscus calyces",
+      "url": "https://edepot.wur.nl/541447",
+      "type": "food science regional study",
+      "region": "Nigeria / Netherlands",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-hib-culture",
+      "organization": "Ozoz Sokoh",
+      "title": "The History of Hibiscus Drinks in the African Diaspora",
+      "url": "https://www.seriouseats.com/hibiscus-african-diaspora",
+      "type": "cultural food history",
+      "region": "West Africa / Caribbean / Latin America",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-hib-pubchem",
+      "organization": "NIH PubChem",
+      "title": "Delphinidin 3-sambubioside (CID 10196837)",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/10196837",
+      "type": "chemical registry",
+      "region": "international",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-schi-phytochemistry",
+      "organization": "Szopa et al.",
+      "title": "Current knowledge of Schisandra chinensis as a medicinal plant",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5378736/",
+      "type": "phytochemical review",
+      "region": "Poland / East Asia",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-schi-traditional",
+      "organization": "International ethnopharmacology review authors",
+      "title": "Comparative Schisandra chinensis and Schisandra sphenanthera ethnopharmacology",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34678416/",
+      "type": "traditional and pharmacokinetic review",
+      "region": "China / Japan / Korea / Russia",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-schi-pubchem",
+      "organization": "NIH PubChem",
+      "title": "Schisandrin B (CID 108130)",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/108130",
+      "type": "chemical registry",
+      "region": "international",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-term-chem",
+      "organization": "Chiang Mai University researchers",
+      "title": "Biological activities of phenolic compounds isolated from Terminalia chebula galls",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21108118/",
+      "type": "primary isolation and laboratory assays",
+      "region": "Thailand",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-term-history",
+      "organization": "International review authors",
+      "title": "Diverse pharmacological perspectives of Terminalia chebula",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9424961/",
+      "type": "traditional use and preclinical evidence review",
+      "region": "South Asia / international",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-term-pubchem1",
+      "organization": "NIH PubChem",
+      "title": "Chebulagic acid (CID 442674)",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/442674",
+      "type": "chemical registry",
+      "region": "international",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-LIVE-term-pubchem2",
+      "organization": "NIH PubChem",
+      "title": "Chebulinic acid (CID 99937814)",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/99937814",
+      "type": "chemical registry",
+      "region": "international",
       "checked_on": "2026-10-15"
     }
   ],
@@ -9339,6 +9735,41 @@
       "pubchem_cid": "101616",
       "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/101616",
       "review_status": "pubchem_lite_and_imppat_inchikey_cross_checked"
+    },
+    {
+      "compound_id": "CMP-delphinidin-3-sambubioside",
+      "status": "pubchem_2d_reference",
+      "formula": "C26H29O16+",
+      "inchi_key": "TWYYVOVDSNRIJM-AFAGGVQESA-O",
+      "pubchem_cid": "10196837",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/10196837",
+      "structure_url": "https://pubchem.ncbi.nlm.nih.gov/compound/10196837#section=2D-Structure"
+    },
+    {
+      "compound_id": "CMP-schisandrin-b",
+      "status": "pubchem_2d_reference_stereochemistry_unspecified_in_cited_isomer_record",
+      "formula": "C23H28O6",
+      "inchi_key": "RTZKSTLPRTWFEV-UHFFFAOYSA-N",
+      "pubchem_cid": "108130",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/108130",
+      "structure_url": "https://pubchem.ncbi.nlm.nih.gov/compound/108130#section=2D-Structure"
+    },
+    {
+      "compound_id": "CMP-chebulagic-acid",
+      "status": "pubchem_2d_reference",
+      "formula": "C41H30O27",
+      "inchi_key": "HGJXAVROWQLCTP-YABCKIEDSA-N",
+      "pubchem_cid": "442674",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/442674",
+      "structure_url": "https://pubchem.ncbi.nlm.nih.gov/compound/442674#section=2D-Structure"
+    },
+    {
+      "compound_id": "CMP-chebulinic-acid",
+      "status": "pubchem_2d_reference",
+      "formula": "C41H32O27",
+      "pubchem_cid": "99937814",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/99937814",
+      "structure_url": "https://pubchem.ncbi.nlm.nih.gov/compound/99937814#section=2D-Structure"
     }
   ],
   "binding": [
