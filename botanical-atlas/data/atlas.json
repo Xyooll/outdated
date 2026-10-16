@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "MVP-1.3.0",
+    "version": "MVP-1.4.0",
     "release_date": "2026-10-14",
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
@@ -22,7 +22,8 @@
     "pending_term_research": [
       "five treasures: ambiguous label; do not fabricate universal standard correspondence"
     ],
-    "interface_release": "2026-10-15 Research Workbench milestone"
+    "interface_release": "2026-10-15 Research Workbench milestone",
+    "bioactivity_policy": "Evidence-specific bioactivity per assay/target/stage, not universal medicinal benefits; lab exposure not medical dosage."
   },
   "organisms": [
     {
@@ -11956,5 +11957,6 @@
       "source_id": "SRC-NEW-ANDRO-TGA",
       "limitations": "Check regulator for rules on previously listed products and any other therapeutic product categories."
     }
-  ]
+  ],
+  "bioactivities": []
 }

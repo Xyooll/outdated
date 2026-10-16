@@ -5,9 +5,9 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[1]
-COLLS=('organisms','compounds','occurrences','domain_notes','safety','cultural_uses','sources','structures','binding','practice_claims','dose_guidance','folklore','regulatory_status')
-IDS={'organisms':'id','compounds':'id','occurrences':'id','cultural_uses':'id','sources':'id','structures':'compound_id','binding':'id','practice_claims':'id','dose_guidance':'id','folklore':'id','regulatory_status':'id'}
-IDENTITY={'organisms':('scientific_name',),'compounds':('display_name',),'sources':('url',),'occurrences':('organism_id','compound_id'),'cultural_uses':('organism_id',),'structures':('compound_id',),'binding':('compound_id',),'practice_claims':('organism_id',),'dose_guidance':('organism_id',),'folklore':('organism_id',),'regulatory_status':('organism_id',)}
+COLLS=('organisms','compounds','occurrences','domain_notes','safety','cultural_uses','sources','structures','binding','practice_claims','dose_guidance','folklore','regulatory_status','bioactivities')
+IDS={'organisms':'id','compounds':'id','occurrences':'id','cultural_uses':'id','sources':'id','structures':'compound_id','binding':'id','practice_claims':'id','dose_guidance':'id','folklore':'id','regulatory_status':'id','bioactivities':'id'}
+IDENTITY={'organisms':('scientific_name',),'compounds':('display_name',),'sources':('url',),'occurrences':('organism_id','compound_id'),'cultural_uses':('organism_id',),'structures':('compound_id',),'binding':('compound_id',),'practice_claims':('organism_id',),'dose_guidance':('organism_id',),'folklore':('organism_id',),'regulatory_status':('organism_id',),'bioactivities':('agent_type','compound_id','organism_id','target_taxon','life_stage','endpoint')}
 def die(message): raise ValueError(message)
 def get(path):
     obj=json.loads(path.read_text('utf-8'))
@@ -59,6 +59,21 @@ def check(data):
         if row.get('clinical_claim') is True or row.get('public_knowledge') is not True:die('Folklore must be public and nonclinical')
     for row in data['regulatory_status']:
         if not all(row.get(k) for k in ('jurisdiction','regulator','category','preparation_scope','status_text','date_checked','limitations')):die('Incomplete regulatory status')
+    for row in data['bioactivities']:
+        if row.get('source_id') not in sources:die('Bioactivity must cite an Atlas source')
+        if row.get('compound_id') and row['compound_id'] not in cmp:die('Unknown bioactivity compound')
+        if row.get('organism_id') and row['organism_id'] not in org:die('Unknown bioactivity organism')
+        if row.get('agent_type')=='isolated_compound' and not row.get('compound_id'):die('Missing tested molecule')
+        if row.get('agent_type')=='plant_essential_oil' and not row.get('organism_id'):die('Missing plant oil organism')
+        if row.get('evidence_tier') not in ('in_vitro','ex_vivo','animal','human_trial','human_observational','in_silico'):die('Unrecognized study level')
+        if not all(row.get(k) for k in ('id','agent_type','activity_category','target_taxon','life_stage','study_model','endpoint','observed_effect','mechanism_status','dose_translation','limitations')):die('Incomplete bioactivity')
+        if row.get('human_clinical_efficacy_established') is True and row.get('evidence_tier')!='human_trial':die('Unsupported preclinical cure claim')
+        if row.get('evidence_tier')!='human_trial' and row.get('dose_guidance'):die('Experimental concentration misrepresented as treatment dose')
+        metric=row.get('metric')
+        if metric is not None:
+            if not isinstance(metric,dict) or metric.get('name') not in ('IC50','EC50','MIC','ED50','LC50','percent_inhibition','qualitative'):die('Invalid activity metric')
+            if not isinstance(metric.get('value'),(int,float)) or isinstance(metric.get('value'),bool) or metric['value']<0:die('Invalid bioactivity assay measurement')
+            if not metric.get('unit'):die('Missing laboratory concentration units')
     return True
 def verify(batch):
     ident=batch.get('batch_id','')
@@ -92,6 +107,10 @@ def verify(batch):
         if not row.get('evidence_status') or not row.get('population') or not row.get('preparation') or row.get('guaranteed_safe') is True:die('Unsafe or incomplete dose claim')
     for row in batch.get('folklore',[]):
         if row.get('public_knowledge') is not True or row.get('clinical_claim') is True:die('Restricted or medicalized folklore')
+    for row in batch.get('bioactivities',[]):
+        if not all(row.get(k) for k in ('id','source_id','agent_type','target_taxon','life_stage','study_model','evidence_tier','endpoint','observed_effect','limitations','dose_translation')):die('Incomplete sourced bioactivity batch')
+        if row.get('human_clinical_efficacy_established') is True and row.get('evidence_tier')!='human_trial':die('Preclinical assay is not proven clinical treatment')
+
 def merge(data,batch):
     result=copy.deepcopy(data)
     for coll in COLLS:
