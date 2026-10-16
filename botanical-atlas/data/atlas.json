@@ -5,7 +5,7 @@
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
     "status": "baseline imported into repository; source verification incomplete",
-    "catalog_revision": 16,
+    "catalog_revision": 17,
     "sync_mode": "repository-published; phone copy remains offline snapshot",
     "missing_legacy_source_ids": [
       "S001",
@@ -15,7 +15,7 @@
       "S006",
       "S012"
     ],
-    "last_ingestion_utc": "2026-10-16T06:26:41.676712+00:00",
+    "last_ingestion_utc": "2026-10-16T08:06:55.758802+00:00",
     "last_enrichment_date": "2026-10-15",
     "layer_status": "Plant comparison, research coverage and chemical-overlap workbench published; documentation is incomplete and every claim remains evidence graded.",
     "claim_system_policy": "Biomedicine, Ayurveda, TCM, Unani, regional herbalisms and ritual folklore are first-class systems; keep evidentiary methods and culturally specific categories distinct.",
@@ -1192,6 +1192,50 @@
         "human_effects": false,
         "safety": false,
         "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "BOT-ginkgo-biloba",
+      "scientific_name": "Ginkgo biloba L.",
+      "common_name": "Ginkgo / maidenhair tree",
+      "kingdom": "Plantae",
+      "geographic_context": "Native to southeastern China; extensively cultivated in East Asia and worldwide.",
+      "synonyms": [
+        "Salisburia adiantifolia Sm.",
+        "Salisburia biloba (L.) Hoffmanns."
+      ],
+      "taxonomic_source_id": "SRC-030-GINKGO-KEW",
+      "part_and_preparation_note": "Ginkgo leaf standardized extract (EGb 761) tested in trials is not interchangeable with toxic ginkgo seeds or crude leaves.",
+      "quality_tier": "accepted_taxon_primary_human_trial_and_institutional_safety",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": true,
+        "chemical_identity": true,
+        "human_effects": true,
+        "safety": true,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "FUN-tremella-fuciformis",
+      "scientific_name": "Tremella fuciformis Berk.",
+      "common_name": "Snow fungus / silver ear / 银耳 (yín ěr)",
+      "kingdom": "Fungi",
+      "geographic_context": "East and Southeast Asian food and medicinal traditions; species distributed beyond Asia.",
+      "synonyms": [
+        "Nakaiomyces nipponicus Kobayasi",
+        "Tremella nipponica (Kobayasi) Wojewoda"
+      ],
+      "taxonomic_source_id": "SRC-030-TREMELLA-GBIF",
+      "part_and_preparation_note": "Edible gelatinous fruiting body; cultured/extracted acetylated polysaccharide TFP-F1 is a distinct research material, not the cooked mushroom.",
+      "quality_tier": "accepted_taxon_preclinical_and_secondary_tradition",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": true,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": true
       }
     }
   ],
@@ -2720,6 +2764,24 @@
       "chemical_family": "β-(1→3) glucan with β-(1→6) side branches",
       "verified_external_ids": {},
       "chemical_identity_status": "specific_repeat_unit_known_polymer_mass_and_distribution_variable"
+    },
+    {
+      "id": "CMP-ginkgolide-b",
+      "display_name": "Ginkgolide B",
+      "entity_type": "single_molecule",
+      "chemical_family": "diterpene trilactone",
+      "verified_external_ids": {
+        "pubchem_cid": "11973122"
+      },
+      "chemical_identity_status": "pubchem_registry_identity_and_formula_verified_C20H24O10"
+    },
+    {
+      "id": "CMP-tremella-tfp-f1-polymer",
+      "display_name": "Tremella fuciformis TFP-F1 acetylated polysaccharide fraction",
+      "entity_type": "polysaccharide_polymer_variable_structure",
+      "chemical_family": "acetylated heteropolysaccharide of mannose, xylose, fucose and glucuronic acid",
+      "verified_external_ids": {},
+      "chemical_identity_status": "fraction_specific_analytical_characterization_not_a_single_small_molecule"
     }
   ],
   "occurrences": [
@@ -4684,6 +4746,24 @@
       "verification": "pending_species_authentication_older_poria_cocos_literature",
       "source_id": "SRC-NEW-FUNG-HOELEN-TRIT",
       "note": "DO NOT count this as species-authenticated Pachyma hoelen chemistry: studies named Poria/Wolfiporia cocos may refer to different taxa."
+    },
+    {
+      "id": "OCC-030-GINKGO-GINKGOLIDE-B",
+      "organism_id": "BOT-ginkgo-biloba",
+      "compound_id": "CMP-ginkgolide-b",
+      "part": "leaf; species-level occurrence noted by chemical registry",
+      "source_id": "SRC-030-GINKGO-PUBCHEM",
+      "verification": "registry_reported_occurrence_not_batch_quantitation",
+      "note": "Leaf-extract composition varies; CID is not an extract identity."
+    },
+    {
+      "id": "OCC-030-TREMELLA-TFP-F1",
+      "organism_id": "FUN-tremella-fuciformis",
+      "compound_id": "CMP-tremella-tfp-f1-polymer",
+      "part": "purified fungal polysaccharide research fraction",
+      "source_id": "SRC-030-TREMELLA-POLY",
+      "verification": "published_fraction_chemical_analysis",
+      "note": "Research isolate, not interchangeable with culinary mushroom, tea or commercial extract."
     }
   ],
   "domain_notes": [
@@ -6246,6 +6326,54 @@
       "domain": "A",
       "text": "No reliable evidence of an isolated long-pepper anxiolytic or antidepressant effect has been indexed in this batch.",
       "quality": "qualified_context_no_assumed_clinical_efficacy"
+    },
+    {
+      "organism_id": "BOT-ginkgo-biloba",
+      "domain": "B",
+      "text": "No human metabolic therapeutic benefit established by the GEM dementia prevention trial.",
+      "quality": "human_trial_scope_limited"
+    },
+    {
+      "organism_id": "BOT-ginkgo-biloba",
+      "domain": "P",
+      "text": "NCCIH warns of bleeding and drug-interaction concerns with leaf extracts and serious toxicity of ginkgo seeds.",
+      "quality": "institutional_safety_review"
+    },
+    {
+      "organism_id": "BOT-ginkgo-biloba",
+      "domain": "C",
+      "text": "A 3069-participant randomized trial found no prevention of dementia with standardized leaf extract.",
+      "quality": "negative_human_randomized_trial"
+    },
+    {
+      "organism_id": "BOT-ginkgo-biloba",
+      "domain": "A",
+      "text": "No reliable mood/anxiety efficacy established by the cited dementia-prevention trial.",
+      "quality": "not_assessed_by_cited_trial"
+    },
+    {
+      "organism_id": "FUN-tremella-fuciformis",
+      "domain": "B",
+      "text": "No human metabolic efficacy established by cited fungal-polysaccharide cell studies.",
+      "quality": "in_vitro_only"
+    },
+    {
+      "organism_id": "FUN-tremella-fuciformis",
+      "domain": "P",
+      "text": "Purified TFP-F1 increased TNF-alpha and IL-6 secretion in J774A.1 cells at 1 microgram/mL; separate polysaccharide fractions suppressed LPS-triggered cytokines in RAW264.7 cells. Distinct preparations and models.",
+      "quality": "primary_in_vitro_studies_context_dependent"
+    },
+    {
+      "organism_id": "FUN-tremella-fuciformis",
+      "domain": "C",
+      "text": "No human cognitive benefit demonstrated by cited studies.",
+      "quality": "human_evidence_not_established"
+    },
+    {
+      "organism_id": "FUN-tremella-fuciformis",
+      "domain": "A",
+      "text": "No human affective or mood effect demonstrated by cited studies.",
+      "quality": "human_evidence_not_established"
     }
   ],
   "safety": [
@@ -6711,6 +6839,23 @@
         "SRC-MAT-PIPER-LONGUM-KEW",
         "SRC-FORM-TRIKATU-JOHRI-1992",
         "SRC-INT-PIPERINE-CURCUMIN-1998"
+      ]
+    },
+    {
+      "organism_id": "BOT-ginkgo-biloba",
+      "alert": "Ginkgo seeds can cause serious poisoning, including seizures. Leaf extract can interact with warfarin/other drugs and may increase bleeding risk; pregnancy safety is uncertain. Seed, leaf, and standardized extract are distinct exposures.",
+      "quality": "NCCIH_institutional_safety_summary",
+      "source_refs": [
+        "SRC-030-GINKGO-NCCIH"
+      ]
+    },
+    {
+      "organism_id": "FUN-tremella-fuciformis",
+      "alert": "No therapeutic safe dose established from in-vitro polysaccharide experiments. Cultivated edible fruiting bodies, concentrated extracts and isolated TFP-F1 are not interchangeable. Correct fungal identity, contamination control and food allergy assessment remain important.",
+      "quality": "preclinical_evidence_limits_and_food_identity_precaution",
+      "source_refs": [
+        "SRC-030-TREMELLA-GBIF",
+        "SRC-030-TREMELLA-POLY"
       ]
     }
   ],
@@ -7606,6 +7751,22 @@
       "verification": "peer_reviewed_historical_review",
       "clinical_efficacy_established": false,
       "limitations": "Species authentication, dose, processing, and product interactions require separate evidence."
+    },
+    {
+      "id": "CUL-030-TREMELLA-YINER",
+      "organism_id": "FUN-tremella-fuciformis",
+      "region": "China / East Asia",
+      "tradition": "Chinese food-medicine / materia medica secondary summary",
+      "original_term": "银耳 (yín ěr)",
+      "part": "fungal fruiting body",
+      "preparation": "dried/rehydrated edible fungus",
+      "reported_use": "Traditional nourishing-yin and moistening-dryness descriptions in Chinese practitioner summaries.",
+      "use_case": "historical/culinary food-medicine context",
+      "claim_kind": "documented_traditional_use",
+      "source_id": "SRC-030-TREMELLA-TRAD",
+      "verification": "secondary_practitioner_account_not_primary_text",
+      "clinical_efficacy_established": false,
+      "limitations": "Not human efficacy, not a therapeutic recommendation."
     }
   ],
   "sources": [
@@ -8809,6 +8970,70 @@
       "title": "Influence of piperine on the pharmacokinetics of curcumin in animals and human volunteers",
       "url": "https://pubmed.ncbi.nlm.nih.gov/9619120/",
       "type": "human_and_animal_pharmacokinetics_primary",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-030-GINKGO-KEW",
+      "title": "Ginkgo biloba L. accepted species and distribution",
+      "organization": "Royal Botanic Gardens Kew / Plants of the World Online",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:262125-1",
+      "type": "taxonomic_authority",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-030-TREMELLA-GBIF",
+      "title": "Tremella fuciformis Berk. species and synonyms",
+      "organization": "GBIF / Catalogue of Life",
+      "url": "https://www.gbif.org/species/5237434",
+      "type": "taxonomic_aggregator",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-030-GINKGO-GEM",
+      "title": "Ginkgo biloba for prevention of dementia: a randomized controlled trial",
+      "organization": "DeKosky et al. JAMA 2008 / PubMed",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19017911/",
+      "type": "randomized_human_trial",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-030-GINKGO-NCCIH",
+      "title": "Ginkgo: Usefulness and Safety",
+      "organization": "US National Center for Complementary and Integrative Health",
+      "url": "https://www.nccih.nih.gov/health/ginkgo",
+      "type": "institutional_safety_review",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-030-GINKGO-PUBCHEM",
+      "title": "Ginkgolide B CID 11973122",
+      "organization": "NIH PubChem",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/11973122",
+      "type": "chemical_registry",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-030-TREMELLA-POLY",
+      "title": "An Immunological Polysaccharide from Tremella fuciformis: Essential Role of Acetylation in Immunomodulation",
+      "organization": "Primary biochemical research / PubMed",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36142298/",
+      "type": "primary_in_vitro_study",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-030-TREMELLA-TRAD",
+      "title": "Yin Er (Fructificatio Tremellae Fuciformis) Chinese herbal material profile",
+      "organization": "Sacred Lotus, secondary Chinese herbal reference",
+      "url": "https://sacredlotus.com/go/chinese-herbs/substance/yin-er-fruiting-body-of-tremella-wood-ear",
+      "type": "secondary_practitioner_summary",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-030-TREMELLA-MIR155",
+      "title": "Tremella fuciformis Polysaccharides Attenuate Oxidative Stress and Inflammation in Macrophages through miR-155",
+      "organization": "Ruan et al. Analytical Cellular Pathology 2018 / PubMed",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29854576/",
+      "type": "primary_in_vitro_study",
       "checked_on": "2026-10-16"
     }
   ],
@@ -11566,6 +11791,15 @@
       "review_status": "polymer_heterogeneity_acknowledged",
       "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S2212619813000053",
       "binding_warning": "This polymer is variable; no single SMILES, CID or exact molecular drawing represents all batches."
+    },
+    {
+      "compound_id": "CMP-ginkgolide-b",
+      "status": "pubchem_2d_reference",
+      "review_status": "pubchem_registry_confirmed_formula_no_smiles_transcribed",
+      "formula": "C20H24O10",
+      "pubchem_cid": "11973122",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/11973122",
+      "binding_warning": "A chemical 2D drawing is not evidence of clinical benefit or of extract standardization."
     }
   ],
   "binding": [
@@ -12421,6 +12655,54 @@
       "evidence_tier": "ethnopharmacological_review_not_proven_efficacy",
       "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
       "limitations": "No source-backed dose, safety or medical efficacy for long pepper alone from this paper; do not automatically generalize Trikatu results to purified piperine."
+    },
+    {
+      "id": "PC-030-GINKGO-GEM-NEGATIVE",
+      "organism_id": "BOT-ginkgo-biloba",
+      "system_id": "BIOMEDICAL",
+      "system": "Western biomedicine",
+      "tradition": "Ginkgo Evaluation of Memory randomized controlled trial",
+      "region": "United States",
+      "original_term": "Ginkgo biloba leaf extract EGb 761",
+      "framework": [
+        "randomized placebo-controlled dementia prevention trial"
+      ],
+      "condition_or_goal": "Prevent all-cause dementia or Alzheimer dementia in older adults",
+      "claim_type": "negative_randomized_human_prevention_trial",
+      "plant_part": "leaf",
+      "preparation": "EGb 761 standardized leaf extract, 120 mg twice daily in study only",
+      "evidence_tier": "large_randomized_human_trial_no_benefit",
+      "source_id": "SRC-030-GINKGO-GEM",
+      "limitations": "3069 participants aged 75+; all-cause dementia HR 1.12 (95% CI 0.94–1.33), no reduction. This study regimen is not a general safety or dosing recommendation."
+    },
+    {
+      "id": "PC-030-TREMELLA-YINER-SECONDARY",
+      "organism_id": "FUN-tremella-fuciformis",
+      "system_id": "TCM",
+      "system": "Traditional Chinese Medicine",
+      "tradition": "Chinese materia medica summarized by secondary practitioner reference",
+      "region": "China / East Asia",
+      "original_term": "银耳 (yín ěr)",
+      "framework": [
+        "Lung yin",
+        "Stomach yin",
+        "moistening dryness (traditional framework only)"
+      ],
+      "framework_details": {
+        "actions": [
+          "养阴 (nourish yin; secondary practitioner description)",
+          "润肺 (moisten Lung; traditional category)"
+        ],
+        "interpretation": "These are TCM pattern concepts, not demonstrated physiological outcomes."
+      },
+      "profile_depth": "deep",
+      "condition_or_goal": "Traditional Lung/Stomach yin deficiency and dryness-pattern complaints",
+      "claim_type": "secondary_documented_traditional_use",
+      "plant_part": "fruiting body",
+      "preparation": "dried/reconstituted fungal fruiting body; not isolated polysaccharide",
+      "evidence_tier": "secondary_practitioner_attribution_not_clinical_trial",
+      "source_id": "SRC-030-TREMELLA-TRAD",
+      "limitations": "Secondary source; no primary pharmacopoeia page independently verified, no assumed meridian/nature/flavor/dose, no human efficacy established."
     }
   ],
   "dose_guidance": [
@@ -12804,6 +13086,43 @@
       "human_clinical_efficacy_established": false,
       "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
       "limitations": "Adult worms in experimental cultures are not live-host clearance evidence."
+    },
+    {
+      "id": "ACT-030-GINKGO-DEMENTIA-NULL",
+      "agent_type": "botanical_extract",
+      "organism_id": "BOT-ginkgo-biloba",
+      "activity_category": "dementia_prevention",
+      "target_taxon": "Homo sapiens",
+      "life_stage": "older adults aged 75 years and above",
+      "study_model": "randomized double-blind placebo-controlled clinical trial; N=3069; median follow-up 6.1 years",
+      "evidence_tier": "human_trial",
+      "endpoint": "incident all-cause dementia",
+      "observed_effect": "No statistically significant reduction in dementia incidence versus placebo (P=0.21). Trial hazard ratio 1.12 (95% CI 0.94–1.33), P=0.21.",
+      "mechanism": "Not a receptor-binding assay.",
+      "mechanism_status": "clinical_outcome_no_target_binding_assessed",
+      "source_id": "SRC-030-GINKGO-GEM",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "120 mg EGb 761 twice daily was study exposure, not recommended dosing.",
+      "limitations": "Does not establish efficacy or safety of different extracts or in other populations."
+    },
+    {
+      "id": "ACT-030-TREMELLA-TFP-F1-CYTOKINES",
+      "agent_type": "isolated_polysaccharide_fraction",
+      "organism_id": "FUN-tremella-fuciformis",
+      "compound_id": "CMP-tremella-tfp-f1-polymer",
+      "activity_category": "immunomodulatory_cell_assay",
+      "target_taxon": "Mus musculus-derived J774A.1 macrophage cell line",
+      "life_stage": "cultured cells",
+      "study_model": "in vitro macrophage cytokine secretion assay with purified acetylated TFP-F1; exposure reported at 1 µg/mL",
+      "evidence_tier": "in_vitro",
+      "endpoint": "TNF-alpha and IL-6 secretion",
+      "observed_effect": "TFP-F1 increased TNF-alpha and IL-6 secretion in cultured macrophages; deacetylation reduced activity.",
+      "mechanism": "Authors implicated TLR4 signaling; no direct receptor binding constant established here.",
+      "mechanism_status": "pathway_implicated_direct_binding_unverified",
+      "source_id": "SRC-030-TREMELLA-POLY",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Cell-culture concentration cannot be translated into a human dose.",
+      "limitations": "Specific acetylated fraction; not evidence that whole snow fungus stimulates human immunity."
     }
   ],
   "medical_systems": [
@@ -13282,6 +13601,32 @@
       "identity_status": "literature_documented_material_identity_not_product_authentication",
       "limitations": "Older literature under Poria/Wolfiporia cocos may mix taxa; no chemical equivalence to other mushrooms is established.",
       "system_id": "TCM"
+    },
+    {
+      "id": "MAT-030-GINKGO-EGB761",
+      "organism_id": "BOT-ginkgo-biloba",
+      "part": "leaf",
+      "preparation": "EGb 761 standardized ginkgo leaf extract",
+      "processing": "standardized leaf extract used in GEM trial; manufacturing specifications not inferred for other products",
+      "material_class": "standardized_leaf_extract",
+      "tradition": "Western biomedical clinical trial",
+      "identity_status": "trial_reported_specific_extract_not_product_authentication",
+      "system_id": "BIOMEDICAL",
+      "source_id": "SRC-030-GINKGO-GEM",
+      "limitations": "Trial dose 120 mg twice daily is NOT a universal safe dose; trial found no prevention benefit."
+    },
+    {
+      "id": "MAT-030-TREMELLA-FRUIT",
+      "organism_id": "FUN-tremella-fuciformis",
+      "part": "fruiting body",
+      "preparation": "银耳 (yín ěr) dried or rehydrated edible fruiting body",
+      "processing": "dried culinary/medicinal material; no authenticated consumer sample tested",
+      "material_class": "dried_fungal_fruiting_body",
+      "tradition": "Chinese food-medicine and secondary materia medica",
+      "identity_status": "secondary_literature_reported_material_not_authentication",
+      "system_id": "TCM",
+      "source_id": "SRC-030-TREMELLA-TRAD",
+      "limitations": "Not equivalent to purified TFP-F1 or an established medical treatment; no safe therapeutic dose established."
     }
   ],
   "formulas": [
