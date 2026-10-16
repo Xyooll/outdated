@@ -20,3 +20,12 @@ Searchable offline application, 2D compound diagrams where authenticated, source
 - A measured dose is tied to product, part, preparation, route, population, indication, duration and source; absent data is plainly marked.
 - CI builds searchable HTML and SQLite, and archived processed batches demonstrate repeated unattended updates.
 - An offline downloaded copy requires refreshing to receive newly published records unless a separate sync client exists.
+
+## Completed development milestone: Research Workbench (v1.3)
+
+- Comparison dashboard links organisms to medicine, preparation-specific doses, safety, culture and folklore, without reducing those systems to one false unified score.
+- Shared-molecule navigator traces chemical identity overlap but distinguishes unverified legacy inventories from attributed non-legacy occurrences. Does not imply binding, synergism or interchangeable preparations.
+- Coverage scoring exposes missing catalog research for 6 domains; it is an editorial completeness metric, not a health or quality score.
+- Entire visualization is bundled into the offline HTML by the canonical publisher. CI checks JavaScript syntax and embeds/tests all assets.
+
+**Next full-build priorities:** independently source and complete medicinal/dose/culture/folklore claims across existing taxa, strengthen evidence grading and chemical occurrence provenance, add cross-entry linked clinical trial details and interaction graph, automate accessibility/browser smoke checks and a properly hosted sync experience. Current downloadable offline HTML snapshots do not self-refresh.

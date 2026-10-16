@@ -135,7 +135,13 @@ def render(data):
     template=(ROOT/'app/template.html').read_text('utf-8')
     if template.count(token)!=1:die('Template placeholder invalid')
     safe=json.dumps(enriched,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('>','\\u003e').replace('&','\\u0026')
-    return template.replace(token,safe).encode('utf-8')
+    html=template.replace(token,safe)
+    for marker,path in (('__WB_JS__',ROOT/'app/workbench.js'),('__WB_CSS__',ROOT/'app/workbench.css')):
+        if html.count(marker)!=1:die('Workbench template placeholder missing: '+marker)
+        asset=path.read_text('utf-8')
+        if not asset or '</script' in asset.lower() or '</style' in asset.lower():die('Untrusted workbench asset content')
+        html=html.replace(marker,asset)
+    return html.encode('utf-8')
 def dbwrite(data,path):
     cx=sqlite3.connect(path)
     try:

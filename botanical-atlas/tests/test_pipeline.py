@@ -61,6 +61,20 @@ class AtlasTests(unittest.TestCase):
         html=p.render(self.data).decode('utf-8')
         for expected in ('nav-perspectives','PC-TCM-SCHISANDRA','DG-EMA-GINGER-MOTION','FL-ROSEMARY-REMEMBRANCE'):
             self.assertIn(expected,html)
+    def test_workbench_is_embedded_offline(self):
+        html=p.render(self.data).decode('utf-8')
+        self.assertIn('Research workbench',html)
+        self.assertIn('Compare plants',html)
+        self.assertIn('Compound connections',html)
+        self.assertNotIn('__WB_JS__',html)
+        self.assertNotIn('__WB_CSS__',html)
+        self.assertNotIn('__EMBED_JSON__',html)
+        self.assertIn('aria-pressed="false"',html)
+    def test_workbench_data_links_valid(self):
+        self.assertTrue(p.check(self.data))
+        identities={x['id'] for x in self.data['organisms']}
+        self.assertTrue(all(x['organism_id'] in identities for x in self.data['practice_claims']))
+        self.assertTrue(all(x['organism_id'] in identities for x in self.data['folklore']))
     def test_identity_conflict(self):
         with self.assertRaises(ValueError):p.merge(self.data,{'organisms':[{'id':'BOT-001','scientific_name':'Wrong identity'}]})
 if __name__=='__main__':unittest.main()
