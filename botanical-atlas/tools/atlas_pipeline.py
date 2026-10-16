@@ -5,9 +5,9 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[1]
-COLLS=('organisms','compounds','occurrences','domain_notes','safety','cultural_uses','sources','structures','binding','practice_claims','dose_guidance','folklore','regulatory_status','bioactivities')
-IDS={'organisms':'id','compounds':'id','occurrences':'id','cultural_uses':'id','sources':'id','structures':'compound_id','binding':'id','practice_claims':'id','dose_guidance':'id','folklore':'id','regulatory_status':'id','bioactivities':'id'}
-IDENTITY={'organisms':('scientific_name',),'compounds':('display_name',),'sources':('url',),'occurrences':('organism_id','compound_id'),'cultural_uses':('organism_id',),'structures':('compound_id',),'binding':('compound_id',),'practice_claims':('organism_id',),'dose_guidance':('organism_id',),'folklore':('organism_id',),'regulatory_status':('organism_id',),'bioactivities':('agent_type','compound_id','organism_id','target_taxon','life_stage','endpoint')}
+COLLS=('organisms','compounds','occurrences','domain_notes','safety','cultural_uses','sources','structures','binding','practice_claims','dose_guidance','folklore','regulatory_status','bioactivities','medical_systems')
+IDS={'organisms':'id','compounds':'id','occurrences':'id','cultural_uses':'id','sources':'id','structures':'compound_id','binding':'id','practice_claims':'id','dose_guidance':'id','folklore':'id','regulatory_status':'id','bioactivities':'id','medical_systems':'id'}
+IDENTITY={'organisms':('scientific_name',),'compounds':('display_name',),'sources':('url',),'occurrences':('organism_id','compound_id'),'cultural_uses':('organism_id',),'structures':('compound_id',),'binding':('compound_id',),'practice_claims':('organism_id',),'dose_guidance':('organism_id',),'folklore':('organism_id',),'regulatory_status':('organism_id',),'bioactivities':('agent_type','compound_id','organism_id','target_taxon','life_stage','endpoint'),'medical_systems':('name',)}
 def die(message): raise ValueError(message)
 def get(path):
     obj=json.loads(path.read_text('utf-8'))
@@ -74,6 +74,25 @@ def check(data):
             if not isinstance(metric,dict) or metric.get('name') not in ('IC50','EC50','MIC','ED50','LC50','percent_inhibition','qualitative'):die('Invalid activity metric')
             if not isinstance(metric.get('value'),(int,float)) or isinstance(metric.get('value'),bool) or metric['value']<0:die('Invalid bioactivity assay measurement')
             if not metric.get('unit'):die('Missing laboratory concentration units')
+    # Tradition-specific ontologies: don't flatten Qi, mizaj and dosha into one biomedical diagnosis.
+    system_ids={x['id'] for x in data['medical_systems']}
+    for ms in data['medical_systems']:
+        if not ms.get('name') or not goodurl(ms.get('reference_url')):die('Missing medical-system terminology reference')
+        if not isinstance(ms.get('axes'),list) or not ms['axes']:die('Medical system has no native concept axes')
+        axes=[axis.get('id') for axis in ms['axes'] if isinstance(axis,dict)]
+        if len(axes)!=len(ms['axes']) or len(set(axes))!=len(axes) or any(not x for x in axes):die('Invalid medical system axes')
+    for claim in data['practice_claims']:
+        sid=claim.get('system_id')
+        if sid and sid not in system_ids:die('Unknown medical system referenced by practice claim')
+        fd=claim.get('framework_details')
+        if fd is not None:
+            if not isinstance(fd,dict) or any(not isinstance(v,(str,list)) or isinstance(v,list) and (not all(isinstance(q,str) for q in v)) for v in fd.values()):die('Malformed framework details')
+            if not sid:die('Native framework fields require canonical system ID')
+        if claim.get('profile_depth')=='deep':
+            if not (sid and claim.get('original_term') and fd and claim.get('source_id') and claim.get('limitations')):die('Incomplete deep medical-system profile')
+            refids=claim.get('supporting_source_ids',[])
+            if not isinstance(refids,list) or any(x not in sources for x in refids):die('Unknown supporting framework source')
+            if claim.get('clinical_efficacy_established') is True and claim.get('claim_type') not in ('clinical_evidence','well_established_monograph'):die('Traditional deep profile called clinically established')
     return True
 def verify(batch):
     ident=batch.get('batch_id','')
@@ -111,6 +130,10 @@ def verify(batch):
         if not all(row.get(k) for k in ('id','source_id','agent_type','target_taxon','life_stage','study_model','evidence_tier','endpoint','observed_effect','limitations','dose_translation')):die('Incomplete sourced bioactivity batch')
         if row.get('human_clinical_efficacy_established') is True and row.get('evidence_tier')!='human_trial':die('Preclinical assay is not proven clinical treatment')
 
+    for ms in batch.get('medical_systems',[]):
+        if not ms.get('name') or not goodurl(ms.get('reference_url')) or not isinstance(ms.get('axes'),list):die('Invalid medical-system registry entry')
+    for row in batch.get('practice_claims',[]):
+        if row.get('profile_depth')=='deep' and not (row.get('system_id') and row.get('original_term') and isinstance(row.get('framework_details'),dict) and row.get('framework_details')):die('Incomplete deep medical profile')
 def merge(data,batch):
     result=copy.deepcopy(data)
     for coll in COLLS:

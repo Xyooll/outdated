@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "MVP-1.4.0",
+    "version": "MVP-1.5.0",
     "release_date": "2026-10-14",
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
@@ -23,7 +23,9 @@
       "five treasures: ambiguous label; do not fabricate universal standard correspondence"
     ],
     "interface_release": "2026-10-15 Research Workbench milestone",
-    "bioactivity_policy": "Evidence-specific bioactivity per assay/target/stage, not universal medicinal benefits; lab exposure not medical dosage."
+    "bioactivity_policy": "Evidence-specific bioactivity per assay/target/stage, not universal medicinal benefits; lab exposure not medical dosage.",
+    "medicine_architecture": "Native system vocabulary and sourced multi-system deep profiles, not a flat list of generic claimed benefits.",
+    "medicine_profile_status": "Generic multi-system schema deployed, Ding Xiang deep reference exemplar incoming; other species/system pairings require research."
   },
   "organisms": [
     {
@@ -12561,6 +12563,379 @@
       "human_clinical_efficacy_established": false,
       "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
       "limitations": "Adult worms in experimental cultures are not live-host clearance evidence."
+    }
+  ],
+  "medical_systems": [
+    {
+      "id": "TCM",
+      "name": "Traditional Chinese Medicine",
+      "regions": [
+        "China",
+        "East Asia"
+      ],
+      "reference_url": "https://www.who.int/publications-detail-redirect/9789240042322",
+      "axes": [
+        {
+          "id": "nature",
+          "label": "Thermal nature"
+        },
+        {
+          "id": "flavor",
+          "label": "Five tastes / flavors"
+        },
+        {
+          "id": "meridians",
+          "label": "Meridian associations"
+        },
+        {
+          "id": "five_phases",
+          "label": "Five phases (where the source specifies them)"
+        },
+        {
+          "id": "patterns",
+          "label": "Traditional diagnostic patterns"
+        },
+        {
+          "id": "actions",
+          "label": "Traditional actions / functions"
+        },
+        {
+          "id": "contraindicated_patterns",
+          "label": "Traditional pattern cautions"
+        },
+        {
+          "id": "source_variations",
+          "label": "School or pharmacopoeia differences"
+        },
+        {
+          "id": "interpretation",
+          "label": "Interpretation limits"
+        }
+      ],
+      "initial_coverage": "illustrative_not_comprehensive"
+    },
+    {
+      "id": "AYURVEDA",
+      "name": "Ayurveda",
+      "regions": [
+        "India",
+        "South Asia"
+      ],
+      "reference_url": "https://www.who.int/publications/i/item/9789240064935",
+      "axes": [
+        {
+          "id": "rasa",
+          "label": "Rasa / taste"
+        },
+        {
+          "id": "guna",
+          "label": "Guna / qualities"
+        },
+        {
+          "id": "virya",
+          "label": "Virya / potency"
+        },
+        {
+          "id": "vipaka",
+          "label": "Vipaka / postdigestive effect"
+        },
+        {
+          "id": "dosha",
+          "label": "Dosha associations"
+        },
+        {
+          "id": "prabhava",
+          "label": "Prabhava / specific action"
+        },
+        {
+          "id": "dhatu",
+          "label": "Dhatu / tissue concepts"
+        },
+        {
+          "id": "indications",
+          "label": "Traditional indications"
+        },
+        {
+          "id": "contraindications",
+          "label": "Traditional cautions"
+        }
+      ],
+      "initial_coverage": "structure_only"
+    },
+    {
+      "id": "SIDDHA",
+      "name": "Siddha medicine",
+      "regions": [
+        "Tamil-speaking South Asia"
+      ],
+      "reference_url": "https://www.who.int/publications/i/item/9789240064973",
+      "axes": [
+        {
+          "id": "mukkutram",
+          "label": "Mukkutram concepts"
+        },
+        {
+          "id": "suvai",
+          "label": "Suvai / taste"
+        },
+        {
+          "id": "gunam",
+          "label": "Gunam / qualities"
+        },
+        {
+          "id": "veeriyam",
+          "label": "Veeriyam / potency"
+        },
+        {
+          "id": "seigai",
+          "label": "Seigai / actions"
+        },
+        {
+          "id": "indications",
+          "label": "Traditional indications"
+        },
+        {
+          "id": "contraindications",
+          "label": "Traditional cautions"
+        }
+      ],
+      "initial_coverage": "structure_only"
+    },
+    {
+      "id": "UNANI",
+      "name": "Unani / Tibb",
+      "regions": [
+        "West Asia",
+        "South Asia",
+        "North Africa"
+      ],
+      "reference_url": "https://www.who.int/publications/i/item/9789240064959",
+      "axes": [
+        {
+          "id": "mizaj",
+          "label": "Mizaj / temperament"
+        },
+        {
+          "id": "akhlat",
+          "label": "Akhlat / humoral concepts"
+        },
+        {
+          "id": "afaal",
+          "label": "Af'aal / actions"
+        },
+        {
+          "id": "darajat",
+          "label": "Degree of temperament (if sourced)"
+        },
+        {
+          "id": "istimal",
+          "label": "Classical uses"
+        },
+        {
+          "id": "muzir",
+          "label": "Potential harms / contraindications"
+        },
+        {
+          "id": "musleh",
+          "label": "Corrective / complementary materials"
+        }
+      ],
+      "initial_coverage": "structure_only"
+    },
+    {
+      "id": "PERSIAN",
+      "name": "Persian / Islamic traditional medicine",
+      "regions": [
+        "Iran",
+        "Persia / historical wider West Asia"
+      ],
+      "reference_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3637900/",
+      "axes": [
+        {
+          "id": "temperament",
+          "label": "Named historical temperament"
+        },
+        {
+          "id": "actions",
+          "label": "Text-attested actions"
+        },
+        {
+          "id": "original_terms",
+          "label": "Original-language terminology"
+        },
+        {
+          "id": "preparations",
+          "label": "Historical preparations"
+        },
+        {
+          "id": "contraindications",
+          "label": "Historical cautions"
+        }
+      ],
+      "initial_coverage": "structure_only"
+    },
+    {
+      "id": "AFRICAN_REGIONAL",
+      "name": "African regional medical traditions",
+      "regions": [
+        "Africa — named communities and regions only"
+      ],
+      "reference_url": "https://www.who.int/publications/i/item/9789240113176",
+      "axes": [
+        {
+          "id": "community",
+          "label": "Attribution to named public community / region"
+        },
+        {
+          "id": "local_terms",
+          "label": "Local-language terms"
+        },
+        {
+          "id": "indications",
+          "label": "Attested claimed uses"
+        },
+        {
+          "id": "preparations",
+          "label": "Part and preparation"
+        },
+        {
+          "id": "limitations",
+          "label": "Knowledge rights and context"
+        },
+        {
+          "id": "contraindications",
+          "label": "Cautions"
+        }
+      ],
+      "initial_coverage": "structure_only"
+    },
+    {
+      "id": "INDIGENOUS_PUBLIC",
+      "name": "Publicly shared Indigenous medicine accounts",
+      "regions": [
+        "Specific communities and territories"
+      ],
+      "reference_url": "https://www.who.int/publications/i/item/9789240113176",
+      "axes": [
+        {
+          "id": "community",
+          "label": "Named community and public permission"
+        },
+        {
+          "id": "local_terms",
+          "label": "Original terminology"
+        },
+        {
+          "id": "worldview",
+          "label": "Community-described conceptual framework"
+        },
+        {
+          "id": "uses",
+          "label": "Publicly documented use cases"
+        },
+        {
+          "id": "cautions",
+          "label": "Cultural access and medical limits"
+        }
+      ],
+      "initial_coverage": "structure_only"
+    },
+    {
+      "id": "EUROPEAN",
+      "name": "European herbal medicine",
+      "regions": [
+        "Europe"
+      ],
+      "reference_url": "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+      "axes": [
+        {
+          "id": "materia_medica",
+          "label": "Herbal materia medica / preparation"
+        },
+        {
+          "id": "humoral_terms",
+          "label": "Historical hot/cold/dry/wet theory where attested"
+        },
+        {
+          "id": "indications",
+          "label": "Traditional and regulatory indication"
+        },
+        {
+          "id": "route",
+          "label": "Route and product-specific constraints"
+        },
+        {
+          "id": "contraindications",
+          "label": "Contraindications and regulatory warnings"
+        }
+      ],
+      "initial_coverage": "structure_only"
+    },
+    {
+      "id": "BIOMEDICAL",
+      "name": "Modern biomedical clinical research",
+      "regions": [
+        "International"
+      ],
+      "reference_url": "https://www.who.int/publications/i/item/9789240113176",
+      "axes": [
+        {
+          "id": "diagnosis",
+          "label": "Research indication and diagnostic criteria"
+        },
+        {
+          "id": "formulation",
+          "label": "Studied formulation and active-exposure identity"
+        },
+        {
+          "id": "population",
+          "label": "Trial population"
+        },
+        {
+          "id": "outcomes",
+          "label": "Endpoints, effect sizes and negative findings"
+        },
+        {
+          "id": "quality",
+          "label": "Methodology and evidence level"
+        },
+        {
+          "id": "safety",
+          "label": "Adverse events and contraindications"
+        }
+      ],
+      "initial_coverage": "structure_only"
+    },
+    {
+      "id": "HIMALAYAN_TIBETAN",
+      "name": "Himalayan and Tibetan traditional medicine",
+      "regions": [
+        "Himalayan and Tibetan communities"
+      ],
+      "reference_url": "https://www.who.int/publications/i/item/9789240113176",
+      "axes": [
+        {
+          "id": "source_school",
+          "label": "Specific named school/tradition"
+        },
+        {
+          "id": "original_terms",
+          "label": "Original-language categories"
+        },
+        {
+          "id": "therapeutic_actions",
+          "label": "Attested indications"
+        },
+        {
+          "id": "preparation",
+          "label": "Material identity and process"
+        },
+        {
+          "id": "cautions",
+          "label": "Tradition-specific cautions"
+        }
+      ],
+      "initial_coverage": "structure_only"
     }
   ]
 }
