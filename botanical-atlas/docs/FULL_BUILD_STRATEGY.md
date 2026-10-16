@@ -53,3 +53,7 @@ Automatic publisher emits deterministic `data/coverage.json` per revision and fl
 ### Terminology fix: source-linked is not laboratory-authenticated
 
 Source-documented material identity is not an independently authenticated consumer product or chemically verified sample. The v1.6 dashboard counts only source-attributed preparation records; it must not imply that those ingredients have been authenticated in a lab or are safe to ingest. Later stages will require separate sample verification and batch-specific chemistry where possible.
+
+### Interaction evidence UI milestone
+
+Clinical pharmacokinetic exposure findings, laboratory assays, traditional incompatibilities and theoretical relationships require separate typed pair records and evidence categories. The standalone Interaction evidence tab makes them searchable independently of historical formulas; do not infer a formula-level interaction from a study of two purified compounds.

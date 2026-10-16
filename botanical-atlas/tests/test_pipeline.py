@@ -136,7 +136,7 @@ class AtlasTests(unittest.TestCase):
         self.assertIn('formula_components',self.data)
         self.assertIn('interaction_evidence',self.data)
         html=p.render(self.data).decode('utf-8')
-        for token in ('>Medicinal materials</button>','>Formulas & interactions</button>','function materialPage(','function formulaPage(','function organismMaterialPanel('):
+        for token in ('>Medicinal materials</button>','>Formulas</button>','>Interaction evidence</button>','function interactionPage(','function materialPage(','function formulaPage(','function organismMaterialPanel('):
             self.assertIn(token,html)
     def test_reject_missing_formula_material(self):
         d=copy.deepcopy(self.data)
