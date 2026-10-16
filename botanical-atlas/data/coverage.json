@@ -27,7 +27,7 @@
   "fungus_count": 20,
   "organisms_with_claims": 24,
   "organisms_without_claims": 42,
-  "organisms_with_authenticated_material_records": 6,
+  "organisms_with_source_attributed_material_records": 6,
   "organisms_without_material_records": 60,
   "organisms_with_dose_context": 7,
   "organisms_with_folklore": 2,
