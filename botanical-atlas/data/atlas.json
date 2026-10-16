@@ -5,7 +5,7 @@
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
     "status": "baseline imported into repository; source verification incomplete",
-    "catalog_revision": 11,
+    "catalog_revision": 12,
     "sync_mode": "repository-published; phone copy remains offline snapshot",
     "missing_legacy_source_ids": [
       "S001",
@@ -15,7 +15,7 @@
       "S006",
       "S012"
     ],
-    "last_ingestion_utc": "2026-10-15T13:08:27.353006+00:00",
+    "last_ingestion_utc": "2026-10-16T03:13:00.023278+00:00",
     "last_enrichment_date": "2026-10-15",
     "layer_status": "Plant comparison, research coverage and chemical-overlap workbench published; documentation is incomplete and every claim remains evidence graded.",
     "claim_system_policy": "Biomedicine, Ayurveda, TCM, Unani, regional herbalisms and ritual folklore are first-class systems; keep evidentiary methods and culturally specific categories distinct.",
@@ -986,6 +986,186 @@
         "human_effects": false,
         "safety": false,
         "international_ethnobotany": true
+      }
+    },
+    {
+      "id": "BOT-althaea-officinalis",
+      "common_name": "Marshmallow root",
+      "scientific_name": "Althaea officinalis L.",
+      "kingdom": "Plantae",
+      "geographic_context": "Native across parts of Europe, West/Central Asia and North Africa; European traditional herbal medicine",
+      "part_and_preparation_note": "Root mucilage in described teas or other oral herbal products. Root is not interchangeable with marshmallow confectionery.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "BOT-calendula-officinalis",
+      "common_name": "Pot marigold / calendula",
+      "scientific_name": "Calendula officinalis L.",
+      "kingdom": "Plantae",
+      "geographic_context": "Western Mediterranean origin; European herbalism and ornamental/food culture",
+      "part_and_preparation_note": "Flower heads in topical and oromucosal products. Plant species and extraction solvent matter.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "BOT-aspalathus-linearis",
+      "common_name": "Rooibos / red bush",
+      "scientific_name": "Aspalathus linearis (Burm.f.) R.Dahlgren",
+      "kingdom": "Plantae",
+      "geographic_context": "Indigenous to Cape Provinces, South Africa; publicly documented Khoi and San traditional knowledge with legally acknowledged benefit sharing",
+      "part_and_preparation_note": "Tea produced from aerial parts; oxidized red rooibos and unoxidized green rooibos differ chemically.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "BOT-andrographis-paniculata",
+      "common_name": "Andrographis / king of bitters",
+      "scientific_name": "Andrographis paniculata (Burm.f.) Wall. ex Nees",
+      "kingdom": "Plantae",
+      "geographic_context": "Indian subcontinent origin; Ayurveda and Chinese traditional medicine; grown elsewhere in Asia",
+      "part_and_preparation_note": "Leaves/aerial parts as herbal preparations. Not equivalent to andrographolide injections or synthetic derivatives.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "BOT-echinacea-purpurea",
+      "common_name": "Purple coneflower / echinacea",
+      "scientific_name": "Echinacea purpurea (L.) Moench",
+      "kingdom": "Plantae",
+      "geographic_context": "Central and eastern North America; historically used by several Indigenous peoples, now cultivated worldwide",
+      "part_and_preparation_note": "Root, flowering aerial parts, pressed juice and concentrated extracts are different preparations; do not substitute other Echinacea species.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "FUN-auricularia-heimuer",
+      "common_name": "Heimuer / East Asian wood ear",
+      "scientific_name": "Auricularia heimuer F. Wu, B.K. Cui & Y.C. Dai",
+      "kingdom": "Fungi",
+      "geographic_context": "East Asia and commercial cultivation; taxonomically distinct from European Auricularia auricula-judae",
+      "part_and_preparation_note": "Cultivated edible basidiocarps; literature for generic wood ear must not automatically be assigned to A. heimuer.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "FUN-flammulina-filiformis",
+      "common_name": "Enoki / enokitake",
+      "scientific_name": "Flammulina filiformis",
+      "kingdom": "Fungi",
+      "geographic_context": "East Asia; cultivated edible mushroom in Japanese, Chinese and Korean food",
+      "part_and_preparation_note": "Cooked fruiting bodies; the East Asian species is distinct from European Flammulina velutipes.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "FUN-schizophyllum-commune",
+      "common_name": "Split-gill mushroom",
+      "scientific_name": "Schizophyllum commune Fr.",
+      "kingdom": "Fungi",
+      "geographic_context": "Cosmopolitan wood-decay basidiomycete; documented as a food in parts of Southeast Asia and in Philippines ethnomycology",
+      "part_and_preparation_note": "Species-level culture and exposure route matter: a food preparation is not a sterile polysaccharide or a safe fungal exposure.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "FUN-ophiocordyceps-sinensis",
+      "common_name": "Caterpillar fungus / yartsa gunbu",
+      "scientific_name": "Ophiocordyceps sinensis (Berk.) G.H. Sung et al.",
+      "kingdom": "Fungi",
+      "geographic_context": "Tibetan Plateau and Himalayan alpine systems; Tibetan, Himalayan and Chinese medicinal history",
+      "part_and_preparation_note": "Fungal stroma plus moth larval host from wild harvest; not interchangeable with farmed Cordyceps militaris or mycelial substitutes.",
+      "quality_tier": "taxonomic_primary_and_international_review",
+      "taxonomy_status": "taxonomic_primary_and_international_review",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    },
+    {
+      "id": "FUN-pachyma-hoelen",
+      "common_name": "Fu ling / hoelen",
+      "scientific_name": "Pachyma hoelen Fr. (also proposed Wolfiporia hoelen)",
+      "kingdom": "Fungi",
+      "geographic_context": "East Asian cultivated medicinal sclerotium; phylogenetic studies separate it from North American Pachyma cocos (often called Wolfiporia cocos)",
+      "part_and_preparation_note": "Dried subterranean sclerotium; older research labeled Poria cocos/Wolfiporia cocos may mix species. Require authentication for chemical transfers.",
+      "quality_tier": "taxonomic_revision_supported_nomenclatural_priority_ongoing",
+      "taxonomy_status": "taxonomic_revision_supported_nomenclatural_priority_ongoing",
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
       }
     }
   ],
@@ -2466,6 +2646,54 @@
       "source_refs": [
         "SRC-013-eu_safety"
       ]
+    },
+    {
+      "id": "CMP-andrographolide",
+      "display_name": "Andrographolide",
+      "entity_type": "single_molecule",
+      "chemical_family": "labdane diterpenoid lactone",
+      "verified_external_ids": {
+        "pubchem_cid": "5318517"
+      },
+      "chemical_identity_status": "registry_formula_and_cid_checked"
+    },
+    {
+      "id": "CMP-aspalathin",
+      "display_name": "Aspalathin",
+      "entity_type": "single_molecule",
+      "chemical_family": "C-glycosyl dihydrochalcone",
+      "verified_external_ids": {
+        "pubchem_cid": "11282394"
+      },
+      "chemical_identity_status": "registry_formula_and_cid_checked"
+    },
+    {
+      "id": "CMP-chicoric-acid",
+      "display_name": "(-)-Chicoric acid / cichoric acid",
+      "entity_type": "single_molecule",
+      "chemical_family": "caffeic acid ester",
+      "verified_external_ids": {
+        "pubchem_cid": "5281764"
+      },
+      "chemical_identity_status": "registry_stereoisomer_specific"
+    },
+    {
+      "id": "CMP-pachymic-acid",
+      "display_name": "Pachymic acid",
+      "entity_type": "single_molecule",
+      "chemical_family": "lanostane triterpenoid",
+      "verified_external_ids": {
+        "pubchem_cid": "5484385"
+      },
+      "chemical_identity_status": "registry_formula_and_cid_checked"
+    },
+    {
+      "id": "CMP-schizophyllan-polymer",
+      "display_name": "Schizophyllan (branched β-glucan polymer)",
+      "entity_type": "polysaccharide_polymer_variable_structure",
+      "chemical_family": "β-(1→3) glucan with β-(1→6) side branches",
+      "verified_external_ids": {},
+      "chemical_identity_status": "specific_repeat_unit_known_polymer_mass_and_distribution_variable"
     }
   ],
   "occurrences": [
@@ -4385,6 +4613,51 @@
       "verification": "source_attributed; concentration and tissue distribution may be unquantified",
       "note": "Quassinoid in Eurycoma roots; molecular target attribution in humans is unestablished.",
       "part_context": "Root; standardized aqueous root extracts and other extracts differ in quassinoid composition"
+    },
+    {
+      "id": "OCC-NEW-AND-ANDROGRAPHOLIDE",
+      "organism_id": "BOT-andrographis-paniculata",
+      "compound_id": "CMP-andrographolide",
+      "part": "leaves and roots",
+      "verification": "pubchem_reviewed_organism_occurrence",
+      "source_id": "SRC-NEW-CHEM-ANDRO",
+      "note": "Isolated diterpenoid; not equivalent to overall safety/efficacy of the herb."
+    },
+    {
+      "id": "OCC-NEW-ROO-ASPALATHIN",
+      "organism_id": "BOT-aspalathus-linearis",
+      "compound_id": "CMP-aspalathin",
+      "part": "leaves and tea",
+      "verification": "pubchem_reviewed_organism_occurrence",
+      "source_id": "SRC-NEW-CHEM-ASP",
+      "note": "Compound concentration depends on fermentation/oxidation and extraction."
+    },
+    {
+      "id": "OCC-NEW-ECH-CHICORIC",
+      "organism_id": "BOT-echinacea-purpurea",
+      "compound_id": "CMP-chicoric-acid",
+      "part": "root and aerial herb",
+      "verification": "published_hplc_review_of_species_specific_constituents",
+      "source_id": "SRC-NEW-ECH-CHEM",
+      "note": "Exact stereochemical forms and amounts depend on product and storage."
+    },
+    {
+      "id": "OCC-NEW-SCH-SCHIZOPHYLLAN",
+      "organism_id": "FUN-schizophyllum-commune",
+      "compound_id": "CMP-schizophyllan-polymer",
+      "part": "fungal biomass or culture-derived polysaccharide",
+      "verification": "published_polymer_structural_review",
+      "source_id": "SRC-NEW-FUNG-SCH-POLY",
+      "note": "Variable polysaccharide—not a fixed small molecule or interchangeable product."
+    },
+    {
+      "id": "OCC-NEW-HO-PACHYMIC",
+      "organism_id": "FUN-pachyma-hoelen",
+      "compound_id": "CMP-pachymic-acid",
+      "part": "sclerotial medicinal material historically called Poria cocos",
+      "verification": "pending_species_authentication_older_poria_cocos_literature",
+      "source_id": "SRC-NEW-FUNG-HOELEN-TRIT",
+      "note": "DO NOT count this as species-authenticated Pachyma hoelen chemistry: studies named Poria/Wolfiporia cocos may refer to different taxa."
     }
   ],
   "domain_notes": [
@@ -5683,6 +5956,246 @@
       "domain": "A",
       "text": "A: Fatigue and quality-of-life scores studied; no established psychiatric efficacy.",
       "quality": "source_attributed; explicitly limited by evidence tier"
+    },
+    {
+      "organism_id": "BOT-althaea-officinalis",
+      "domain": "B",
+      "text": "Mucilage is predominantly an exposure/physical soothing factor rather than a proven metabolic energy enhancer.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-althaea-officinalis",
+      "domain": "P",
+      "text": "Historical demulcent use for throat/mouth and GI discomfort; clinical quality limited.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-althaea-officinalis",
+      "domain": "C",
+      "text": "No established cognition benefit.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-althaea-officinalis",
+      "domain": "A",
+      "text": "No validated mood treatment; soothing rituals distinct from measured anxiolytic effects.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-calendula-officinalis",
+      "domain": "B",
+      "text": "No human energy benefit established.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-calendula-officinalis",
+      "domain": "P",
+      "text": "Traditional topical use; isolated floral triterpenoids influence IL-6 release in lab models, not a proven systemic anti-inflammatory therapy.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-calendula-officinalis",
+      "domain": "C",
+      "text": "No established cognitive benefit.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-calendula-officinalis",
+      "domain": "A",
+      "text": "Floral cultural associations alone do not prove psychophysiologic efficacy.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-aspalathus-linearis",
+      "domain": "B",
+      "text": "Aspalathin has experimental metabolic activity; tea has not been proven to treat human diabetes.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-aspalathus-linearis",
+      "domain": "P",
+      "text": "Rooibos is a traditional beverage; reported digestive uses require controlled human evidence.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-aspalathus-linearis",
+      "domain": "C",
+      "text": "Cognitive benefits not established.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-aspalathus-linearis",
+      "domain": "A",
+      "text": "Traditional calming beverage associations should not be converted to clinical anxiety/sleep outcomes.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-andrographis-paniculata",
+      "domain": "B",
+      "text": "No valid claim of improved energy metabolism from routine herb consumption.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-andrographis-paniculata",
+      "domain": "P",
+      "text": "Clinical symptom studies suggest possible relief in upper respiratory infection, but severe anaphylaxis risk is confirmed.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-andrographis-paniculata",
+      "domain": "C",
+      "text": "No convincing human cognitive benefit.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-andrographis-paniculata",
+      "domain": "A",
+      "text": "No established mood indication.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-echinacea-purpurea",
+      "domain": "B",
+      "text": "No established systemic energy benefits.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-echinacea-purpurea",
+      "domain": "P",
+      "text": "Heterogeneous trials: modest reduction in cold risk possible, duration benefit unclear; allergy risk important.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-echinacea-purpurea",
+      "domain": "C",
+      "text": "No demonstrated human cognitive effect.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "BOT-echinacea-purpurea",
+      "domain": "A",
+      "text": "No established anxiety or mood indication.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-auricularia-heimuer",
+      "domain": "B",
+      "text": "Edible fungal carbohydrates and variable polysaccharides; human metabolic treatment effects unconfirmed.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-auricularia-heimuer",
+      "domain": "P",
+      "text": "Food use documented; extrapolation from genus-level polysaccharide assays is not valid for this species.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-auricularia-heimuer",
+      "domain": "C",
+      "text": "No proven cognition improvement.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-auricularia-heimuer",
+      "domain": "A",
+      "text": "No proven mood improvement.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-flammulina-filiformis",
+      "domain": "B",
+      "text": "Nutritional food, not a verified therapeutic energy booster.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-flammulina-filiformis",
+      "domain": "P",
+      "text": "Food safety is key: Listeria has been associated with enoki products; consume properly cooked.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-flammulina-filiformis",
+      "domain": "C",
+      "text": "No clinically established cognitive efficacy.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-flammulina-filiformis",
+      "domain": "A",
+      "text": "No clinical anxiolytic or antidepressant efficacy established.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-schizophyllum-commune",
+      "domain": "B",
+      "text": "Polysaccharide polymer research is preclinical; energy enhancement unestablished.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-schizophyllum-commune",
+      "domain": "P",
+      "text": "Immunomodulation assays reported, but human respiratory allergy/infection has been documented.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-schizophyllum-commune",
+      "domain": "C",
+      "text": "No proven nerve or cognition repair.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-schizophyllum-commune",
+      "domain": "A",
+      "text": "No proven mood effects.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-ophiocordyceps-sinensis",
+      "domain": "B",
+      "text": "Claims of vitality/energy are historically documented; human effects not adequately verified.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-ophiocordyceps-sinensis",
+      "domain": "P",
+      "text": "Traditional use and laboratory signals are distinct from proven human clinical outcomes.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-ophiocordyceps-sinensis",
+      "domain": "C",
+      "text": "No verified human neuroregeneration or memory effect.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-ophiocordyceps-sinensis",
+      "domain": "A",
+      "text": "Traditional tonic beliefs not demonstrated antidepressant benefits.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-pachyma-hoelen",
+      "domain": "B",
+      "text": "Metabolic effects investigated in mixed-taxon Poria literature; species-specific human evidence absent.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-pachyma-hoelen",
+      "domain": "P",
+      "text": "Historic TCM dampness/diuretic uses and laboratory data do not prove human edema treatment.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-pachyma-hoelen",
+      "domain": "C",
+      "text": "No demonstrated human cognitive benefit.",
+      "quality": "qualified_context_not_all_domains_proven"
+    },
+    {
+      "organism_id": "FUN-pachyma-hoelen",
+      "domain": "A",
+      "text": "Traditional calming-mind accounts remain history, not clinical proof.",
+      "quality": "qualified_context_not_all_domains_proven"
     }
   ],
   "safety": [
@@ -6050,6 +6563,86 @@
       "quality": "traditional_pharmacopoeia_identity_caution",
       "source_refs": [
         "SRC-LENS-CHINA-JINYINHUA"
+      ]
+    },
+    {
+      "organism_id": "BOT-althaea-officinalis",
+      "alert": "Traditional mucilage preparations may delay absorption of concurrently taken oral medicines; data for specific products and vulnerable groups are limited. Do not assume a safe dose for all ages.",
+      "quality": "institutional_regulatory_traditional",
+      "source_refs": [
+        "SRC-NEW-EMA-ALTHAEA"
+      ]
+    },
+    {
+      "organism_id": "BOT-calendula-officinalis",
+      "alert": "Allergy can occur with Asteraceae-family plants. Minor topical applications are different from ingesting extracts, oils or unidentified flowers; EMA indications are restricted.",
+      "quality": "regulatory_herbal_monograph",
+      "source_refs": [
+        "SRC-NEW-EMA-CALENDULA"
+      ]
+    },
+    {
+      "organism_id": "BOT-aspalathus-linearis",
+      "alert": "Ordinary rooibos beverage differs from concentrated nutraceutical extracts. Human evidence for disease treatment and standardized safe extract dosing remains insufficient.",
+      "quality": "regional_pharmacopoeia_limitations",
+      "source_refs": [
+        "SRC-NEW-ROO-BOOK"
+      ]
+    },
+    {
+      "organism_id": "BOT-andrographis-paniculata",
+      "alert": "IMPORTANT: Severe allergic reactions including anaphylaxis and a fatal report prompted Australia's 2026 removal of andrographis from its listed-medicine framework. Do not equate symptom trial data with safety.",
+      "quality": "government_high_risk_regulatory_alert",
+      "source_refs": [
+        "SRC-NEW-ANDRO-TGA"
+      ]
+    },
+    {
+      "organism_id": "BOT-echinacea-purpurea",
+      "alert": "Potentially severe allergic reactions and gastrointestinal effects; caution with asthma/allergy and possibly immunosuppressants, pregnancy and children. Cold trial efficacy inconsistent.",
+      "quality": "nih_institutional_safety_summary",
+      "source_refs": [
+        "SRC-NEW-NCCIH-ECHINACEA"
+      ]
+    },
+    {
+      "organism_id": "FUN-auricularia-heimuer",
+      "alert": "Commercial cultivated wood ear is food, not evidence for administering fungal polysaccharides medically. Several visually similar Auricularia species require species-level authentication; avoid wild collection based on pictures.",
+      "quality": "taxonomy_and_food_use_caution",
+      "source_refs": [
+        "SRC-NEW-FUNG-AUR-TAX"
+      ]
+    },
+    {
+      "organism_id": "FUN-flammulina-filiformis",
+      "alert": "CDC documents Listeria outbreaks linked to enoki products: cook thoroughly and avoid raw consumption, especially for pregnant, older or immunocompromised people.",
+      "quality": "cdc_confirmed_foodborne_outbreak",
+      "source_refs": [
+        "SRC-NEW-FUNG-FLAM-CDC"
+      ]
+    },
+    {
+      "organism_id": "FUN-schizophyllum-commune",
+      "alert": "Schizophyllum commune is implicated in allergic bronchopulmonary disease and sinus/respiratory infections in human case literature. Culinary reports are NOT evidence that breathing spores or self-colonizing with this fungus is safe.",
+      "quality": "human_opportunistic_pathogen_review",
+      "source_refs": [
+        "SRC-NEW-FUNG-SCH-HAZ"
+      ]
+    },
+    {
+      "organism_id": "FUN-ophiocordyceps-sinensis",
+      "alert": "Overharvesting threatens wild Himalayan populations. Species substitution, contaminants and counterfeit products are meaningful uncertainties; human safe dosing and efficacy not established by ethnomedicinal literature.",
+      "quality": "ethnomedicinal_conservation_review",
+      "source_refs": [
+        "SRC-NEW-FUNG-OPHI-CONSERVE"
+      ]
+    },
+    {
+      "organism_id": "FUN-pachyma-hoelen",
+      "alert": "The East Asian fu ling taxon is not necessarily the North American Wolfiporia cocos used in older analyses. Misidentification undermines compound, exposure and safety extrapolation.",
+      "quality": "primary_taxonomic_and_nomenclatural_warning",
+      "source_refs": [
+        "SRC-NEW-FUNG-HOELEN-NAME"
       ]
     }
   ],
@@ -6737,6 +7330,182 @@
       "verification": "published_chinese_pharmacopoeia_reference",
       "clinical_efficacy_established": false,
       "limitations": "Pattern descriptors are not Western medical diagnoses or proven therapeutic outcomes."
+    },
+    {
+      "id": "CUL-NEW-ALTHAEA-EU",
+      "organism_id": "BOT-althaea-officinalis",
+      "region": "Europe and West Asia",
+      "tradition": "European herbal materia medica",
+      "original_term": "marshmallow root / Althaeae radix",
+      "part": "root",
+      "preparation": "oral/upper-mouth herbal preparations",
+      "reported_use": "Historically used for throat irritation, associated dry cough and mild stomach discomfort; described in EU traditional-use assessment.",
+      "use_case": "Historically reported use",
+      "claim_kind": "historical_use",
+      "source_id": "SRC-NEW-EMA-ALTHAEA",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Traditional monograph is not proof of clinical effectiveness for every preparation."
+    },
+    {
+      "id": "CUL-NEW-CALENDULA-EU",
+      "organism_id": "BOT-calendula-officinalis",
+      "region": "Europe",
+      "tradition": "European herbal medicine",
+      "original_term": "Calendulae flos",
+      "part": "flower",
+      "preparation": "topical and oromucosal products",
+      "reported_use": "Traditionally used for minor skin/mouth inflammation and minor wounds.",
+      "use_case": "Historically reported use",
+      "claim_kind": "historical_use",
+      "source_id": "SRC-NEW-EMA-CALENDULA",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Insufficient robust clinical evidence; species and preparation required."
+    },
+    {
+      "id": "CUL-NEW-ROOIBOS-KHOI",
+      "organism_id": "BOT-aspalathus-linearis",
+      "region": "South Africa, Cape provinces",
+      "tradition": "Publicly acknowledged Khoi and San rooibos traditional knowledge",
+      "original_term": "rooibos",
+      "part": "aerial herb",
+      "preparation": "tea and broader culturally documented uses",
+      "reported_use": "Documented heritage of rooibos knowledge and publicly acknowledged commercial benefit-sharing rights.",
+      "use_case": "Food and cultural practice",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-NEW-ROO-SAN",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Do not publish restricted knowledge or treat community heritage as a biomedical efficacy claim."
+    },
+    {
+      "id": "CUL-NEW-AND-AYU",
+      "organism_id": "BOT-andrographis-paniculata",
+      "region": "India and South Asia",
+      "tradition": "Ayurveda and regional medical traditions",
+      "original_term": "kalmegh",
+      "part": "leaves and aerial parts",
+      "preparation": "traditional herb preparations",
+      "reported_use": "Reported in traditional fever, respiratory and digestive contexts.",
+      "use_case": "Historically reported use",
+      "claim_kind": "traditional_use",
+      "source_id": "SRC-NEW-ANDRO-TCM",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Not proven to cure infections; severe anaphylaxis risk."
+    },
+    {
+      "id": "CUL-NEW-AND-TCM",
+      "organism_id": "BOT-andrographis-paniculata",
+      "region": "China",
+      "tradition": "Traditional Chinese Medicine",
+      "original_term": "穿心莲 (chuan xin lian)",
+      "part": "aerial herb",
+      "preparation": "traditional materia medica and manufactured preparations",
+      "reported_use": "Used in traditional fever and sore throat indications; naming does not prove efficacy for infection.",
+      "use_case": "Historically reported use",
+      "claim_kind": "traditional_use",
+      "source_id": "SRC-NEW-ANDRO-TCM",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Do not assume all TCM injectables have the same risk/benefit as an oral herb."
+    },
+    {
+      "id": "CUL-NEW-ECH-NATIVE",
+      "organism_id": "BOT-echinacea-purpurea",
+      "region": "North America",
+      "tradition": "Public general historical overview of Indigenous use",
+      "original_term": "echinacea / purple coneflower",
+      "part": "species and part vary across communities",
+      "preparation": "traditional medicines varied",
+      "reported_use": "NCCIH notes E. purpurea was used medicinally in some Native American contexts for respiratory ailments, tooth pain and snakebite.",
+      "use_case": "Historically reported use",
+      "claim_kind": "historical_use",
+      "source_id": "SRC-NEW-NCCIH-ECHINACEA",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "No named community-specific practice can be inferred from this broad secondary source. Snakebite requires emergency care."
+    },
+    {
+      "id": "CUL-NEW-AUR-FOOD",
+      "organism_id": "FUN-auricularia-heimuer",
+      "region": "East Asia",
+      "tradition": "Commercial and customary mushroom food use",
+      "original_term": "heimuer / wood ear",
+      "part": "fruiting body",
+      "preparation": "cooked edible mushroom",
+      "reported_use": "The distinct East Asian cultivated wood-ear species was formally separated from European A. auricula-judae in molecular taxonomy studies.",
+      "use_case": "Food and cultural practice",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-NEW-FUNG-AUR-TAX",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Historical articles using A. auricula-judae may not identify which Asian wood ear they studied."
+    },
+    {
+      "id": "CUL-NEW-FLAM-FOOD",
+      "organism_id": "FUN-flammulina-filiformis",
+      "region": "China, Japan and Korea",
+      "tradition": "East Asian culinary traditions",
+      "original_term": "enoki / enokitake",
+      "part": "cultivated fruiting body",
+      "preparation": "cooked in soups and other foods",
+      "reported_use": "Enoki is an established cultivated culinary mushroom in East Asian food cultures.",
+      "use_case": "Food and cultural practice",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-NEW-FUNG-FLAM-FOOD",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Cooking thoroughly is important because of documented Listeria outbreaks."
+    },
+    {
+      "id": "CUL-NEW-SCH-PH",
+      "organism_id": "FUN-schizophyllum-commune",
+      "region": "Philippines",
+      "tradition": "Publicly published Indigenous-community ethnomycology",
+      "original_term": "split-gill mushroom",
+      "part": "fruiting body",
+      "preparation": "community food use; not a treatment recipe",
+      "reported_use": "Published ethnomycological research lists Schizophyllum commune among edible mushrooms used by communities in the Philippines.",
+      "use_case": "Food and cultural practice",
+      "claim_kind": "cultural_food",
+      "source_id": "SRC-NEW-FUNG-SCH-CULT",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Do not assign a single preparation or secret/restricted local tradition without primary documentation."
+    },
+    {
+      "id": "CUL-NEW-OPHI-SIKKIM",
+      "organism_id": "FUN-ophiocordyceps-sinensis",
+      "region": "North Sikkim, Himalayan region",
+      "tradition": "Regional folk healer accounts and Tibetan-related practice",
+      "original_term": "Yarsa gumba / keera jhar",
+      "part": "whole fungus–larva complex",
+      "preparation": "historical folk medicinal preparations",
+      "reported_use": "Publicly reported tonic and many other medicinal claims documented in Sikkim.",
+      "use_case": "Historically reported use",
+      "claim_kind": "traditional_use",
+      "source_id": "SRC-NEW-FUNG-OPHI-LOCAL",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Extremely broad folk claims are not clinical validation; harvesting has conservation and ethical concerns."
+    },
+    {
+      "id": "CUL-NEW-HOELEN-TCM",
+      "organism_id": "FUN-pachyma-hoelen",
+      "region": "China and East Asia",
+      "tradition": "Traditional Chinese materia medica",
+      "original_term": "茯苓 (fu ling)",
+      "part": "sclerotium",
+      "preparation": "historical formula component",
+      "reported_use": "Traditional descriptions include dampness/diuretic pattern, spleen support and calming the mind in TCM terminology.",
+      "use_case": "Historically reported use",
+      "claim_kind": "traditional_use",
+      "source_id": "SRC-NEW-FUNG-HOELEN-USE",
+      "verification": "published_public_document",
+      "clinical_efficacy_established": false,
+      "limitations": "Historical studies labeled Poria cocos may conflate North American and East Asian fungi; concepts are not biomedical diagnoses."
     }
   ],
   "sources": [
@@ -7573,6 +8342,278 @@
       "title": "Biochemical basis of Qi-invigorating action of Schisandra berry",
       "url": "https://pubmed.ncbi.nlm.nih.gov/16552829/",
       "type": "original_authoritative_or_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-KEW-ALTHAEA",
+      "organization": "Royal Botanic Gardens Kew",
+      "title": "Althaea officinalis species taxonomy",
+      "url": "https://powo.science.kew.org/taxon/558872-1",
+      "type": "taxonomic_backbone",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-EMA-ALTHAEA",
+      "organization": "European Medicines Agency",
+      "title": "Althaeae radix: herbal medicinal product",
+      "url": "https://www.ema.europa.eu/en/medicines/herbal/althaeae-radix",
+      "type": "regulatory_materia_medica",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-KEW-CALENDULA",
+      "organization": "Royal Botanic Gardens Kew",
+      "title": "Calendula officinalis taxonomy",
+      "url": "https://powo.science.kew.org/taxon/187894-1",
+      "type": "taxonomic_backbone",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-EMA-CALENDULA",
+      "organization": "European Medicines Agency",
+      "title": "Calendulae flos: HMPC traditional-use assessment",
+      "url": "https://www.ema.europa.eu/en/medicines/herbal/calendulae-flos",
+      "type": "regulatory_materia_medica",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-CAL-CHEM",
+      "organization": "Nature Communications",
+      "title": "Biosynthesis and bioactivity of anti-inflammatory triterpenoids in Calendula officinalis",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12304140/",
+      "type": "primary_chemical_cellular",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-KEW-ROOIBOS",
+      "organization": "Royal Botanic Gardens Kew",
+      "title": "Aspalathus linearis accepted taxonomy",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:475647-1",
+      "type": "taxonomic_backbone",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-ROO-BOOK",
+      "organization": "The South African Herbal Pharmacopoeia",
+      "title": "Aspalathus linearis monograph",
+      "url": "https://www.sciencedirect.com/science/article/pii/B9780323997942000015",
+      "type": "regional_medicinal_monograph",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-ROO-SAN",
+      "organization": "South African Government",
+      "title": "Rooibos traditional knowledge benefit-sharing agreement",
+      "url": "https://www.gov.za/news/speeches/minister-barbara-creecy-launch-rooibos-traditional-knowledge-industry-wide-benefit",
+      "type": "government_public_cultural_acknowledgement",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-KEW-ANDRO",
+      "organization": "Royal Botanic Gardens Kew",
+      "title": "Andrographis paniculata accepted taxonomy",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:45226-1",
+      "type": "taxonomic_backbone",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-ANDRO-ARTI",
+      "organization": "PubMed / systematic review",
+      "title": "Andrographis paniculata in symptomatic acute respiratory tract infections, meta-analysis",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28783743/",
+      "type": "systematic_review_human",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-ANDRO-TGA",
+      "organization": "Australian Therapeutic Goods Administration",
+      "title": "Andrographis removed from listed medicines framework because of allergy risk",
+      "url": "https://www.tga.gov.au/news/news-articles/andrographis-removed-listed-medicines-framework-because-allergy-risk",
+      "type": "government_regulatory_action",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-ANDRO-TCM",
+      "organization": "Australian Therapeutic Goods Administration",
+      "title": "Andrographis traditional Indian and Chinese labels, allergy safety",
+      "url": "https://www.tga.gov.au/safety/safety-monitoring-and-information/safety-alerts/medicines-containing-andrographis-paniculata-safety-advisory",
+      "type": "institutional_cultural_summary",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-KEW-ECHINACEA",
+      "organization": "Royal Botanic Gardens Kew",
+      "title": "Echinacea purpurea accepted taxonomy",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:1174497-2",
+      "type": "taxonomic_backbone",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-NCCIH-ECHINACEA",
+      "organization": "NIH NCCIH",
+      "title": "Echinacea: Usefulness and Safety",
+      "url": "https://www.nccih.nih.gov/health/echinacea",
+      "type": "human_evidence_and_safety_summary",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-ECH-CHEM",
+      "organization": "Pharmacognosy Reviews / PMC",
+      "title": "Echinacea purpurea phytochemistry and analysis methods",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4441164/",
+      "type": "analytical_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-AUR-TAX",
+      "organization": "Wu et al., Phytotaxa",
+      "title": "Species clarification of Auricularia heimuer using molecular and morphological data",
+      "url": "https://doi.org/10.11646/phytotaxa.186.5.1",
+      "type": "primary_taxonomic",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-FLAM-TAX",
+      "organization": "NCBI Taxonomy and Wang et al.",
+      "title": "Flammulina filiformis taxonomic record, East Asian Flammulina distinct from F. velutipes",
+      "url": "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2060913",
+      "type": "taxonomic_backbone",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-FLAM-FOOD",
+      "organization": "Journal of Fungi / PMC",
+      "title": "Molecular markers for enoki (Flammulina filiformis) cultivars and cultivation background",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10056640/",
+      "type": "food_science",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-FLAM-CDC",
+      "organization": "US CDC",
+      "title": "Listeria outbreak linked to enoki mushrooms and food-safety precautions",
+      "url": "https://www.cdc.gov/listeria/outbreaks/enoki-11-22/index.html",
+      "type": "government_food_safety",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-SCH-CULT",
+      "organization": "Philippines ethnomycology researchers",
+      "title": "Edible mushrooms of the Philippines: traditional knowledge and cultivation",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/B9780323994897000032",
+      "type": "regional_ethnomycology",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-SCH-CHEM",
+      "organization": "Food Chemistry / PubMed",
+      "title": "Bioactive compounds and nutritional roles of Schizophyllum commune",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40701086/",
+      "type": "phytochemical_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-SCH-HAZ",
+      "organization": "Journal of Medical Mycology / PubMed",
+      "title": "Schizophyllum commune as an emerging fungal pathogen",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22524529/",
+      "type": "human_case_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-SCH-POLY",
+      "organization": "Bioactive Carbohydrates and Dietary Fibre",
+      "title": "Schizophyllan, a branched glucan: structure and bioactivity review",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S2212619813000053",
+      "type": "polymer_chemistry_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-OPHI-TAX",
+      "organization": "NIH PubChem Taxonomy",
+      "title": "Ophiocordyceps sinensis taxonomy (not Cordyceps militaris)",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/taxonomy/72228",
+      "type": "taxonomic_backbone",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-OPHI-LOCAL",
+      "organization": "Panda and Swain",
+      "title": "Traditional uses of Cordyceps sinensis of Sikkim",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3121254/",
+      "type": "regional_ethnomycology",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-OPHI-CONSERVE",
+      "organization": "Pradhan et al. / PubMed",
+      "title": "Sikkim Himalayan caterpillar fungus commercialization and conservation",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27481300/",
+      "type": "conservation_and_ethnopharmacology",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-HOELEN-TAX",
+      "organization": "Wu et al. / Frontiers in Microbiology",
+      "title": "Pachyma genus and cultivated medicinal Fuling species clarification",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7793888/",
+      "type": "primary_taxonomic",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-HOELEN-NAME",
+      "organization": "Papp et al.",
+      "title": "What is the correct scientific name for Fuling medicinal mushroom?",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9354628/",
+      "type": "taxonomic_nomenclature_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-HOELEN-USE",
+      "organization": "Wang et al. / PubMed",
+      "title": "Poria cocos traditional uses, phytochemistry, pharmacology (historical specimen names ambiguous)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23528366/",
+      "type": "traditional_phytochemical_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-FUNG-HOELEN-TRIT",
+      "organization": "NIH PMC / review",
+      "title": "Pachymic acid in Poria cocos labeled materials and pharmacology",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9366251/",
+      "type": "compound_review",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-CHEM-ANDRO",
+      "organization": "NIH PubChem",
+      "title": "Andrographolide CID 5318517",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5318517",
+      "type": "chemical_registry",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-CHEM-ASP",
+      "organization": "NIH PubChem",
+      "title": "Aspalathin CID 11282394",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/11282394",
+      "type": "chemical_registry",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-CHEM-CICH",
+      "organization": "NIH PubChem",
+      "title": "Chicoric acid CID 5281764",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5281764",
+      "type": "chemical_registry",
+      "checked_on": "2026-10-15"
+    },
+    {
+      "id": "SRC-NEW-CHEM-PACH",
+      "organization": "NIH PubChem",
+      "title": "Pachymic acid CID 5484385",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5484385",
+      "type": "chemical_registry",
       "checked_on": "2026-10-15"
     }
   ],
@@ -10283,6 +11324,53 @@
       "status": "structure_pending_verification",
       "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/13936691",
       "review_status": "Stereochemistry and exact structure not independently validated"
+    },
+    {
+      "compound_id": "CMP-andrographolide",
+      "status": "pubchem_2d_reference",
+      "review_status": "authoritative_pubchem_registry",
+      "formula": "C20H30O5",
+      "molecular_weight_g_mol": 350.4,
+      "pubchem_cid": "5318517",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/5318517",
+      "binding_warning": "2D structure does not prove clinical outcomes or receptor binding."
+    },
+    {
+      "compound_id": "CMP-aspalathin",
+      "status": "pubchem_2d_reference",
+      "review_status": "authoritative_pubchem_registry",
+      "formula": "C21H24O11",
+      "molecular_weight_g_mol": 452.4,
+      "pubchem_cid": "11282394",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/11282394",
+      "binding_warning": "Registry-level structure only, not demonstrated human efficacy."
+    },
+    {
+      "compound_id": "CMP-chicoric-acid",
+      "status": "pubchem_2d_reference",
+      "review_status": "authoritative_pubchem_registry_stereochemistry_specific",
+      "formula": "C22H18O12",
+      "molecular_weight_g_mol": 474.4,
+      "pubchem_cid": "5281764",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/5281764",
+      "binding_warning": "Other chicoric-acid forms/isomers may require separate identities."
+    },
+    {
+      "compound_id": "CMP-pachymic-acid",
+      "status": "pubchem_2d_reference",
+      "review_status": "authoritative_pubchem_registry_not_species_provenance",
+      "formula": "C33H52O5",
+      "molecular_weight_g_mol": 528.8,
+      "pubchem_cid": "5484385",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/5484385",
+      "binding_warning": "Chemical identity verified, but old Fuling material may have been misidentified."
+    },
+    {
+      "compound_id": "CMP-schizophyllan-polymer",
+      "status": "polymer_repeat_unit_only_no_unique_2d_molecule",
+      "review_status": "polymer_heterogeneity_acknowledged",
+      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S2212619813000053",
+      "binding_warning": "This polymer is variable; no single SMILES, CID or exact molecular drawing represents all batches."
     }
   ],
   "binding": [
@@ -10547,6 +11635,154 @@
       "evidence_tier": "museum_historical_commentary",
       "source_id": "SRC-LENS-MET-ROSEMARY",
       "limitations": "Historical medical belief only; the Met article does not establish a modern clinical cognitive treatment."
+    },
+    {
+      "organism_id": "BOT-althaea-officinalis",
+      "id": "PC-NEW-ALTHAEA-EMA",
+      "system": "European herbal regulatory medicine",
+      "tradition": "EMA HMPC",
+      "region": "EU",
+      "framework": [
+        "traditional use"
+      ],
+      "condition_or_goal": "Dry cough associated with throat irritation and mild gastrointestinal discomfort",
+      "plant_part": "root",
+      "preparation": "specified marshmallow root herbal products",
+      "route": "oral/oromucosal",
+      "claim_type": "traditional_monograph",
+      "evidence_tier": "regulatory_traditional_use_not_well_established_clinical_efficacy",
+      "source_id": "SRC-NEW-EMA-ALTHAEA",
+      "limitations": "EMA review of historic experience; not proof of comparative clinical effectiveness."
+    },
+    {
+      "organism_id": "BOT-calendula-officinalis",
+      "id": "PC-NEW-CAL-EMA",
+      "system": "European herbal regulatory medicine",
+      "tradition": "EMA HMPC",
+      "region": "EU",
+      "framework": [
+        "traditional use"
+      ],
+      "condition_or_goal": "Minor skin inflammation, minor wounds and minor mouth/throat inflammation",
+      "plant_part": "flowers",
+      "preparation": "topical or oromucosal calendula flower products",
+      "route": "topical/oromucosal",
+      "claim_type": "traditional_monograph",
+      "evidence_tier": "regulatory_traditional_use_not_proven_in_good_trials",
+      "source_id": "SRC-NEW-EMA-CALENDULA",
+      "limitations": "Apply only to products, populations and minor problems within the monograph."
+    },
+    {
+      "organism_id": "BOT-andrographis-paniculata",
+      "id": "PC-NEW-ANDRO-ARTI",
+      "system": "Modern biomedical research",
+      "tradition": "Clinical evidence meta-analysis",
+      "region": "International",
+      "framework": [
+        "respiratory symptom trials"
+      ],
+      "condition_or_goal": "Acute respiratory infection symptom relief, particularly cough/sore throat",
+      "plant_part": "leaves/aerial herb",
+      "preparation": "variable commercial oral products, mixtures included",
+      "route": "oral",
+      "claim_type": "clinical_evidence",
+      "evidence_tier": "systematic_review_33_trials_quality_limitations",
+      "source_id": "SRC-NEW-ANDRO-ARTI",
+      "limitations": "Treatment/products heterogeneous; evidence does not negate potentially fatal allergy risk or imply antiviral cure."
+    },
+    {
+      "organism_id": "BOT-andrographis-paniculata",
+      "id": "PC-NEW-ANDRO-TCM",
+      "system": "Traditional Chinese Medicine",
+      "tradition": "Public materia medica names documented by TGA",
+      "region": "China",
+      "framework": [
+        "historical fever and throat symptom categories"
+      ],
+      "original_term": "穿心莲 / chuan xin lian",
+      "condition_or_goal": "Fever and sore throat historically",
+      "plant_part": "aerial herb",
+      "preparation": "traditional herb formulations",
+      "route": "varies",
+      "claim_type": "traditional_report",
+      "evidence_tier": "government_summary_of_traditional_report",
+      "source_id": "SRC-NEW-ANDRO-TCM",
+      "limitations": "Not a demonstrated clinical antipyretic effect and not a safe substitute for medical treatment."
+    },
+    {
+      "organism_id": "BOT-echinacea-purpurea",
+      "id": "PC-NEW-ECH-COLDS",
+      "system": "Modern biomedical research",
+      "tradition": "NIH NCCIH clinical evidence synthesis",
+      "region": "US/international",
+      "framework": [
+        "upper respiratory infection"
+      ],
+      "condition_or_goal": "Common cold prevention or duration",
+      "plant_part": "variable E. purpurea herb/root",
+      "preparation": "different commercial extracts",
+      "route": "oral",
+      "claim_type": "clinical_evidence",
+      "evidence_tier": "conflicting_human_studies_small_prevention_effect_possible",
+      "source_id": "SRC-NEW-NCCIH-ECHINACEA",
+      "limitations": "Possibly small reduction in cold risk; shortening illness remains uncertain, species and product vary."
+    },
+    {
+      "organism_id": "BOT-aspalathus-linearis",
+      "id": "PC-NEW-ROO-REGION",
+      "system": "South African regional traditional herbalism",
+      "tradition": "South African Herbal Pharmacopoeia",
+      "region": "South Africa",
+      "framework": [
+        "tea/food heritage",
+        "traditional digestive complaints"
+      ],
+      "condition_or_goal": "Traditionally consumed for gastrointestinal discomfort and calming beverage use",
+      "plant_part": "aerial leaves/stems",
+      "preparation": "rooibos tea",
+      "route": "oral beverage",
+      "claim_type": "traditional_report",
+      "evidence_tier": "regional_pharmacopoeial_secondary_descriptions",
+      "source_id": "SRC-NEW-ROO-BOOK",
+      "limitations": "Reported tradition is not evidence that tea treats reflux, insomnia or chronic disease."
+    },
+    {
+      "organism_id": "FUN-ophiocordyceps-sinensis",
+      "id": "PC-NEW-OPHI-SIKKIM",
+      "system": "Himalayan/Tibetan traditional medicine",
+      "tradition": "Public Sikkim ethnomedicinal review",
+      "region": "North Sikkim / Tibetan Plateau",
+      "framework": [
+        "tonic/general ethnomedicinal uses"
+      ],
+      "condition_or_goal": "Historically regarded as tonic and used for diverse complaints",
+      "plant_part": "fungus–larva complex",
+      "preparation": "traditional context, no dosing recipe",
+      "route": "historical oral",
+      "claim_type": "traditional_report",
+      "evidence_tier": "public_regional_ethnomedical_accounts_not_human_efficacy",
+      "source_id": "SRC-NEW-FUNG-OPHI-LOCAL",
+      "limitations": "Conservation, counterfeit material and species identification; clinical benefit not established by report."
+    },
+    {
+      "organism_id": "FUN-pachyma-hoelen",
+      "id": "PC-NEW-HOELEN-FULING",
+      "system": "Traditional Chinese Medicine",
+      "tradition": "Classical Fuling accounts reviewed in modern pharmacognosy",
+      "region": "China",
+      "framework": [
+        "spleen/dampness concepts",
+        "calming the mind"
+      ],
+      "original_term": "茯苓 / fu ling",
+      "condition_or_goal": "Dampness-related complaints, edema and restlessness in traditional framework",
+      "plant_part": "sclerotium",
+      "preparation": "traditional materia medica ingredient",
+      "route": "oral tradition",
+      "claim_type": "traditional_report",
+      "evidence_tier": "ethnopharmacology_review_with_taxonomic_identity_caveat",
+      "source_id": "SRC-NEW-FUNG-HOELEN-USE",
+      "limitations": "Fuling is better identified as P. hoelen; do not automatically equate with Wolfiporia cocos studies or a biomedical diuretic."
     }
   ],
   "dose_guidance": [
@@ -10617,6 +11853,40 @@
       "upper_limit_status": "NOT a proven safe upper limit",
       "contraindications": "Individual pattern, species and product identity, toxicity, pregnancy, disease and medicine interactions require qualified assessment.",
       "risks": "Historical/formulary amount is NOT modern proof of efficacy or a self-prescribing safe dose."
+    },
+    {
+      "id": "DG-NEW-ANDRO-NONE",
+      "organism_id": "BOT-andrographis-paniculata",
+      "tradition": "Safety-first regulatory context",
+      "source_id": "SRC-NEW-ANDRO-TGA",
+      "part": "aerial herb",
+      "preparation": "unspecified commercial oral products vary",
+      "route": "oral",
+      "population": "general; NOT individualized",
+      "intended_use": "respiratory symptom claims",
+      "amount_text": "No universally safe intake established",
+      "frequency_text": "Not established",
+      "evidence_status": "not_established_across_products",
+      "upper_limit_status": "Not established",
+      "contraindications": "Known severe hypersensitivity, potentially fatal anaphylaxis; especially caution with previous reactions.",
+      "risks": "Potential for serious allergy means literature doses are not safe recommendations."
+    },
+    {
+      "id": "DG-NEW-OPHI-NONE",
+      "organism_id": "FUN-ophiocordyceps-sinensis",
+      "tradition": "Traditional Sikkim/Tibetan records",
+      "source_id": "SRC-NEW-FUNG-OPHI-LOCAL",
+      "part": "fungus-larva complex",
+      "preparation": "variable and species often adulterated",
+      "route": "traditional oral",
+      "population": "general; insufficient quality-controlled studies",
+      "intended_use": "traditional tonic claims",
+      "amount_text": "No verified generally safe dosing standard",
+      "frequency_text": "Not established",
+      "evidence_status": "not_established_across_products",
+      "upper_limit_status": "Not established",
+      "contraindications": "Unknown composition, quality and contaminants; medical conditions and medications require separate assessment.",
+      "risks": "Historical tonic reports do not establish product-specific safe doses."
     }
   ],
   "folklore": [
@@ -10673,6 +11943,18 @@
       "date_checked": "2026-10-15",
       "source_id": "SRC-LENS-EMA-MINT",
       "limitations": "Regulatory categories, allowable claims and product authorization vary by national implementation."
+    },
+    {
+      "id": "REG-NEW-ANDRO-AU-2026",
+      "organism_id": "BOT-andrographis-paniculata",
+      "jurisdiction": "Australia",
+      "regulator": "Therapeutic Goods Administration",
+      "category": "listed_medicine_ingredient_restriction",
+      "preparation_scope": "Andrographis paniculata in low-risk listed medicines",
+      "status_text": "Removed from permitted ingredients for new listed medicines from 17 September 2026 due to severe allergy/anaphylaxis risk.",
+      "date_checked": "2026-10-15",
+      "source_id": "SRC-NEW-ANDRO-TGA",
+      "limitations": "Check regulator for rules on previously listed products and any other therapeutic product categories."
     }
   ]
 }
