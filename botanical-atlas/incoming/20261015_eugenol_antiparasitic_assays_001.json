@@ -1,0 +1,251 @@
+{
+  "batch_id": "20261015_eugenol_antiparasitic_assays_001",
+  "research_date": "2026-10-15",
+  "research_reference_url": "https://pubmed.ncbi.nlm.nih.gov/21272580/",
+  "summary": "Eight distinct antiprotozoal/anthelmintic lab-assay records for isolated eugenol or separately tested clove oil, plus NIH toxicity caveat. Experimental IC50/EC50 values are never human dose suggestions.",
+  "sources": [
+    {
+      "id": "SRC-EUG-GIARDIA-2011",
+      "organization": "Experimental Parasitology / PubMed",
+      "title": "Anti-Giardia activity of Syzygium aromaticum essential oil and eugenol: effects on growth, viability, adherence and ultrastructure",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21272580/",
+      "published": "2011",
+      "type": "primary_in_vitro"
+    },
+    {
+      "id": "SRC-EUG-LEISH-MEX-2023",
+      "organization": "Molecules / PubMed",
+      "title": "The antileishmanial activity of eugenol associated with lipid storage reduction rather than membrane properties alterations",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37175277/",
+      "published": "2023",
+      "type": "primary_in_vitro"
+    },
+    {
+      "id": "SRC-EUG-LEISH-MAJOR-2025",
+      "organization": "Acta Parasitologica / PubMed",
+      "title": "In Vitro Anti-Leishmanial Activity and Molecular Docking of Eugenol as a Potential Agent Against Leishmania Major",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40622619/",
+      "published": "2025",
+      "type": "primary_in_vitro_and_in_silico"
+    },
+    {
+      "id": "SRC-EUG-HAEMONCHUS-2026",
+      "organization": "Veterinary Parasitology / PubMed",
+      "title": "Synthesis, cytotoxicity and in vitro and in silico anthelmintic activity of eugenol and derivatives against Haemonchus contortus",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41760478/",
+      "published": "2026",
+      "type": "primary_in_vitro_and_in_silico"
+    },
+    {
+      "id": "SRC-EUG-NIH-SAFETY",
+      "organization": "NIH LiverTox / NCBI Bookshelf",
+      "title": "Eugenol (Clove Oil): hepatotoxicity and overdose",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK551727/",
+      "type": "medical_safety_review"
+    }
+  ],
+  "bioactivities": [
+    {
+      "id": "ACT-EUG-GIARDIA",
+      "agent_type": "isolated_compound",
+      "compound_id": "CMP-eugenol",
+      "organism_id": null,
+      "activity_category": "antiprotozoal",
+      "target_taxon": "Giardia lamblia",
+      "life_stage": "trophozoites",
+      "study_model": "in vitro protozoan cultures",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Growth inhibition",
+      "metric": {
+        "name": "IC50",
+        "value": 101,
+        "unit": "µg/mL"
+      },
+      "observed_effect": "Eugenol inhibited trophozoite growth and adherence in culture.",
+      "mechanism": "Altered morphology, adherence and organelles were observed, without validating a unique binding target.",
+      "mechanism_status": "observed_phenotype_no_specific_target",
+      "source_id": "SRC-EUG-GIARDIA-2011",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
+      "limitations": "No human giardiasis treatment trial established by this study."
+    },
+    {
+      "id": "ACT-CLOVE-GIARDIA-OIL",
+      "agent_type": "plant_essential_oil",
+      "compound_id": null,
+      "organism_id": "BOT-001",
+      "activity_category": "antiprotozoal",
+      "target_taxon": "Giardia lamblia",
+      "life_stage": "trophozoites",
+      "study_model": "in vitro clove essential-oil assay",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Growth inhibition",
+      "metric": {
+        "name": "IC50",
+        "value": 134,
+        "unit": "µg/mL"
+      },
+      "observed_effect": "Clove oil mixture inhibited growth and adherence, but this is not the same as purified eugenol.",
+      "mechanism": "Cellular structural damage observed in vitro.",
+      "mechanism_status": "mixture_composition_and_unique_targets_not_resolved",
+      "source_id": "SRC-EUG-GIARDIA-2011",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
+      "limitations": "Essential oil is not clove buds or clove tea and cannot be taken as a proven antiparasitic medicine."
+    },
+    {
+      "id": "ACT-EUG-LEISHMEX",
+      "agent_type": "isolated_compound",
+      "compound_id": "CMP-eugenol",
+      "organism_id": null,
+      "activity_category": "antiprotozoal",
+      "target_taxon": "Leishmania mexicana mexicana",
+      "life_stage": "promastigotes",
+      "study_model": "promastigote cell culture and laboratory lipid assays",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Growth inhibition",
+      "metric": {
+        "name": "IC50",
+        "value": 2.72,
+        "unit": "µg/mL"
+      },
+      "observed_effect": "In vitro parasite growth inhibition and decreased lipid droplet content.",
+      "mechanism": "Decreased lipid stores may be associated with the effect; membrane effects arose at higher exposure than antiparasitic IC50.",
+      "mechanism_status": "experimental_association_no_confirmed_direct_binding",
+      "source_id": "SRC-EUG-LEISH-MEX-2023",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
+      "limitations": "No proof of leishmaniasis cure in people; species and parasite stage matter."
+    },
+    {
+      "id": "ACT-EUG-LEISHMAJOR-PROM",
+      "agent_type": "isolated_compound",
+      "compound_id": "CMP-eugenol",
+      "organism_id": null,
+      "activity_category": "antiprotozoal",
+      "target_taxon": "Leishmania major",
+      "life_stage": "promastigotes",
+      "study_model": "promastigote cultures; docking separate",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Parasite viability reduction",
+      "metric": {
+        "name": "IC50",
+        "value": 235.22,
+        "unit": "µg/mL"
+      },
+      "observed_effect": "Eugenol showed measurable in vitro promastigote activity.",
+      "mechanism": "Docking/immune hypotheses not demonstrated receptor binding.",
+      "mechanism_status": "in_silico_hypothesis",
+      "source_id": "SRC-EUG-LEISH-MAJOR-2025",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
+      "limitations": "In vitro concentration does not translate to a human dose or generalize to other Leishmania."
+    },
+    {
+      "id": "ACT-EUG-LEISHMAJOR-AMAST",
+      "agent_type": "isolated_compound",
+      "compound_id": "CMP-eugenol",
+      "organism_id": null,
+      "activity_category": "antiprotozoal",
+      "target_taxon": "Leishmania major",
+      "life_stage": "amastigotes",
+      "study_model": "in vitro amastigote system",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Parasite viability reduction",
+      "metric": {
+        "name": "IC50",
+        "value": 73.1,
+        "unit": "µg/mL"
+      },
+      "observed_effect": "Eugenol alone had activity in amastigote assays; drug-combination findings are separate.",
+      "mechanism": "Target unknown.",
+      "mechanism_status": "target_unresolved",
+      "source_id": "SRC-EUG-LEISH-MAJOR-2025",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
+      "limitations": "Not a human trial; host toxicity and achievable human exposures unknown."
+    },
+    {
+      "id": "ACT-EUG-HAEMONCHUS-EGG",
+      "agent_type": "isolated_compound",
+      "compound_id": "CMP-eugenol",
+      "organism_id": null,
+      "activity_category": "anthelmintic",
+      "target_taxon": "Haemonchus contortus",
+      "life_stage": "eggs",
+      "study_model": "in vitro egg hatch assay",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Egg hatch inhibition",
+      "metric": {
+        "name": "EC50",
+        "value": 0.21,
+        "unit": "mg/mL"
+      },
+      "observed_effect": "Eugenol affected hatching of parasite eggs.",
+      "mechanism": "Potential biochemical interactions were only modeled by docking.",
+      "mechanism_status": "phenotype_observed_target_docking_only",
+      "source_id": "SRC-EUG-HAEMONCHUS-2026",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
+      "limitations": "Veterinary gastrointestinal nematode; in vivo safety and effectiveness were not established."
+    },
+    {
+      "id": "ACT-EUG-HAEMONCHUS-LARVAE",
+      "agent_type": "isolated_compound",
+      "compound_id": "CMP-eugenol",
+      "organism_id": null,
+      "activity_category": "anthelmintic",
+      "target_taxon": "Haemonchus contortus",
+      "life_stage": "larvae",
+      "study_model": "in vitro larval migration assay",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Larval migration inhibition",
+      "metric": {
+        "name": "EC50",
+        "value": 1.35,
+        "unit": "mg/mL"
+      },
+      "observed_effect": "Eugenol inhibited migration of larvae.",
+      "mechanism": "Precise molecular target not experimentally verified.",
+      "mechanism_status": "phenotype_observed_target_unknown",
+      "source_id": "SRC-EUG-HAEMONCHUS-2026",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
+      "limitations": "Not demonstrated for treating animals or humans."
+    },
+    {
+      "id": "ACT-EUG-HAEMONCHUS-ADULT",
+      "agent_type": "isolated_compound",
+      "compound_id": "CMP-eugenol",
+      "organism_id": null,
+      "activity_category": "anthelmintic",
+      "target_taxon": "Haemonchus contortus",
+      "life_stage": "adults",
+      "study_model": "in vitro adult worm motility assay",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Adult worm motility inhibition",
+      "metric": {
+        "name": "EC50",
+        "value": 0.11,
+        "unit": "mg/mL"
+      },
+      "observed_effect": "Adult movement was inhibited; immobility does not necessarily equal worm death.",
+      "mechanism": "Morphological damage observed and molecular docking was explored, not proof of direct binding.",
+      "mechanism_status": "microscopy_observation_and_unverified_docking",
+      "source_id": "SRC-EUG-HAEMONCHUS-2026",
+      "human_clinical_efficacy_established": false,
+      "dose_translation": "Laboratory assay exposure only. No safe or effective human or livestock treatment dose established.",
+      "limitations": "Adult worms in experimental cultures are not live-host clearance evidence."
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-001",
+      "alert": "NIH LiverTox reports severe liver and kidney injury and neurologic toxicity after clove/eugenol oil overdose, particularly in children. Experimental antiparasitic concentrations provide no safe intake regimen.",
+      "quality": "institutional_clinical_safety_review",
+      "source_refs": [
+        "SRC-EUG-NIH-SAFETY"
+      ]
+    }
+  ]
+}
