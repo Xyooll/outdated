@@ -1,0 +1,303 @@
+{
+  "batch_id": "20261016_material_formula_trikatu_001",
+  "research_date": "2026-10-16",
+  "research_reference_url": "https://pubmed.ncbi.nlm.nih.gov/1434692/",
+  "summary": "First functional medicinal-material/formula/interaction graph: one new taxon Piper longum, eight distinct preparation materials including clove essential oil vs flower bud, authenticated Trikatu ingredient components, and separately sourced human piperine-curcumin exposure interaction. No medical dose, formula efficacy, or assumed synergy.",
+  "sources": [
+    {
+      "id": "SRC-MAT-PIPER-LONGUM-KEW",
+      "organization": "Royal Botanic Gardens Kew (Plants of the World Online)",
+      "title": "Piper longum L. — accepted species and synonyms",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:682031-1",
+      "type": "taxonomic_primary_backbone",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "organization": "Johri and Zutshi, Journal of Ethnopharmacology / PubMed",
+      "title": "An Ayurvedic formulation 'Trikatu' and its constituents",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1434692/",
+      "type": "peer_reviewed_traditional_composition_review",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-FORM-TRIKATU-REVIEW-2021",
+      "organization": "Narrative review / PubMed",
+      "title": "Is Trikatu an ayurvedic formulation effective for the management of flu-like illness? A narrative review",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34081846/",
+      "type": "secondary_narrative_review_not_proven_therapy",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-INT-PIPERINE-CURCUMIN-1998",
+      "organization": "Shoba et al., Planta Medica / PubMed",
+      "title": "Influence of piperine on the pharmacokinetics of curcumin in animals and human volunteers",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9619120/",
+      "type": "human_and_animal_pharmacokinetics_primary",
+      "checked_on": "2026-10-16"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-piper-longum",
+      "scientific_name": "Piper longum L.",
+      "common_name": "Long pepper / pippali",
+      "kingdom": "Plantae",
+      "geographic_context": "Eastern Himalaya, South Asia and parts of Southeast Asia; used in Ayurvedic Trikatu formulas.",
+      "part_and_preparation_note": "Dried fruit/infructescence in medicinal contexts. Not equivalent to black pepper Piper nigrum or Piper retrofractum under ambiguous common names.",
+      "quality_tier": "kew_taxonomic_source_reviewed",
+      "taxonomic_source_id": "SRC-MAT-PIPER-LONGUM-KEW",
+      "synonyms": [
+        "Chavica longa (L.) H.Karst."
+      ],
+      "completeness": {
+        "taxonomy": true,
+        "preparation_chemistry": false,
+        "chemical_identity": false,
+        "human_effects": false,
+        "safety": false,
+        "international_ethnobotany": false
+      }
+    }
+  ],
+  "medicinal_materials": [
+    {
+      "id": "MAT-GINGER-DRIED-RHIZOME",
+      "organism_id": "BOT-007",
+      "part": "rhizome",
+      "preparation": "dried ginger rhizome used in named Trikatu composition",
+      "processing": "drying and powdering discussed in traditional formula category; ratios not verified",
+      "material_class": "dried_rhizome",
+      "tradition": "Ayurveda",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "identity_status": "literature_documented_material_identity_not_product_authentication",
+      "limitations": "Trikatu's ginger component is distinct from fresh ginger, volatile oil or purified gingerol; named constituent is not safe-dosing evidence.",
+      "system_id": "AYURVEDA"
+    },
+    {
+      "id": "MAT-BLACK-PEPPER-DRIED-FRUIT",
+      "organism_id": "BOT-010",
+      "part": "fruit",
+      "preparation": "black pepper dried fruit",
+      "processing": "drying, often powdered in studied Trikatu descriptions",
+      "material_class": "dried_fruit",
+      "tradition": "Ayurveda",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "identity_status": "literature_documented_material_identity_not_product_authentication",
+      "limitations": "This ingredient is Piper nigrum, not Piper longum, and whole fruit is not a purified piperine formulation.",
+      "system_id": "AYURVEDA"
+    },
+    {
+      "id": "MAT-LONG-PEPPER-DRIED-FRUIT",
+      "organism_id": "BOT-piper-longum",
+      "part": "infructescence / long pepper fruit",
+      "preparation": "Piper longum long pepper fruit used in Trikatu",
+      "processing": "dried fruit/infructescence, processing and ratio not independently established in source",
+      "material_class": "dried_fruit",
+      "tradition": "Ayurveda",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "identity_status": "literature_documented_material_identity_not_product_authentication",
+      "limitations": "Taxon must be authenticated as Piper longum L.; Piper retrofractum and other long-pepper species should not be silently substituted.",
+      "system_id": "AYURVEDA"
+    },
+    {
+      "id": "MAT-CLOVE-DRIED-BUD",
+      "organism_id": "BOT-001",
+      "part": "unopened flower bud",
+      "preparation": "Caryophylli Flos / Ding Xiang dried flower-bud medicinal material",
+      "processing": "dried bud, traditional materia medica",
+      "material_class": "dried_flower_bud",
+      "tradition": "Traditional Chinese Medicine",
+      "source_id": "SRC-TCM-DING-2020-PHARM",
+      "identity_status": "literature_documented_material_identity_not_product_authentication",
+      "limitations": "Only dried bud identity and historic monograph context; not a concentrated essential oil or guaranteed safe ingestion.",
+      "system_id": "TCM"
+    },
+    {
+      "id": "MAT-CLOVE-ESSENTIAL-OIL",
+      "organism_id": "BOT-001",
+      "part": "flower-bud aromatic oil",
+      "preparation": "concentrated clove essential oil",
+      "processing": "volatile-oil extraction, not equivalent to culinary buds",
+      "material_class": "essential_oil",
+      "tradition": "commercial topical / aromatic applications and laboratory studies",
+      "source_id": "SRC-EUG-NIH-SAFETY",
+      "identity_status": "literature_documented_material_identity_not_product_authentication",
+      "limitations": "Concentrated clove oil can cause chemical burns and severe toxicity when swallowed; this record is not a product-use instruction."
+    },
+    {
+      "id": "MAT-MINT-DRIED-LEAF",
+      "organism_id": "BOT-004",
+      "part": "leaf",
+      "preparation": "peppermint leaf medicinal herbal preparation",
+      "processing": "leaf drying / herbal preparation as discussed in EU monograph",
+      "material_class": "dried_leaf",
+      "tradition": "European herbal monograph",
+      "source_id": "EMA_LEAF",
+      "identity_status": "literature_documented_material_identity_not_product_authentication",
+      "limitations": "Peppermint leaf preparation is not the same as peppermint essential oil capsules or undiluted oil.",
+      "system_id": "EUROPEAN"
+    },
+    {
+      "id": "MAT-MINT-ESSENTIAL-OIL",
+      "organism_id": "BOT-004",
+      "part": "leaf-derived volatile oil",
+      "preparation": "Menthae piperitae aetheroleum / peppermint essential oil",
+      "processing": "steam-distilled volatile-oil material; standardized commercial products differ",
+      "material_class": "essential_oil",
+      "tradition": "European herbal monograph",
+      "source_id": "EMA_OIL",
+      "identity_status": "literature_documented_material_identity_not_product_authentication",
+      "limitations": "Oil formulation, enteric coating and intended route matter; undiluted essential oil must not be treated as mint tea.",
+      "system_id": "EUROPEAN"
+    },
+    {
+      "id": "MAT-FULING-DRIED-SCLEROTIUM",
+      "organism_id": "FUN-pachyma-hoelen",
+      "part": "sclerotium",
+      "preparation": "fu ling / hoelen dried fungal sclerotium",
+      "processing": "traditionally dried sclerotium; exact processing/species requires authentication",
+      "material_class": "dried_sclerotium",
+      "tradition": "Traditional Chinese Medicine",
+      "source_id": "SRC-NEW-FUNG-HOELEN-USE",
+      "identity_status": "literature_documented_material_identity_not_product_authentication",
+      "limitations": "Older literature under Poria/Wolfiporia cocos may mix taxa; no chemical equivalence to other mushrooms is established.",
+      "system_id": "TCM"
+    }
+  ],
+  "formulas": [
+    {
+      "id": "FORM-TRIKATU",
+      "name": "Trikatu",
+      "original_term": "त्रिकटु (Trikaṭu, 'three pungents')",
+      "system_id": "AYURVEDA",
+      "tradition": "Ayurvedic medicine",
+      "region": "India / South Asia",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "claimed_use": "Historically combined three pungent spices in Ayurvedic multi-herb practice; reviewed for hypothetical digestive, immunomodulatory or bioavailability-related properties.",
+      "claim_type": "historical_multi_herb_formula_composition",
+      "evidence_tier": "peer_reviewed_ethnopharmacological_review_not_human_efficacy_trial",
+      "clinical_efficacy_established": false,
+      "limitations": "Named composition is documented; no clinical claim that Trikatu cures COVID-19, infections, or any disease. Formula descriptions and ingredient ratios can vary by textual lineage. Piperine can change exposure to other drugs; contraindications and safe dosing cannot be inferred from the historical name."
+    }
+  ],
+  "formula_components": [
+    {
+      "id": "FC-TRIKATU-GINGER",
+      "formula_id": "FORM-TRIKATU",
+      "material_id": "MAT-GINGER-DRIED-RHIZOME",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "role": "documented named constituent: ginger",
+      "limitations": "No therapeutic dosage, fraction or formula processing duration confirmed by this record."
+    },
+    {
+      "id": "FC-TRIKATU-BLACK-PEPPER",
+      "formula_id": "FORM-TRIKATU",
+      "material_id": "MAT-BLACK-PEPPER-DRIED-FRUIT",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "role": "documented named constituent: black pepper",
+      "limitations": "Piper nigrum and purified piperine are distinct exposures. No safe combination dose established."
+    },
+    {
+      "id": "FC-TRIKATU-LONG-PEPPER",
+      "formula_id": "FORM-TRIKATU",
+      "material_id": "MAT-LONG-PEPPER-DRIED-FRUIT",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "role": "documented named constituent: long pepper",
+      "limitations": "Actual authenticated botanical species and product purity matter; no ratio or dose is inferred."
+    }
+  ],
+  "interaction_evidence": [
+    {
+      "id": "INT-PIPERINE-CURCUMIN-HUMAN-PK-1998",
+      "left_ref": "compound:CMP-piperine",
+      "right_ref": "compound:CMP-curcumin",
+      "interaction_type": "measured_pharmacokinetic_exposure_modulation",
+      "evidence_tier": "human_pharmacokinetic_study",
+      "method": "Controlled short-window serum concentration comparison in healthy volunteers; animal experiments also included.",
+      "observation": "Piperine coadministration increased measured systemic curcumin exposure in the specific experimental setting. This was a pharmacokinetic endpoint, NOT evidence of enhanced medical treatment effectiveness.",
+      "source_id": "SRC-INT-PIPERINE-CURCUMIN-1998",
+      "clinical_efficacy_established": false,
+      "limitations": "Study used isolated compounds in a specific short-duration, high-exposure experiment; cannot generalize to culinary turmeric+pepper, Trikatu, other medications or long-term safety. Piperine may alter drug handling, so interactions matter.",
+      "assay_endpoint": "human serum concentration and bioavailability of curcumin"
+    }
+  ],
+  "cultural_uses": [
+    {
+      "id": "CUL-LONGPEPPER-TRIKATU",
+      "organism_id": "BOT-piper-longum",
+      "region": "India / South Asia",
+      "tradition": "Ayurvedic Trikatu formula tradition",
+      "original_term": "पिप्पली (pippalī)",
+      "part": "dried fruit / infructescence",
+      "preparation": "a named component of multi-herb Trikatu; not a preparation instruction",
+      "reported_use": "Traditional formula pairs long pepper with ginger and black pepper in Trikatu; other attributed effects are not necessarily supported by clinical trials.",
+      "use_case": "Traditional multi-ingredient formulation",
+      "claim_kind": "documented_traditional_formula",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "verification": "peer_reviewed_historical_review",
+      "clinical_efficacy_established": false,
+      "limitations": "Species authentication, dose, processing, and product interactions require separate evidence."
+    }
+  ],
+  "practice_claims": [
+    {
+      "id": "PC-LONGPEPPER-TRIKATU-AYURVEDA",
+      "organism_id": "BOT-piper-longum",
+      "system": "Ayurveda",
+      "system_id": "AYURVEDA",
+      "tradition": "South Asian classical Ayurvedic compound formulas",
+      "region": "India / South Asia",
+      "original_term": "पिप्पली (pippalī)",
+      "framework": [
+        "Trikatu multi-herb mixture; no unverified rasa/virya/dosha labels assigned"
+      ],
+      "condition_or_goal": "Historically used as a component of Trikatu for a variety of claimed health conditions and to modify other medicines' activity.",
+      "claim_type": "traditional_formula_component",
+      "plant_part": "fruit / infructescence",
+      "preparation": "dried long-pepper material used with black pepper and ginger; see FORM-TRIKATU",
+      "route": "oral historical preparations; not a recommended route or regimen",
+      "evidence_tier": "ethnopharmacological_review_not_proven_efficacy",
+      "source_id": "SRC-FORM-TRIKATU-JOHRI-1992",
+      "limitations": "No source-backed dose, safety or medical efficacy for long pepper alone from this paper; do not automatically generalize Trikatu results to purified piperine."
+    }
+  ],
+  "domain_notes": [
+    {
+      "organism_id": "BOT-piper-longum",
+      "domain": "B",
+      "text": "Piperine-containing pepper products may affect xenobiotic pharmacokinetics; this does not prove improved metabolism or energy in people.",
+      "quality": "qualified_context_no_assumed_clinical_efficacy"
+    },
+    {
+      "organism_id": "BOT-piper-longum",
+      "domain": "P",
+      "text": "Traditional digestive and other uses in Trikatu are documented historically, not established treatments in controlled human efficacy studies.",
+      "quality": "qualified_context_no_assumed_clinical_efficacy"
+    },
+    {
+      "organism_id": "BOT-piper-longum",
+      "domain": "C",
+      "text": "No source-verified specific cognitive therapeutic result for Piper longum has been entered in this batch.",
+      "quality": "qualified_context_no_assumed_clinical_efficacy"
+    },
+    {
+      "organism_id": "BOT-piper-longum",
+      "domain": "A",
+      "text": "No reliable evidence of an isolated long-pepper anxiolytic or antidepressant effect has been indexed in this batch.",
+      "quality": "qualified_context_no_assumed_clinical_efficacy"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-piper-longum",
+      "alert": "Medicinal long pepper is not interchangeable with black pepper or other Piper species. Piperine-associated pharmacokinetic changes may alter medicine exposure; safe dose and use in pregnancy, children and chronic illnesses have not been established by the Trikatu composition reviews.",
+      "quality": "identity_and_drug_exposure_caution",
+      "source_refs": [
+        "SRC-MAT-PIPER-LONGUM-KEW",
+        "SRC-FORM-TRIKATU-JOHRI-1992",
+        "SRC-INT-PIPERINE-CURCUMIN-1998"
+      ]
+    }
+  ]
+}
