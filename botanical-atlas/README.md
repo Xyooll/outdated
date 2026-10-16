@@ -58,3 +58,7 @@ To avoid systematic omissions, scheduled research should cross-query synonyms, m
 ## MVP v1.5: native medical-system profiles
 
 The Atlas now has a **Medical systems** library separate from **Medicinal claims**. Ten systems each have sourced controlled-vocabulary axes; TCM, Ayurveda and Unani are not flattened into one list of benefits. Detailed claim cards can show traditional energetics, diagnosed patterns, nature/flavor, meridian/tissue relationships, source variations and historical cautions—only when supported. The prototype deep profile is Chinese Ding Xiang; systematic profiles for most taxa and systems remain incomplete. The full implementation contract and staged roadmap are in `docs/FULL_BUILD_STRATEGY.md`.
+
+## v1.6 medicinal material and formula graph
+
+Four new typed tables connect botanical taxa to preparation-specific medicinal materials, multi-herb formulas, roles/components and source-attributed interaction research. Browse via **Medicinal materials** and **Formulas & interactions**; plant identities also link to their materials. These records are references to historical ingredients and scientific hypotheses, **not** recipes, dosing instructions, medical recommendations, or proof of combination synergy. Formula coverage remains preliminary, with a Trikatu case study as an acceptance test. See `docs/INGESTION_FORMAT.md` and `docs/FULL_BUILD_STRATEGY.md` for schema and staged product milestones.

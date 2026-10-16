@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "MVP-1.5.0",
+    "version": "MVP-1.6.0",
     "release_date": "2026-10-14",
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
@@ -25,7 +25,9 @@
     "interface_release": "2026-10-15 Research Workbench milestone",
     "bioactivity_policy": "Evidence-specific bioactivity per assay/target/stage, not universal medicinal benefits; lab exposure not medical dosage.",
     "medicine_architecture": "Native system vocabulary and sourced multi-system deep profiles, not a flat list of generic claimed benefits.",
-    "medicine_profile_status": "Generic multi-system schema deployed, Ding Xiang deep reference exemplar incoming; other species/system pairings require research."
+    "medicine_profile_status": "Generic multi-system schema deployed, Ding Xiang deep reference exemplar incoming; other species/system pairings require research.",
+    "material_formula_policy": "Typed source-attributed preparations, multi-ingredient formulas and interaction observations are distinct from efficacy, recommended doses or assumed synergy.",
+    "material_formula_status": "Schema, offline UI and integrity gates delivered; evidence-backed Trikatu seed batch follows separately."
   },
   "organisms": [
     {
@@ -13053,5 +13055,9 @@
       ],
       "initial_coverage": "structure_only"
     }
-  ]
+  ],
+  "medicinal_materials": [],
+  "formulas": [],
+  "formula_components": [],
+  "interaction_evidence": []
 }

@@ -36,3 +36,12 @@ Offline searchable responsive app, hosted updating version, filters by system/pa
 
 ## Current limitation and next release gates
 MVP is not a completed global pharmacopeia. 65 organisms and 32 medicinal-claim records existed at baseline; most organism/tradition pairs still have no deep profile. Prioritize coverage without fabricating native theory assignments. The preexisting HTML downloaded to a phone remains an offline snapshot; use hosted page for current versions. A passing Python/JS CI does not prove physical Android UI tests have run.
+
+### Completed v1.6 foundations (first milestone)
+- Typed medicinal-material identities with organism, part, preparation and processing; prohibit one herb species from silently standing in for essential oil, rhizome, tincture or isolated molecule.
+- Explicit multi-ingredient formula and ingredient tables with source references and required ≥2 authenticated ingredients, plus typed pairwise interaction evidence that distinguishes hypothesized bioavailability effects from demonstrated clinical efficacy.
+- New responsive offline application tabs 'Medicinal materials' and 'Formulas & interactions'; links back to plant dossiers, original sources and each ingredient; search across formula constituents.
+- Validation and regression tests block malformed ingredients, missing sources, unsupported clinical or synergistic assertions, and universally safe-dose implications.
+- Verified first formula example intended: Trikatu (dried ginger rhizome, black pepper fruit, long pepper fruit), linked to the 1992 Journal of Ethnopharmacology review; source-backed historical composition is NOT proof of efficacy, and its hypothesized bioavailability effects cannot substitute for pharmacokinetic clinical trials. Actual publication must be confirmed separately.
+
+Still incomplete: full global formula corpus, genuinely measured herbal combination interactions, batch-specific processing quantities, source-verification automation, original-language licensing and community permissions, user accessibility/mobile interaction tests, clinically validated safety and effectiveness.

@@ -130,6 +130,33 @@ class AtlasTests(unittest.TestCase):
         html=p.render(self.data).decode('utf-8')
         for token in ('>Medical systems</button>', 'function systemPage(', 'function nativeFramework(', 'WHO'):
             if token!='WHO':self.assertIn(token,html)
+    def test_material_formula_schema_is_in_offline_app(self):
+        self.assertIn('medicinal_materials',self.data)
+        self.assertIn('formulas',self.data)
+        self.assertIn('formula_components',self.data)
+        self.assertIn('interaction_evidence',self.data)
+        html=p.render(self.data).decode('utf-8')
+        for token in ('>Medicinal materials</button>','>Formulas & interactions</button>','function materialPage(','function formulaPage(','function organismMaterialPanel('):
+            self.assertIn(token,html)
+    def test_reject_missing_formula_material(self):
+        d=copy.deepcopy(self.data)
+        if not d['formulas']:
+            self.skipTest('formula seed batch not ingested')
+        d['formula_components'][0]['material_id']='NO_SUCH_MATERIAL'
+        with self.assertRaises(ValueError):p.check(d)
+    def test_reject_unattributed_interaction(self):
+        d=copy.deepcopy(self.data)
+        if not d['interaction_evidence']:
+            self.skipTest('interaction seed batch not ingested')
+        d['interaction_evidence'][0]['source_id']='NOT_REAL'
+        with self.assertRaises(ValueError):p.check(d)
+    def test_formula_requires_distinct_components(self):
+        d=copy.deepcopy(self.data)
+        if not d['formulas']:
+            self.skipTest('formula seed batch not ingested')
+        target=d['formulas'][0]['id']
+        d['formula_components']=[r for r in d['formula_components'] if r['formula_id']!=target][:0]+[next(r for r in d['formula_components'] if r['formula_id']==target)]
+        with self.assertRaises(ValueError):p.check(d)
     def test_identity_conflict(self):
         with self.assertRaises(ValueError):p.merge(self.data,{'organisms':[{'id':'BOT-001','scientific_name':'Wrong identity'}]})
 if __name__=='__main__':unittest.main()

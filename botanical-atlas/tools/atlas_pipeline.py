@@ -5,9 +5,9 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[1]
-COLLS=('organisms','compounds','occurrences','domain_notes','safety','cultural_uses','sources','structures','binding','practice_claims','dose_guidance','folklore','regulatory_status','bioactivities','medical_systems')
-IDS={'organisms':'id','compounds':'id','occurrences':'id','cultural_uses':'id','sources':'id','structures':'compound_id','binding':'id','practice_claims':'id','dose_guidance':'id','folklore':'id','regulatory_status':'id','bioactivities':'id','medical_systems':'id'}
-IDENTITY={'organisms':('scientific_name',),'compounds':('display_name',),'sources':('url',),'occurrences':('organism_id','compound_id'),'cultural_uses':('organism_id',),'structures':('compound_id',),'binding':('compound_id',),'practice_claims':('organism_id',),'dose_guidance':('organism_id',),'folklore':('organism_id',),'regulatory_status':('organism_id',),'bioactivities':('agent_type','compound_id','organism_id','target_taxon','life_stage','endpoint'),'medical_systems':('name',)}
+COLLS=('organisms','compounds','occurrences','domain_notes','safety','cultural_uses','sources','structures','binding','practice_claims','dose_guidance','folklore','regulatory_status','bioactivities','medical_systems','medicinal_materials','formulas','formula_components','interaction_evidence')
+IDS={'organisms':'id','compounds':'id','occurrences':'id','cultural_uses':'id','sources':'id','structures':'compound_id','binding':'id','practice_claims':'id','dose_guidance':'id','folklore':'id','regulatory_status':'id','bioactivities':'id','medical_systems':'id','medicinal_materials':'id','formulas':'id','formula_components':'id','interaction_evidence':'id'}
+IDENTITY={'organisms':('scientific_name',),'compounds':('display_name',),'sources':('url',),'occurrences':('organism_id','compound_id'),'cultural_uses':('organism_id',),'structures':('compound_id',),'binding':('compound_id',),'practice_claims':('organism_id',),'dose_guidance':('organism_id',),'folklore':('organism_id',),'regulatory_status':('organism_id',),'bioactivities':('agent_type','compound_id','organism_id','target_taxon','life_stage','endpoint'),'medical_systems':('name',),'medicinal_materials':('organism_id','part','preparation','processing'),'formulas':('original_term','system_id'),'formula_components':('formula_id','material_id'),'interaction_evidence':('left_ref','right_ref','interaction_type','evidence_tier')}
 def die(message): raise ValueError(message)
 def get(path):
     obj=json.loads(path.read_text('utf-8'))
@@ -93,6 +93,42 @@ def check(data):
             refids=claim.get('supporting_source_ids',[])
             if not isinstance(refids,list) or any(x not in sources for x in refids):die('Unknown supporting framework source')
             if claim.get('clinical_efficacy_established') is True and claim.get('claim_type') not in ('clinical_evidence','well_established_monograph'):die('Traditional deep profile called clinically established')
+    # Material identity is distinct from botanical species, extract and isolated constituent.
+    msids={r['id'] for r in data['medical_systems']}
+    mids={r['id'] for r in data['medicinal_materials']}
+    fids={r['id'] for r in data['formulas']}
+    refs={'material':mids,'formula':fids,'compound':cmp}
+    for m in data['medicinal_materials']:
+        if not all(m.get(k) for k in ('id','organism_id','part','preparation','processing','material_class','tradition','source_id','identity_status','limitations')):die('Incomplete medicinal material')
+        if m['organism_id'] not in org or m['source_id'] not in sources:die('Unattributed medicinal material')
+        if m.get('system_id') and m['system_id'] not in msids:die('Unknown material medical system')
+        if m.get('safe_to_ingest') is True:die('Plant material identity alone never establishes safety')
+    for formula in data['formulas']:
+        if not all(formula.get(k) for k in ('id','name','original_term','system_id','tradition','source_id','claimed_use','claim_type','evidence_tier','limitations')):die('Incomplete formula definition')
+        if formula['system_id'] not in msids or formula['source_id'] not in sources:die('Unattributed formula')
+        if formula.get('clinical_efficacy_established') is True and formula.get('evidence_tier') not in ('human_trial','systematic_review_of_human_trials'):die('Tradition cannot establish formula clinical efficacy')
+        if formula.get('standard_safe_dose') is not None:die('Formula dossier cannot claim universally safe dose')
+    linked={}
+    for comp in data['formula_components']:
+        if not all(comp.get(k) for k in ('id','formula_id','material_id','source_id','role','limitations')):die('Incomplete formula component')
+        if comp['formula_id'] not in fids or comp['material_id'] not in mids or comp['source_id'] not in sources:die('Broken formula material or source link')
+        linked.setdefault(comp['formula_id'],[]).append(comp['material_id'])
+        if comp.get('safe_dose') is not None:die('Formula component cannot set unverified safe intake')
+    for formula in data['formulas']:
+        members=linked.get(formula['id'],[])
+        if len(members)<2 or len(members)!=len(set(members)):die('Multi-herb formula needs at least two distinct authenticated materials')
+    for ev in data['interaction_evidence']:
+        if not all(ev.get(k) for k in ('id','left_ref','right_ref','interaction_type','evidence_tier','method','observation','source_id','limitations')):die('Incomplete interaction evidence')
+        if ev['source_id'] not in sources:die('Unattributed interaction evidence')
+        for ref in (ev['left_ref'],ev['right_ref']):
+            if not isinstance(ref,str) or ':' not in ref:die('Interaction reference must be typed')
+            kind,ident=ref.split(':',1)
+            if kind not in refs or ident not in refs[kind]:die('Unknown interaction entity')
+        if ev['left_ref']==ev['right_ref']:die('Interaction cannot self-reference')
+        if ev.get('clinical_efficacy_established') is True and ev.get('evidence_tier') not in ('human_trial','systematic_review_of_human_trials'):die('Interaction hypothesis falsely described as proven efficacy')
+        if ev['interaction_type'] in ('laboratory_synergy','laboratory_antagonism') and not ev.get('assay_endpoint'):die('Synergy/antagonism require explicit experimental assay endpoint')
+    for row in data['practice_claims']+data['dose_guidance']:
+        if row.get('material_id') and row['material_id'] not in mids:die('Practice or dose refers to missing medicinal material')
     return True
 def verify(batch):
     ident=batch.get('batch_id','')
@@ -134,6 +170,13 @@ def verify(batch):
         if not ms.get('name') or not goodurl(ms.get('reference_url')) or not isinstance(ms.get('axes'),list):die('Invalid medical-system registry entry')
     for row in batch.get('practice_claims',[]):
         if row.get('profile_depth')=='deep' and not (row.get('system_id') and row.get('original_term') and isinstance(row.get('framework_details'),dict) and row.get('framework_details')):die('Incomplete deep medical profile')
+    for key in ('medicinal_materials','formulas','formula_components','interaction_evidence'):
+        for row in batch.get(key,[]):
+            if not row.get('id') or not row.get('source_id'):die('Unattributed formula/material batch record')
+    for item in batch.get('formulas',[]):
+        if not item.get('limitations') or not item.get('evidence_tier'):die('Formula missing evidence limits')
+    for row in batch.get('interaction_evidence',[]):
+        if not row.get('evidence_tier') or not row.get('method') or not row.get('limitations'):die('Unsupported interaction assertion')
 def merge(data,batch):
     result=copy.deepcopy(data)
     for coll in COLLS:
