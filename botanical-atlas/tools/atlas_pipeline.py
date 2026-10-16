@@ -227,6 +227,36 @@ def render(data):
         if not asset or '</script' in asset.lower() or '</style' in asset.lower():die('Untrusted workbench asset content')
         html=html.replace(marker,asset)
     return html.encode('utf-8')
+def coverage_report(data):
+    """Deterministic editorial coverage metrics: not medical evidence and not a link-availability scan."""
+    ids=lambda key,ref='organism_id':{r[ref] for r in data[key] if r.get(ref)}
+    attributed={r['id'] for r in data['sources'] if goodurl(r.get('url'))}
+    constituents={r['compound_id'] for r in data['bioactivities'] if r.get('compound_id')}
+    hard_to_verify=[r['id'] for r in data['sources'] if not goodurl(r.get('url'))]
+    weaker_occurrences=[r.get('id') for r in data['occurrences'] if 'legacy' in str(r.get('verification','')).lower() or r.get('source_id') not in attributed]
+    species={r['id'] for r in data['organisms']}
+    material_covered=ids('medicinal_materials')
+    medical=ids('practice_claims')
+    return {
+        'schema':'atlas_editorial_coverage_v1',
+        'catalog_revision':data['meta'].get('catalog_revision'),
+        'warning':'Coverage means a record exists, not verified efficacy, clinical benefit or safe dosing. Source URLs have not been independently fetched.',
+        'counts':{key:len(data[key]) for key in COLLS},
+        'plant_count':sum(1 for r in data['organisms'] if r.get('kingdom')=='Plantae'),
+        'fungus_count':sum(1 for r in data['organisms'] if r.get('kingdom')=='Fungi'),
+        'organisms_with_claims':len(medical),
+        'organisms_without_claims':len(species-medical),
+        'organisms_with_authenticated_material_records':len(material_covered),
+        'organisms_without_material_records':len(species-material_covered),
+        'organisms_with_dose_context':len(ids('dose_guidance')),
+        'organisms_with_folklore':len(ids('folklore')),
+        'deep_medicinal_profiles':sum(1 for r in data['practice_claims'] if r.get('profile_depth')=='deep'),
+        'compound_identities_with_assay_records':len(constituents),
+        'compound_identities_without_assay_records':len(data['compounds'])-len(constituents),
+        'legacy_or_unclear_chemical_occurrence_ids':sorted(x for x in weaker_occurrences if x),
+        'source_entries_missing_usable_url':sorted(hard_to_verify),
+        'unreviewed_assays_are_not_zero_effects':True
+    }
 def dbwrite(data,path):
     cx=sqlite3.connect(path)
     try:
@@ -259,6 +289,7 @@ def run(ingest=False):
     if batches:save(canonical,(json.dumps(state,indent=2,ensure_ascii=False)+'\n').encode('utf-8'))
     save(ROOT/'site/index.html',html)
     save(ROOT/'data/atlas.sqlite',sqlite_blob)
+    save(ROOT/'data/coverage.json',(json.dumps(coverage_report(state),indent=2,ensure_ascii=False)+'\n').encode('utf-8'))
     for file in batches:
         (ROOT/'processed').mkdir(exist_ok=True)
         shutil.move(str(file),str(ROOT/'processed'/file.name))

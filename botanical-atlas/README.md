@@ -62,3 +62,7 @@ The Atlas now has a **Medical systems** library separate from **Medicinal claims
 ## v1.6 medicinal material and formula graph
 
 Four new typed tables connect botanical taxa to preparation-specific medicinal materials, multi-herb formulas, roles/components and source-attributed interaction research. Browse via **Medicinal materials** and **Formulas & interactions**; plant identities also link to their materials. These records are references to historical ingredients and scientific hypotheses, **not** recipes, dosing instructions, medical recommendations, or proof of combination synergy. Formula coverage remains preliminary, with a Trikatu case study as an acceptance test. See `docs/INGESTION_FORMAT.md` and `docs/FULL_BUILD_STRATEGY.md` for schema and staged product milestones.
+
+### Automated editorial coverage report (v1.6)
+
+Every publishing run now regenerates `data/coverage.json`. It counts plant/fungal identities, medicinal claims, deep profiles, preparation identities, historical formulas, compound-assay coverage, missing legacy source URLs and source-poor chemical occurrences. This is a **documentation completeness report**, not independent literature verification or proof of efficacy. The Research Workbench dashboard now measures eight dimensions per organism, including authenticated medicinal materials and formula connections; compare panels show sourced preparation details and formula evidence without invented synergy.

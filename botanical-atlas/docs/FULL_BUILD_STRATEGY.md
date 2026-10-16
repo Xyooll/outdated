@@ -45,3 +45,7 @@ MVP is not a completed global pharmacopeia. 65 organisms and 32 medicinal-claim 
 - Verified first formula example intended: Trikatu (dried ginger rhizome, black pepper fruit, long pepper fruit), linked to the 1992 Journal of Ethnopharmacology review; source-backed historical composition is NOT proof of efficacy, and its hypothesized bioavailability effects cannot substitute for pharmacokinetic clinical trials. Actual publication must be confirmed separately.
 
 Still incomplete: full global formula corpus, genuinely measured herbal combination interactions, batch-specific processing quantities, source-verification automation, original-language licensing and community permissions, user accessibility/mobile interaction tests, clinically validated safety and effectiveness.
+
+### v1.6 second milestone: visible research deficits
+
+Automatic publisher emits deterministic `data/coverage.json` per revision and flags unresolved legacy URLs and compound occurrences. Research Workbench expands to 8 documentation-based axes per organism and surfaces sourced material/formula relationships during side-by-side comparison. Remaining work: external source verification, integrity of legal source attribution, robust chemical evidence extraction, comprehensive native-worldview profiles, quantified interaction causality, automated browsers/Android smoke tests, nonpublic knowledge gate and app sync.

@@ -157,6 +157,22 @@ class AtlasTests(unittest.TestCase):
         target=d['formulas'][0]['id']
         d['formula_components']=[r for r in d['formula_components'] if r['formula_id']!=target][:0]+[next(r for r in d['formula_components'] if r['formula_id']==target)]
         with self.assertRaises(ValueError):p.check(d)
+    def test_editorial_coverage_audit(self):
+        report=p.coverage_report(self.data)
+        self.assertEqual(report['counts']['organisms'],len(self.data['organisms']))
+        self.assertEqual(report['counts']['formulas'],len(self.data['formulas']))
+        self.assertEqual(report['counts']['medicinal_materials'],len(self.data['medicinal_materials']))
+        self.assertGreaterEqual(report['deep_medicinal_profiles'],1)
+        self.assertTrue(report['source_entries_missing_usable_url'])
+        self.assertTrue(report['warning'])
+        self.assertEqual(report['compound_identities_with_assay_records']+report['compound_identities_without_assay_records'],len(self.data['compounds']))
+    def test_workbench_coverage_has_formula_layer(self):
+        js=(ROOT/'app/workbench.js').read_text('utf-8')
+        self.assertIn('Identified preparation',js)
+        self.assertIn('Linked formula',js)
+        self.assertIn('Known medicinal materials',js)
+        self.assertIn('Linked traditional formulas',js)
+        self.assertIn('/8 documented',js)
     def test_identity_conflict(self):
         with self.assertRaises(ValueError):p.merge(self.data,{'organisms':[{'id':'BOT-001','scientific_name':'Wrong identity'}]})
 if __name__=='__main__':unittest.main()
