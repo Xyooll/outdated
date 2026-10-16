@@ -61,8 +61,23 @@ function activityForOrganism(id){
  return `<section class="section"><h2>Biological effects in research studies</h2><div class="cap-note">Lab effects for an isolated compound do NOT show that using whole clove or an herbal preparation treats infection. Laboratory assay concentrations are never safe human doses.</div>${activityCards(direct)}${ingredient.length?'<h3 style="margin-top:15px">Separately studied isolated constituents</h3>'+activityCards(ingredient):''}</section>`;
 }
 function noteWidget(id){return `<section class="section notes"><div class="sectionhead"><h2>Private research note</h2><span class="tag">Saved only in this browser</span></div><textarea id="notebox" placeholder="Your observation, research question, or source to check…">${esc(savedNotes[id]||'')}</textarea><div class="noteaction"><span class="mini-info">Notes are not validated evidence; export them before clearing browser data.</span><button class="btn primary" data-save="${esc(id)}">Save note</button></div></section>`}
+function traditionDetail(c){
+ const f=c.framework_details;
+ if(!f)return '';
+ const item=(name,val)=>val&&(!Array.isArray(val)||val.length)?'<div class="meta"><b>'+esc(name)+':</b> '+esc(Array.isArray(val)?val.join(' · '):val)+'</div>':'';
+ let parts='<div class="notice"><b>Traditional medical classification (source-specific)</b>';
+ parts+=item('Nature / temperature',f.nature);
+ parts+=item('Flavor',f.flavor);
+ parts+=item('Meridians / channels',f.meridians);
+ parts+=item('Pattern indications',f.patterns);
+ parts+=item('Functional actions',f.actions);
+ parts+=item('Traditional contraindications',f.contraindicated_patterns);
+ parts+=item('Recorded source differences',f.source_variations);
+ parts+=item('Framework cautions',f.interpretation);
+ return parts+'</div>';
+}
 function claimCard(c){
- return `<div class="tile"><div class="culture-meta">${esc(medicalSystemGroup(c))} · ${esc(c.region)}</div><div class="pills" style="margin:6px 0"><span class="pill ${c.claim_type==='clinical_evidence'?'':'warning'}">${c.claim_type==='clinical_evidence'?'Human clinical evidence (quality varies)':'Traditional or historical claim — not clinical proof'}</span></div><h3>${esc(c.condition_or_goal)}</h3><p>${esc(c.tradition)} · ${esc(c.plant_part)} · ${esc(c.preparation)}</p><div class="meta"><b>Terms/framework:</b> ${esc((c.framework||[]).join(' · ')||'Not specified')}<br><b>Evidence type:</b> ${esc(c.evidence_tier)}<br><b>Claim category:</b> ${esc(c.claim_type)}</div><div class="notice">${esc(c.limitations)}</div><div class="mini-info">${linkSource(c.source_id)}</div></div>`
+ return `<div class="tile"><div class="culture-meta">${esc(medicalSystemGroup(c))} · ${esc(c.region)}</div><div class="pills" style="margin:6px 0"><span class="pill ${c.claim_type==='clinical_evidence'?'':'warning'}">${c.claim_type==='clinical_evidence'?'Human clinical evidence (quality varies)':'Traditional or historical claim — not clinical proof'}</span></div><h3>${esc(c.condition_or_goal)}</h3><p>${esc(c.tradition)} · ${esc(c.plant_part)} · ${esc(c.preparation)}</p><div class="meta"><b>Terms/framework:</b> ${esc((c.framework||[]).join(' · ')||'Not specified')}<br><b>Evidence type:</b> ${esc(c.evidence_tier)}<br><b>Claim category:</b> ${esc(c.claim_type)}</div>${traditionDetail(c)}<div class="notice">${esc(c.limitations)}</div><div class="mini-info">${linkSource(c.source_id)}</div></div>`
 }
 function perspectivePanel(oid){
  const items=practice.filter(x=>x.organism_id===oid),ds=dosages.filter(x=>x.organism_id===oid),fs=folklore.filter(x=>x.organism_id===oid),rs=regulatory.filter(x=>x.organism_id===oid);
