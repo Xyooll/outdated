@@ -99,6 +99,19 @@ class AtlasTests(unittest.TestCase):
         self.assertIn('Study effects',html)
         self.assertIn('ACT-EUG-GIARDIA',html)
         self.assertIn('ACT-CLOVE-GIARDIA-OIL',html)
+    def test_medicinal_traditions_are_searchable(self):
+        data=self.data
+        self.assertGreaterEqual(len(data['practice_claims']),32)
+        systems={r['system'] for r in data['practice_claims']}
+        self.assertIn('Ayurveda',systems)
+        self.assertIn('Traditional Chinese Medicine',systems)
+        self.assertIn('Unani / Tibb',systems)
+        self.assertIn('Ghanaian traditional herbal medicine',systems)
+        self.assertTrue(p.check(data))
+    def test_claims_present_in_offline_html(self):
+        html=p.render(self.data).decode('utf-8')
+        for token in ('>Medicinal claims</button>','medicalSystemGroup(c)','PC-CULTURE-TURMERIC-UNANI','PC-CULTURE-WITHANIA-EAFRICA','Traditional or historical claim'):
+            self.assertIn(token,html)
     def test_identity_conflict(self):
         with self.assertRaises(ValueError):p.merge(self.data,{'organisms':[{'id':'BOT-001','scientific_name':'Wrong identity'}]})
 if __name__=='__main__':unittest.main()
