@@ -49,3 +49,7 @@ Still incomplete: full global formula corpus, genuinely measured herbal combinat
 ### v1.6 second milestone: visible research deficits
 
 Automatic publisher emits deterministic `data/coverage.json` per revision and flags unresolved legacy URLs and compound occurrences. Research Workbench expands to 8 documentation-based axes per organism and surfaces sourced material/formula relationships during side-by-side comparison. Remaining work: external source verification, integrity of legal source attribution, robust chemical evidence extraction, comprehensive native-worldview profiles, quantified interaction causality, automated browsers/Android smoke tests, nonpublic knowledge gate and app sync.
+
+### Terminology fix: source-linked is not laboratory-authenticated
+
+Source-documented material identity is not an independently authenticated consumer product or chemically verified sample. The v1.6 dashboard counts only source-attributed preparation records; it must not imply that those ingredients have been authenticated in a lab or are safe to ingest. Later stages will require separate sample verification and batch-specific chemistry where possible.

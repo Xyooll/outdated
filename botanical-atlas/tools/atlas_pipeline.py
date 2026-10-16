@@ -246,7 +246,7 @@ def coverage_report(data):
         'fungus_count':sum(1 for r in data['organisms'] if r.get('kingdom')=='Fungi'),
         'organisms_with_claims':len(medical),
         'organisms_without_claims':len(species-medical),
-        'organisms_with_authenticated_material_records':len(material_covered),
+        'organisms_with_source_attributed_material_records':len(material_covered),
         'organisms_without_material_records':len(species-material_covered),
         'organisms_with_dose_context':len(ids('dose_guidance')),
         'organisms_with_folklore':len(ids('folklore')),

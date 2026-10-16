@@ -162,6 +162,7 @@ class AtlasTests(unittest.TestCase):
         self.assertEqual(report['counts']['organisms'],len(self.data['organisms']))
         self.assertEqual(report['counts']['formulas'],len(self.data['formulas']))
         self.assertEqual(report['counts']['medicinal_materials'],len(self.data['medicinal_materials']))
+        self.assertEqual(report['organisms_with_source_attributed_material_records'],len({m['organism_id'] for m in self.data['medicinal_materials']}))
         self.assertGreaterEqual(report['deep_medicinal_profiles'],1)
         self.assertTrue(report['source_entries_missing_usable_url'])
         self.assertTrue(report['warning'])
