@@ -112,6 +112,24 @@ class AtlasTests(unittest.TestCase):
         html=p.render(self.data).decode('utf-8')
         for token in ('>Medicinal claims</button>','medicalSystemGroup(c)','PC-CULTURE-TURMERIC-UNANI','PC-CULTURE-WITHANIA-EAFRICA','Traditional or historical claim'):
             self.assertIn(token,html)
+    def test_medical_systems_and_source_specific_axes(self):
+        self.assertGreaterEqual(len(self.data['medical_systems']),10)
+        byid={s['id']:s for s in self.data['medical_systems']}
+        self.assertIn('TCM',byid)
+        self.assertIn('AYURVEDA',byid)
+        self.assertIn('UNANI',byid)
+        self.assertTrue(any(a['id']=='five_phases' for a in byid['TCM']['axes']))
+        self.assertTrue(any(a['id']=='dosha' for a in byid['AYURVEDA']['axes']))
+        self.assertTrue(any(a['id']=='mizaj' for a in byid['UNANI']['axes']))
+        self.assertTrue(p.check(self.data))
+    def test_deep_system_profile_must_be_valid(self):
+        d=copy.deepcopy(self.data)
+        d['practice_claims'][0]['system_id']='UNKNOWN-TRADITION'
+        with self.assertRaises(ValueError):p.check(d)
+    def test_medical_systems_show_in_offline_app(self):
+        html=p.render(self.data).decode('utf-8')
+        for token in ('>Medical systems</button>', 'function systemPage(', 'function nativeFramework(', 'WHO'):
+            if token!='WHO':self.assertIn(token,html)
     def test_identity_conflict(self):
         with self.assertRaises(ValueError):p.merge(self.data,{'organisms':[{'id':'BOT-001','scientific_name':'Wrong identity'}]})
 if __name__=='__main__':unittest.main()
