@@ -75,6 +75,30 @@ class AtlasTests(unittest.TestCase):
         identities={x['id'] for x in self.data['organisms']}
         self.assertTrue(all(x['organism_id'] in identities for x in self.data['practice_claims']))
         self.assertTrue(all(x['organism_id'] in identities for x in self.data['folklore']))
+    def test_bioactivity_records_and_sources(self):
+        self.assertGreaterEqual(len(self.data['bioactivities']),8)
+        sources={x['id'] for x in self.data['sources']}
+        self.assertTrue(all(x['source_id'] in sources for x in self.data['bioactivities']))
+        self.assertTrue(p.check(self.data))
+    def test_reject_false_eugenol_cure(self):
+        d=copy.deepcopy(self.data)
+        row=copy.deepcopy(d['bioactivities'][0])
+        row['id']='TEST-FALSE-CURE'
+        row['human_clinical_efficacy_established']=True
+        d['bioactivities'].append(row)
+        with self.assertRaises(ValueError):p.check(d)
+    def test_reject_missing_activity_source(self):
+        d=copy.deepcopy(self.data)
+        row=copy.deepcopy(d['bioactivities'][0])
+        row['id']='TEST-MISSING-SOURCE'
+        row['source_id']='ABSENT-REFERENCE'
+        d['bioactivities'].append(row)
+        with self.assertRaises(ValueError):p.check(d)
+    def test_study_tab_is_rendered(self):
+        html=p.render(self.data).decode('utf-8')
+        self.assertIn('Study effects',html)
+        self.assertIn('ACT-EUG-GIARDIA',html)
+        self.assertIn('ACT-CLOVE-GIARDIA-OIL',html)
     def test_identity_conflict(self):
         with self.assertRaises(ValueError):p.merge(self.data,{'organisms':[{'id':'BOT-001','scientific_name':'Wrong identity'}]})
 if __name__=='__main__':unittest.main()

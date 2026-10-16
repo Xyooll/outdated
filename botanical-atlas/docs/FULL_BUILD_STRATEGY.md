@@ -29,3 +29,7 @@ Searchable offline application, 2D compound diagrams where authenticated, source
 - Entire visualization is bundled into the offline HTML by the canonical publisher. CI checks JavaScript syntax and embeds/tests all assets.
 
 **Next full-build priorities:** independently source and complete medicinal/dose/culture/folklore claims across existing taxa, strengthen evidence grading and chemical occurrence provenance, add cross-entry linked clinical trial details and interaction graph, automate accessibility/browser smoke checks and a properly hosted sync experience. Current downloadable offline HTML snapshots do not self-refresh.
+
+## Longitudinal evidence capture policy
+
+Do not equate the four host-effect domains with a complete biological action catalog. A fifth orthogonal indexing *dimension* is assay-level target-effect evidence, not a new health domain: what organism, cells, receptor or pathway was actually tested, against which tested preparation, at what concentration and stage, with what comparator, and which clinical/animal evidence tier? New compound research must include both beneficial and harmful findings, null results, mechanisms not confirmed by docking and negative interactions. Taxonomy, preparations and source identifiers must be validated. Research batches remain no-approval/auto-publish; incomplete evidence is labeled, not rejected purely for not being clinically confirmed.
