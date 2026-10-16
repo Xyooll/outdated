@@ -339,15 +339,9 @@
       "target_taxon": "Homo sapiens",
       "life_stage": "older adults aged 75 years and above",
       "study_model": "randomized double-blind placebo-controlled clinical trial; N=3069; median follow-up 6.1 years",
-      "evidence_tier": "human_randomized_trial",
+      "evidence_tier": "human_trial",
       "endpoint": "incident all-cause dementia",
-      "metric": {
-        "name": "hazard_ratio",
-        "value": 1.12,
-        "unit": "unitless",
-        "confidence_interval_95": "0.94-1.33"
-      },
-      "observed_effect": "No statistically significant reduction in dementia incidence versus placebo (P=0.21).",
+      "observed_effect": "No statistically significant reduction in dementia incidence versus placebo (P=0.21). Trial hazard ratio 1.12 (95% CI 0.94–1.33), P=0.21.",
       "mechanism": "Not a receptor-binding assay.",
       "mechanism_status": "clinical_outcome_no_target_binding_assessed",
       "source_id": "SRC-030-GINKGO-GEM",
@@ -363,14 +357,9 @@
       "activity_category": "immunomodulatory_cell_assay",
       "target_taxon": "Mus musculus-derived J774A.1 macrophage cell line",
       "life_stage": "cultured cells",
-      "study_model": "in vitro macrophage cytokine secretion assay with purified acetylated TFP-F1",
+      "study_model": "in vitro macrophage cytokine secretion assay with purified acetylated TFP-F1; exposure reported at 1 µg/mL",
       "evidence_tier": "in_vitro",
       "endpoint": "TNF-alpha and IL-6 secretion",
-      "metric": {
-        "name": "tested_concentration",
-        "value": 1,
-        "unit": "µg/mL"
-      },
       "observed_effect": "TFP-F1 increased TNF-alpha and IL-6 secretion in cultured macrophages; deacetylation reduced activity.",
       "mechanism": "Authors implicated TLR4 signaling; no direct receptor binding constant established here.",
       "mechanism_status": "pathway_implicated_direct_binding_unverified",
