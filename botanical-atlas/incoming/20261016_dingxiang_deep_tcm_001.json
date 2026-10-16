@@ -1,0 +1,130 @@
+{
+  "batch_id": "20261016_dingxiang_deep_tcm_001",
+  "research_date": "2026-10-16",
+  "research_reference_url": "https://shennongalpha.westlake.edu.cn/en/knowledge/nmm-0028",
+  "summary": "First deep medical-system profile for Ding Xiang, following system-specific materia medica axes and conflicting meridian source attributions. Includes separate TCM traditional amount and safety framing, not medical dosing advice.",
+  "sources": [
+    {
+      "id": "SRC-TCM-DING-2020-PHARM",
+      "organization": "Chinese Pharmacopoeia 2020 as reproduced by Westlake University ShennongAlpha",
+      "title": "Dingxiang (Caryophylli Flos, Syzygium aromaticum flower-bud): 2020 monograph",
+      "url": "https://shennongalpha.westlake.edu.cn/en/knowledge/nmm-0028",
+      "type": "2020_chinese_pharmacopoeia_monograph",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-TCM-DING-ACUTODAY",
+      "organization": "Acupuncture Today practitioner herb reference",
+      "title": "Cloves (ding xiang): channel attributions, historical functions, and pattern cautions",
+      "url": "https://acupuncturetoday.com/herbs-and-botanicals/cloves-ding-xiang",
+      "type": "secondary_tcm_practitioner_reference",
+      "checked_on": "2026-10-16"
+    },
+    {
+      "id": "SRC-WHO-TCM-TERMS-2022",
+      "organization": "World Health Organization",
+      "title": "WHO international standard terminologies on traditional Chinese medicine",
+      "url": "https://www.who.int/publications-detail-redirect/9789240042322",
+      "type": "terminology_standard_not_plant_efficacy_source",
+      "checked_on": "2026-10-16"
+    }
+  ],
+  "practice_claims": [
+    {
+      "id": "PC-TCM-DINGXIANG-2020-DEEP",
+      "organism_id": "BOT-001",
+      "system_id": "TCM",
+      "profile_depth": "deep",
+      "system": "Traditional Chinese Medicine",
+      "tradition": "Chinese Pharmacopoeia (2020) Dingxiang materia medica; practitioner secondary source contrasts",
+      "region": "China / East Asia",
+      "original_term": "丁香 (Dīngxiāng) · Caryophylli Flos",
+      "framework": [
+        "辛 (pungent/acrid)",
+        "温 (warm)",
+        "脾、胃、肺、肾经 (Spleen/Stomach/Lung/Kidney meridians)",
+        "温中降逆 (warm middle/descend counterflow Qi)",
+        "补肾助阳 (assist Kidney Yang)"
+      ],
+      "framework_details": {
+        "nature": "温 (warm); this specific monograph does not classify it as hot",
+        "flavor": "辛 (pungent / acrid)",
+        "meridians": [
+          "脾 (Spleen)",
+          "胃 (Stomach)",
+          "肺 (Lung) — in 2020 Chinese Pharmacopoeia",
+          "肾 (Kidney)"
+        ],
+        "patterns": [
+          "脾胃虚寒 — Spleen/Stomach deficiency-cold",
+          "呃逆、呕吐 — hiccups and vomiting/counterflow Qi",
+          "食少吐泻、心腹冷痛 — low appetite, vomiting/diarrhea, cold abdominal pain",
+          "肾虚阳痿 — impotence in traditional Kidney-deficiency pattern"
+        ],
+        "actions": [
+          "温中降逆 — warm the middle and lower counterflow Qi",
+          "补肾助阳 — tonify Kidney and assist Yang"
+        ],
+        "contraindicated_patterns": [
+          "Practitioner guide: external heat or Yin-deficiency heat patterns.",
+          "Chinese Pharmacopoeia: 不宜与郁金同用 — traditionally incompatible with Yu Jin (Curcumae Radix), not proof of a clinical interaction with ordinary culinary turmeric."
+        ],
+        "source_variations": [
+          "Chinese Pharmacopoeia 2020 gives Spleen, Stomach, Lung, and Kidney channel tropism.",
+          "Acupuncture Today practitioner summary lists only Spleen, Stomach and Kidney; preserve both attributions."
+        ],
+        "interpretation": "Heat/cold, meridians, Kidney Yang and counterflow Qi are descriptions within TCM's theoretical framework, not biomedical clinical diagnoses. No five-phase assignment is inserted without source-specific evidence."
+      },
+      "condition_or_goal": "Traditional Spleen/Stomach deficiency-cold, counterflow hiccups and vomiting, appetite/digestive complaints, and Kidney Yang deficiency patterns.",
+      "claim_type": "traditional_pharmacopoeial_indications",
+      "plant_part": "Dried unopened flower buds (Caryophylli Flos; Syzygium aromaticum / historical Eugenia caryophyllata)",
+      "preparation": "Pharmacopoeial dried flower buds; traditional internal use or powdered external use, not interchangeable with concentrated eugenol/clove oil.",
+      "route": "Traditional oral medicinal material, or externally applied powder as historically specified; not prescribing instructions.",
+      "evidence_tier": "chinese_pharmacopoeia_2020_traditional_materia_medica_not_established_biomedical_efficacy",
+      "source_id": "SRC-TCM-DING-2020-PHARM",
+      "supporting_source_ids": [
+        "SRC-TCM-DING-ACUTODAY",
+        "SRC-WHO-TCM-TERMS-2022"
+      ],
+      "clinical_efficacy_established": false,
+      "limitations": "Documented theoretical properties and historical indications only. No demonstration of cure of infection, vomiting, impotence, renal illness or other conditions. Separate concentrated clove oil toxicity, drug interactions and verified safe amounts. Secondary practitioner source may disagree with Pharmacopoeia; labels remain source-attributed."
+    }
+  ],
+  "dose_guidance": [
+    {
+      "id": "DG-TCM-DINGXIANG-2020-MONOGRAPH",
+      "organism_id": "BOT-001",
+      "tradition": "Chinese Pharmacopoeia 2020 (historical/pharmacopoeial reference only)",
+      "source_id": "SRC-TCM-DING-2020-PHARM",
+      "part": "Dried whole flower buds — Caryophylli Flos",
+      "preparation": "Dried medicinal bud material; NOT clove essential oil, purified eugenol, or arbitrary extracts.",
+      "route": "Monograph reports internal administration or ground powder for external use; not equivalent routes.",
+      "population": "General materia medica reference, not a validated safe amount for children, pregnancy, anticoagulant use, liver disorders or chronic dosing.",
+      "intended_use": "Traditional deficiency-cold and counterflow pattern indications.",
+      "amount_text": "1–3 g (Chinese Pharmacopoeia 2020 reference for medicinal buds).",
+      "frequency_text": "No individualized frequency or duration established by this record.",
+      "evidence_status": "historical_pharmacopoeia_amount_not_personally_safe_dose",
+      "upper_limit_status": "3 g is not a universal safe maximum or proof of therapeutic efficacy.",
+      "contraindications": "Traditional sources caution about heat-pattern and Yin-deficiency heat presentations; traditional incompatibility with Yu Jin (Curcumae Radix) is not a proven general food/drug interaction. Concentrated oils can cause serious toxicity.",
+      "risks": "A monograph quantity is not safe self-treatment advice; do not substitute oil, multiply doses, or use for serious symptoms."
+    }
+  ],
+  "cultural_uses": [
+    {
+      "id": "CUL-TCM-DINGXIANG-2020",
+      "organism_id": "BOT-001",
+      "region": "China and East Asia",
+      "tradition": "Chinese materia medica / Chinese Pharmacopoeia 2020",
+      "original_term": "丁香 (Dīngxiāng; Caryophylli Flos)",
+      "part": "Dried clove flower buds",
+      "preparation": "Traditional oral medicinal material or external powder, not essential-oil self-treatment",
+      "reported_use": "Traditionally classified as warm and pungent, associated with Spleen, Stomach, Lung and Kidney channels; warm middle and support descending counterflow Qi, with Kidney Yang support claims.",
+      "use_case": "Cold-pattern digestive, counterflow vomiting/hiccup, Kidney Yang pattern historical use",
+      "claim_kind": "traditional_use",
+      "source_id": "SRC-TCM-DING-2020-PHARM",
+      "verification": "chinese_pharmacopoeia_2020_materia_medica_reference",
+      "clinical_efficacy_established": false,
+      "limitations": "Pattern words and historical indications are TCM concepts, not evidence that buds treat a corresponding biomedical disease or that essential oil is safe to ingest."
+    }
+  ]
+}
