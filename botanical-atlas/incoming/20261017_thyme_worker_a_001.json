@@ -1,0 +1,385 @@
+{
+  "batch_id": "20261017_thyme_worker_a_001",
+  "research_date": "2026-10-17",
+  "research_reference_url": "https://www.ema.europa.eu/en/medicines/herbal/thymi-herba",
+  "summary": "Worker A incremental, source-attributed Thymus vulgaris taxonomy, EMA preparation-specific medicinal profiles, clinical uncertainty, two historic metaphysical subprofiles, sample-specific oil constituents, one in-vitro oil assay, product safety and non-prescriptive age/route context. Not a complete dossier; v1.7 nested extraction/media schemas remain unimplemented.",
+  "research_method": "Primary regulator and taxonomic references, peer-reviewed analytical and in-vitro papers, source-labelled secondary cultural histories; source links inspected 2026-10-17; no original specimens, raw assays or clinical papers independently reproduced.",
+  "sources": [
+    {
+      "id": "SRC-THY-A-KEW-20261017",
+      "organization": "Royal Botanic Gardens, Kew / Plants of the World Online",
+      "title": "Thymus vulgaris L. accepted taxonomy, native range, synonyms",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:461765-1",
+      "type": "taxonomic_primary_backbone",
+      "checked_on": "2026-10-17"
+    },
+    {
+      "id": "SRC-THY-A-RHS-20261017",
+      "organization": "Royal Horticultural Society",
+      "title": "Thymus vulgaris common thyme horticultural description",
+      "url": "https://www.rhs.org.uk/plants/18213/thymus-vulgaris/details",
+      "type": "botanical_morphology",
+      "checked_on": "2026-10-17"
+    },
+    {
+      "id": "SRC-THY-A-EMA-HERBA-20261017",
+      "organization": "European Medicines Agency, HMPC",
+      "title": "Thymi herba — EU traditional herbal monograph and public assessment",
+      "url": "https://www.ema.europa.eu/en/medicines/herbal/thymi-herba",
+      "type": "traditional_use_regulatory_monograph",
+      "published": "2014-06-02",
+      "checked_on": "2026-10-17"
+    },
+    {
+      "id": "SRC-THY-A-EMA-OIL-20261017",
+      "organization": "European Medicines Agency, HMPC",
+      "title": "Thymi aetheroleum — EU traditional herbal monograph, revision 1",
+      "url": "https://www.ema.europa.eu/en/medicines/herbal/thymi-aetheroleum",
+      "type": "traditional_use_regulatory_monograph",
+      "published": "2020-09-21",
+      "checked_on": "2026-10-17"
+    },
+    {
+      "id": "SRC-THY-A-SATYAL-2016",
+      "organization": "Satyal, Murray, McFeeters and Setzer, Foods",
+      "title": "Essential Oil Characterization of Thymus vulgaris from Various Geographical Locations",
+      "url": "https://doi.org/10.3390/foods5040070",
+      "type": "primary_analytical_chemistry",
+      "published": "2016-10-27",
+      "checked_on": "2026-10-17"
+    },
+    {
+      "id": "SRC-THY-A-SCHMIDT-2012",
+      "organization": "Schmidt et al., Natural Product Communications / PubMed",
+      "title": "Chemical composition, olfactory analysis and antibacterial activity of Thymus vulgaris chemotypes",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22978238/",
+      "type": "primary_in_vitro_chemistry_and_microbiology",
+      "published": "2012",
+      "checked_on": "2026-10-17"
+    },
+    {
+      "id": "SRC-THY-A-UCDAVIS",
+      "organization": "University of California Davis, Nutritional Geography",
+      "title": "Thyme: historically reported Greek/Roman symbolism and Culpeper",
+      "url": "https://nutritionalgeography.faculty.ucdavis.edu/thyme/",
+      "type": "secondary_cultural_history",
+      "checked_on": "2026-10-17"
+    },
+    {
+      "id": "SRC-THY-A-MET-2012",
+      "organization": "The Metropolitan Museum of Art / The Medieval Garden Enclosed",
+      "title": "Thyme, Wild and Tame: Hildegard and medieval herbal tradition",
+      "url": "https://blog.metmuseum.org/cloistersgardens/2012/10/04/thyme-wild-and-tame/",
+      "type": "museum_historical_interpretation",
+      "published": "2012-10-04",
+      "checked_on": "2026-10-17"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-002",
+      "scientific_name": "Thymus vulgaris",
+      "common_name": "Thyme",
+      "family": "Lamiaceae",
+      "accepted_name_authority": "Thymus vulgaris L. (Kew POWO accepted, originally published 1753)",
+      "taxonomic_synonyms": [
+        "Origanum thymus Kuntze",
+        "Thymus collinus Salisb. (illegitimate superfluous name)"
+      ],
+      "native_range": "SW Europe and SE Italy; Kew lists Baleares, France, Italy and Spain as native and many other territories as introduced.",
+      "morphology": "Aromatic evergreen dwarf subshrub, often to ~30 cm, with small linear-to-ovate grey-green leaves and white/pink whorled flowers in early summer; cultivar and environment variation.",
+      "identification_cautions": "Common name 'thyme' covers multiple Thymus species; EMA Thymi herba and oil also include T. zygis. Species, plant part and chemotype must be confirmed before extrapolating chemistry or product safety; RHS cultivar traits do not guarantee wild identity.",
+      "identity_source_ids": [
+        "SRC-THY-A-KEW-20261017",
+        "SRC-THY-A-RHS-20261017"
+      ],
+      "taxonomy_verification": "source_documented_not_independently_specimen_authenticated",
+      "geographic_context": "Native southwestern Europe and southeastern Italy; widely cultivated and introduced elsewhere (Kew POWO).",
+      "part_and_preparation_note": "Leaves and flowering tops used as culinary/herbal material; dried herba, expressed juice, extracts and steam-distilled essential oil are distinct materials. Oil chemotypes vary markedly."
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-BOT-002-01",
+      "organism_id": "BOT-002",
+      "compound_id": "CMP-thymol",
+      "note": "Measured volatile constituent in a particular thymol-chemotype essential-oil sample: 47.1% thymol in Richerenches (France); not a species-wide concentration or an amount in brewed tea.",
+      "verification": "published_GC_MS_sample_specific_2016",
+      "source_id": "SRC-THY-A-SATYAL-2016",
+      "plant_part": "essential oil from plant material; precise input part for this sample not established by this record"
+    },
+    {
+      "id": "OCC-BOT-002-02",
+      "organism_id": "BOT-002",
+      "compound_id": "CMP-carvacrol",
+      "note": "Reported among volatile components of T. vulgaris essential oil; relative amounts vary with chemotype; no species-wide percentage is justified.",
+      "verification": "published_analytical_chemistry_reviewed_2016",
+      "source_id": "SRC-THY-A-SATYAL-2016"
+    },
+    {
+      "id": "OCC-BOT-002-03",
+      "organism_id": "BOT-002",
+      "compound_id": "CMP-p-cymene",
+      "note": "Measured at 20.1% in the Richerenches (France) thymol-chemotype essential oil; batch-specific GC-MS profile, not universal.",
+      "verification": "published_GC_MS_sample_specific_2016",
+      "source_id": "SRC-THY-A-SATYAL-2016"
+    },
+    {
+      "id": "OCC-BOT-002-04",
+      "organism_id": "BOT-002",
+      "compound_id": "CMP-gamma-terpinene",
+      "note": "Reported as a volatile constituent in T. vulgaris essential oil; amounts are chemotype/sample dependent.",
+      "verification": "published_analytical_chemistry_reviewed_2016",
+      "source_id": "SRC-THY-A-SATYAL-2016"
+    }
+  ],
+  "medicinal_materials": [
+    {
+      "id": "MAT-THY-A-DRIED-HERBA",
+      "organism_id": "BOT-002",
+      "part": "Leaves and flowers / above-ground herb (EMA also covers T. zygis)",
+      "preparation": "Dried comminuted herb for herbal tea; expressed juice and liquid/soft/dry solvent extracts are separately described in EMA monograph.",
+      "processing": "Drying/comminution, expression or solvent extraction depending on preparation; no method-specific yield or purity stated in this source.",
+      "material_class": "herbal_substance_and_preparations_not_essential_oil",
+      "tradition": "European HMPC traditional herbal use",
+      "system_id": "EUROPEAN",
+      "source_id": "SRC-THY-A-EMA-HERBA-20261017",
+      "identity_status": "source_documented_species_accepted_not_batch_authenticated",
+      "limitations": "EMA monograph covers both T. vulgaris and T. zygis, and multiple distinct preparations. No one-to-one efficacy or dosage equivalence across preparations; no extraction yield verified."
+    },
+    {
+      "id": "MAT-THY-A-STEAM-OIL",
+      "organism_id": "BOT-002",
+      "part": "Fresh flowering aerial parts (EMA also covers T. zygis)",
+      "preparation": "Steam-distilled thyme essential oil (Thymi aetheroleum); finished oral, topical and bath products are distinct.",
+      "processing": "Steam distillation of fresh flowering aerial material; source provides method class but not sample-specific yield, recovery or purity.",
+      "material_class": "essential_oil_not_dried_herb_or_pure_thymol",
+      "tradition": "European HMPC traditional herbal use",
+      "system_id": "EUROPEAN",
+      "source_id": "SRC-THY-A-EMA-OIL-20261017",
+      "identity_status": "source_documented_method_and_taxa_not_product_authenticated",
+      "limitations": "EMA oil monograph applies to defined preparations of either T. vulgaris or T. zygis; commercial oils differ in chemotype and quality. Essential oil is not interchangeable with tea, raw plant or isolated thymol; do not ingest unformulated oil."
+    }
+  ],
+  "practice_claims": [
+    {
+      "id": "PC-THY-A-EU-HERBA-TRAD",
+      "organism_id": "BOT-002",
+      "system_id": "EUROPEAN",
+      "profile_depth": "deep",
+      "system": "European herbal medicine",
+      "tradition": "European Medicines Agency HMPC traditional-use assessment",
+      "region": "European Union",
+      "original_term": "Thymi herba (thyme herb)",
+      "framework": [
+        "HMPC traditional use",
+        "productive cough with common cold",
+        "herb preparation and age-specific product distinctions"
+      ],
+      "framework_details": {
+        "materia_medica": "Dried/comminuted leaves and flowers, expressed juice or defined extracts; EMA also accepts Thymus zygis.",
+        "indications": "Traditional relief of productive cough associated with a cold.",
+        "route": "Oral herbal tea, liquid or solid products as specifically formulated.",
+        "contraindications": "Allergy to thyme or other Lamiaceae; stomach complaints possible.",
+        "interpretation": "HMPC classification is traditional use; clinical efficacy is not established by this classification."
+      },
+      "condition_or_goal": "Traditional relief of productive/chesty cough with colds.",
+      "claim_type": "traditional_regulatory_monograph",
+      "plant_part": "Leaves and flowers; not essential oil",
+      "preparation": "Dried/comminuted herb, expressed juice or specified soft/liquid/dry extracts",
+      "material_id": "MAT-THY-A-DRIED-HERBA",
+      "evidence_tier": "traditional_or_historical",
+      "clinical_efficacy_established": false,
+      "source_id": "SRC-THY-A-EMA-HERBA-20261017",
+      "limitations": "The monograph also covers T. zygis and product-specific formulations. HMPC reports insufficient clinical evidence for firm efficacy conclusions; no universal dosage or self-treatment advice."
+    },
+    {
+      "id": "PC-THY-A-EU-OIL-TRAD",
+      "organism_id": "BOT-002",
+      "system_id": "EUROPEAN",
+      "profile_depth": "deep",
+      "system": "European herbal medicine",
+      "tradition": "European Medicines Agency HMPC thyme oil traditional-use assessment",
+      "region": "European Union",
+      "original_term": "Thymi aetheroleum (thyme essential oil)",
+      "framework": [
+        "HMPC traditional use",
+        "steam-distilled flowering aerial-part oil",
+        "distinct oral/topical/bath medicinal products"
+      ],
+      "framework_details": {
+        "materia_medica": "Steam-distilled essential oil from fresh flowering aerial parts; EMA also includes T. zygis.",
+        "indications": "Traditional use for symptoms of productive cough/colds in specified medicinal products.",
+        "route": "Oral formulated liquids (adults); topical preparations (adults); bath products (some ages >3 years).",
+        "contraindications": "Thyme oil allergy, possible skin irritation; no facial application; special hot-bath contraindications.",
+        "interpretation": "Traditional-use assessment is not proof of clinical effectiveness or evidence that raw essential oil can safely be swallowed."
+      },
+      "condition_or_goal": "Traditional symptomatic relief of cough and colds in defined thyme-oil medicines.",
+      "claim_type": "traditional_regulatory_monograph",
+      "plant_part": "Fresh flowering above-ground parts, steam-distilled",
+      "preparation": "Defined thyme essential-oil medicinal products, not neat oil",
+      "material_id": "MAT-THY-A-STEAM-OIL",
+      "evidence_tier": "traditional_or_historical",
+      "clinical_efficacy_established": false,
+      "source_id": "SRC-THY-A-EMA-OIL-20261017",
+      "limitations": "Age/route restrictions differ; steam-distilled oil is distinct from tea and isolated thymol. HMPC judged evidence insufficient for confirmed clinical efficacy."
+    },
+    {
+      "id": "PC-THY-A-BIOMED-COUGH-UNCERTAIN",
+      "organism_id": "BOT-002",
+      "system_id": "BIOMEDICAL",
+      "system": "Modern biomedical clinical research",
+      "tradition": "EMA HMPC evidence review of human cough study",
+      "region": "European Union / human clinical evidence",
+      "condition_or_goal": "Assess comparative effect on productive cough in adults.",
+      "claim_type": "clinical_evidence",
+      "plant_part": "Thyme preparation; formulation insufficiently described in reviewed study",
+      "preparation": "Unspecified thyme preparation compared with bromhexine in 60 adults; not assignable to specific oil or chemotype",
+      "evidence_tier": "human_interventional",
+      "clinical_efficacy_established": false,
+      "source_id": "SRC-THY-A-EMA-HERBA-20261017",
+      "limitations": "HMPC reports no significant difference between groups, but sample size and inadequate formulation description preclude firm efficacy or equivalence conclusions. Original study not independently extracted in this batch."
+    },
+    {
+      "id": "PC-THY-A-EU-MEDIEVAL",
+      "organism_id": "BOT-002",
+      "system_id": "EUROPEAN",
+      "system": "European historical herbal medicine",
+      "tradition": "12th-century Hildegard of Bingen, Physica, as discussed by Metropolitan Museum of Art",
+      "region": "Medieval Central Europe",
+      "condition_or_goal": "Historical warming/drying humoral interpretation and ointment/steam-bath use.",
+      "claim_type": "historical_textual_interpretation",
+      "plant_part": "Thyme herb; historical term may not map uniquely to modern species",
+      "preparation": "Historical ointment and steam-bath descriptions, not modern treatment instructions",
+      "evidence_tier": "traditional_or_historical",
+      "clinical_efficacy_established": false,
+      "source_id": "SRC-THY-A-MET-2012",
+      "limitations": "Museum explicitly cautions Hildegard's 'thymus' may be modern T. vulgaris, not authenticated. Historical claims about leprosy, palsy, lice or eye conditions are NOT clinically verified; no medical directions should be inferred."
+    }
+  ],
+  "folklore": [
+    {
+      "id": "FOL-THY-A-GREEK-COURAGE",
+      "organism_id": "BOT-002",
+      "tradition": "Ancient Greek symbolism as summarized in UC Davis Nutritional Geography",
+      "region": "Ancient Greece / modern secondary historical summary",
+      "theme": "Courage, social grace and incense symbolism",
+      "description": "UC Davis recounts thyme as historically associated with courage and graceful elegance, and discusses an incense/sacrifice-related Greek etymological association. This is a historical cultural interpretation, not an empirically measurable energetic effect.",
+      "claim_type": "public_historical_symbolism",
+      "evidence_tier": "metaphysical_belief",
+      "source_id": "SRC-THY-A-UCDAVIS",
+      "limitations": "Secondary educational summary; primary ancient-language and ritual texts not yet independently checked. Do not universalize across all Greek traditions or imply spiritual/clinical proof.",
+      "public_knowledge": true,
+      "clinical_claim": false
+    },
+    {
+      "id": "FOL-THY-A-ROMAN-VENUS",
+      "organism_id": "BOT-002",
+      "tradition": "Roman classical herbal symbolism as summarized in UC Davis Nutritional Geography",
+      "region": "Ancient Rome / modern secondary historical summary",
+      "theme": "Association with Venus",
+      "description": "UC Davis reports a historical Roman association of thyme with Venus. Record as a source-specific cultural correspondence, not a general botanical fact or proof of any physiological effect.",
+      "claim_type": "public_historical_symbolism",
+      "evidence_tier": "metaphysical_belief",
+      "source_id": "SRC-THY-A-UCDAVIS",
+      "limitations": "Secondary summary only; exact ancient text, dating and plant-species identification remain unverified. Not a universally accepted planetary assignment.",
+      "public_knowledge": true,
+      "clinical_claim": false
+    }
+  ],
+  "regulatory_status": [
+    {
+      "id": "REG-THY-A-EMA-HERBA",
+      "organism_id": "BOT-002",
+      "jurisdiction": "European Union",
+      "regulator": "European Medicines Agency / HMPC",
+      "category": "European herbal monograph (traditional use)",
+      "preparation_scope": "Thymi herba; defined herb/juice/extract preparations of T. vulgaris or T. zygis",
+      "status_text": "HMPC concluded long-standing traditional use for productive cough associated with colds; not well-established clinical efficacy. National authorities assess individual product authorizations.",
+      "date_checked": "2026-10-17",
+      "source_id": "SRC-THY-A-EMA-HERBA-20261017",
+      "limitations": "Not blanket EU approval of all thyme products, extracts or claims."
+    },
+    {
+      "id": "REG-THY-A-EMA-OIL",
+      "organism_id": "BOT-002",
+      "jurisdiction": "European Union",
+      "regulator": "European Medicines Agency / HMPC",
+      "category": "European herbal monograph and EU list entry (traditional use)",
+      "preparation_scope": "Steam-distilled oil of fresh flowering aerial parts from T. vulgaris or T. zygis; specific oral/topical/bath medicines",
+      "status_text": "HMPC traditional-use conclusions and route-specific cautions; a 2026 scientific-data review call is shown on EMA site, not a replacement final monograph.",
+      "date_checked": "2026-10-17",
+      "source_id": "SRC-THY-A-EMA-OIL-20261017",
+      "limitations": "No claim that undiluted essential oil is safe to ingest or that every marketed oil is licensed."
+    }
+  ],
+  "dose_guidance": [
+    {
+      "id": "DG-THY-A-EMA-HERBA-AGE",
+      "organism_id": "BOT-002",
+      "tradition": "EU HMPC traditional-use product context",
+      "part": "Leaves and flowers (Thymi herba)",
+      "preparation": "EMA-covered herb, juice or extracts; exact product varies",
+      "route": "Oral, product-specific",
+      "population": "Generally adults/adolescents older than twelve years; only certain formulations for children older than four years per EMA summary",
+      "intended_use": "Traditional productive cough associated with colds",
+      "amount_text": "No universal safe amount across preparations; follow the specific authorized product monograph/leaflet, not a general herb dose.",
+      "frequency_text": "Not established across all preparations.",
+      "evidence_status": "not_established_across_products",
+      "upper_limit_status": "No single safe maximum established by this summary.",
+      "contraindications": "Allergy to thyme or other Lamiaceae; seek care if cough persists beyond a week or worsens.",
+      "risks": "Stomach complaints possible. Traditional use does not establish safety in pregnancy, breastfeeding, chronic disease or all ages.",
+      "source_id": "SRC-THY-A-EMA-HERBA-20261017"
+    },
+    {
+      "id": "DG-THY-A-EMA-OIL-AGE",
+      "organism_id": "BOT-002",
+      "tradition": "EU HMPC thyme-oil traditional-use product context",
+      "part": "Fresh flowering aerial parts",
+      "preparation": "Steam-distilled oil in finished medicinal products, NOT neat oil",
+      "route": "Defined oral/topical medicines for adults; bath products may have a different age scope",
+      "population": "EMA: oral/topical adult-only; some bath products for children older than three years",
+      "intended_use": "Traditional symptoms of cough/cold",
+      "amount_text": "No universal safe amount across routes or chemotypes; do not infer a dose from raw essential oil.",
+      "frequency_text": "Product-dependent; no generalized frequency.",
+      "evidence_status": "not_established_across_products",
+      "upper_limit_status": "No universally safe maximum established for concentrated oil.",
+      "contraindications": "Oil allergy, skin irritation; no facial application; avoid hot baths with open wounds, acute skin disease, severe infection/fever, serious circulatory or cardiac conditions as detailed by EMA.",
+      "risks": "Concentrated oil is not equivalent to herbal tea; do not self-administer undiluted oil or use adult product directions for children.",
+      "source_id": "SRC-THY-A-EMA-OIL-20261017"
+    }
+  ],
+  "safety": [
+    {
+      "organism_id": "BOT-002",
+      "alert": "EMA Thymi herba: contraindicated for patients allergic to thyme or Lamiaceae; stomach upset possible. A cold-associated cough lasting over one week or worsening warrants medical evaluation. Product age restrictions apply.",
+      "quality": "EMA_authoritative_product_scope_2026_10_17",
+      "source_id": "SRC-THY-A-EMA-HERBA-20261017"
+    },
+    {
+      "organism_id": "BOT-002",
+      "alert": "EMA Thymi aetheroleum: allergic reactions and skin irritation reported; not for facial application; full hot baths contraindicated with open wounds, serious skin disease, fever/severe infection, circulatory disorders, high blood pressure or heart failure. Finished products have route-specific age limits.",
+      "quality": "EMA_authoritative_product_scope_2026_10_17",
+      "source_id": "SRC-THY-A-EMA-OIL-20261017"
+    }
+  ],
+  "bioactivities": [
+    {
+      "id": "BIO-THY-A-OIL-GRAMPOS-2012",
+      "organism_id": "BOT-002",
+      "agent_type": "plant_essential_oil",
+      "activity_category": "antibacterial",
+      "target_taxon": "Staphylococcus aureus and Brochothrix thermosphacta (food-associated bacterial isolates)",
+      "life_stage": "Cultured vegetative bacteria; specific strains and stage details not resolved in this summary",
+      "study_model": "In-vitro antibacterial testing of four GC-MS/GC-FID-characterized thyme oil chemotypes (Schmidt et al. 2012)",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Antibacterial activity against Gram-positive and Gram-negative cultured bacteria",
+      "observed_effect": "All four tested chemotype oils showed stronger antibacterial activity against Gram-positive strains than against tested Gram-negative bacteria.",
+      "mechanism_status": "Mechanism not demonstrated by this study abstract; chemical composition correlation is not target binding.",
+      "dose_translation": "No human dose or treatment efficacy can be inferred from bacterial culture tests.",
+      "source_id": "SRC-THY-A-SCHMIDT-2012",
+      "limitations": "In vitro results only; chemotypes differed markedly and no general clinical antibiotic effect is established. Specific assay concentrations not extracted from full paper; no numeric potency claimed.",
+      "human_clinical_efficacy_established": false
+    }
+  ]
+}
