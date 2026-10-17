@@ -1,6 +1,6 @@
 {
   "schema": "atlas_editorial_coverage_v1",
-  "catalog_revision": 19,
+  "catalog_revision": 20,
   "warning": "Coverage means a record exists, not verified efficacy, clinical benefit or safe dosing. Source URLs have not been independently fetched.",
   "counts": {
     "organisms": 68,
@@ -9,7 +9,7 @@
     "domain_notes": 268,
     "safety": 79,
     "cultural_uses": 57,
-    "sources": 153,
+    "sources": 154,
     "structures": 193,
     "binding": 7,
     "practice_claims": 40,
@@ -18,7 +18,7 @@
     "regulatory_status": 5,
     "bioactivities": 11,
     "medical_systems": 10,
-    "medicinal_materials": 12,
+    "medicinal_materials": 13,
     "formulas": 1,
     "formula_components": 3,
     "interaction_evidence": 1

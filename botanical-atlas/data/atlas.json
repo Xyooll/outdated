@@ -5,7 +5,7 @@
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
     "status": "baseline imported into repository; source verification incomplete",
-    "catalog_revision": 19,
+    "catalog_revision": 20,
     "sync_mode": "repository-published; phone copy remains offline snapshot",
     "missing_legacy_source_ids": [
       "S001",
@@ -15,7 +15,7 @@
       "S006",
       "S012"
     ],
-    "last_ingestion_utc": "2026-10-17T22:10:01.706961+00:00",
+    "last_ingestion_utc": "2026-10-17T22:58:15.568253+00:00",
     "last_enrichment_date": "2026-10-15",
     "layer_status": "Plant comparison, research coverage and chemical-overlap workbench published; documentation is incomplete and every claim remains evidence graded.",
     "claim_system_policy": "Biomedicine, Ayurveda, TCM, Unani, regional herbalisms and ritual folklore are first-class systems; keep evidentiary methods and culturally specific categories distinct.",
@@ -9349,6 +9349,12 @@
       "license": "CC0-1.0",
       "archive_sha256": "ff325bc477c355799d12194e2d172c9e181ba44e59056c5ca97f41db595b7d19",
       "limitations": "Historical USDA source tables with older taxonomic/chemistry assertions; refer to raw reference codes and primary publications before upgrading validity."
+    },
+    {
+      "id": "SRC-THY-A-GEDIKOGLU-2019",
+      "title": "Evaluation of Thymus vulgaris and Thymbra spicata essential oils and plant extracts for chemical composition, antioxidant, and antimicrobial properties",
+      "organization": "Gedikoğlu, Sökmen and Çivit, 2019",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6526640/"
     }
   ],
   "structures": [
@@ -14164,6 +14170,18 @@
       "source_id": "SRC-THY-A-EMA-OIL-20261017",
       "identity_status": "source_documented_method_and_taxa_not_product_authenticated",
       "limitations": "EMA oil monograph applies to defined preparations of either T. vulgaris or T. zygis; commercial oils differ in chemotype and quality. Essential oil is not interchangeable with tea, raw plant or isolated thymol; do not ingest unformulated oil."
+    },
+    {
+      "id": "MAT-THY-A-HD-2019",
+      "organism_id": "BOT-002",
+      "part": "Air-dried cultivated Thymus vulgaris herb",
+      "preparation": "Laboratory hydrodistilled essential oil",
+      "processing": "Measured yield 1.80 ± 0.14% w/w, n=2; thymol 55.3%, carvacrol 8.7% and p-cymene 11.2% as relative GC-MS peak areas.",
+      "material_class": "laboratory_essential_oil",
+      "tradition": "Experimental phytochemistry",
+      "source_id": "SRC-THY-A-GEDIKOGLU-2019",
+      "identity_status": "study_identified_not_independently_authenticated",
+      "limitations": "Single research sample; relative GC-MS peak area is not chemical purity, oil composition is variable, and this result does not establish human efficacy or safe use."
     }
   ],
   "formulas": [
