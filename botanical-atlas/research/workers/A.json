@@ -7,5 +7,8 @@
   "research_sources": [
     "https://pmc.ncbi.nlm.nih.gov/articles/PMC6526640/"
   ],
-  "next": "Research missing traditions, structures and images; preserve separate source-backed profiles."
+  "next": "Resolve the duplicate incoming batch before the next ingestion, then continue thyme.",
+  "last_published_batch": "20261017_thyme_a_methods_002",
+  "publisher_issue": "A later edit recreated an incoming copy of the archived batch, causing a duplicate-batch validation error.",
+  "new_research": "Gedikoglu 2019 measured thyme oil yields: hydrodistillation 1.80 ± 0.14% and microwave-assisted 1.77 ± 0.05% (w/w, n=2)."
 }
