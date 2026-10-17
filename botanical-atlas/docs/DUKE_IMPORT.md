@@ -1,0 +1,7 @@
+# USDA Dr Duke bulk import (CC0)
+
+This public-domain USDA archive contains 16 historic CSV tables. The uploader supplied ZIP SHA256 ff325bc477c355799d12194e2d172c9e181ba44e59056c5ca97f41db595b7d19. Official catalog: https://catalog.data.gov/dataset/dr-dukes-phytochemical-and-ethnobotanical-databases .
+
+Use tools/import_duke.py with --archive ZIP --atlas data/atlas.json --output audit.json --mode audit. For optional controlled Atlas-compatible chemistry batch use --mode batch --limit 12; the batch is a preview, not a clinical evidence claim. The GitHub Actions workflow downloads and SHA-verifies the archive, generates source-mapped audit and small pilot preview artifacts without publishing to the canonical database until the pilot is validated and submitted to the existing ingestion mechanism.
+
+Safety/quality guardrails: exact binomial match only (modern taxonomy remains unverified), exact existing compound name only (do not manufacture unverified identities), skip previously present organism-compound pairs, preserve plant parts and raw citation codes. Historical AGGREGAC tags and ETHNOBOT headings are research leads, NOT human treatment efficacy, dosage guidance, resolved molecular targets, metaphysical evidence, complete medicinal systems, or extraction yields. Every published occurrence must state archival secondary verification. No unlicensed images or closed community knowledge. Existing five nested profile families and source-evidence boundaries remain intact.

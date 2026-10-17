@@ -1,0 +1,40 @@
+name: Botanical Atlas - USDA Duke source audit
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'botanical-atlas/tools/import_duke.py'
+      - '.github/workflows/botanical-atlas-duke-import.yml'
+permissions:
+  contents: read
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch pinned USDA public domain archive
+        run: |
+          curl --fail --location --retry 3 --max-time 120 --output /tmp/Duke-Source-CSV.zip 'https://ndownloader.figshare.com/files/43363335'
+          echo 'ff325bc477c355799d12194e2d172c9e181ba44e59056c5ca97f41db595b7d19  /tmp/Duke-Source-CSV.zip' | sha256sum --check
+      - name: Generate audit and staged chemistry preview
+        run: |
+          python3 -m py_compile botanical-atlas/tools/import_duke.py
+          python3 botanical-atlas/tools/import_duke.py --archive /tmp/Duke-Source-CSV.zip --atlas botanical-atlas/data/atlas.json --output /tmp/duke-full-audit.json --mode audit
+          python3 botanical-atlas/tools/import_duke.py --archive /tmp/Duke-Source-CSV.zip --atlas botanical-atlas/data/atlas.json --output /tmp/duke-12-preview.json --mode batch --limit 12
+          python3 - <<'PY'
+          import json
+          a=json.load(open('/tmp/duke-full-audit.json'));b=json.load(open('/tmp/duke-12-preview.json'))
+          assert a['coverage']['unambiguous_matched_atlas_plants'] >= 20
+          assert 0 < len(b['occurrences']) <= 12
+          assert not any(k in b for k in ('dose_guidance','bioactivities','folklore','practice_claims'))
+          print('PASS: exact-match source audit, no inferred medical claims')
+          PY
+      - name: Preserve research audit, no automatic canon ingestion
+        uses: actions/upload-artifact@v4
+        with:
+          name: duke-archive-audit
+          path: |
+            /tmp/duke-full-audit.json
+            /tmp/duke-12-preview.json
+          retention-days: 30
