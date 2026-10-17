@@ -1,15 +1,15 @@
 {
   "schema": "atlas_editorial_coverage_v1",
-  "catalog_revision": 18,
+  "catalog_revision": 19,
   "warning": "Coverage means a record exists, not verified efficacy, clinical benefit or safe dosing. Source URLs have not been independently fetched.",
   "counts": {
     "organisms": 68,
     "compounds": 207,
-    "occurrences": 246,
+    "occurrences": 258,
     "domain_notes": 268,
     "safety": 79,
     "cultural_uses": 57,
-    "sources": 152,
+    "sources": 153,
     "structures": 193,
     "binding": 7,
     "practice_claims": 40,

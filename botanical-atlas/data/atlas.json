@@ -5,7 +5,7 @@
     "name": "Botanical Identity Atlas · MVP",
     "inherited_dataset": "v1.1.0 (reported chemistry, not fully verified)",
     "status": "baseline imported into repository; source verification incomplete",
-    "catalog_revision": 18,
+    "catalog_revision": 19,
     "sync_mode": "repository-published; phone copy remains offline snapshot",
     "missing_legacy_source_ids": [
       "S001",
@@ -15,7 +15,7 @@
       "S006",
       "S012"
     ],
-    "last_ingestion_utc": "2026-10-17T22:00:53.506535+00:00",
+    "last_ingestion_utc": "2026-10-17T22:10:01.706961+00:00",
     "last_enrichment_date": "2026-10-15",
     "layer_status": "Plant comparison, research coverage and chemical-overlap workbench published; documentation is incomplete and every claim remains evidence graded.",
     "claim_system_policy": "Biomedicine, Ayurveda, TCM, Unani, regional herbalisms and ritual folklore are first-class systems; keep evidentiary methods and culturally specific categories distinct.",
@@ -4779,6 +4779,213 @@
       "source_id": "SRC-030-TREMELLA-POLY",
       "verification": "published_fraction_chemical_analysis",
       "note": "Research isolate, not interchangeable with culinary mushroom, tea or commercial extract."
+    },
+    {
+      "id": "OCC-DUKE-BOT-001-CMP-beta-carotene",
+      "organism_id": "BOT-001",
+      "compound_id": "CMP-beta-carotene",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Bark"
+      ],
+      "duke_raw_source_codes": [
+        "CRC"
+      ],
+      "duke_rows": 1,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-001-CMP-oleanolic-acid",
+      "organism_id": "BOT-001",
+      "compound_id": "CMP-oleanolic-acid",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Essential Oil",
+        "Fruit",
+        "Seed"
+      ],
+      "duke_raw_source_codes": [
+        "14305",
+        "19988",
+        "HHB JNP59:987 PH2 20007 12959"
+      ],
+      "duke_rows": 3,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-1-8-cineole",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-1-8-cineole",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Leaf",
+        "Rhizome",
+        "Root"
+      ],
+      "duke_raw_source_codes": [
+        "10973",
+        "FFJ10:355",
+        "HHB FFJ10:355"
+      ],
+      "duke_rows": 3,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-alpha-pinene",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-alpha-pinene",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Leaf",
+        "Rhizome",
+        "Rhizome Essent. Oil",
+        "Tuber"
+      ],
+      "duke_raw_source_codes": [
+        "11172",
+        "AYL FFJ10:355",
+        "PAN 10982"
+      ],
+      "duke_rows": 4,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-beta-carotene",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-beta-carotene",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Plant",
+        "Rhizome"
+      ],
+      "duke_raw_source_codes": [
+        "CRC",
+        "PED98"
+      ],
+      "duke_rows": 2,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-caffeic-acid",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-caffeic-acid",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Rhizome"
+      ],
+      "duke_raw_source_codes": [
+        "PAN 10958"
+      ],
+      "duke_rows": 1,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-camphor",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-camphor",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Rhizome Essent. Oil",
+        "Tuber"
+      ],
+      "duke_raw_source_codes": [
+        "10982",
+        "11172"
+      ],
+      "duke_rows": 2,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-eugenol",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-eugenol",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Rhizome Essent. Oil",
+        "Tuber"
+      ],
+      "duke_raw_source_codes": [
+        "11172",
+        "PAN 10982"
+      ],
+      "duke_rows": 2,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-gamma-terpinene",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-gamma-terpinene",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Leaf",
+        "Rhizome"
+      ],
+      "duke_raw_source_codes": [
+        "FFJ10:355"
+      ],
+      "duke_rows": 2,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-limonene",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-limonene",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Leaf",
+        "Rhizome",
+        "Rhizome Essent. Oil",
+        "Tuber"
+      ],
+      "duke_raw_source_codes": [
+        "11172",
+        "FFJ10:355",
+        "PAN 10982"
+      ],
+      "duke_rows": 4,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-p-cymene",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-p-cymene",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Leaf",
+        "Rhizome"
+      ],
+      "duke_raw_source_codes": [
+        "FFJ10:355",
+        "FFJ10:355 HHB 7374"
+      ],
+      "duke_rows": 2,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
+    },
+    {
+      "id": "OCC-DUKE-BOT-006-CMP-protocatechuic-acid",
+      "organism_id": "BOT-006",
+      "compound_id": "CMP-protocatechuic-acid",
+      "source_id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "verification": "usda_archival_secondary_unconfirmed_original_citation_requires_followup",
+      "plant_parts": [
+        "Leaf"
+      ],
+      "duke_raw_source_codes": [
+        "PAN 9329"
+      ],
+      "duke_rows": 1,
+      "note": "USDA archival tables report this compound occurrence in this plant/part; not independently authenticated, not evidence of dose, efficacy, synergy or experimental effect."
     }
   ],
   "domain_notes": [
@@ -9131,6 +9338,17 @@
       "type": "museum_historical_interpretation",
       "published": "2012-10-04",
       "checked_on": "2026-10-17"
+    },
+    {
+      "id": "SRC-USDA-DUKE-CSV-CC0-ARCHIVE",
+      "organization": "USDA Agricultural Research Service / National Agricultural Library",
+      "title": "Dr Duke's Phytochemical and Ethnobotanical Databases, archival CSV data tables (CC0)",
+      "url": "https://catalog.data.gov/dataset/dr-dukes-phytochemical-and-ethnobotanical-databases",
+      "type": "usda_secondary_compilation_historical_not_independently_authenticated",
+      "checked_on": "2026-10-17",
+      "license": "CC0-1.0",
+      "archive_sha256": "ff325bc477c355799d12194e2d172c9e181ba44e59056c5ca97f41db595b7d19",
+      "limitations": "Historical USDA source tables with older taxonomic/chemistry assertions; refer to raw reference codes and primary publications before upgrading validity."
     }
   ],
   "structures": [
