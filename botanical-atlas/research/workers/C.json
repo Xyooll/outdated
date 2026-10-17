@@ -1,0 +1,19 @@
+{
+  "worker": "C",
+  "organism_id": "BOT-008",
+  "scientific_name": "Allium sativum",
+  "status": "in_progress",
+  "checked_on": "2026-10-17",
+  "dossier_complete": false,
+  "source_scope": "Kew POWO, NCCIH, EMA HMPC, PubChem, primary Giardia 2018, TCM secondary, Ayurvedic pharmacopoeia index",
+  "publication_status": "full_batch_write_blocked_by_tool_safety_checks",
+  "gaps": [
+    "nested metaphysical/extraction/media schema planned only",
+    "more tradition-specific primary sources",
+    "complete chemistry and negative findings",
+    "rights-cleared image files",
+    "independent compound structure stereochemistry check",
+    "published batch readback and CI",
+    "complete source-scoped extraction yield studies"
+  ]
+}
