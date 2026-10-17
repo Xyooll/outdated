@@ -1,18 +1,64 @@
 {
   "worker": "B",
   "organism_id": "BOT-012",
-  "scientific_name": "Ocimum tenuiflorum",
-  "status": "in_progress",
+  "scientific_name": "Ocimum tenuiflorum L.",
+  "status": "research_in_progress_publication_blocked",
   "checked_on": "2026-10-17",
   "dossier_complete": false,
-  "gaps": [
-    "nested media/extraction schema not implemented",
-    "additional traditional-system primary sources",
-    "compound-by-compound assays",
-    "licensed images"
+  "partition": "Unicode code-point sum of organism ID modulo 4 equals 1",
+  "verified_sections": [
+    "Kew taxonomy and morphological description",
+    "one 2022 product-specific human stress trial and 2017 mixed-species systematic review",
+    "part-specific essential oil chemistry in 2005 paper",
+    "2017 steam-vs-hydro distillation comparison and 2023 measured fresh-leaf oil yield",
+    "public Vaishnava tulsi devotional account",
+    "Merck safety and interaction cautions",
+    "three Wikimedia Commons plant-part image licenses"
   ],
-  "sources": [
+  "missing_sections": [
+    "primary Sanskrit Ayurveda pharmacopoeial axes",
+    "Siddha and other region-specific original traditions",
+    "compound-specific bioactivity and negative assays",
+    "separate extraction and media schema",
+    "independent photographic taxon authentication",
+    "more preparation-specific clinical evidence and safety"
+  ],
+  "source_urls": [
     "https://powo.science.kew.org/taxon/453130-1",
-    "https://doi.org/10.3389/fnut.2022.965130"
-  ]
+    "https://doi.org/10.3389/fnut.2022.965130",
+    "https://doi.org/10.1155/2017/9217567",
+    "https://doi.org/10.1080/10412905.2005.9699025",
+    "https://doi.org/10.1002/cbdv.201600417",
+    "https://doi.org/10.22146/agritech.72545",
+    "https://www.merckmanuals.com/professional/special-subjects/dietary-supplements/holy-basil",
+    "https://sanskrit.org/a-sacred-plant-tulasi/index.html"
+  ],
+  "media_license_checked": [
+    {
+      "kind": "whole plant",
+      "url": "https://commons.wikimedia.org/wiki/File:Ocimum_tenuiflorum_plant.jpg",
+      "creator": "Krisnendu Paul",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "kind": "leaves",
+      "url": "https://commons.wikimedia.org/wiki/File:(Ocimum_tenuiflorum)_Tulasi_foliage_01.jpg",
+      "creator": "Adityamadhav83",
+      "license": "CC BY-SA 3.0"
+    },
+    {
+      "kind": "flower",
+      "url": "https://commons.wikimedia.org/wiki/File:Ocimum_tenuiflorum_flower.jpg",
+      "creator": "Abhishek Jacob",
+      "license": "CC BY-SA 2.0"
+    }
+  ],
+  "publication": {
+    "attempt": "create sourced incoming research batch",
+    "result": "blocked by tool safety checks; no B incoming batch created",
+    "canonical_status": "unchanged for BOT-012",
+    "publisher_issue": "Latest Botanical Atlas workflow fails at ingest with Duplicate/replayed or misnamed batch, due to an existing thyme batch still in incoming and processed; do not alter worker A's batch",
+    "workflow_run": "https://github.com/Xyooll/outdated/actions/runs/39077256806"
+  },
+  "next_step": "Continue one-plant research and resolve permitted publication pathway; preserve evidence distinctions, avoid unsafe assumptions."
 }
