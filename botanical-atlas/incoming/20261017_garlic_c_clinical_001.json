@@ -1,0 +1,52 @@
+{
+  "batch_id": "20261017_garlic_c_clinical_001",
+  "research_date": "2026-10-17",
+  "research_reference_url": "https://www.nccih.nih.gov/health/garlic",
+  "summary": "Source-graded garlic clinical evidence summary with uncertainty and negative findings.",
+  "sources": [
+    {
+      "id": "SRC-C-GAR-NCCIH-20261017",
+      "title": "Garlic: Usefulness and Safety",
+      "organization": "US NIH NCCIH",
+      "url": "https://www.nccih.nih.gov/health/garlic"
+    }
+  ],
+  "practice_claims": [
+    {
+      "id": "PC-C-GAR-LIPID-20261017",
+      "organism_id": "BOT-008",
+      "system": "Modern biomedicine",
+      "system_id": "BIOMEDICAL",
+      "tradition": "NCCIH evidence summary",
+      "region": "United States",
+      "framework": [
+        "clinical evidence"
+      ],
+      "condition_or_goal": "Some garlic supplements may reduce total and LDL cholesterol to a small extent in people with elevated cholesterol",
+      "claim_type": "clinical_evidence",
+      "plant_part": "bulb",
+      "preparation": "various oral garlic supplements; not equivalent products",
+      "evidence_tier": "human_evidence_summary",
+      "source_id": "SRC-C-GAR-NCCIH-20261017",
+      "limitations": "NCCIH synthesis; magnitude and consistency vary; no proof of cardiovascular event prevention."
+    },
+    {
+      "id": "PC-C-GAR-GASTRIC-20261017",
+      "organism_id": "BOT-008",
+      "system": "Modern biomedicine",
+      "system_id": "BIOMEDICAL",
+      "tradition": "NCCIH evidence summary",
+      "region": "United States",
+      "framework": [
+        "negative human finding"
+      ],
+      "condition_or_goal": "Consuming garlic does not appear to reduce stomach-cancer risk",
+      "claim_type": "clinical_evidence",
+      "plant_part": "bulb",
+      "preparation": "dietary garlic consumption",
+      "evidence_tier": "human_evidence_summary_negative",
+      "source_id": "SRC-C-GAR-NCCIH-20261017",
+      "limitations": "Negative risk association summary, not an experiment establishing treatment; colorectal-cancer association remains uncertain."
+    }
+  ]
+}
