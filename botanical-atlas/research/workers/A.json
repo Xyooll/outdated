@@ -1,0 +1,11 @@
+{
+  "worker": "A",
+  "organism_id": "BOT-002",
+  "scientific_name": "Thymus vulgaris",
+  "status": "in_progress",
+  "checked_on": "2026-10-17",
+  "research_sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6526640/"
+  ],
+  "next": "Research missing traditions, structures and images; preserve separate source-backed profiles."
+}
