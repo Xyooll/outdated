@@ -6,7 +6,7 @@
   "checked_on": "2026-10-17",
   "dossier_complete": false,
   "source_scope": "Kew POWO, NCCIH, EMA HMPC, PubChem, primary Giardia 2018, TCM secondary, Ayurvedic pharmacopoeia index",
-  "publication_status": "full_batch_write_blocked_by_tool_safety_checks",
+  "publication_status": "blocked: two incoming-batch create attempts and a longer research-note create rejected by tool safety checks; canonical unchanged",
   "gaps": [
     "nested metaphysical/extraction/media schema planned only",
     "more tradition-specific primary sources",
@@ -15,5 +15,26 @@
     "independent compound structure stereochemistry check",
     "published batch readback and CI",
     "complete source-scoped extraction yield studies"
-  ]
+  ],
+  "sources": [
+    "https://powo.science.kew.org/taxon/528796-1",
+    "https://www.kew.org/plants/garlic",
+    "https://www.nccih.nih.gov/health/garlic",
+    "https://www.ema.europa.eu/en/medicines/herbal/allii-sativi-bulbus",
+    "https://doi.org/10.3389/fcimb.2018.00353",
+    "https://doi.org/10.3892/etm.2019.8393",
+    "https://pubchem.ncbi.nlm.nih.gov/compound/65036",
+    "https://commons.wikimedia.org/wiki/Category:Allium_sativum"
+  ],
+  "progress": {
+    "taxonomy": "source_checked",
+    "medicinal_traditions": "partial",
+    "metaphysical": "partial",
+    "active_ingredients": "partial",
+    "extraction": "partial",
+    "images": "candidate_links_only",
+    "safety": "partial",
+    "clinical_negative_results": "partial",
+    "publication": "blocked"
+  }
 }
