@@ -1,0 +1,18 @@
+{
+  "worker": "B",
+  "organism_id": "BOT-012",
+  "scientific_name": "Ocimum tenuiflorum",
+  "status": "in_progress",
+  "checked_on": "2026-10-17",
+  "dossier_complete": false,
+  "gaps": [
+    "nested media/extraction schema not implemented",
+    "additional traditional-system primary sources",
+    "compound-by-compound assays",
+    "licensed images"
+  ],
+  "sources": [
+    "https://powo.science.kew.org/taxon/453130-1",
+    "https://doi.org/10.3389/fnut.2022.965130"
+  ]
+}
