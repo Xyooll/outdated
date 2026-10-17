@@ -1,0 +1,49 @@
+{
+  "batch_id": "20261017_garlic_c_chemistry_001",
+  "research_date": "2026-10-17",
+  "research_reference_url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/garlic",
+  "summary": "Garlic bulb chemical precursor and processing provenance, and PubChem allicin identity; no treatment, dose, or extraction-yield assertions.",
+  "sources": [
+    {
+      "id": "SRC-C-GAR-MSK-20261017",
+      "title": "Garlic: chemical constituents and processing context",
+      "organization": "Memorial Sloan Kettering Cancer Center",
+      "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/garlic"
+    },
+    {
+      "id": "SRC-C-GAR-PUBCHEM-20261017",
+      "title": "Allicin CID 65036 molecular identity",
+      "organization": "NCBI PubChem",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/65036"
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-BOT-008-01",
+      "organism_id": "BOT-008",
+      "compound_id": "CMP-alliin",
+      "note": "Alliin in intact garlic cells is converted by alliinase after tissue disruption; concentration not established here.",
+      "source_id": "SRC-C-GAR-MSK-20261017",
+      "verification": "secondary_source_checked"
+    },
+    {
+      "id": "OCC-BOT-008-02",
+      "organism_id": "BOT-008",
+      "compound_id": "CMP-allicin",
+      "note": "Allicin forms after disruption of garlic tissue and is reactive and unstable; amount depends on preparation. Do not equate whole bulb, processed extract, and isolated molecule.",
+      "source_id": "SRC-C-GAR-MSK-20261017",
+      "verification": "secondary_source_checked"
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-allicin",
+      "formula": "C6H10OS2",
+      "molecular_weight_g_mol": 162.28,
+      "pubchem_cid": 65036,
+      "inchi_key": "JDLKFOPOAOFWQN-UHFFFAOYSA-N",
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/65036",
+      "review_status": "pubchem_identity_checked_stereochemistry_unresolved"
+    }
+  ]
+}
