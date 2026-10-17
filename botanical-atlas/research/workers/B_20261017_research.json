@@ -1,0 +1,50 @@
+{
+  "worker": "B",
+  "organism_id": "BOT-012",
+  "checked_on": "2026-10-17",
+  "status": "partial_research_not_published",
+  "taxon": {
+    "accepted": "Ocimum tenuiflorum L.",
+    "synonym": "Ocimum sanctum L.",
+    "family": "Lamiaceae",
+    "native_range": "Tropical and subtropical Asia to western Pacific",
+    "source": "https://powo.science.kew.org/taxon/453130-1"
+  },
+  "human_evidence": {
+    "trial": "100 adults, 8-week randomized trial, standardized leaf-rich aerial extract 250 mg daily; improved perceived stress and insomnia symptom scores versus placebo, not proof of treating disease",
+    "source": "https://doi.org/10.3389/fnut.2022.965130",
+    "review": "2017 systematic review of 24 heterogeneous human studies",
+    "review_source": "https://doi.org/10.1155/2017/9217567"
+  },
+  "chemistry": {
+    "note": "Volatile oil varies greatly by chemotype and sampled plant part; do not generalize concentrations.",
+    "methyl_eugenol_rich": "South India: hydrodistilled leaf oil reported 75.3% methyl eugenol in sampled oil.",
+    "source": "https://doi.org/10.1080/10412905.2005.9699025",
+    "australian_oil": "Camphor 31.5%, 1,8-cineole 18.9%, eugenol 13.8% of reported oil volatiles.",
+    "source2": "https://doi.org/10.3389/fmicb.2016.00681"
+  },
+  "tradition": {
+    "ayurveda": "Traditional rasa/guna/virya/vipaka descriptors vary across sources; primary pharmacopoeia passage not verified.",
+    "source": "https://ayurwiki.org/herbs/Ocimum_tenuiflorum_-_Holy_Basil%2C_Krishna_Tulasi%2C_Tulsi%2C_Tolasi%2C_Tulasi/",
+    "vaishnava": "Publicly documented sacred use in devotion to Vishnu/Krishna, not medical evidence.",
+    "source2": "https://sanskrit.org/a-sacred-plant-tulasi/index.html"
+  },
+  "safety": {
+    "source": "https://www.merckmanuals.com/professional/special-subjects/dietary-supplements/holy-basil",
+    "note": "Pregnancy, blood clotting, thyroid, glucose, medication interactions require preparation-specific caution; clinical safety unknown for long-term use."
+  },
+  "media": {
+    "candidate": "https://commons.wikimedia.org/wiki/Category:Ocimum_tenuiflorum",
+    "status": "file-level licenses and identity verification pending"
+  },
+  "publication": "Automated incoming batch write blocked by tool safety check; research preserved separately.",
+  "remaining": [
+    "compound-specific antiparasitic assays and negative findings",
+    "primary Ayurvedic and Siddha materia medica",
+    "other source-attested regional traditions",
+    "validated extraction yields and purification data",
+    "media license and photo identity checks",
+    "full nested schema and offline UI"
+  ],
+  "dossier_complete": false
+}
