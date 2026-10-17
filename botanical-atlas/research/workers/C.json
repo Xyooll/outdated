@@ -36,5 +36,17 @@
     "safety": "partial",
     "clinical_negative_results": "partial",
     "publication": "blocked"
+  },
+  "duke_archive": {
+    "sha256": "ff325bc477c355799d12194e2d172c9e181ba44e59056c5ca97f41db595b7d19",
+    "source": "https://catalog.data.gov/dataset/dr-dukes-phytochemical-and-ethnobotanical-databases",
+    "taxonomy_key": "FNFTAX FNFNUM=54 Allium sativum var. sativum",
+    "raw_row_counts": {
+      "FARMACY": 257,
+      "FARMACY_NEW": 585,
+      "ETHNOBOT": 191,
+      "COMMON_NAMES": 1
+    },
+    "interpretation": "historical secondary research leads; duplicate rows, units and original citations need validation; not published as therapeutic claims"
   }
 }
