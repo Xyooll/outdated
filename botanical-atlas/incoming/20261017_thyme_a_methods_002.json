@@ -10,5 +10,19 @@
       "organization": "Gedikoğlu, Sökmen and Çivit, 2019",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6526640/"
     }
+  ],
+  "medicinal_materials": [
+    {
+      "id": "MAT-THY-A-HD-2019",
+      "organism_id": "BOT-002",
+      "part": "Air-dried cultivated Thymus vulgaris herb",
+      "preparation": "Laboratory hydrodistilled essential oil",
+      "processing": "Measured yield 1.80 ± 0.14% w/w, n=2; thymol 55.3%, carvacrol 8.7% and p-cymene 11.2% as relative GC-MS peak areas.",
+      "material_class": "laboratory_essential_oil",
+      "tradition": "Experimental phytochemistry",
+      "source_id": "SRC-THY-A-GEDIKOGLU-2019",
+      "identity_status": "study_identified_not_independently_authenticated",
+      "limitations": "Single research sample; relative GC-MS peak area is not chemical purity, oil composition is variable, and this result does not establish human efficacy or safe use."
+    }
   ]
 }
