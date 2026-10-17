@@ -1,0 +1,42 @@
+{
+  "worker": "D",
+  "organism_id": "BOT-005",
+  "scientific_name": "Cinnamomum verum",
+  "status": "in_progress",
+  "checked_on": "2026-10-17",
+  "dossier_complete": false,
+  "source_scope": "Kew POWO, NIH NCCIH, EMA HMPC, Sri Lankan GC-MS study, PubMed extraction study, Ayurwiki secondary source, pinned USDA Dr Duke CC0 archive",
+  "publication_status": "Research in progress; attempted sourced incoming batch was blocked by connector safety checks, so canonical content is not yet updated.",
+  "progress": {
+    "taxonomy": "VERIFIED",
+    "medicinal_traditions": "PARTIAL",
+    "metaphysical": "UNKNOWN",
+    "active_ingredients": "PARTIAL",
+    "extraction": "PARTIAL",
+    "images": "UNKNOWN",
+    "safety": "PARTIAL",
+    "formulas_and_interactions": "UNKNOWN",
+    "publication": "BLOCKED"
+  },
+  "duke_archive": {
+    "sha256": "ff325bc477c355799d12194e2d172c9e181ba44e59056c5ca97f41db595b7d19",
+    "taxon_id": "269",
+    "synonym_taxon_id": "2215",
+    "historical_chemistry_rows_for_exact_binomial": 478,
+    "archival_note": "Secondary historical research leads only; no clinical or extraction yield inference."
+  },
+  "sources": [
+    "https://powo.science.kew.org/taxon/463752-1",
+    "https://www.nccih.nih.gov/health/cinnamon/",
+    "https://www.ema.europa.eu/en/medicines/herbal/cinnamomi-cortex",
+    "https://www.ema.europa.eu/en/medicines/herbal/cinnamomi-corticis-aetheroleum",
+    "https://journals.sjp.ac.lk/index.php/fesympo/article/view/3717",
+    "https://pubmed.ncbi.nlm.nih.gov/20333616/"
+  ],
+  "next_actions": [
+    "Retry a source-backed, schema-compatible small batch if connector safety permits.",
+    "Distinguish C. verum from Chinese materia medica C. cassia.",
+    "Verify traditional texts and photo licenses.",
+    "Extend planned nested extraction/media profile schema without loss of existing data."
+  ]
+}
