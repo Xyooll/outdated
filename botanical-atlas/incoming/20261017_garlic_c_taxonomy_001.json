@@ -1,0 +1,24 @@
+{
+  "batch_id": "20261017_garlic_c_taxonomy_001",
+  "research_date": "2026-10-17",
+  "research_reference_url": "https://powo.science.kew.org/taxon/528796-1",
+  "summary": "Garlic taxonomy and native-range source verification, no health claims.",
+  "sources": [
+    {
+      "id": "SRC-C-GAR-KEW-20261017",
+      "title": "Allium sativum L. accepted taxon and native distribution",
+      "organization": "Royal Botanic Gardens Kew",
+      "url": "https://powo.science.kew.org/taxon/528796-1"
+    }
+  ],
+  "organisms": [
+    {
+      "id": "BOT-008",
+      "scientific_name": "Allium sativum",
+      "common_name": "Garlic",
+      "geographic_context": "Kew POWO accepted species Allium sativum L.; native range Central Asia to northeastern Iran; cultivated worldwide.",
+      "taxonomy_source_id": "SRC-C-GAR-KEW-20261017",
+      "taxonomy_status": "accepted_by_Kew_POWO_2026-10-17"
+    }
+  ]
+}
