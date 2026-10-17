@@ -57,3 +57,17 @@ Source-documented material identity is not an independently authenticated consum
 ### Interaction evidence UI milestone
 
 Clinical pharmacokinetic exposure findings, laboratory assays, traditional incompatibilities and theoretical relationships require separate typed pair records and evidence categories. The standalone Interaction evidence tab makes them searchable independently of historical formulas; do not infer a formula-level interaction from a study of two purified compounds.
+
+
+## v1.7 approved multi-profile vision + anti-drift gates (2026-10-17)
+**Scope update, not a completed deployment.** The user-defined product now has **one organism identity** with **five independent nested profile families**: (1) Medicinal traditions (TCM, Ayurveda, Unani, Western biomedicine and source-specific others), (2) Metaphysical traditions with their own internally nested tradition/community profiles, (3) Active ingredients and compound studies, (4) Extraction and preparation methods tied to exact input and output materials, and (5) sourced pictures/visuals across the organism and all relevant subprofiles. Each category supports multiple full depth profiles—not single-sentence traditional-use notes.
+
+**Binding references:** [Detailed architecture and staged requirements](PROFILE_ARCHITECTURE_VISION.md); [machine-readable product vision and acceptance contract](PRODUCT_VISION_CONTRACT.json); [agent implementation guardrails](../AGENTS.md). Existing v1.6 material, formula, medical systems and interactions are retained; this is an additive next milestone.
+
+**MVP completion gates:** organism-hub nested navigation, distinct tradition-specific TCM/medical and metaphysical subprofiles, compound and extraction output links, source-and-license verified visuals, honest unknown states, contextual evidence/safety, clove/Ding Xiang/eugenol acceptance path plus one fungal acceptance path, legacy migration, and tested responsive offline browsing. The currently working app does **not yet satisfy** all these requirements.
+
+**Full-product goals:** global independent subprofile coverage, original scripts and community permissions, precise chemistry/extraction analytical evidence, indexed null and harmful findings, media provenance/image rights and takedowns, cross-perspective knowledge graph with non-equivalence boundaries, global updates with rollback, high-confidence original-source review, accessible localization and trustworthy search.
+
+**Drift prevention:** versioned JSON contract; test suite rejects loss of the five profile families, provenance/safety/media-rights policies, and historical data collections; same test suite is invoked by existing GitHub publishing CI; `AGENTS.md` requires invariant-to-change traceability, backward-compatibility, source-quality checks, and evidence of mobile/offline testing before claims of completion. Documented human approval is required to change the vision contract, not to publish ordinary validated Atlas research batches. Static tests **cannot** verify cultural accuracy, image licensing or clinical truths on their own. Add data-level validations and UI acceptance tests as the new profile types are implemented.
+
+**Sequence:** protect canonical schema → nested profile model and read-only migration → browser and search → extraction/output & visual media entities → citation/evidence/rights validation → broader research coverage. Do not sacrifice depth to inflate organism count.

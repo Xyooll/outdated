@@ -28,7 +28,7 @@ jobs:
           python-version: '3.12'
       - name: Check research workbench JavaScript syntax
         run: node --check app/workbench.js
-      - name: Test batch integrity protections
+      - name: Test batch integrity and Atlas vision guardrails
         run: python -m unittest discover -s tests -v
       - name: Automatically ingest research and regenerate catalog
         run: python tools/atlas_pipeline.py ingest

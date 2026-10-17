@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0.0",
+  "revision": "2026-10-17",
+  "project": "Botanical & Fungal Identity Atlas",
+  "contract_status": "approved_vision_not_implemented_features",
+  "canonical_organism_key": "organism_id",
+  "document": "docs/PROFILE_ARCHITECTURE_VISION.md",
+  "required_top_level_profiles": [
+    {
+      "id": "medicinal",
+      "plural": true,
+      "nesting": [
+        "tradition",
+        "school_or_community",
+        "source"
+      ],
+      "state": "planned_nested_navigation"
+    },
+    {
+      "id": "metaphysical",
+      "plural": true,
+      "nesting": [
+        "tradition",
+        "community",
+        "source"
+      ],
+      "state": "planned_nested_navigation"
+    },
+    {
+      "id": "active_ingredients",
+      "plural": true,
+      "nesting": [
+        "compound",
+        "source_or_assay"
+      ],
+      "state": "planned_nested_navigation"
+    },
+    {
+      "id": "extraction_preparation",
+      "plural": true,
+      "nesting": [
+        "method",
+        "input_material",
+        "output_material"
+      ],
+      "state": "planned_nested_navigation"
+    },
+    {
+      "id": "visual_library",
+      "plural": true,
+      "nesting": [
+        "subject",
+        "media_kind"
+      ],
+      "state": "planned_galleries"
+    }
+  ],
+  "source_boundaries": [
+    "individual_organism_is_not_preparation",
+    "extract_is_not_purified_compound",
+    "tradition_or_spiritual_belief_is_not_clinical_evidence",
+    "in_vitro_or_animal_result_is_not_proven_human_effect",
+    "historical_amount_is_not_safe_dose",
+    "missing_record_is_not_negative_finding",
+    "source_attribution_is_not_independent_authentication"
+  ],
+  "evidence_tiers": [
+    "traditional_or_historical",
+    "metaphysical_belief",
+    "in_silico",
+    "in_vitro",
+    "animal",
+    "human_observational",
+    "human_interventional",
+    "systematic_review",
+    "null_or_negative",
+    "unknown"
+  ],
+  "media_required_fields": [
+    "id",
+    "subject_ref",
+    "media_kind",
+    "caption",
+    "creator",
+    "source_url",
+    "rights_or_license",
+    "alt_text",
+    "verification_status"
+  ],
+  "provenance_required_fields": [
+    "source_id",
+    "scope",
+    "limitations"
+  ],
+  "mandatory_invariants": [
+    "one_identity_many_independent_profiles",
+    "nested_tradition_specific_medicinal_profiles",
+    "nested_tradition_specific_metaphysical_profiles",
+    "compound_identity_and_extraction_profiles_remain_distinct",
+    "credited_visuals_in_each_relevant_context",
+    "original_vocabulary_and_no_cross_system_equivalence",
+    "no_clinical_inference_from_tradition_compound_or_formula",
+    "preparation_specific_safety_and_no_universal_safe_dose",
+    "source_attribution_and_explicit_unknowns",
+    "restricted_knowledge_and_image_rights_respected",
+    "legacy_catalog_and_automated_ingestion_preserved",
+    "no_feature_marked_built_without_tests"
+  ],
+  "acceptance_cases": [
+    "clove_ding_xiang_traditions_eugenol_extraction_images",
+    "representative_fungus_multisystem_and_visuals"
+  ],
+  "blocked_behaviors": [
+    "flatten_all_traditions_to_generic_benefits",
+    "conflate_plant_extract_and_molecule",
+    "insert_unlicensed_or_unattributed_images",
+    "publish_nonpublic_cultural_claims",
+    "fabricate_missing_axes_evidence_yields_or_doses",
+    "claim_unbuilt_ui_published"
+  ],
+  "release_gates": {
+    "mvp": [
+      "nested_profiles_readable_and_searchable",
+      "verified_sources_and_explicit_unknown_states",
+      "chemical_extraction_links_distinguish_materials",
+      "attributed_accessible_media",
+      "clove_and_fungus_acceptance",
+      "existing_v1_6_regression_pass",
+      "mobile_and_offline_smoke_test"
+    ],
+    "full": [
+      "coverage_by_profile_and_tradition",
+      "image_rights_verification",
+      "full_provenance_and_revisions",
+      "safety_and_negative_results",
+      "conflict_and_consent_controls",
+      "knowledge_graph_and_comparison",
+      "production_observability_and_rollback"
+    ]
+  }
+}
