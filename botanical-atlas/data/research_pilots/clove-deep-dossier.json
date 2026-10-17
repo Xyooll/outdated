@@ -1,0 +1,655 @@
+{
+  "schema_version": "0.1.0",
+  "status": "research_pilot_partial_not_full_completion",
+  "organism_id": "BOT-001",
+  "common_name": "Clove",
+  "scientific_name": "Syzygium aromaticum (L.) Merr. & L.M.Perry",
+  "family": "Myrtaceae",
+  "original_range": "Maluku Islands, Indonesia",
+  "date": "2026-10-17",
+  "baseline_ref": "botanical-atlas/data/atlas.json",
+  "definition_of_complete": "Each appropriate named tradition documented or explicitly researched with a source-backed absence; verified taxonomic identity, material-specific constituents and effects, method-linked outputs, safe-risk boundaries, licensed media and independent review. A time-limited pilot does not meet this standard.",
+  "sources": [
+    {
+      "id": "SRC-TCM-DING-2020-PHARM",
+      "title": "Ding Xiang 2020 Chinese Pharmacopoeia reference (existing Atlas source)",
+      "url": "https://shennongalpha.westlake.edu.cn/en/knowledge/nmm-0028",
+      "kind": "pharmacopoeial_record"
+    },
+    {
+      "id": "SRC-AYUR-REVIEW-2019",
+      "title": "Pamnani et al., A Comprehensive Ayurvedic Review on Lavanga, AYUSHDHARA 2019",
+      "url": "https://ayushdhara.in/index.php/ayushdhara/article/download/438/371/1029",
+      "kind": "secondary_scholarly_review"
+    },
+    {
+      "id": "SRC-AYUR-COLLEGE",
+      "title": "Shri Dhanwantry Ayurvedic College, Lavanga materia medica summary",
+      "url": "https://www.sdach.ac.in/about-dravyaguna-vigyan/dravyaguna-vigyan-blogs/lavanga/",
+      "kind": "educational_materia_medica"
+    },
+    {
+      "id": "SRC-UNANI-ORODENTAL",
+      "title": "Role of Unani Medicines in Oro-Dental Diseases: A Comprehensive Review and Scientific Evidence",
+      "url": "https://www.fortunejournals.com/articles/role-of-unani-medicines-in-orodental-diseases-a-comprehensive-review-and-scientific-evidence.html",
+      "kind": "secondary_scholarly_review"
+    },
+    {
+      "id": "SRC-UNANI-CLINICAL",
+      "title": "Latafat & Kidwai, Itrifal ustukhudoos plus cloves in allergic rhinitis, preliminary open study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3331020/",
+      "kind": "small_uncontrolled_clinical_study"
+    },
+    {
+      "id": "SRC-CLOVE-2021-REVIEW",
+      "title": "Haro-González et al., Clove Essential Oil: Extraction, Chemical Composition and Bioactivity, Molecules 2021",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8588428/",
+      "kind": "scientific_review"
+    },
+    {
+      "id": "SRC-CLOVE-2025-COMPOSITION",
+      "title": "Evaluating the multifaceted bioactivity of Syzygium aromaticum essential oil",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11913364/",
+      "kind": "analytical_research"
+    },
+    {
+      "id": "SRC-EUG-NIH-SAFETY",
+      "title": "LiverTox: Eugenol (Clove Oil)",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK551727/",
+      "kind": "clinical_toxicology"
+    },
+    {
+      "id": "SRC-EUG-GIARDIA-2011",
+      "title": "Anti-Giardia clove oil and eugenol assays",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21272580/",
+      "kind": "in_vitro_study"
+    },
+    {
+      "id": "SRC-EUG-LEISH-MEX-2023",
+      "title": "Eugenol effects on Leishmania mexicana in vitro",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37175277/",
+      "kind": "in_vitro_study"
+    },
+    {
+      "id": "SRC-EUG-HAEMONCHUS-2026",
+      "title": "Eugenol assays versus Haemonchus contortus",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41760478/",
+      "kind": "in_vitro_study"
+    },
+    {
+      "id": "SRC-POMANDER-GHS",
+      "title": "Greenwich Historical Society: Pomander Balls, historical aromatic customs",
+      "url": "https://greenwichhistory.org/pomander-balls-a-holiday-craft/",
+      "kind": "historical_cultural_review"
+    },
+    {
+      "id": "SRC-KEW-CLOVE",
+      "title": "Kew, Plants of the World Online, Syzygium aromaticum",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:601421-1/general-information",
+      "kind": "taxonomic_reference"
+    },
+    {
+      "id": "SRC-PHOTO-BUDS",
+      "title": "Wikimedia Commons file: Dried cloves",
+      "url": "https://commons.wikimedia.org/wiki/File:Dried_cloves.jpg",
+      "kind": "licensed_media"
+    },
+    {
+      "id": "SRC-PHOTO-TREE",
+      "title": "Wikimedia Commons file: The flowers of clove tree in Pemba island",
+      "url": "https://commons.wikimedia.org/wiki/File:The_flowers_of_clove_tree_in_Pemba_island.JPG",
+      "kind": "licensed_media"
+    },
+    {
+      "id": "SRC-PLATE-WELLCOME",
+      "title": "Wikimedia Commons/Wellcome clove botanical watercolor",
+      "url": "https://commons.wikimedia.org/wiki/File:Clove_plant_(Syzygium_aromaticum);_stem_with_flower_buds._Wa_Wellcome_V0043507.jpg",
+      "kind": "licensed_media"
+    },
+    {
+      "id": "SRC-PUBCHEM-EUG",
+      "title": "PubChem Eugenol CID 3314",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/3314",
+      "kind": "chemical_registry"
+    }
+  ],
+  "profile_families": [
+    {
+      "id": "medicinal",
+      "title": "Medicinal perspectives",
+      "profiles": [
+        {
+          "id": "MED-CLOVE-TCM",
+          "title": "Ding Xiang · 丁香 · Traditional Chinese Medicine",
+          "tradition": "Chinese Pharmacopoeia 2020",
+          "evidence": "documented_traditional_framework",
+          "depth": "substantial_existing",
+          "fields": [
+            [
+              "Material",
+              "Caryophylli Flos: dried unopened flower bud; not clove essential oil"
+            ],
+            [
+              "Nature and flavor",
+              "温 (warm), 辛 (pungent/acrid)"
+            ],
+            [
+              "Channel affinities",
+              "脾 (Spleen), 胃 (Stomach), 肺 (Lung), 肾 (Kidney) in the pharmacopoeia; a practitioner source omits Lung."
+            ],
+            [
+              "Actions",
+              "温中降逆 (warm middle, descend counterflow Qi); 补肾助阳 (assist Kidney Yang)"
+            ],
+            [
+              "Indication patterns",
+              "Spleen–Stomach deficiency-cold, hiccup/vomiting counterflow, cold-pattern abdominal discomfort, Kidney-Yang deficiency descriptions."
+            ],
+            [
+              "Traditional cautions",
+              "Sources caution on heat-pattern use and classical incompatibility with Yu Jin (Curcumae Radix). Neither proves a laboratory interaction or clinical effect."
+            ],
+            [
+              "Historical amount",
+              "1–3 g for dried bud in cited monograph; not a personalized safe dose and never transferable to oil."
+            ],
+            [
+              "Research gap",
+              "Classical formula comparisons, processing variants, source-page verification, regional/school subprofiles and clinical differentiation."
+            ]
+          ],
+          "source_ids": [
+            "SRC-TCM-DING-2020-PHARM"
+          ]
+        },
+        {
+          "id": "MED-CLOVE-AYUR",
+          "title": "Lavanga · लवङ्ग · Ayurveda",
+          "tradition": "Indian Ayurvedic materia medica",
+          "evidence": "documented_traditional_framework",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Names",
+              "Lavanga, Devakusuma; modern sources refer to Syzygium aromaticum flower buds."
+            ],
+            [
+              "Rasa",
+              "Katu (pungent), Tikta (bitter), with classical lexicon-specific differences."
+            ],
+            [
+              "Guna",
+              "Laghu (light), Snigdha (unctuous) in the Ayurvedic college summary; other texts differ, including Ruksha/Tikshna variants."
+            ],
+            [
+              "Virya / Vipaka",
+              "Shita (cooling potency) in the cited college account; Katu postdigestive effect there, while the 2019 multi-text review records disagreement about Vipaka. Do not force an 'always warming' TCM equivalence."
+            ],
+            [
+              "Dosha and actions",
+              "The review describes Kapha/Pitta-regulating claims, Deepana, Pachana, Ruchya, and other traditional actions; this is an internal Ayurvedic framework, not proof of physiology."
+            ],
+            [
+              "Historical indications",
+              "Trishna (thirst), Chhardi (vomiting), Hikka (hiccup), Shoola (pain), Kasa/Shwasa (cough/breathing complaints), digestive distress described traditionally."
+            ],
+            [
+              "Historical formulas",
+              "Names include Lavangadi Churna, Lavangadi Vati, Lavangachatussama; constituent ratios and outcomes need independent investigation."
+            ],
+            [
+              "Safety and disagreement",
+              "Sources even disagree on reported amounts and properties. No quoted oil-drop recommendation is an established safe dose."
+            ],
+            [
+              "Research gap",
+              "Primary passage verification, mapped passages from individual nighantus, botanical part identity, and trial-level evidence."
+            ]
+          ],
+          "source_ids": [
+            "SRC-AYUR-REVIEW-2019",
+            "SRC-AYUR-COLLEGE"
+          ]
+        },
+        {
+          "id": "MED-CLOVE-UNANI",
+          "title": "Qaranfal · قرنفل · Unani/Tibb",
+          "tradition": "Greco-Arabic and South Asian Unani",
+          "evidence": "documented_traditional_framework",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Mizaj",
+              "Harr/Yabis — hot and dry, often third degree in the cited review; degree belongs to the attributed author and should not be generalized."
+            ],
+            [
+              "Afa'al (reported actions)",
+              "Musakkin-e-Alam (analgesic), Mohallil-e-Waram (anti-inflammatory), Mufarreh and Muqawwi-e-Meda (stomachic) reported by sources; traditional terms are not clinical verification."
+            ],
+            [
+              "Historical indications",
+              "Toothache, halitosis, flatulence/colic, dyspepsia, and other Unani uses in review literature."
+            ],
+            [
+              "Preparation context",
+              "Dried Qaranfal in multi-ingredient formulas and aromatic oil are not equivalent. Historic formula provenance requires ingredient-specific source links."
+            ],
+            [
+              "Clinical contrast",
+              "A small open study with 20 people assessed a **combination** containing cloves for allergic rhinitis; neither efficacy nor cloves' isolated contribution was established."
+            ],
+            [
+              "Research gap",
+              "Original pharmacopeial passages, precise mizaj disputes, dose/processing variability, contraindications by school, high-quality controlled trials."
+            ]
+          ],
+          "source_ids": [
+            "SRC-UNANI-ORODENTAL",
+            "SRC-UNANI-CLINICAL"
+          ]
+        },
+        {
+          "id": "MED-CLOVE-BIOMED",
+          "title": "Western biomedicine · evidence-based outcomes",
+          "tradition": "Modern experimental and clinical research",
+          "evidence": "mixed_in_vitro_and_safety_review",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Identification and exposure",
+              "Analytic chemistry from a particular bud, stem, leaf or oil sample is required before attributing a measured constituent percentage."
+            ],
+            [
+              "Dental and local anesthetic context",
+              "Eugenol has recognized local dental applications, but raw concentrated clove oil can injure mucosa and must not be treated as an interchangeable dental drug."
+            ],
+            [
+              "Antiparasitic laboratory findings",
+              "Published cell/parasite assays report activity on Giardia, Leishmania and Haemonchus stages. These do not establish a human or veterinary antiparasitic treatment."
+            ],
+            [
+              "Other preclinical findings",
+              "Clove oil and eugenol show antimicrobial, antioxidant and other experimental outcomes, often in vitro; no generic 'cures infection' conclusion."
+            ],
+            [
+              "Safety",
+              "Concentrated oil ingestion can cause severe organ toxicity, particularly in children; sensitization and oral irritation possible. Interactions need route/dose-specific evidence."
+            ],
+            [
+              "Research gap",
+              "Controlled clinical outcome syntheses, absorption and tissue exposure, preparation identity, toxicology thresholds, negative trials and pharmacovigilance."
+            ]
+          ],
+          "source_ids": [
+            "SRC-CLOVE-2021-REVIEW",
+            "SRC-EUG-GIARDIA-2011",
+            "SRC-EUG-LEISH-MEX-2023",
+            "SRC-EUG-HAEMONCHUS-2026",
+            "SRC-EUG-NIH-SAFETY"
+          ]
+        },
+        {
+          "id": "MED-CLOVE-OTHER-GAPS",
+          "title": "Other named medical systems",
+          "tradition": "Research queue, not a fabricated profile",
+          "evidence": "not_yet_researched",
+          "depth": "open_gap",
+          "fields": [
+            [
+              "Needed",
+              "Siddha, Indonesian Jamu, Kampo and named African, Caribbean and other traditions where clove is documented; identify specific school/community and source."
+            ],
+            [
+              "Boundary",
+              "A generic regional label does not license assigning TCM or Ayurveda categories to another culture."
+            ]
+          ],
+          "source_ids": []
+        }
+      ]
+    },
+    {
+      "id": "metaphysical",
+      "title": "Metaphysical and symbolic traditions",
+      "profiles": [
+        {
+          "id": "META-CLOVE-SANSKRIT",
+          "title": "Devakusuma and auspicious-flower epithets",
+          "tradition": "Sanskrit materia medica lexicon histories",
+          "evidence": "historical_secondary_review_not_spiritual_proof",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Documented language",
+              "The 2019 review attributes the names Devakusuma (flower associated with gods) and Shreesangya (auspicious) to named traditional lexicons."
+            ],
+            [
+              "Meaning and caution",
+              "These are text-reported epithets, not evidence that clove has a universal planetary, elemental or chakra correspondence, nor proof of ritual effects."
+            ],
+            [
+              "Research gap",
+              "Verify exact original texts, translation, date and whether entries refer to clove across historical botanical naming."
+            ]
+          ],
+          "source_ids": [
+            "SRC-AYUR-REVIEW-2019"
+          ]
+        },
+        {
+          "id": "META-CLOVE-POMANDER",
+          "title": "Aromatic custom and pomanders",
+          "tradition": "Historical European scented-object practice",
+          "evidence": "documented_folklore_historical_custom",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Historical record",
+              "Greenwich Historical Society describes medieval aromatic sachets and later clove-studded citrus pomanders as fragrance customs."
+            ],
+            [
+              "Belief context",
+              "Historical communities associated bad smells with illness; this represents historical disease theory, not evidence fragrant objects prevent infection."
+            ],
+            [
+              "Scope",
+              "Pomander history is cultural/symbolic and not automatically a magical protection ritual. The modern citrus-clove holiday decoration has later Victorian associations."
+            ],
+            [
+              "Research gap",
+              "Find dated primary accounts of specific ritual, spiritual, protection or planetary symbolism; do not conflate all European eras."
+            ]
+          ],
+          "source_ids": [
+            "SRC-POMANDER-GHS"
+          ]
+        },
+        {
+          "id": "META-CLOVE-MODERN",
+          "title": "Modern metaphysical correspondences",
+          "tradition": "Modern Western esoteric and other named traditions",
+          "evidence": "not_yet_sourced",
+          "depth": "open_gap",
+          "fields": [
+            [
+              "Unverified pending research",
+              "Claims of prosperity, protection, Mars/Jupiter, fire elements, chakra alignment, or energy cleansing require dated and named sources for each tradition."
+            ],
+            [
+              "No asserted equivalence",
+              "No scientific proof of spiritual effects; culturally restricted practices must not be republished without permission."
+            ]
+          ],
+          "source_ids": []
+        }
+      ]
+    },
+    {
+      "id": "active_ingredients",
+      "title": "Active ingredients and experiments",
+      "profiles": [
+        {
+          "id": "CHEM-CLOVE-EUG",
+          "title": "Eugenol · dominant volatile constituent",
+          "tradition": "Analytical chemistry and in-vitro pharmacology",
+          "evidence": "analytical_and_in_vitro",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Identity",
+              "Eugenol · C₁₀H₁₂O₂ · PubChem CID 3314 · CAS 97-53-0; clove's existing molecular SVG is stored in structures/CMP-eugenol.svg."
+            ],
+            [
+              "Chemistry",
+              "A phenylpropanoid phenol; not the same as eugenyl acetate or clove essential-oil mixture."
+            ],
+            [
+              "Quantitative example",
+              "A cited GC-MS study reports 79.21% eugenol, 11.60% β-caryophyllene, 6.27% eugenyl acetate and 1.56% humulene **within that studied oil**, not universally across cloves."
+            ],
+            [
+              "Study effects",
+              "Existing Atlas includes in-vitro Giardia, Leishmania, Haemonchus activity with parasite stage and concentration; several of clove's 11 occurrence records are legacy-unreviewed."
+            ],
+            [
+              "Evidence warning",
+              "Observed lab activity ≠ patient benefit, achievable dose, or preparation-level efficacy. A compound may be toxic at active concentrations."
+            ],
+            [
+              "Research gap",
+              "Concentration by organ and harvest batch, full minor-metabolite verification, receptor causality, pharmacokinetics and human outcomes."
+            ]
+          ],
+          "source_ids": [
+            "SRC-PUBCHEM-EUG",
+            "SRC-CLOVE-2025-COMPOSITION",
+            "SRC-EUG-GIARDIA-2011",
+            "SRC-EUG-LEISH-MEX-2023",
+            "SRC-EUG-HAEMONCHUS-2026"
+          ]
+        },
+        {
+          "id": "CHEM-CLOVE-OTHER",
+          "title": "Other constituent families",
+          "tradition": "Clove oil chemistry",
+          "evidence": "analytical_review",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Major volatile co-constituents",
+              "β-Caryophyllene, eugenyl acetate and α-humulene repeatedly reported, with strong method- and part-specific variability."
+            ],
+            [
+              "Non-volatile compounds",
+              "Reported tannins/polyphenols (e.g., gallic acid and flavonoids) depend on material and extraction; they should not inherit bud-oil percentage estimates."
+            ],
+            [
+              "Coverage limitation",
+              "The existing Atlas associates 11 compounds with clove, but many rows have unresolved original references. This is a partial inventory, not 'all active ingredients'."
+            ]
+          ],
+          "source_ids": [
+            "SRC-CLOVE-2021-REVIEW"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "extraction_preparation",
+      "title": "Extraction and preparation",
+      "profiles": [
+        {
+          "id": "EXT-CLOVE-HYDRO",
+          "title": "Hydrodistillation",
+          "tradition": "Experimental essential-oil extraction",
+          "evidence": "comparative_method_review",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Input → output",
+              "Clove buds or other named parts → mixed volatile essential oil. This is not purified eugenol."
+            ],
+            [
+              "Method scope",
+              "Water/heat-driven volatility and condensation, with reported GC-MS comparisons among batches."
+            ],
+            [
+              "Measured outcomes",
+              "Reviewed studies report differing major-oil percentages by method and sampling; sample-specific 69.68–87.26% eugenol entries appear in the cited review, not a guaranteed yield."
+            ],
+            [
+              "Hazards",
+              "Heat and concentrated oil exposure; extracted oils are not validated as oral antiparasitic medicines."
+            ],
+            [
+              "Research gap",
+              "Source study metadata and normalized mass-balance/yield by plant part, pre-treatment and batch."
+            ]
+          ],
+          "source_ids": [
+            "SRC-CLOVE-2021-REVIEW"
+          ]
+        },
+        {
+          "id": "EXT-CLOVE-STEAM",
+          "title": "Steam distillation",
+          "tradition": "Experimental and industrial essential-oil extraction",
+          "evidence": "comparative_method_review",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Input → output",
+              "Volatile-bearing clove materials → steam-distilled aromatic oil."
+            ],
+            [
+              "Comparison",
+              "Different raw plant parts, steam handling and storage produce differing profiles; an oil label is insufficient to establish purity."
+            ],
+            [
+              "Research gap",
+              "Extract specific studies and explicit quantitative comparisons with hydrodistillation."
+            ]
+          ],
+          "source_ids": [
+            "SRC-CLOVE-2021-REVIEW"
+          ]
+        },
+        {
+          "id": "EXT-CLOVE-SOLVENT",
+          "title": "Solvent and ultrasound-assisted extractions",
+          "tradition": "Laboratory botanical extraction",
+          "evidence": "comparative_method_review",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Input → output",
+              "Ground or intact clove buds and a specified solvent/media → multi-constituent extract rather than essential oil by definition."
+            ],
+            [
+              "Technique diversity",
+              "The cited review surveys solvent extraction and ultrasound-assisted techniques that change recovered constituent proportions."
+            ],
+            [
+              "Hazards",
+              "Solvent residue, flammability and extract concentration; a laboratory procedure is not a home-use recommendation."
+            ],
+            [
+              "Research gap",
+              "Independently validated solvent residual tests, batch yields, precise eugenol isolation vs crude-extract identity."
+            ]
+          ],
+          "source_ids": [
+            "SRC-CLOVE-2021-REVIEW"
+          ]
+        },
+        {
+          "id": "EXT-CLOVE-CO2",
+          "title": "Supercritical fluid and microwave-assisted methods",
+          "tradition": "Engineered extraction technologies",
+          "evidence": "comparative_method_review",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Input → output",
+              "Clove material → method-specific volatile fractions or extracts, contingent on analytical results."
+            ],
+            [
+              "Method classes",
+              "Supercritical-fluid extraction and microwave-assisted hydrodistillation are reviewed; they differ from traditional water infusions."
+            ],
+            [
+              "Research gap",
+              "Reproducible method-specific comparisons with emissions, residues, quality, purification and cost."
+            ]
+          ],
+          "source_ids": [
+            "SRC-CLOVE-2021-REVIEW"
+          ]
+        },
+        {
+          "id": "EXT-CLOVE-TRADITIONAL",
+          "title": "Whole buds, powders and water infusions",
+          "tradition": "Traditional materials and preparations",
+          "evidence": "traditional_material_identity",
+          "depth": "source_backed_seed",
+          "fields": [
+            [
+              "Input → output",
+              "Whole dried buds → powder or water-based preparation; neither equals clove oil or isolated eugenol."
+            ],
+            [
+              "Medical ties",
+              "TCM Ding Xiang and Ayurvedic Lavanga specify material and part; oral treatment claims remain tradition-level descriptions."
+            ],
+            [
+              "Research gap",
+              "Pre- and post-processing chemistry for specific historical preparations, quality and microbiological data."
+            ]
+          ],
+          "source_ids": [
+            "SRC-TCM-DING-2020-PHARM",
+            "SRC-AYUR-REVIEW-2019"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "visual_library",
+      "title": "Pictures, plates and molecular structures",
+      "profiles": []
+    }
+  ],
+  "media": [
+    {
+      "id": "VIS-CLOVE-BUDS-2026",
+      "subject_ref": "BOT-001",
+      "kind": "photo",
+      "caption": "Dried flower buds of clove (spice material).",
+      "creator": "Nabunje Leticia",
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dried_cloves.jpg?width=640",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Dried_cloves.jpg",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "alt": "Brown nail-shaped dried cloves pictured closely",
+      "verification": "commons_license_and_species_context_reviewed",
+      "source_id": "SRC-PHOTO-BUDS"
+    },
+    {
+      "id": "VIS-CLOVE-TREE-2015",
+      "subject_ref": "BOT-001",
+      "kind": "photo",
+      "caption": "Live clove tree flowers and developing buds on Pemba Island.",
+      "creator": "Prof. Chen Hualin (Harveychl)",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/35/The_flowers_of_clove_tree_in_Pemba_island.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:The_flowers_of_clove_tree_in_Pemba_island.JPG",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "alt": "Green clove tree leaves with branching buds and blossoms",
+      "verification": "commons_license_and_species_context_reviewed",
+      "source_id": "SRC-PHOTO-TREE"
+    },
+    {
+      "id": "VIS-CLOVE-WELLCOME",
+      "subject_ref": "BOT-001",
+      "kind": "historical_botanical_plate",
+      "caption": "Clove buds botanical illustration, watercolor circa 1833; illustrative, not a specimen authentication.",
+      "creator": "Wellcome Collection",
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Clove_plant_%28Syzygium_aromaticum%29%3B_stem_with_flower_buds._Wa_Wellcome_V0043507.jpg?width=600",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Clove_plant_(Syzygium_aromaticum);_stem_with_flower_buds._Wa_Wellcome_V0043507.jpg",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "alt": "Historical botanical watercolor of clove stems and flower buds",
+      "verification": "commons_license_and_artwork_context_reviewed",
+      "source_id": "SRC-PLATE-WELLCOME"
+    }
+  ],
+  "remaining_gaps": [
+    "Legacy chemical occurrences without verified links",
+    "Many region-specific and metaphysical tradition subprofiles unsourced or absent",
+    "No complete extraction-lab dataset covering every process and purity benchmark",
+    "Online Wikimedia media are not embedded for offline use",
+    "No independent expert review of every medicinal and spiritual text",
+    "Few randomized human clinical outcomes; no safe antiparasitic treatment evidence",
+    "Full taxonomy synonyms and identification key remain incomplete"
+  ]
+}
