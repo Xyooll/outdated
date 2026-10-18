@@ -1,0 +1,34 @@
+{
+  "worker": "A",
+  "organism_id": "BOT-002",
+  "scientific_name": "Thymus vulgaris",
+  "checked_on": "2026-10-17",
+  "status": "in_progress",
+  "last_published_batch": "20261017_thyme_a_methods_002",
+  "pending_batch": "20261017_thyme_a_solvents_assays_003",
+  "sources": [
+    "https://doi.org/10.1002/fsn3.1007",
+    "https://pubchem.ncbi.nlm.nih.gov/compound/6989",
+    "https://commons.wikimedia.org/wiki/File:Thymus_vulgaris_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-271.jpg"
+  ],
+  "findings": "2019 paper: thyme oil MAE yield 1.77 ± 0.05% w/w; 80% methanol vs ethanol polar extracts rosmarinic acid 13.66 ± 0.145% vs 8.696 ± 0.055% (Table 4). Both polar extracts were negative in disk-diffusion assays against six strains, while oils showed inhibition against S. aureus ATCC 9144. Study-specific n=2; no human treatment implications.",
+  "media_candidate": {
+    "url": "https://commons.wikimedia.org/wiki/File:Thymus_vulgaris_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-271.jpg",
+    "creator": "Walther Otto Müller",
+    "rights": "Public Domain Mark 1.0",
+    "state": "candidate_only_not_ingested"
+  },
+  "blocker": "An incoming batch named 20261017_thyme_a_methods_002.json duplicates a previously processed batch. Publisher rejects replay; delete_file and update_file connector actions were blocked. No claim of new canonical publication.",
+  "profiles": {
+    "identity": "PARTIAL",
+    "medicinal": "PARTIAL",
+    "metaphysical": "PARTIAL",
+    "active_ingredients": "PARTIAL",
+    "extraction": "PARTIAL",
+    "visual": "UNKNOWN",
+    "bioactivity": "PARTIAL",
+    "safety": "PARTIAL",
+    "formulas": "UNKNOWN"
+  },
+  "next": "Resolve duplicate incoming batch, run publisher, verify atlas.json, offline HTML and SQLite, continue BOT-002 until dossier completion."
+}
