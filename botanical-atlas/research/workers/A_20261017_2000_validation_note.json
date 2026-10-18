@@ -1,0 +1,14 @@
+{
+  "worker": "A",
+  "organism_id": "BOT-002",
+  "checked_on": "2026-10-17",
+  "status": "publication_blocked",
+  "urgent_correction": "Incoming batch 20261017_thyme_a_solvents_assays_003.json currently has BIO-THY-A-GED2019-POLAR-NEG.evidence_tier = null_or_negative, but atlas_pipeline.py accepts only in_vitro, ex_vivo, animal, human_trial, human_observational, in_silico. Set evidence_tier to in_vitro and keep the negative observed_effect and antibacterial_null_result category. Update-file connector was blocked by safety checks, so this correction was not applied.",
+  "existing_blocker": "Remove or safely reconcile stale incoming 20261017_thyme_a_methods_002.json already archived under processed; automated publisher currently fails with duplicate/replayed batch.",
+  "publication_truth": "No records from batch 003 were ingested into canonical atlas.json. GitHub tests passed but ingestion failed.",
+  "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6526640/",
+    "https://pubchem.ncbi.nlm.nih.gov/compound/6989"
+  ],
+  "next": "Apply the two explicit corrections above, rerun publisher, then read back canonical JSON, SQLite and offline HTML. Continue thyme only."
+}
