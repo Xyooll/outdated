@@ -2,7 +2,7 @@
   "worker": "B",
   "organism_id": "BOT-012",
   "scientific_name": "Ocimum tenuiflorum L.",
-  "status": "research_in_progress_publication_blocked",
+  "status": "research_in_progress_batch_queued_canonical_unverified",
   "checked_on": "2026-10-17",
   "dossier_complete": false,
   "partition": "Unicode code-point sum of organism ID modulo 4 equals 1",
@@ -54,11 +54,39 @@
     }
   ],
   "publication": {
-    "attempt": "create sourced incoming research batch",
+    "attempt": "Created validated-format research batch for estragole in incoming; CI and canonical readback pending",
     "result": "blocked by tool safety checks; no B incoming batch created",
-    "canonical_status": "unchanged for BOT-012",
-    "publisher_issue": "Latest Botanical Atlas workflow fails at ingest with Duplicate/replayed or misnamed batch, due to an existing thyme batch still in incoming and processed; do not alter worker A's batch",
-    "workflow_run": "https://github.com/Xyooll/outdated/actions/runs/39077256806"
+    "canonical_status": "NOT CONFIRMED; prior global ingestion failure from worker A's duplicate and invalid evidence tier",
+    "publisher_issue": "Worker A thyme incoming replay and invalid evidence_tier still need resolution by owner/worker A; do not modify A records.",
+    "workflow_run": "https://github.com/Xyooll/outdated/actions/runs/39077256806",
+    "new_batch": "botanical-atlas/incoming/20261017_tulsi_b_estragole_001.json",
+    "batch_commit": "caf21870247be749e4031cc15423a416ca7efeb9"
   },
-  "next_step": "Continue one-plant research and resolve permitted publication pathway; preserve evidence distinctions, avoid unsafe assumptions."
+  "next_step": "Inspect Actions result after new batch, confirm canonical JSON/SQLite/HTML or report failure; continue source-level verification of 113 USDA chemical labels, 56 historical claims, tradition-specific monographs and licensed pictures. Do not rotate from BOT-012.",
+  "new_findings_20261017_2115": {
+    "uploaded_usda_archive": "Duke-Source-CSV.zip, 16 CSV files, CC0",
+    "taxonomy_crosswalk": [
+      {
+        "FNFNUM": "2021",
+        "taxon": "Ocimum sanctum",
+        "FARMACY_NEW_rows": 29,
+        "unique_chemical_labels": 29
+      },
+      {
+        "FNFNUM": "2024",
+        "taxon": "Ocimum tenuiflorum",
+        "FARMACY_NEW_rows": 137,
+        "unique_chemical_labels": 113
+      }
+    ],
+    "ethnobotanical_legacy_rows_for_synonym": 56,
+    "critical_note": "These counts are historical source-index entries, not 113 independently authenticated isolated molecules or 56 medically proven effects. FNFTAX synonyms need canonical crosswalk; several entries are classes or mixtures, source units may be ambiguous. Original papers and current taxonomy must be checked.",
+    "compound_identity": "Methyl chavicol = estragole; PubChem CID 8815, CAS 140-67-0, InChIKey ZFMSMUAANRJZFM-UHFFFAOYSA-N.",
+    "chemotype_example": "Brophy et al 1993 northern Australian leaf essential oil: reported 87% methyl chavicol and 4.1% dry-leaf oil yield; not a universal tulsi composition.",
+    "references": [
+      "https://agdatacommons.nal.usda.gov/articles/dataset/Dr_Duke_s_Phytochemical_and_Ethnobotanical_Databases/24660351",
+      "https://pubchem.ncbi.nlm.nih.gov/compound/8815",
+      "https://herbase.iteipmai.fr/modules/webportal/gabarit.php?field=Auteur&idbase=2&op=see_also&value=BROPHY+JJ."
+    ]
+  }
 }
