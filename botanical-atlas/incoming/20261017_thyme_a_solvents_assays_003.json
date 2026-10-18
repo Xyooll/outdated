@@ -1,0 +1,113 @@
+{
+  "batch_id": "20261017_thyme_a_solvents_assays_003",
+  "research_date": "2026-10-17",
+  "research_reference_url": "https://doi.org/10.1002/fsn3.1007",
+  "summary": "Worker A: preparation-specific thyme microwave oil and polar solvent extracts; measured study-specific rosmarinic acid; negative and positive in-vitro bacterial assays; verified thymol PubChem identity. No therapeutic inference. Pending publisher unblock due replayed batch 002.",
+  "research_method": "Direct review of Gedikoglu et al. (2019) tables 1, 4, 5 and methods; PubChem thymol identity. Two technical replicates in the 2019 study. No extrapolation to other chemotypes, human efficacy or safe dose.",
+  "sources": [
+    {
+      "id": "SRC-THY-A-PUBCHEM-6989",
+      "title": "Thymol, CID 6989, compound structure and chemical identifiers",
+      "organization": "PubChem, U.S. National Library of Medicine",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/compound/6989"
+    }
+  ],
+  "structures": [
+    {
+      "compound_id": "CMP-thymol",
+      "status": "source_verified_2d_identity",
+      "review_status": "verified_pubchem_cid_6989",
+      "formula": "C10H14O",
+      "molecular_weight_g_mol": 150.22,
+      "smiles": "CC1=CC(=C(C=C1)C(C)C)O",
+      "pubchem_cid": 6989,
+      "source_url": "https://pubchem.ncbi.nlm.nih.gov/compound/6989",
+      "binding_warning": "Compound identity and structure do not establish binding, clinical benefit, bioavailability or safety."
+    }
+  ],
+  "medicinal_materials": [
+    {
+      "id": "MAT-THY-A-MAE-2019",
+      "organism_id": "BOT-002",
+      "part": "Air-dried cultivated Thymus vulgaris aerial material (Diyarbakir Research Institute, July 2017)",
+      "preparation": "Microwave-assisted essential oil fraction (MAE), analytical research sample",
+      "processing": "Reported oil yield 1.77 ± 0.05% w/w (n=2); thymol 50.53% and p-cymene 11.79% reported as relative GC-MS peak area. This method did not significantly change oil yield versus hydrodistillation in this sample.",
+      "material_class": "laboratory_essential_oil_fraction",
+      "tradition": "Experimental phytochemistry",
+      "source_id": "SRC-THY-A-GEDIKOGLU-2019",
+      "identity_status": "study_reported_not_independently_authenticated",
+      "limitations": "Study-specific oil and batch. Relative GC-MS peak area is not mass fraction or purity. Not a clinical product, safe dose or general species yield."
+    },
+    {
+      "id": "MAT-THY-A-METHANOL-2019",
+      "organism_id": "BOT-002",
+      "part": "Air-dried cultivated Thymus vulgaris herb",
+      "preparation": "Laboratory 80% aqueous methanol polar extract, subsequently freeze-dried",
+      "processing": "Study-reported rosmarinic acid value 13.66 ± 0.145% in Table 4; total phenolics 15.13 ± 0.313 mg gallic-acid equivalents/g dry weight; DPPH IC50 29.22 ± 0.385 µg/mL (n=2).",
+      "material_class": "analytical_polar_solvent_extract_not_ingestible",
+      "tradition": "Experimental phytochemistry",
+      "source_id": "SRC-THY-A-GEDIKOGLU-2019",
+      "identity_status": "study_reported_not_independently_authenticated",
+      "limitations": "Methanol is a laboratory solvent; no suggestion for home use or consumption. Table 4 reported composition percentages are study-method-specific and not purified rosmarinic acid yield or safe dose. Cell-free antioxidant results do not prove human benefit."
+    },
+    {
+      "id": "MAT-THY-A-ETHANOL-2019",
+      "organism_id": "BOT-002",
+      "part": "Air-dried cultivated Thymus vulgaris herb",
+      "preparation": "Laboratory 80% aqueous ethanol polar extract, subsequently freeze-dried",
+      "processing": "Study-reported rosmarinic acid value 8.696 ± 0.055% in Table 4; total phenolics 13.57 ± 0.103 mg gallic-acid equivalents/g dry weight; DPPH IC50 36.77 ± 0.45 µg/mL (n=2).",
+      "material_class": "analytical_polar_solvent_extract_not_finished_medicine",
+      "tradition": "Experimental phytochemistry",
+      "source_id": "SRC-THY-A-GEDIKOGLU-2019",
+      "identity_status": "study_reported_not_independently_authenticated",
+      "limitations": "Research extraction with solvent removal and analysis, not an ingestible preparation or dosing guidance. Percent values are method/sample-specific and do not establish purified compound yield or clinical activity."
+    }
+  ],
+  "occurrences": [
+    {
+      "id": "OCC-BOT-002-05",
+      "organism_id": "BOT-002",
+      "compound_id": "CMP-rosmarinic-acid",
+      "source_id": "SRC-THY-A-GEDIKOGLU-2019",
+      "verification": "primary_HPLC_polar_extract_sample_specific_2019",
+      "plant_part": "Dried cultivated herb, polar laboratory extracts",
+      "note": "HPLC-determined rosmarinic acid: Table 4 reported 13.66 ± 0.145% in 80% methanol extract and 8.696 ± 0.055% in 80% ethanol extract (n=2). Reported percentages are analytical extract composition, not an organism-wide concentration or pure isolate yield. No clinical efficacy inference."
+    }
+  ],
+  "bioactivities": [
+    {
+      "id": "BIO-THY-A-GED2019-POLAR-NEG",
+      "organism_id": "BOT-002",
+      "agent_type": "plant_polar_solvent_extract",
+      "activity_category": "antibacterial_negative_finding",
+      "target_taxon": "Bacillus cereus NRRL B3711; Staphylococcus aureus ATCC 9144; Staphylococcus epidermidis ATCC 12228; Escherichia coli ATCC 25922; Salmonella enteritidis ATCC 13076; Salmonella typhimurium ATCC 14028",
+      "life_stage": "Cultured bacterial cells",
+      "study_model": "In-vitro disk diffusion, 80% methanol and 80% ethanol extracts from cultivated thyme (Gedikoglu et al. 2019)",
+      "evidence_tier": "null_or_negative",
+      "endpoint": "Growth inhibition zone in six bacterial cultures",
+      "observed_effect": "Neither polar extract displayed detectable antibacterial activity against the six tested strains under the reported disk diffusion conditions.",
+      "mechanism_status": "Not determined; negative in this assay does not establish absence of all antimicrobial activity.",
+      "dose_translation": "No clinical efficacy, dose, or antimicrobial-treatment inference.",
+      "source_id": "SRC-THY-A-GEDIKOGLU-2019",
+      "limitations": "One laboratory study with n=2; extract type and diffusion behavior matter. Not a universal negative finding for all thyme extracts, microbes, concentrations or conditions.",
+      "human_clinical_efficacy_established": false
+    },
+    {
+      "id": "BIO-THY-A-GED2019-OIL-SAU",
+      "organism_id": "BOT-002",
+      "agent_type": "plant_essential_oil",
+      "activity_category": "antibacterial_in_vitro",
+      "target_taxon": "Staphylococcus aureus ATCC 9144",
+      "life_stage": "Cultured vegetative bacteria",
+      "study_model": "In-vitro disk diffusion of hydrodistilled vs microwave-assisted thyme essential oils, n=2 (Gedikoglu et al. 2019)",
+      "evidence_tier": "in_vitro",
+      "endpoint": "Growth-inhibition zone diameter in millimeters",
+      "observed_effect": "Hydrodistilled oil 24.5 ± 2.96 mm; microwave-assisted oil 29 ± 2.24 mm for S. aureus ATCC 9144 (Table 5).",
+      "mechanism_status": "Oil mixture tested; no individual thymol target-binding or mechanistic attribution established.",
+      "dose_translation": "In-vitro inhibition zones cannot be translated into human antimicrobial treatment or safe ingestion.",
+      "source_id": "SRC-THY-A-GEDIKOGLU-2019",
+      "limitations": "Specific strain, preparation and disk-diffusion conditions only, n=2. Relative peak-area composition is not purity; no animal/human outcomes.",
+      "human_clinical_efficacy_established": false
+    }
+  ]
+}
